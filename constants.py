@@ -1,8 +1,9 @@
-import pygame
+import pygame  # To use pygame
+import time  # To get the time
 
 # Game
-NUM_MAP = 0  # Map number
-START_POS = [(0, 0)]  # Start position
+START_POS = [(735, 245)]  # Start position
+START_TIME = time.time()  # Start time of the game
 
 
 # Display
@@ -12,11 +13,14 @@ WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = info.current_w - 75, info.current_h 
 WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
 pygame.display.set_caption("Genetic algorithm")  # Window title
 
-BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Background
-
 
 # Car
-MAX_SPEED = 5  # Maximum speed of the car
+CAR_SIZES = [1]
+
+MAX_SPEED = 6  # Maximum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
+
+MIN_MEDIUM_SPEED = 2  # Minimum medium speed of the car
+MIN_HIGH_SPEED = 4  # Minimum high speed of the car
 
 

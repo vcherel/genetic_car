@@ -1,26 +1,46 @@
 import pygame  # To use pygame
-import sys  # To exit the game
-from constants import WINDOW, BACKGROUND  # Import the window and the background
-from variables import DEBUG  # Import the debug mode
+from variables import BACKGROUND, START, MODE, NB_CARS, NUM_MAP  # Import the variables
+from constants import WINDOW, START_POS   # Import the constants
+from ui import detect_events  # Import the detect_events function
+from car import Car  # Import the car
+
+
+def open_window():
+    """
+    Open the window of the game
+    """
+    WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
+    pygame.display.update()  # Update the screen
+
+    while 1:
+        detect_events()  # Detect events
+
+        if START:   # When the game starts
+            play()  # Play the game
 
 
 def play():
     """
     Play the game
     """
+    image = pygame.image.load("images/car.jpg")  # Image of the car
+    pos = START_POS[NUM_MAP]  # Position of the car
+
+    if MODE == "car":       # One car
+        cars = [Car(image, pos)]  # List of cars
+    else:                   # Multiple cars
+        cars = [Car(image, pos) for _ in range(NB_CARS)]
+
     while 1:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()  # Quit the game
-            # Detection of clicks
-            elif DEBUG and event.type == pygame.MOUSEBUTTONDOWN:
-                print("Click at position", pygame.mouse.get_pos())  # Print the position of the click
+        for car in cars:
+            car.update()
+            car.draw()
+
+        detect_events()
 
 
 if __name__ == '__main__':
     """
     Main program
     """
-    WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
-    pygame.display.update()  # Update the screen
-    play()  # Play the game
+    open_window()  # Start the game
