@@ -1,5 +1,5 @@
 import pygame  # To use pygame
-from variables import BACKGROUND, START, MODE, NB_CARS, NUM_MAP  # Import the variables
+from variables import BACKGROUND, START, MODE, NB_CARS, NUM_MAP, CAR_IMAGE  # Import the variables
 from constants import WINDOW, START_POS   # Import the constants
 from ui import detect_events  # Import the detect_events function
 from car import Car  # Import the car
@@ -23,20 +23,25 @@ def play():
     """
     Play the game
     """
-    image = pygame.image.load("images/car.jpg")  # Image of the car
     pos = START_POS[NUM_MAP]  # Position of the car
 
     if MODE == "car":       # One car
-        cars = [Car(image, pos)]  # List of cars
+        cars = [Car(CAR_IMAGE, pos)]  # List of cars
     else:                   # Multiple cars
-        cars = [Car(image, pos) for _ in range(NB_CARS)]
+        cars = [Car(CAR_IMAGE, pos) for _ in range(NB_CARS)]
 
     while 1:
-        for car in cars:
-            car.update()
-            car.draw()
+        all_dead = True     # True if all cars are dead
+        for car in cars:    # For each car
+            if not car.dead:
+                all_dead = False    # At least one car is alive
+                car.move()          # Move the car
 
-        detect_events()
+        detect_events()  # Detect events in the ui
+        pygame.display.update()  # Update the screen
+
+        if all_dead:
+            print("All dead")
 
 
 if __name__ == '__main__':

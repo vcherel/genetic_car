@@ -11,18 +11,20 @@ NB_CARS = 30  # Number of cars
 NUM_MAP = 0  # Map number
 
 BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
-CAR_IMAGE = scale_image(pygame.image.load("images/car.jpg"), CAR_SIZES[NUM_MAP])    # Image of the car
+BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))    # Mask of the black pixels of the background (used to detect collisions)
+CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
 
 
 def change_map(num_map):
     """
-    Change the map
+    Change the map and all the variables associated
 
     Args:
         num_map (int): number of the new map
     """
-    global NUM_MAP, BACKGROUND, CAR_IMAGE
+    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, CAR_IMAGE
     NUM_MAP = num_map  # New map number
 
     BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
-    CAR_IMAGE = scale_image(pygame.image.load("images/car.jpg"), CAR_SIZES[NUM_MAP])    # Image of the car
+    BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))
+    CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
