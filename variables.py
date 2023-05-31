@@ -3,7 +3,7 @@ from constants import WIDTH_SCREEN, HEIGHT_SCREEN, CAR_SIZES  # Import the scree
 from utils import scale_image  # Import the scale_image function
 
 
-MODE = "car"  # Mode of the game ("car" for one car, "cars" for multiple cars)
+MULTIPLE_CARS = False  # True if we want to have multiple cars, False if we want to have only one car
 DEBUG = True  # Debug mode (True or False)
 START = True  # Start the game (True or False)
 
@@ -26,5 +26,5 @@ def change_map(num_map):
     NUM_MAP = num_map  # New map number
 
     BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
-    BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))
+    BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
     CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
