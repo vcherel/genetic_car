@@ -1,5 +1,6 @@
 import pygame  # To use pygame
-from variables import BACKGROUND, START, MULTIPLE_CARS, NB_CARS, NUM_MAP, CAR_IMAGE  # Import the variables
+import sys  # To exit the game
+from variables import BACKGROUND, START, MULTIPLE_CARS, NB_CARS, NUM_MAP, CAR_IMAGE, CHANGE_CHECKPOINT  # Import the variables
 from constants import WINDOW, START_POS   # Import the constants
 from ui import detect_events  # Import the detect_events function
 from car import Car  # Import the car
@@ -14,6 +15,22 @@ def open_window():
 
     while 1:
         detect_events()  # Detect events
+        if CHANGE_CHECKPOINT:
+            # We display the image that explain that we are in the checkpoint mode
+            image_checkpoint = pygame.image.load("images/checkpoint.png")  # Image of the checkpoint
+            WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
+            pygame.display.flip()  # Update the screen
+            # We open the file to write the checkpoints
+            with open("data/checkpoints_" + str(NUM_MAP), "w") as file_checkpoint_write:
+                while 1:
+                    # We detect the mouse click to write the coordinates in the file
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            sys.exit()  # Quitter le jeu
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            if event.button == 1:
+                                x, y = event.pos
+                                file_checkpoint_write.write(str(x) + " " + str(y) + "\n")
         if START:   # When the game starts
             play()  # Play the game
 

@@ -57,12 +57,12 @@ class Car:
 
     def change_speed_angle(self):
         """
-        Change the acceleration of the car (depending on the genetic cone)
+        Change the acceleration and the angle of the car (depending on the genetic cone)
 
         Return:
             float: acceleration of the car
         """
-        # We select the right acceleration depending on the speed of the car
+        # We select the right cone depending on the speed of the car
         if self.speed < MIN_MEDIUM_SPEED:
             width = self.genetic.width_slow
             height = self.genetic.height_slow
@@ -76,18 +76,19 @@ class Car:
             height = self.genetic.height_fast
             self.speed_state = "fast"
 
+        # We compute the position of the points of the cone
         front_of_car = self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2,\
             self.pos[1] + math.sin(math.radians(-self.angle)) * self.image.get_width() / 2  # Position of the front of the car
         angle_cone = math.degrees(math.atan(width / (2 * height)))  # Angle of the cone
 
         top = front_of_car[0] + math.cos(math.radians(self.angle)) * height,\
-            front_of_car[1] - math.sin(math.radians(self.angle)) * height
+            front_of_car[1] - math.sin(math.radians(self.angle)) * height  # Position of the top of the cone
         left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * height,\
-            front_of_car[1] - math.sin(math.radians(self.angle + angle_cone)) * height
+            front_of_car[1] - math.sin(math.radians(self.angle + angle_cone)) * height  # Position of the left of the cone
         right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * height,\
-            front_of_car[1] - math.sin(math.radians(self.angle - angle_cone)) * height
+            front_of_car[1] - math.sin(math.radians(self.angle - angle_cone)) * height  # Position of the right of the cone
         if DEBUG:
-            pygame.draw.polygon(WINDOW, (0, 0, 255), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(WINDOW, (0, 0, 0), (front_of_car, left, top, right), 3)  # Draw the detection cone
 
         # If the point top is outside the window or if the point top is on a black pixel of the background
         if top[0] <= 0 or top[0] >= WIDTH_SCREEN or top[1] <= 0 or top[1] >= HEIGHT_SCREEN or BACKGROUND.get_at((int(top[0]), int(top[1]))) == (0, 0, 0, 255):
@@ -104,7 +105,7 @@ class Car:
         """
         Update the position and the angle of the car
         """
-        if DEBUG and KEYBOARD_CONTROL:
+        if KEYBOARD_CONTROL:
             # Control of the car with the keyboard
             keys = pygame.key.get_pressed()  # Key pressed
             if keys[pygame.K_LEFT]:
@@ -120,6 +121,7 @@ class Car:
             # Change the speed of the car
             self.speed += self.acceleration  # Update the speed of the car
 
+        # Limit the speed of the car (between MIN_SPEED and MAX_SPEED)
         if self.speed > MAX_SPEED:  # If the speed is too high
             self.speed = MAX_SPEED  # Set the speed to the maximum speed
         elif self.speed < MIN_SPEED:  # If the speed is negative
@@ -137,7 +139,7 @@ class Car:
 
     def detect_collision(self):
         """
-        Detect the collision of the car
+        Detect collision of the car with the walls
         """
         if self.pos[0] < 0 or self.pos[0] > WINDOW.get_width() or self.pos[1] < 0 or self.pos[1] > WINDOW.get_height():
             self.dead = True    # Collision with the wall of the window

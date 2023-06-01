@@ -4,8 +4,9 @@ from utils import scale_image  # Import the scale_image function
 
 
 MULTIPLE_CARS = True  # True if we want to have multiple cars, False if we want to have only one car
-DEBUG = False  # Debug mode (True or False)
-KEYBOARD_CONTROL = False  # Control the car with the keyboard (True or False)
+DEBUG = False  # True for debug mode, False for normal mode
+KEYBOARD_CONTROL = False  # True to control the car with the keyboard
+CHANGE_CHECKPOINT = True  # Change the checkpoint for the actual map
 START = True  # Start the game (True or False)
 
 NB_CARS = 10  # Number of cars
@@ -13,7 +14,7 @@ NUM_MAP = 0  # Map number
 
 BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
 BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))    # Mask of the black pixels of the background (used to detect collisions)
-CAR_IMAGE = scale_image(pygame.image.load("images/car.png"), CAR_SIZES[NUM_MAP]).convert_alpha()   # Image of the car
+CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP]).convert_alpha()   # Image of the car
 
 
 def change_map(num_map):
