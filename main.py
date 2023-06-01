@@ -2,7 +2,7 @@ import sys  # To quit the game
 import pygame  # To use pygame
 from variables import BACKGROUND, START, MULTIPLE_CARS, NB_CARS, NUM_MAP, CAR_IMAGE, CHANGE_CHECKPOINT  # Import the variables
 from constants import WINDOW, START_POS   # Import the constants
-from ui import detect_events, edit_background  # Import the detect_events function
+from ui import detect_events_ui, edit_background  # Import the detect_events function
 from car import Car  # Import the car
 
 
@@ -15,7 +15,9 @@ def open_window():
     pygame.display.flip()  # Update the screen
 
     while 1:
-        detect_events()  # Detect events
+        detect_events_ui()  # Detect events in the ui and draw buttons
+
+        # If we want to change the checkpoints
         if CHANGE_CHECKPOINT:
             # We display the image that explain that we are in the checkpoint mode
             image_checkpoint = pygame.image.load("images/checkpoint.png")  # Image of the checkpoint
@@ -40,7 +42,6 @@ def play():
     """
     Play the game
     """
-    WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
     pos = START_POS[NUM_MAP]  # Position of the car
 
     if MULTIPLE_CARS:       # One car
@@ -49,7 +50,10 @@ def play():
         cars = [Car(CAR_IMAGE, pos)]
 
     while 1:
+
         WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
+        detect_events_ui()  # Detect events in the ui and draw buttons
+
         all_dead = True     # True if all cars are dead
         for car in cars:    # For each car
             if not car.dead:
@@ -57,7 +61,7 @@ def play():
                 car.move()          # Move the car
             car.draw()  # Draw the car
 
-        detect_events()  # Detect events in the ui
+        detect_events_ui()  # Detect events in the ui
         pygame.display.update()  # Update the screen
 
         if all_dead:    # If all cars are dead

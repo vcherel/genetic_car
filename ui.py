@@ -1,14 +1,19 @@
 import pygame  # To use pygame
 import sys  # To quit the game
+import variables  # Import the variables
 from constants import WINDOW, FONT  # Import the window
 from variables import BACKGROUND  # Import the variables
 from button import Button  # Import the button
 
+BUTTON_DEBUG = Button(1435, 642, pygame.image.load("images/checkbox_1.png"), pygame.image.load("images/checkbox_2.png"),
+                      pygame.image.load("images/checkbox_3.png"), check_box=True, scale=0.03)
 
-def detect_events():
+
+def detect_events_ui():
     """
     Detect events in the ui and do the corresponding action
     """
+    # Pygame events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()  # Quit the game
@@ -17,6 +22,9 @@ def detect_events():
             print("Click at position", pygame.mouse.get_pos())  # Print the position of the click
             print("Color of the pixel", WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
+    # Button events
+    draw_buttons()  # Draw the buttons and do the corresponding action
+
 
 def edit_background():
     """
@@ -24,3 +32,10 @@ def edit_background():
     """
     # Add a text for the debug mode
     BACKGROUND.blit(FONT.render("Debug mode :", True, (255, 255, 255), (0, 0, 0)), (1300, 640))  # Add the text to the screen
+
+
+def draw_buttons():
+    """
+    Draw the buttons
+    """
+    variables.DEBUG = BUTTON_DEBUG.draw()  # Draw the debug button

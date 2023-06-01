@@ -1,8 +1,9 @@
 import pygame  # To use pygame
+from constants import WINDOW  # Import the window
 
 
 class Button:
-    def __init__(self, x, y, image, scale, check_box=False, image_hover=None, image_clicked=None):
+    def __init__(self, x, y, image, image_hover=None, image_clicked=None, check_box=False, scale=1):
         """
         Initialization of a button
 
@@ -18,40 +19,46 @@ class Button:
         self.image = pygame.transform.scale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))  # Image of the button
         self.rect = self.image.get_rect()  # Rectangle of the button
         self.rect.topleft = (x, y)  # Position of the button
-        self.clicked = False  # True if the button is clicked, False otherwise
         self.check_box = check_box   # True if the button is a checkbox, False otherwise
-        self.image_hover = image_hover  # Image of the button when the mouse is over it
-        self.image_clicked = image_clicked  # Image of the button when it is clicked
+        self.checked = False    # True if the checkbox is checked, False otherwise
+        self.time_clicked = 0   # Time when the button is clicked
 
-    def draw(self, surface):
+        if image_hover is not None:
+            self.image_hover = pygame.transform.scale(image_hover, (int(image_hover.get_width() * scale), int(image_hover.get_height() * scale)))
+        else:
+            self.image_hover = None  # Image of the button when the mouse is over it
+        if image_clicked is not None:
+            self.image_clicked = pygame.transform.scale(image_clicked, (int(image_clicked.get_width() * scale), int(image_clicked.get_height() * scale)))
+        else:
+            self.image_clicked = None  # Image of the button when it is clicked
+
+    def draw(self):
         """
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
 
-        Args:
-            surface (pygame.Surface): surface on which the button is drawn
+        Returns:
+            bool: True if the button is clicked (or activated), False otherwise
         """
-        if self.clicked and self.image_clicked is not None:  # Button clicked and has a clicked image
-            image = self.image_clicked
-        else:
-            image = self.image  # Image of the button
+        image = self.image  # Image of the button
 
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
-            if pygame.mouse.get_pressed()[0] == 1:    # Mouse clicked
-                if self.clicked:       # Button already clicked
-                    if self.check_box:
-                        self.clicked = False
-                else:   # Button not already clicked
-                    self.clicked = True
-                    if self.image_clicked is not None:
-                        image = self.image_clicked
+            if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 100:    # Mouse clicked for the first time
+                self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
+                if self.check_box:
+                    self.checked = not self.checked  # Change the state of the checkbox
+                else:
+                    self.checked = True     # Activate the button
 
-            else:  # Mouse not clicked
-                if self.image_hover is not None:   # Button has a hover image
-                    image = self.image_hover    # We change the image of the button if the mouse is over it
                 if not self.check_box:
-                    self.clicked = False    # We reset the clicked state of the button if it is not a checkbox
+                    self.checked = False  # Change the state if it's a simple button
+
+            if self.image_hover is not None:
+                image = self.image_hover   # Change the image if it's possible
+
+        if self.checked and self.image_clicked is not None:
+            image = self.image_clicked  # Change the image if it's possible
 
         # Draw button on screen
-        surface.blit(image, (self.rect.x, self.rect.y))
+        WINDOW.blit(image, (self.rect.x, self.rect.y))
 
-        return self.clicked  # Return True if the button is clicked (or activated), False otherwise
+        return self.checked  # Return True if the button is clicked (or activated), False otherwise

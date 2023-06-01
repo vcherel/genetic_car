@@ -1,8 +1,9 @@
 import pygame  # Pygame library
 import math  # Math library
+import variables  # Variables of the game
 from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, \
     HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED  # Constants of the game
-from variables import BACKGROUND, BACKGROUND_MASK, DEBUG, KEYBOARD_CONTROL  # Variables of the game
+from variables import BACKGROUND, BACKGROUND_MASK, KEYBOARD_CONTROL  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
 
@@ -53,8 +54,8 @@ class Car:
         self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead and erase it if it is the case
-        if DEBUG:
-            # self.draw_detection_cone()  # Draw the detection cone of the car
+        if variables.DEBUG:
+            self.draw_detection_cone()  # Draw the detection cone of the car
             pass
 
     def change_speed_angle(self):
@@ -89,7 +90,7 @@ class Car:
             front_of_car[1] - math.sin(math.radians(self.angle + angle_cone)) * height  # Position of the left of the cone
         right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * height, \
             front_of_car[1] - math.sin(math.radians(self.angle - angle_cone)) * height  # Position of the right of the cone
-        if DEBUG:
+        if variables.DEBUG:
             pygame.draw.polygon(WINDOW, (0, 0, 0), (front_of_car, left, top, right), 3)  # Draw the detection cone
 
         # If the point top is outside the window or if the point top is on a black pixel of the background
