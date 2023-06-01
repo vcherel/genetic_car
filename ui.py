@@ -2,7 +2,6 @@ import pygame  # To use pygame
 import sys  # To quit the game
 import variables  # Import the variables
 from constants import WINDOW, FONT  # Import the window
-from variables import BACKGROUND  # Import the variables
 from button import Button  # Import the button
 
 DEBUG_BUTTON = Button(1435, 642, pygame.image.load("images/checkbox_1.png"), pygame.image.load("images/checkbox_2.png"),
@@ -33,8 +32,8 @@ def edit_background():
     Initialize the ui by adding elements to the BACKGROUND
     """
     # Add a text for the debug mode
-    BACKGROUND.blit(FONT.render("Debug mode :", True, (255, 255, 255), (0, 0, 0)), (1300, 640))  # Add the text to the screen
-    line = pygame.draw.line(BACKGROUND, (0, 0, 0), (1280, 120), (1280, 0), 2)
+    variables.BACKGROUND.blit(FONT.render("Debug mode :", True, (255, 255, 255), (0, 0, 0)), (1300, 640))  # Add the text to the screen
+    line = pygame.draw.line(variables.BACKGROUND, (0, 0, 0), (1280, 120), (1280, 0), 2)
 
 
 def draw_buttons():

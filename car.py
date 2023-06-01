@@ -2,8 +2,8 @@ import pygame  # Pygame library
 import math  # Math library
 import variables  # Variables of the game
 from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, \
-    HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED  # Constants of the game
-from variables import BACKGROUND, BACKGROUND_MASK, KEYBOARD_CONTROL  # Variables of the game
+    HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT  # Constants of the game
+from variables import KEYBOARD_CONTROL, CHECKPOINTS, NUM_MAP  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
 
@@ -50,13 +50,33 @@ class Car:
         """
         Move the car and update its state
         """
-
+        self.detect_checkpoint()  # Detect if the car has reached a checkpoint
+        print(self.genetic.fitness)
         self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead and erase it if it is the case
         if variables.DEBUG:
             self.draw_detection_cone()  # Draw the detection cone of the car
-            pass
+
+    def detect_checkpoint(self):
+        """
+        Detect if the car has reached a checkpoint (or multiple checkpoints)
+
+        Return:
+            bool: True if the car has reached a checkpoint, False otherwise
+        """
+        checkpoint_passed = False  # True if the car has passed a checkpoint, False otherwise
+        actual_checkpoint = variables.CHECKPOINTS[self.next_checkpoint]  # Actual checkpoint to reach
+        if actual_checkpoint[0] - RADIUS_CHECKPOINT < self.pos[0] < actual_checkpoint[0] + RADIUS_CHECKPOINT and\
+                actual_checkpoint[1] - RADIUS_CHECKPOINT < self.pos[1] < actual_checkpoint[1] + RADIUS_CHECKPOINT:
+            self.genetic.fitness += 1
+            self.next_checkpoint += 1
+            checkpoint_passed = True
+            if self.next_checkpoint == len(variables.CHECKPOINTS):
+                self.next_checkpoint = 0
+
+        if checkpoint_passed:   # If the car has passed a checkpoint, we check if it has passed multiple checkpoints
+            self.detect_checkpoint()
 
     def change_speed_angle(self):
         """
@@ -94,16 +114,16 @@ class Car:
             pygame.draw.polygon(WINDOW, (0, 0, 0), (front_of_car, left, top, right), 3)  # Draw the detection cone
 
         # If the point top is outside the window or if the point top is on a black pixel of the background
-        if top[0] <= 0 or top[0] >= WIDTH_SCREEN or top[1] <= 0 or top[1] >= HEIGHT_SCREEN or BACKGROUND.get_at(
+        if top[0] <= 0 or top[0] >= WIDTH_SCREEN or top[1] <= 0 or top[1] >= HEIGHT_SCREEN or variables.BACKGROUND.get_at(
                 (int(top[0]), int(top[1]))) == (0, 0, 0, 255):
             self.acceleration = DECELERATION  # The car decelerates
         else:
             self.acceleration = ACCELERATION  # Else the car accelerates
 
-        if left[0] <= 0 or left[0] >= WIDTH_SCREEN or left[1] <= 0 or left[1] >= HEIGHT_SCREEN or BACKGROUND.get_at(
+        if left[0] <= 0 or left[0] >= WIDTH_SCREEN or left[1] <= 0 or left[1] >= HEIGHT_SCREEN or variables.BACKGROUND.get_at(
                 (int(left[0]), int(left[1]))) == (0, 0, 0, 255):
             self.angle -= TURN_ANGLE
-        if right[0] <= 0 or right[0] >= WIDTH_SCREEN or right[1] <= 0 or right[1] >= HEIGHT_SCREEN or BACKGROUND.get_at(
+        if right[0] <= 0 or right[0] >= WIDTH_SCREEN or right[1] <= 0 or right[1] >= HEIGHT_SCREEN or variables.BACKGROUND.get_at(
                 (int(right[0]), int(right[1]))) == (0, 0, 0, 255):
             self.angle += TURN_ANGLE
 
@@ -153,7 +173,7 @@ class Car:
 
         # Collision with the walls of the circuit
         car_mask = pygame.mask.from_surface(self.rotated_image)
-        if BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
+        if variables.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
             self.dead = True
 
     def draw(self):
