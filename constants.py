@@ -19,7 +19,7 @@ FONT = pygame.font.SysFont("Arial", 20)  # Font
 # Car
 CAR_SIZES = [0.15]
 
-MAX_SPEED = 7  # Maximum speed of the car
+MAX_SPEED = 3  # Maximum speed of the car
 MIN_SPEED = 0.5  # Minimum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
 
