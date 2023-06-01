@@ -1,7 +1,7 @@
 import pygame  # Pygame library
 import math  # Math library
-from constants import MAX_SPEED, WINDOW, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED  # Constants of the game
-from variables import BACKGROUND_MASK, BACKGROUND, DEBUG  # Variables of the game
+from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, HEIGHT_SCREEN, TURN_ANGLE  # Constants of the game
+from variables import BACKGROUND, BACKGROUND_MASK, DEBUG  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
 
@@ -18,7 +18,8 @@ class Car:
         self.dead = False   # True if the car is dead, False otherwise
 
         self.speed = 0  # Current speed of the car
-        self.acceleration = 0.5  # Current acceleration of the car
+        self.speed_state = "slow"  # Current speed state of the car
+        self.acceleration = 0  # Current acceleration of the car
 
         self.angle = 0  # Current angle of the car
         self.pos = pos      # Current position of the car
@@ -36,6 +37,7 @@ class Car:
         self.dead = False
 
         self.speed = 0
+        self.speed_state = "slow"
 
         self.angle = 0
         self.pos = pos
@@ -44,10 +46,18 @@ class Car:
 
     def move(self):
         """
-        Move the car and update its state
+        Erase the car, move it and update its state
         """
+        if DEBUG:  # Erase car + detection cone
+            # We increase the size of rotated_rect to be sure to erase the car, and we put it in the front of the car
+            rect = self.rotated_rect.inflate(200, 550)
+            rect = rect.move(math.cos(math.radians(self.angle)) * self.image.get_height(), math.sin(math.radians(self.angle)) * self.image.get_height())
+            WINDOW.blit(BACKGROUND, rect, rect)
+        else:       # Erase car
+            WINDOW.blit(BACKGROUND, self.rotated_rect, self.rotated_rect)
+
         self.change_acceleration()  # Change the acceleration of the car (depending on the genetic cone)
-        self.update_pos()  # Erase the previous position of the car and update its position / orientation
+        self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead and erase it if it is the case
         if DEBUG:
             self.draw_detection_cone()  # Draw the detection cone of the car
@@ -59,23 +69,37 @@ class Car:
         Return:
             float: acceleration of the car
         """
+        # We select the right acceleration depending on the speed of the car
         if self.speed < MIN_MEDIUM_SPEED:
             width = self.genetic.width_slow
             height = self.genetic.height_slow
+            self.speed_state = "slow"
         elif self.speed < MIN_HIGH_SPEED:
             width = self.genetic.width_medium
             height = self.genetic.height_medium
+            self.speed_state = "medium"
         else:
             width = self.genetic.width_fast
             height = self.genetic.height_fast
+            self.speed_state = "fast"
 
-        # Get the point at the middle of the front of the car
         front_of_car = self.pos[0] + math.cos(math.radians(self.angle)) * self.image.get_width() / 2, self.pos[1] + math.sin(math.radians(self.angle)) * self.image.get_width() / 2
 
-        # Get the points of the detection cone
-        left = front_of_car[0] + math.cos(math.radians(self.angle + 90)) * width, front_of_car[1] + math.sin(math.radians(self.angle + 90)) * width
-        right = front_of_car[0] + math.cos(math.radians(self.angle - 90)) * width, front_of_car[1] + math.sin(math.radians(self.angle - 90)) * width
-        top = front_of_car[0] + math.cos(math.radians(self.angle)) * height, front_of_car[1] + math.sin(math.radians(self.angle)) * height
+        top = front_of_car[0] + math.sqrt((width / 2) ** 2 + height ** 2) + math.cos(math.radians(self.angle)) * height, front_of_car[1] + math.sin(math.radians(self.angle)) * height
+        left = front_of_car[0] + height + math.cos(math.radians(self.angle)) * height, front_of_car[1] - width / 2 + math.sin(math.radians(self.angle)) * height
+        right = front_of_car[0] + height + math.cos(math.radians(self.angle)) * height, front_of_car[1] + width / 2 + math.sin(math.radians(self.angle)) * height
+
+        # If the point top is outside the window or if the point top is on a black pixel of the background
+        if top[0] <= 0 or top[0] >= WIDTH_SCREEN or top[1] <= 0 or top[1] >= HEIGHT_SCREEN or BACKGROUND_MASK.get_at((int(top[0]), int(top[1]))) == (0, 0, 0, 255):
+            self.acceleration = DECELERATION  # The car decelerates
+        else:
+            self.acceleration = ACCELERATION  # Else the car accelerates
+        """
+        if BACKGROUND_MASK.get_at((int(left[0]), int(left[1]))) == (0, 0, 0, 255):
+            self.angle += TURN_ANGLE
+        if BACKGROUND_MASK.get_at((int(right[0]), int(right[1]))) == (0, 0, 0, 255):
+            self.angle -= TURN_ANGLE
+        """
 
     def update_pos(self):
         """

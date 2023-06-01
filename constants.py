@@ -4,7 +4,7 @@ import time  # To get the time
 # Game
 START_POS = [(735, 245)]  # Start position
 START_TIME = time.time()  # Start time of the game
-
+CLOCK = pygame.time.Clock()  # Clock
 
 # Display
 pygame.init()  # Pygame initialization
@@ -18,23 +18,23 @@ pygame.display.set_caption("Genetic algorithm")  # Window title
 CAR_SIZES = [0.2]
 
 
-MAX_SPEED = 3  # Maximum speed of the car
+MAX_SPEED = 5  # Maximum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
 
-ACCELERATION = 0.03  # Acceleration of the car
-DECELERATION = 0.08  # Deceleration of the car
+ACCELERATION = 0.02  # Acceleration of the car
+DECELERATION = -1  # Deceleration of the car
 
 # Cone
-WIDTH_MULTIPLIER = 10  # Width multiplier of the cone
-HEIGHT_MULTIPLIER = 20  # Height multiplier of the cone
+WIDTH_MULTIPLIER = 12  # Width multiplier of the cone
+HEIGHT_MULTIPLIER = 10  # Height multiplier of the cone
 
 # To know what is the speed of the car :
 """
-Low speed: 0 < speed < 2
-Medium speed: 2 < speed < 4
-High speed: 4 < speed < 6
+Low speed: speed < MIN_MEDIUM_SPEED
+Medium speed: MIN_MEDIUM_SPEED < speed < MIN_HIGH_SPEED
+High speed: MIN_HIGH_SPEED < speed
 """
-MIN_MEDIUM_SPEED = 2
-MIN_HIGH_SPEED = 4
+MIN_MEDIUM_SPEED = MAX_SPEED / 3
+MIN_HIGH_SPEED = MAX_SPEED / 3 * 2
 
 
