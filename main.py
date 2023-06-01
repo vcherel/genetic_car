@@ -1,6 +1,7 @@
 import sys  # To quit the game
 import pygame  # To use pygame
-from variables import BACKGROUND, START, MULTIPLE_CARS, NB_CARS, NUM_MAP, CAR_IMAGE, CHANGE_CHECKPOINT  # Import the variables
+import variables  # Import the variables
+from variables import BACKGROUND, MULTIPLE_CARS, NB_CARS, NUM_MAP, CAR_IMAGE, CHANGE_CHECKPOINT  # Import the variables
 from constants import WINDOW, START_POS   # Import the constants
 from ui import detect_events_ui, edit_background  # Import the detect_events function
 from car import Car  # Import the car
@@ -10,13 +11,7 @@ def open_window():
     """
     Open the window of the game
     """
-    edit_background()  # Add elements not clickable to the background
-    WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
-    pygame.display.flip()  # Update the screen
-
     while 1:
-        detect_events_ui()  # Detect events in the ui and draw buttons
-
         # If we want to change the checkpoints
         if CHANGE_CHECKPOINT:
             # We display the image that explain that we are in the checkpoint mode
@@ -34,7 +29,12 @@ def open_window():
                             if event.button == 1:
                                 x, y = event.pos
                                 file_checkpoint_write.write(str(x) + " " + str(y) + "\n")
-        if START:   # When the game starts
+
+        WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
+        detect_events_ui()  # Detect events in the ui and draw buttons
+        pygame.display.flip()  # Update the screen
+
+        if variables.START:   # When the game starts
             play()  # Play the game
 
 
@@ -49,8 +49,7 @@ def play():
     else:                   # Multiple cars
         cars = [Car(CAR_IMAGE, pos)]
 
-    while 1:
-
+    while variables.PLAY:
         WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
         detect_events_ui()  # Detect events in the ui and draw buttons
 
@@ -61,15 +60,17 @@ def play():
                 car.move()          # Move the car
             car.draw()  # Draw the car
 
-        detect_events_ui()  # Detect events in the ui
         pygame.display.update()  # Update the screen
 
         if all_dead:    # If all cars are dead
             play()
+
+    open_window()  # Restart the game
 
 
 if __name__ == '__main__':
     """
     Main program
     """
+    edit_background()  # Add elements not clickable to the background
     open_window()  # Start the game

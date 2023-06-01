@@ -5,8 +5,10 @@ from constants import WINDOW, FONT  # Import the window
 from variables import BACKGROUND  # Import the variables
 from button import Button  # Import the button
 
-BUTTON_DEBUG = Button(1435, 642, pygame.image.load("images/checkbox_1.png"), pygame.image.load("images/checkbox_2.png"),
+DEBUG_BUTTON = Button(1435, 642, pygame.image.load("images/checkbox_1.png"), pygame.image.load("images/checkbox_2.png"),
                       pygame.image.load("images/checkbox_3.png"), check_box=True, scale=0.03)
+STOP_BUTTON = Button(1400, 20, pygame.image.load("images/stop_button.png"), scale=0.15)
+START_BUTTON = Button(1300, 15, pygame.image.load("images/start_button.png"), scale=0.18)
 
 
 def detect_events_ui():
@@ -32,10 +34,13 @@ def edit_background():
     """
     # Add a text for the debug mode
     BACKGROUND.blit(FONT.render("Debug mode :", True, (255, 255, 255), (0, 0, 0)), (1300, 640))  # Add the text to the screen
+    line = pygame.draw.line(BACKGROUND, (0, 0, 0), (1280, 120), (1280, 0), 2)
 
 
 def draw_buttons():
     """
     Draw the buttons
     """
-    variables.DEBUG = BUTTON_DEBUG.draw()  # Draw the debug button
+    variables.DEBUG = DEBUG_BUTTON.draw()  # Draw the debug button
+    variables.PLAY = not STOP_BUTTON.draw()  # Draw the stop button
+    variables.START = START_BUTTON.draw()  # Draw the start button

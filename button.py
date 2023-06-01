@@ -49,6 +49,7 @@ class Button:
                 else:
                     self.checked = True     # Activate the button
 
+            else:
                 if not self.check_box:
                     self.checked = False  # Change the state if it's a simple button
 

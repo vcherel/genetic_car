@@ -8,8 +8,9 @@ DEBUG = False  # True for debug mode, False for normal mode
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 START = True  # Start the game (True or False)
+PLAY = False  # Stop the game (True or False)
 
-NB_CARS = 10  # Number of cars
+NB_CARS = 50  # Number of cars
 NUM_MAP = 0  # Map number
 
 BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
