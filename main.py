@@ -1,8 +1,8 @@
+import sys  # To quit the game
 import pygame  # To use pygame
-import sys  # To exit the game
 from variables import BACKGROUND, START, MULTIPLE_CARS, NB_CARS, NUM_MAP, CAR_IMAGE, CHANGE_CHECKPOINT  # Import the variables
 from constants import WINDOW, START_POS   # Import the constants
-from ui import detect_events  # Import the detect_events function
+from ui import detect_events, edit_background  # Import the detect_events function
 from car import Car  # Import the car
 
 
@@ -10,6 +10,7 @@ def open_window():
     """
     Open the window of the game
     """
+    edit_background()  # Add elements not clickable to the background
     WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
     pygame.display.flip()  # Update the screen
 

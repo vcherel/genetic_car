@@ -1,6 +1,7 @@
 import pygame  # Pygame library
 import math  # Math library
-from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED  # Constants of the game
+from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, \
+    HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED  # Constants of the game
 from variables import BACKGROUND, BACKGROUND_MASK, DEBUG, KEYBOARD_CONTROL  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
@@ -15,14 +16,14 @@ class Car:
             pos (tuple(int,int)): position of the car
         """
         self.genetic = Genetic()  # Genetic of the car
-        self.dead = False   # True if the car is dead, False otherwise
+        self.dead = False  # True if the car is dead, False otherwise
 
         self.speed = 0  # Current speed of the car
         self.speed_state = "slow"  # Current speed state of the car
         self.acceleration = 0  # Current acceleration of the car
 
         self.angle = 0  # Current angle of the car
-        self.pos = pos      # Current position of the car
+        self.pos = pos  # Current position of the car
 
         self.image = image  # Image of the car
         self.rotated_image = self.image  # Rotated image of the car
@@ -53,7 +54,8 @@ class Car:
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead and erase it if it is the case
         if DEBUG:
-            self.draw_detection_cone()  # Draw the detection cone of the car
+            # self.draw_detection_cone()  # Draw the detection cone of the car
+            pass
 
     def change_speed_angle(self):
         """
@@ -77,28 +79,31 @@ class Car:
             self.speed_state = "fast"
 
         # We compute the position of the points of the cone
-        front_of_car = self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2,\
+        front_of_car = self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2, \
             self.pos[1] + math.sin(math.radians(-self.angle)) * self.image.get_width() / 2  # Position of the front of the car
         angle_cone = math.degrees(math.atan(width / (2 * height)))  # Angle of the cone
 
         top = front_of_car[0] + math.cos(math.radians(self.angle)) * height,\
             front_of_car[1] - math.sin(math.radians(self.angle)) * height  # Position of the top of the cone
-        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * height,\
+        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * height, \
             front_of_car[1] - math.sin(math.radians(self.angle + angle_cone)) * height  # Position of the left of the cone
-        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * height,\
+        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * height, \
             front_of_car[1] - math.sin(math.radians(self.angle - angle_cone)) * height  # Position of the right of the cone
         if DEBUG:
             pygame.draw.polygon(WINDOW, (0, 0, 0), (front_of_car, left, top, right), 3)  # Draw the detection cone
 
         # If the point top is outside the window or if the point top is on a black pixel of the background
-        if top[0] <= 0 or top[0] >= WIDTH_SCREEN or top[1] <= 0 or top[1] >= HEIGHT_SCREEN or BACKGROUND.get_at((int(top[0]), int(top[1]))) == (0, 0, 0, 255):
+        if top[0] <= 0 or top[0] >= WIDTH_SCREEN or top[1] <= 0 or top[1] >= HEIGHT_SCREEN or BACKGROUND.get_at(
+                (int(top[0]), int(top[1]))) == (0, 0, 0, 255):
             self.acceleration = DECELERATION  # The car decelerates
         else:
             self.acceleration = ACCELERATION  # Else the car accelerates
 
-        if left[0] <= 0 or left[0] >= WIDTH_SCREEN or left[1] <= 0 or left[1] >= HEIGHT_SCREEN or BACKGROUND.get_at((int(left[0]), int(left[1]))) == (0, 0, 0, 255):
+        if left[0] <= 0 or left[0] >= WIDTH_SCREEN or left[1] <= 0 or left[1] >= HEIGHT_SCREEN or BACKGROUND.get_at(
+                (int(left[0]), int(left[1]))) == (0, 0, 0, 255):
             self.angle -= TURN_ANGLE
-        if right[0] <= 0 or right[0] >= WIDTH_SCREEN or right[1] <= 0 or right[1] >= HEIGHT_SCREEN or BACKGROUND.get_at((int(right[0]), int(right[1]))) == (0, 0, 0, 255):
+        if right[0] <= 0 or right[0] >= WIDTH_SCREEN or right[1] <= 0 or right[1] >= HEIGHT_SCREEN or BACKGROUND.get_at(
+                (int(right[0]), int(right[1]))) == (0, 0, 0, 255):
             self.angle += TURN_ANGLE
 
     def update_pos(self):
@@ -135,14 +140,15 @@ class Car:
 
         # Rotate the car
         self.rotated_image = pygame.transform.rotate(self.image, self.angle)  # Rotate the image of the car
-        self.rotated_rect = self.rotated_image.get_rect(center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
+        self.rotated_rect = self.rotated_image.get_rect(
+            center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
 
     def detect_collision(self):
         """
         Detect collision of the car with the walls
         """
         if self.pos[0] < 0 or self.pos[0] > WINDOW.get_width() or self.pos[1] < 0 or self.pos[1] > WINDOW.get_height():
-            self.dead = True    # Collision with the wall of the window
+            self.dead = True  # Collision with the wall of the window
 
         # Collision with the walls of the circuit
         car_mask = pygame.mask.from_surface(self.rotated_image)
@@ -159,34 +165,34 @@ class Car:
         """
         Draw the 3 detection cones of the car
         """
-        front_of_car = self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2,\
+        front_of_car = self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2, \
             self.pos[1] + math.sin(math.radians(-self.angle)) * self.image.get_width() / 2  # Position of the front of the car
         angle_cone = math.degrees(math.atan(self.genetic.width_slow / (2 * self.genetic.height_slow)))  # Angle of the cone
 
         # Slow detection cone
         # Compute angle of the cone with height and width of the cone
-        top = front_of_car[0] + math.cos(math.radians(self.angle)) * self.genetic.height_slow,\
+        top = front_of_car[0] + math.cos(math.radians(self.angle)) * self.genetic.height_slow, \
             front_of_car[1] - math.sin(math.radians(self.angle)) * self.genetic.height_slow
-        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * self.genetic.height_slow,\
+        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * self.genetic.height_slow, \
             front_of_car[1] - math.sin(math.radians(self.angle + angle_cone)) * self.genetic.height_slow
-        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * self.genetic.height_slow,\
+        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * self.genetic.height_slow, \
             front_of_car[1] - math.sin(math.radians(self.angle - angle_cone)) * self.genetic.height_slow
         pygame.draw.polygon(WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
 
         # Medium detection cone
-        top = front_of_car[0] + math.cos(math.radians(self.angle)) * self.genetic.height_medium,\
+        top = front_of_car[0] + math.cos(math.radians(self.angle)) * self.genetic.height_medium, \
             front_of_car[1] - math.sin(math.radians(self.angle)) * self.genetic.height_medium
-        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * self.genetic.height_medium,\
+        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * self.genetic.height_medium, \
             front_of_car[1] - math.sin(math.radians(self.angle + angle_cone)) * self.genetic.height_medium
-        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * self.genetic.height_medium,\
+        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * self.genetic.height_medium, \
             front_of_car[1] - math.sin(math.radians(self.angle - angle_cone)) * self.genetic.height_medium
         pygame.draw.polygon(WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
 
         # Fast detection cone
-        top = front_of_car[0] + math.cos(math.radians(self.angle)) * self.genetic.height_fast,\
+        top = front_of_car[0] + math.cos(math.radians(self.angle)) * self.genetic.height_fast, \
             front_of_car[1] - math.sin(math.radians(self.angle)) * self.genetic.height_fast
-        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * self.genetic.height_fast,\
+        left = front_of_car[0] + math.cos(math.radians(self.angle + angle_cone)) * self.genetic.height_fast, \
             front_of_car[1] - math.sin(math.radians(self.angle + angle_cone)) * self.genetic.height_fast
-        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * self.genetic.height_fast,\
+        right = front_of_car[0] + math.cos(math.radians(self.angle - angle_cone)) * self.genetic.height_fast, \
             front_of_car[1] - math.sin(math.radians(self.angle - angle_cone)) * self.genetic.height_fast
         pygame.draw.polygon(WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)

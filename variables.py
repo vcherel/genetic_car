@@ -6,7 +6,7 @@ from utils import scale_image  # Import the scale_image function
 MULTIPLE_CARS = True  # True if we want to have multiple cars, False if we want to have only one car
 DEBUG = False  # True for debug mode, False for normal mode
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
-CHANGE_CHECKPOINT = True  # Change the checkpoint for the actual map
+CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 START = True  # Start the game (True or False)
 
 NB_CARS = 10  # Number of cars
