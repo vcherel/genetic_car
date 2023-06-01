@@ -18,11 +18,11 @@ pygame.display.set_caption("Genetic algorithm")  # Window title
 CAR_SIZES = [0.2]
 
 
-MAX_SPEED = 5  # Maximum speed of the car
+MAX_SPEED = 4  # Maximum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
 
 ACCELERATION = 0.02  # Acceleration of the car
-DECELERATION = -1  # Deceleration of the car
+DECELERATION = 0  # Deceleration of the car
 
 # Cone
 WIDTH_MULTIPLIER = 12  # Width multiplier of the cone

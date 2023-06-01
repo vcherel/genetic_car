@@ -5,6 +5,7 @@ from utils import scale_image  # Import the scale_image function
 
 MULTIPLE_CARS = False  # True if we want to have multiple cars, False if we want to have only one car
 DEBUG = True  # Debug mode (True or False)
+KEYBOARD_CONTROL = True  # Control the car with the keyboard (True or False)
 START = True  # Start the game (True or False)
 
 NB_CARS = 30  # Number of cars
