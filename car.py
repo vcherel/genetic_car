@@ -4,20 +4,24 @@ import variables  # Variables of the game
 from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, \
     HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT  # Constants of the game
 from utils import compute_detection_cone_points, compute_front_of_car  # To compute the coordinates of the point of the detection cone
-from variables import KEYBOARD_CONTROL, CHECKPOINTS, NUM_MAP  # Variables of the game
+from variables import KEYBOARD_CONTROL  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
 
 class Car:
-    def __init__(self, image, pos):
+    def __init__(self, image, pos, genetic=None):
         """
         Initialization of the car
 
         Args:
             image (pygame.surface.Surface): image of the car
             pos (tuple(int,int)): position of the car
+            genetic (Genetic): genetic of the car to copy (if None, create a new genetic)
         """
-        self.genetic = Genetic()  # Genetic of the car
+        if genetic is None:
+            self.genetic = Genetic()  # Genetic of the car
+        else:
+            self.genetic = Genetic(genetic)
         self.dead = False  # True if the car is dead, False otherwise
 
         self.speed = 0  # Current speed of the car
@@ -32,20 +36,7 @@ class Car:
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
 
         self.next_checkpoint = 0  # Next checkpoint to reach
-
-    def init(self, pos):
-        """
-        Initialize the car (after a death)
-        """
-        self.dead = False
-
-        self.speed = 0
-        self.speed_state = "slow"
-
-        self.angle = 0
-        self.pos = pos
-
-        self.next_checkpoint = 0
+        self.score = 0  # Score of the car
 
     def move(self):
         """
@@ -69,7 +60,7 @@ class Car:
         actual_checkpoint = variables.CHECKPOINTS[self.next_checkpoint]  # Actual checkpoint to reach
         if actual_checkpoint[0] - RADIUS_CHECKPOINT < self.pos[0] < actual_checkpoint[0] + RADIUS_CHECKPOINT and\
                 actual_checkpoint[1] - RADIUS_CHECKPOINT < self.pos[1] < actual_checkpoint[1] + RADIUS_CHECKPOINT:
-            self.genetic.fitness += 1
+            self.score += 1
             self.next_checkpoint += 1
             checkpoint_passed = True
             if self.next_checkpoint == len(variables.CHECKPOINTS):

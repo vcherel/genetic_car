@@ -27,10 +27,6 @@ TURN_ANGLE = 5  # Angle of rotation of the car
 ACCELERATION = 0.1  # Acceleration of the car
 DECELERATION = -1  # Deceleration of the car
 
-# Cone
-WIDTH_MULTIPLIER = 11  # Width multiplier of the cone
-HEIGHT_MULTIPLIER = 17  # Height multiplier of the cone
-
 # To know what is the speed of the car :
 """
 Low speed: speed < MIN_MEDIUM_SPEED
@@ -40,4 +36,10 @@ High speed: MIN_HIGH_SPEED < speed
 MIN_MEDIUM_SPEED = MAX_SPEED / 3
 MIN_HIGH_SPEED = MAX_SPEED / 3 * 2
 
+# Cone
+WIDTH_MULTIPLIER = 11  # Width multiplier of the cone
+HEIGHT_MULTIPLIER = 17  # Height multiplier of the cone
 
+# Genetic algorithm
+MUTATION_CHANCE = 0.1  # Chance of mutation
+CROSSOVER_CHANCE = 0.1  # Chance of crossover

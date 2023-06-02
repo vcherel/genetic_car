@@ -5,6 +5,7 @@ from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import t
 from display import display_checkpoints, edit_background  # To see the checkpoints
 from ui import detect_events_ui  # Import the detect_events function
 from constants import WINDOW, START_POS   # Import the constants
+from genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from car import Car  # Import the car
 
 
@@ -43,13 +44,15 @@ def open_window():
             play()  # Play the game
 
 
-def play():
+def play(cars=None):
     """
     Play the game
-    """
-    pos = START_POS[variables.NUM_MAP]  # Position of the car
 
-    cars = [Car(variables.CAR_IMAGE, pos) for _ in range(variables.NB_CARS)]  # List of cars
+    Args:
+        cars (list): list of cars (if None, it is the first time we play)
+    """
+    if cars is None:
+        cars = [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP]) for _ in range(variables.NB_CARS)]  # List of cars
 
     while variables.PLAY:
         WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
@@ -68,7 +71,11 @@ def play():
         pygame.display.update()  # Update the screen
 
         if all_dead:    # If all cars are dead
-            play()
+            if variables.USE_GENETIC:
+                cars = apply_genetic(cars)  # Genetic algorithm
+                play(cars)  # Restart the game with the new cars
+            else:
+                play()  # Restart the game
 
     open_window()  # Restart the game
 

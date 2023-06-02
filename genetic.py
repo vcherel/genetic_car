@@ -13,8 +13,6 @@ class Genetic:
         Args:
             genetic (Genetic): genetic algorithm to copy
         """
-        self.fitness = 0  # Car score
-
         if genetic is None:
             self.width_fast = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going fast
             self.height_fast = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going fast
@@ -24,6 +22,12 @@ class Genetic:
 
             self.width_slow = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going slow
             self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
+        else:
+            self.width_fast = genetic.width_fast
+            self.height_fast = genetic.height_fast
 
+            self.width_medium = genetic.width_medium
+            self.height_medium = genetic.height_medium
 
-
+            self.width_slow = genetic.width_slow
+            self.height_slow = genetic.height_slow
