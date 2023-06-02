@@ -7,14 +7,15 @@ KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 
 START = True  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
-MULTIPLE_CARS = True  # True if we want to have multiple cars, False if we want to have only one car
 
 CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 SEE_CHECKPOINTS = False  # See the checkpoints
 
-
-NB_CARS = 1  # Number of cars
 NUM_MAP = 0  # Map number
+
+NB_CARS = 30  # Number of cars
+CHANGE_NB_CARS = False  # Change the number of cars
+STR_NB_CARS = str(NB_CARS)  # Text of the number of cars
 
 BACKGROUND = None  # Image of the background
 BACKGROUND_MASK = None    # Mask of the black pixels of the background (used to detect collisions)

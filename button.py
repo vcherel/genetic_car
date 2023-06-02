@@ -3,7 +3,7 @@ from constants import WINDOW  # Import the window
 
 
 class Button:
-    def __init__(self, x, y, image, image_hover=None, image_clicked=None, check_box=False, scale=1):
+    def __init__(self, x, y, image, image_hover=None, image_clicked=None, check_box=False, writing_rectangle=False, scale=1):
         """
         Initialization of a button
 
@@ -20,6 +20,7 @@ class Button:
         self.rect = self.image.get_rect()  # Rectangle of the button
         self.rect.topleft = (x, y)  # Position of the button
         self.check_box = check_box   # True if the button is a checkbox, False otherwise
+        self.writing_rectangle = writing_rectangle   # True if the button is a writing rectangle, False otherwise
         self.checked = False    # True if the checkbox is checked, False otherwise
         self.time_clicked = 0   # Time when the button is clicked
 
@@ -50,7 +51,7 @@ class Button:
                     self.checked = True     # Activate the button
 
             else:
-                if not self.check_box:
+                if not self.check_box and not self.writing_rectangle:
                     self.checked = False  # Change the state if it's a simple button
 
             if self.image_hover is not None:
@@ -63,3 +64,9 @@ class Button:
         WINDOW.blit(image, (self.rect.x, self.rect.y))
 
         return self.checked  # Return True if the button is clicked (or activated), False otherwise
+
+    def uncheck_button(self):
+        """
+        Uncheck the button
+        """
+        self.checked = False    # Uncheck the button

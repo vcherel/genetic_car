@@ -13,21 +13,22 @@ WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to a
 WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
 pygame.display.set_caption("Genetic algorithm")  # Window title
 
+# Choose a random font and print it
 FONT = pygame.font.SysFont("Arial", 20)  # Font
 
 
 # Car
 CAR_SIZES = [0.15]
 
-MAX_SPEED = 3  # Maximum speed of the car
-MIN_SPEED = 0.5  # Minimum speed of the car
+MAX_SPEED = 6  # Maximum speed of the car
+MIN_SPEED = 1  # Minimum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
 
-ACCELERATION = 0.07  # Acceleration of the car
-DECELERATION = -0.9  # Deceleration of the car
+ACCELERATION = 0.1  # Acceleration of the car
+DECELERATION = -1  # Deceleration of the car
 
 # Cone
-WIDTH_MULTIPLIER = 9  # Width multiplier of the cone
+WIDTH_MULTIPLIER = 11  # Width multiplier of the cone
 HEIGHT_MULTIPLIER = 17  # Height multiplier of the cone
 
 # To know what is the speed of the car :

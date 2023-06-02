@@ -2,8 +2,8 @@ import sys  # To quit the game
 import pygame  # To use pygame
 import variables  # Import the variables
 from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import the variables
-from ui import detect_events_ui, edit_background  # Import the detect_events function
-from display import display_checkpoints  # To see the checkpoints
+from display import display_checkpoints, edit_background  # To see the checkpoints
+from ui import detect_events_ui  # Import the detect_events function
 from constants import WINDOW, START_POS   # Import the constants
 from car import Car  # Import the car
 
@@ -49,10 +49,7 @@ def play():
     """
     pos = START_POS[variables.NUM_MAP]  # Position of the car
 
-    if variables.MULTIPLE_CARS:       # One car
-        cars = [Car(variables.CAR_IMAGE, pos) for _ in range(variables.NB_CARS)]  # List of cars
-    else:                   # Multiple cars
-        cars = [Car(variables.CAR_IMAGE, pos)]
+    cars = [Car(variables.CAR_IMAGE, pos) for _ in range(variables.NB_CARS)]  # List of cars
 
     while variables.PLAY:
         WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
