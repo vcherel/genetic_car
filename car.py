@@ -1,9 +1,11 @@
+import random
+
 import pygame  # Pygame library
 import math  # Math library
 import variables  # Variables of the game
 from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, \
     HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT  # Constants of the game
-from utils import compute_detection_cone_points, compute_front_of_car  # To compute the coordinates of the point of the detection cone
+from utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
 from variables import KEYBOARD_CONTROL  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
@@ -25,7 +27,6 @@ class Car:
         self.dead = False  # True if the car is dead, False otherwise
 
         self.speed = 0  # Current speed of the car
-        self.speed_state = "slow"  # Current speed state of the car
         self.acceleration = 0  # Current acceleration of the car
 
         self.angle = 0  # Current angle of the car
@@ -77,37 +78,29 @@ class Car:
             float: acceleration of the car
         """
         # We select the right cone depending on the speed of the car
-        if self.speed < MIN_MEDIUM_SPEED:
-            width = self.genetic.width_slow
-            height = self.genetic.height_slow
-            self.speed_state = "slow"
-        elif self.speed < MIN_HIGH_SPEED:
-            width = self.genetic.width_medium
-            height = self.genetic.height_medium
-            self.speed_state = "medium"
-        else:
-            width = self.genetic.width_fast
-            height = self.genetic.height_fast
-            self.speed_state = "fast"
+        width, height = self.determine_size_cone()
 
-        front_of_car = compute_front_of_car(self.pos, self.angle, self.image)  # Point of the front of the car
+        front_of_car = self.determine_front_of_car()  # Point of the front of the car
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, width, height)  # Points of the detection cone
 
         if variables.DEBUG:
-            pygame.draw.polygon(WINDOW, (0, 0, 0), (front_of_car, left, top, right), 3)  # Draw the detection cone
+            # Draw the detection cone
+            pygame.draw.polygon(WINDOW, (1, 1, 1), (front_of_car, left, top, right), 3)  # (1, 1, 1) = almost black to see the cone and not disturb the wall detector
 
-        # If the point top is outside the window or if the point top is on a black pixel of the background
-        if top[0] <= 0 or top[0] >= WIDTH_SCREEN or top[1] <= 0 or top[1] >= HEIGHT_SCREEN or variables.BACKGROUND.get_at(
-                (int(top[0]), int(top[1]))) == (0, 0, 0, 255):
-            self.acceleration = DECELERATION  # The car decelerates
+        wall_at_top = detect_wall(front_of_car, top)  # Detect if the car is near a wall (top)
+        wall_at_left = detect_wall(front_of_car, left)  # Detect if the car is near a wall (left)
+        wall_at_right = detect_wall(front_of_car, right)  # Detect if the car is near a wall (right)
+
+        # If there is a wall in front of the car, we decelerate it
+        if wall_at_top:
+            self.acceleration = DECELERATION
         else:
-            self.acceleration = ACCELERATION  # Else the car accelerates
-
-        if left[0] <= 0 or left[0] >= WIDTH_SCREEN or left[1] <= 0 or left[1] >= HEIGHT_SCREEN or variables.BACKGROUND.get_at(
-                (int(left[0]), int(left[1]))) == (0, 0, 0, 255):
+            self.acceleration = ACCELERATION
+        
+        # If there is a wall on the left or on the right of the car, we turn it
+        if wall_at_left:
             self.angle -= TURN_ANGLE
-        if right[0] <= 0 or right[0] >= WIDTH_SCREEN or right[1] <= 0 or right[1] >= HEIGHT_SCREEN or variables.BACKGROUND.get_at(
-                (int(right[0]), int(right[1]))) == (0, 0, 0, 255):
+        if wall_at_right:
             self.angle += TURN_ANGLE
 
     def update_pos(self):
@@ -144,8 +137,7 @@ class Car:
 
         # Rotate the car
         self.rotated_image = pygame.transform.rotate(self.image, self.angle)  # Rotate the image of the car
-        self.rotated_rect = self.rotated_image.get_rect(
-            center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
+        self.rotated_rect = self.rotated_image.get_rect(center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
 
     def detect_collision(self):
         """
@@ -169,7 +161,7 @@ class Car:
         """
         Draw the 3 detection cones of the car
         """
-        front_of_car = compute_front_of_car(self.pos, self.angle, self.image)  # Point of the front of the car
+        front_of_car = self.determine_front_of_car()  # Point of the front of the car
 
         # Slow detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.height_slow)
@@ -182,3 +174,32 @@ class Car:
         # Fast detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.height_fast)
         pygame.draw.polygon(WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+
+    def determine_size_cone(self):
+        """
+        Determine the size of the detection cone according to the speed of the car
+
+        Returns:
+            width, height (int, int): the width and the height of the detection cone
+        """
+        if self.speed < MIN_MEDIUM_SPEED:
+            width = self.genetic.width_slow
+            height = self.genetic.height_slow
+        elif self.speed < MIN_HIGH_SPEED:
+            width = self.genetic.width_medium
+            height = self.genetic.height_medium
+        else:
+            width = self.genetic.width_fast
+            height = self.genetic.height_fast
+        return width, height
+
+    def determine_front_of_car(self):
+        """
+        Compute the coordinates of the front of the car
+        Args:
+
+        Returns:
+            front_of_car (tuple(int, int)): the coordinates of the front of the car
+        """
+        return self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2,\
+            self.pos[1] + math.sin(math.radians(-self.angle)) * self.image.get_width() / 2

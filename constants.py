@@ -20,11 +20,11 @@ FONT = pygame.font.SysFont("Arial", 20)  # Font
 # Car
 CAR_SIZES = [0.15]
 
-MAX_SPEED = 6  # Maximum speed of the car
+MAX_SPEED = 8  # Maximum speed of the car
 MIN_SPEED = 1  # Minimum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
 
-ACCELERATION = 0.1  # Acceleration of the car
+ACCELERATION = 0.2  # Acceleration of the car
 DECELERATION = -1  # Deceleration of the car
 
 # To know what is the speed of the car :
@@ -37,9 +37,9 @@ MIN_MEDIUM_SPEED = MAX_SPEED / 3
 MIN_HIGH_SPEED = MAX_SPEED / 3 * 2
 
 # Cone
-WIDTH_MULTIPLIER = 11  # Width multiplier of the cone
+WIDTH_MULTIPLIER = 13  # Width multiplier of the cone
 HEIGHT_MULTIPLIER = 17  # Height multiplier of the cone
 
 # Genetic algorithm
-MUTATION_CHANCE = 0.1  # Chance of mutation
+MUTATION_CHANCE = 0.2  # Chance of mutation
 CROSSOVER_CHANCE = 0.1  # Chance of crossover

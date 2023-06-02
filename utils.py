@@ -18,21 +18,6 @@ def scale_image(img, factor):
     return pygame.transform.scale(img, size)
 
 
-def compute_front_of_car(pos, angle, image):
-    """
-    Compute the coordinates of the front of the car
-    Args:
-        pos (tuple(float, float)): the position of the car
-        angle (float): the angle of the car
-        image (pygame.Surface): the image of the car
-
-    Returns:
-        front_of_car (tuple(int, int)): the coordinates of the front of the car
-    """
-    return pos[0] + math.cos(math.radians(-angle)) * image.get_width() / 2, \
-        pos[1] + math.sin(math.radians(-angle)) * image.get_width() / 2
-
-
 def compute_detection_cone_points(angle, front_of_car, width, height):
     """
     Compute the coordinates of the points of the detection cone
@@ -57,6 +42,42 @@ def compute_detection_cone_points(angle, front_of_car, width, height):
     return [left, top, right]
 
 
+def detect_wall(front_of_car, point):
+    """
+    Detect if there is a wall between the front of the car and the point
+
+    Args:
+        front_of_car (tuple(int, int)): the coordinates of the front of the car
+        point (tuple(int, int)): the coordinates of the point
+
+    Returns:
+        bool : True if there is a wall, False otherwise
+    """
+    x1, y1 = front_of_car  # Coordinates of the front of the car
+    x2, y2 = point  # Coordinates of the point
+
+    if x1 == x2:  # If the car is parallel to the wall
+        # We check if there is a wall between the front of the car and the point
+        for y in range(int(min(y1, y2)), int(max(y1, y2))):
+            x1 = int(x1)
+            # We check if the pixel is black (wall)
+            if point_out_of_window((x1, y)) or pygame.display.get_surface().get_at((x1, y)) == (0, 0, 0, 255):
+                return True  # There is a wall
+
+    # We determine the equation of the line between the front of the car and the point (y = ax + b)
+    a = (y2 - y1) / (x2 - x1)
+    b = y1 - a * x1
+
+    # We check if there is a wall between the front of the car and the point
+    for x in range(int(min(x1, x2)), int(max(x1, x2))):
+        y = int(a * x + b)
+        # We check if the pixel is black (wall)
+        if point_out_of_window((x, y)) or pygame.display.get_surface().get_at((x, y)) == (0, 0, 0, 255):
+            return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
+
+    return False  # There is no wall
+
+
 def random_attribution(value):
     """
     We want to attribute a random value to a variable, but we want that values close to the actual value has more chance
@@ -79,3 +100,18 @@ def random_attribution(value):
     else:
         value = value + random.uniform(-5, 5)
     return max(1, min(6, round(value)))  # We round the value between 1 and 6
+
+
+def point_out_of_window(point):
+    """
+    Check if a point is out of the window
+
+    Args:
+        point (tuple(int, int)): the coordinates of the point
+
+    Returns:
+        True if the point is out of the window, False otherwise
+    """
+    return point[0] < 0 or point[0] >= pygame.display.get_surface().get_width() or \
+        point[1] < 0 or point[1] >= pygame.display.get_surface().get_height()
+

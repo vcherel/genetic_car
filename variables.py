@@ -13,7 +13,7 @@ SEE_CHECKPOINTS = False  # See the checkpoints
 
 NUM_MAP = 0  # Map number
 
-NB_CARS = 100  # Number of cars
+NB_CARS = 20  # Number of cars
 CHANGE_NB_CARS = False  # Change the number of cars
 STR_NB_CARS = str(NB_CARS)  # Text of the number of cars
 

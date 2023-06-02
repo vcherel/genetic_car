@@ -54,7 +54,7 @@ def play(cars=None):
     if cars is None:
         cars = [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP]) for _ in range(variables.NB_CARS)]  # List of cars
 
-    while variables.PLAY:
+    while variables.PLAY:  # While the game is not stopped
         WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
         detect_events_ui()  # Detect events in the ui and draw buttons
 
