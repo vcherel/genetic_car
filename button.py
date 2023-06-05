@@ -43,7 +43,7 @@ class Button:
         image = self.image  # Image of the button
 
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
-            if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 100:    # Mouse clicked for the first time
+            if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 150:    # Mouse clicked for the first time
                 self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
                 if self.check_box:
                     self.checked = not self.checked  # Change the state of the checkbox

@@ -28,7 +28,7 @@ def detect_events_ui():
         if event.type == pygame.QUIT:
             sys.exit()  # Quit the game
         # Detection of clicks
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        elif variables.SEE_CURSOR and event.type == pygame.MOUSEBUTTONDOWN:
             print("Click at position", pygame.mouse.get_pos())  # Print the position of the click
             print("Color of the pixel", WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
         if variables.CHANGE_NB_CARS:
@@ -62,7 +62,10 @@ def activate_buttons():
 
     variables.DEBUG = DEBUG_BUTTON.activate()  # Draw the debug button
     variables.PLAY = not STOP_BUTTON.activate()  # Draw the stop button
+    pause_before = variables.PAUSE
     variables.PAUSE = PAUSE_BUTTON.activate()  # Draw the pause button
+    if pause_before and not variables.PAUSE:  # If the pause button is unchecked, we resume the simulation and blit the screen
+        WINDOW.blit(variables.BACKGROUND, (0, 0))
 
     variables.START = START_BUTTON.activate()  # Draw the start button
     if variables.START and variables.PAUSE:    # We also resume the simulation if the start button is pressed

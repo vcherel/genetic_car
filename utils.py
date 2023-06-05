@@ -91,16 +91,16 @@ def random_attribution(value):
         value (int): the new value (between 1 and 6)
     """
     rand = random.random()
-    if rand < 1/2:
-        value = value + random.uniform(-1, 1)  # We add a random value between -1 and 1
+    if rand < 1/5:
+        value = value + random.uniform(-5, 5)  # We add a random value between -1 and 1
     elif rand < 1/4:
-        value = value + random.uniform(-2, 2)
-    elif rand < 1/8:
-        value = value + random.uniform(-3, 3)
-    elif rand < 1/16:
         value = value + random.uniform(-4, 4)
+    elif rand < 1/3:
+        value = value + random.uniform(-3, 3)
+    elif rand < 1/2:
+        value = value + random.uniform(-2, 2)
     else:
-        value = value + random.uniform(-5, 5)
+        value = value + random.uniform(-1, 1)
     return max(1, min(6, round(value)))  # We round the value between 1 and 6
 
 

@@ -4,6 +4,7 @@ from utils import scale_image  # Import the scale_image function
 
 DEBUG = False  # True for debug mode, False for normal mode
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
+SEE_CURSOR = False  # True to see the cursor position and color when clicking
 
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
