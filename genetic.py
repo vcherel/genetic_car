@@ -22,6 +22,7 @@ class Genetic:
 
             self.width_slow = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going slow
             self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
+
         else:
             self.width_fast = genetic.width_fast
             self.height_fast = genetic.height_fast

@@ -5,6 +5,7 @@ from utils import scale_image  # Import the scale_image function
 DEBUG = False  # True for debug mode, False for normal mode
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 SEE_CURSOR = False  # True to see the cursor position and color when clicking
+SEED = None  # Seed of the random (None to not use a seed)
 
 RECT_BLIT = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the screen
 

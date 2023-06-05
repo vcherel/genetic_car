@@ -36,6 +36,8 @@ class Car:
         self.next_checkpoint = 0  # Next checkpoint to reach
         self.score = 0  # Score of the car
 
+        self.points_detection_cone = []  # Points of the detection cone if DEBUG is True
+
     def move(self):
         """
         Move the car and update its state
@@ -43,9 +45,7 @@ class Car:
         self.detect_checkpoint()  # Detect if the car has reached a checkpoint
         self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
         self.update_pos()  # Update the position and orientation of the car
-        self.detect_collision()  # Detect if the car is dead and erase it if it is the case
-        if variables.DEBUG:
-            self.draw_detection_cone()  # Draw the detection cone of the car
+        self.detect_collision()  # Detect if the car is dead
 
     def detect_checkpoint(self):
         """
@@ -95,10 +95,6 @@ class Car:
             self.angle -= TURN_ANGLE
         if wall_at_right:
             self.angle += TURN_ANGLE
-
-        if variables.DEBUG:
-            # Draw the detection cone
-            pygame.draw.polygon(WINDOW, (1, 1, 1), (front_of_car, left, top, right), 3)  # (1, 1, 1) = almost black to see the cone and not disturb the wall detector
 
     def update_pos(self):
         """
@@ -187,6 +183,8 @@ class Car:
         Draw the car
         """
         WINDOW.blit(self.rotated_image, self.rotated_rect)  # We display the car
+        if variables.DEBUG and not self.dead:
+            self.draw_detection_cone()  # Draw the detection cone of the car
 
     def erase(self):
         """
@@ -202,15 +200,29 @@ class Car:
 
         # Slow detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.height_slow)
-        pygame.draw.polygon(WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
+        if self.speed < MIN_MEDIUM_SPEED:
+            pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+        else:
+            pygame.draw.polygon(WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
 
         # Medium detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.height_medium)
-        pygame.draw.polygon(WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
+        if MIN_MEDIUM_SPEED < self.speed < MIN_HIGH_SPEED:
+            pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+        else:
+            pygame.draw.polygon(WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
 
         # Fast detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.height_fast)
-        pygame.draw.polygon(WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+        if self.speed > MIN_HIGH_SPEED:
+            pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+        else:
+            pygame.draw.polygon(WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+
+        if variables.DEBUG:
+            # Draw the detection cone
+            # pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, self.points_detection_cone[0], self.points_detection_cone[1], self.points_detection_cone[2]), 3)
+            pass
 
     def update_cords_blit(self):
         print(self.rotated_rect)

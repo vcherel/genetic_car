@@ -1,6 +1,7 @@
 import sys  # To quit the game
 import pygame  # To use pygame
 import variables  # Import the variables
+import random  # To generate random numbers
 from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import the variables
 from display import display_checkpoints, edit_background  # To see the checkpoints
 from constants import WINDOW, START_POS, CLOCK, FPS   # Import the constants
@@ -106,6 +107,8 @@ if __name__ == '__main__':
     """
     Main program
     """
+    if variables.SEED:
+        random.seed(variables.SEED)  # Initialize the random seed
     change_map(variables.NUM_MAP)  # Change the map to the first one
     edit_background()  # Add elements not clickable to the background
     open_window()  # Start the game
