@@ -5,7 +5,7 @@ from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import t
 from display import display_checkpoints, edit_background  # To see the checkpoints
 from constants import WINDOW, START_POS, CLOCK, FPS   # Import the constants
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from ui import detect_events_ui, draw_buttons  # Import the ui
+from ui import detect_events_ui, activate_buttons  # Import the ui
 from car import Car  # Import the car
 
 
@@ -35,7 +35,7 @@ def open_window():
 
         detect_events_ui()  # Detect events in the ui and do the corresponding action
 
-        draw_buttons()  # Draw the buttons
+        activate_buttons()  # Activate the buttons
         if SEE_CHECKPOINTS:
             display_checkpoints()   # Display the checkpoints
 
@@ -59,36 +59,40 @@ def play(cars=None):
 
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action
+        if variables.PAUSE:
+            activate_buttons()  # Activate the buttons
+            pygame.display.update()  # Update the screen
 
-        # Erase the screen
-        if variables.DEBUG:
-            WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
-        else:
-            for car in cars:
-                car.erase()
-
-        draw_buttons()  # Draw the buttons and do the corresponding action
-        if SEE_CHECKPOINTS:
-            display_checkpoints()   # Display the checkpoints
-
-        all_dead = True     # True if all cars are dead
-        for car in cars:    # For each car
-            if not car.dead:
-                all_dead = False    # At least one car is alive
-                car.move()          # Move the car
-            car.draw()  # Draw the car
-
-        pygame.display.update()  # Update the screen
-
-        if all_dead:    # If all cars are dead
-            WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
-            if variables.USE_GENETIC:
-                cars = apply_genetic(cars)  # Genetic algorithm
-                play(cars)  # Restart the game with the new cars
+        if not variables.PAUSE:
+            # Erase the screen
+            if variables.DEBUG:
+                WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
             else:
-                play()  # Restart the game
+                for car in cars:
+                    car.erase()
 
-        CLOCK.tick(FPS)  # Limit FPS
+            activate_buttons()  # Draw the buttons and do the corresponding action
+            if SEE_CHECKPOINTS:
+                display_checkpoints()   # Display the checkpoints
+
+            all_dead = True     # True if all cars are dead
+            for car in cars:    # For each car
+                if not car.dead:
+                    all_dead = False    # At least one car is alive
+                    car.move()          # Move the car
+                car.draw()  # Draw the car
+
+            pygame.display.update()  # Update the screen
+
+            if all_dead:    # If all cars are dead
+                WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
+                if variables.USE_GENETIC:
+                    cars = apply_genetic(cars)  # Genetic algorithm
+                    play(cars)  # Restart the game with the new cars
+                else:
+                    play()  # Restart the game
+
+            CLOCK.tick(FPS)  # Limit FPS
 
     open_window()  # Restart the game
 

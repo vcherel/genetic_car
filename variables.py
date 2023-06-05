@@ -5,8 +5,9 @@ from utils import scale_image  # Import the scale_image function
 DEBUG = False  # True for debug mode, False for normal mode
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 
-START = True  # Start the game (True or False)
+START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
+PAUSE = False  # Pause the game (True or False)
 
 CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 SEE_CHECKPOINTS = False  # See the checkpoints
