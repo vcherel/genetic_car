@@ -68,11 +68,13 @@ def detect_wall(front_of_car, point):
     a = (y2 - y1) / (x2 - x1)
     b = y1 - a * x1
 
+    surface_display = pygame.display.get_surface()  # We get the surface of the window
+
     # We check if there is a wall between the front of the car and the point
     for x in range(int(min(x1, x2)), int(max(x1, x2))):
         y = int(a * x + b)
         # We check if the pixel is black (wall)
-        if point_out_of_window((x, y)) or pygame.display.get_surface().get_at((x, y)) == (0, 0, 0, 255):
+        if point_out_of_window((x, y)) or surface_display.get_at((x, y)) == (0, 0, 0, 255):
             return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
 
     return False  # There is no wall

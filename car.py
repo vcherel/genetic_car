@@ -1,12 +1,9 @@
-import random
-
 import pygame  # Pygame library
 import math  # Math library
 import variables  # Variables of the game
-from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, WIDTH_SCREEN, \
-    HEIGHT_SCREEN, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT  # Constants of the game
+from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT  # Constants of the game
 from utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
-from variables import KEYBOARD_CONTROL  # Variables of the game
+from variables import KEYBOARD_CONTROL, BACKGROUND  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
 
@@ -83,10 +80,6 @@ class Car:
         front_of_car = self.determine_front_of_car()  # Point of the front of the car
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, width, height)  # Points of the detection cone
 
-        if variables.DEBUG:
-            # Draw the detection cone
-            pygame.draw.polygon(WINDOW, (1, 1, 1), (front_of_car, left, top, right), 3)  # (1, 1, 1) = almost black to see the cone and not disturb the wall detector
-
         wall_at_top = detect_wall(front_of_car, top)  # Detect if the car is near a wall (top)
         wall_at_left = detect_wall(front_of_car, left)  # Detect if the car is near a wall (left)
         wall_at_right = detect_wall(front_of_car, right)  # Detect if the car is near a wall (right)
@@ -102,6 +95,10 @@ class Car:
             self.angle -= TURN_ANGLE
         if wall_at_right:
             self.angle += TURN_ANGLE
+
+        if variables.DEBUG:
+            # Draw the detection cone
+            pygame.draw.polygon(WINDOW, (1, 1, 1), (front_of_car, left, top, right), 3)  # (1, 1, 1) = almost black to see the cone and not disturb the wall detector
 
     def update_pos(self):
         """
@@ -144,18 +141,29 @@ class Car:
         Detect collision of the car with the walls
         """
         if self.pos[0] < 0 or self.pos[0] > WINDOW.get_width() or self.pos[1] < 0 or self.pos[1] > WINDOW.get_height():
-            self.dead = True  # Collision with the wall of the window
+            self.kill()  # Collision with the wall of the window
 
-        # Collision with the walls of the circuit
         car_mask = pygame.mask.from_surface(self.rotated_image)
         if variables.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
-            self.dead = True
+            self.kill()  # Collision with the walls of the circuit
+
+    def kill(self):
+        """
+        Kill the car
+        """
+        self.dead = True  # The car is dead
 
     def draw(self):
         """
         Draw the car
         """
         WINDOW.blit(self.rotated_image, self.rotated_rect)  # We display the car
+
+    def erase(self):
+        """
+        Erase the car
+        """
+        WINDOW.blit(variables.BACKGROUND, self.rotated_rect, self.rotated_rect)  # Erase the car
 
     def draw_detection_cone(self):
         """

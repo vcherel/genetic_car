@@ -3,15 +3,16 @@ import pygame  # To use pygame
 import variables  # Import the variables
 from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import the variables
 from display import display_checkpoints, edit_background  # To see the checkpoints
-from ui import detect_events_ui  # Import the detect_events function
-from constants import WINDOW, START_POS   # Import the constants
+from constants import WINDOW, START_POS, CLOCK, FPS   # Import the constants
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
+from ui import detect_events_ui, draw_buttons  # Import the ui
 from car import Car  # Import the car
 
 
 def open_window():
+    WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
     """
-    Open the window of the game
+    Open the window of the game and manage the events until the game is started or closed
     """
     while 1:
         # If we want to change the checkpoints
@@ -32,9 +33,9 @@ def open_window():
                                 x, y = event.pos
                                 file_checkpoint_write.write(str(x) + " " + str(y) + "\n")
 
-        WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
-        detect_events_ui()  # Detect events in the ui and draw buttons
+        detect_events_ui()  # Detect events in the ui and do the corresponding action
 
+        draw_buttons()  # Draw the buttons
         if SEE_CHECKPOINTS:
             display_checkpoints()   # Display the checkpoints
 
@@ -42,6 +43,8 @@ def open_window():
 
         if variables.START:   # When the game starts
             play()  # Play the game
+
+        CLOCK.tick(FPS)  # Limit FPS
 
 
 def play(cars=None):
@@ -55,9 +58,16 @@ def play(cars=None):
         cars = [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP]) for _ in range(variables.NB_CARS)]  # List of cars
 
     while variables.PLAY:  # While the game is not stopped
-        WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
-        detect_events_ui()  # Detect events in the ui and draw buttons
+        detect_events_ui()  # Detect events in the ui and do the corresponding action
 
+        # Erase the screen
+        if variables.DEBUG:
+            WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
+        else:
+            for car in cars:
+                car.erase()
+
+        draw_buttons()  # Draw the buttons and do the corresponding action
         if SEE_CHECKPOINTS:
             display_checkpoints()   # Display the checkpoints
 
@@ -71,11 +81,14 @@ def play(cars=None):
         pygame.display.update()  # Update the screen
 
         if all_dead:    # If all cars are dead
+            WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
             if variables.USE_GENETIC:
                 cars = apply_genetic(cars)  # Genetic algorithm
                 play(cars)  # Restart the game with the new cars
             else:
                 play()  # Restart the game
+
+        CLOCK.tick(FPS)  # Limit FPS
 
     open_window()  # Restart the game
 

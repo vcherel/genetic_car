@@ -51,10 +51,6 @@ def detect_events_ui():
                 else:
                     # Append the entered character to the text
                     variables.STR_NB_CARS += event.unicode
-            pass
-
-    # Button events
-    draw_buttons()  # Draw the buttons and do the corresponding action
 
 
 def draw_buttons():

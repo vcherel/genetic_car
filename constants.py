@@ -6,6 +6,9 @@ START_POS = [(600, 165)]  # Start position
 START_TIME = time.time()  # Start time of the game
 RADIUS_CHECKPOINT = 80  # Radius of the checkpoint
 
+CLOCK = pygame.time.Clock()  # Clock
+FPS = 60  # Frame per second
+
 # Display
 pygame.init()  # Pygame initialization
 info = pygame.display.Info()  # Get the screen size
@@ -13,9 +16,7 @@ WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to a
 WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
 pygame.display.set_caption("Genetic algorithm")  # Window title
 
-# Choose a random font and print it
 FONT = pygame.font.SysFont("Arial", 20)  # Font
-
 
 # Car
 CAR_SIZES = [0.15]
