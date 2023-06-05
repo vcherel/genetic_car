@@ -117,3 +117,25 @@ def point_out_of_window(point):
     return point[0] < 0 or point[0] >= pygame.display.get_surface().get_width() or \
         point[1] < 0 or point[1] >= pygame.display.get_surface().get_height()
 
+
+def union_rect(rects):
+    """
+    Compute the union of two rectangles
+
+    Args:
+        rects (list(pygame.Rect)): the list of the rectangles
+
+    Returns:
+        return_rect (pygame.Rect): the union of the two rectangles
+    """
+    if len(rects) == 0:
+        return pygame.Rect(0, 0, 0, 0)
+    elif len(rects) == 1:
+        return rects[0]
+
+    return_rect = pygame.Rect(0, 0, 0, 0)
+    return_rect.x = min([rect.x for rect in rects])
+    return_rect.y = min([rect.y for rect in rects])
+    return_rect.width = max([rect.x + rect.width for rect in rects]) - return_rect.x
+    return_rect.height = max([rect.y + rect.height for rect in rects]) - return_rect.y
+    return return_rect

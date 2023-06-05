@@ -5,7 +5,8 @@ from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import t
 from display import display_checkpoints, edit_background  # To see the checkpoints
 from constants import WINDOW, START_POS, CLOCK, FPS   # Import the constants
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from ui import detect_events_ui, activate_buttons  # Import the ui
+from utils import union_rect  # Import the union_rect function
+from ui import detect_events_ui, activate_ui  # Import the ui
 from car import Car  # Import the car
 
 
@@ -35,7 +36,7 @@ def open_window():
 
         detect_events_ui()  # Detect events in the ui and do the corresponding action
 
-        activate_buttons()  # Activate the buttons
+        activate_ui()  # Activate the buttons
         if SEE_CHECKPOINTS:
             display_checkpoints()   # Display the checkpoints
 
@@ -60,7 +61,7 @@ def play(cars=None):
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action
         if variables.PAUSE:
-            activate_buttons()  # Activate the buttons
+            activate_ui()  # Activate the buttons
             pygame.display.update()  # Update the screen
 
         if not variables.PAUSE:
@@ -68,19 +69,23 @@ def play(cars=None):
             if variables.DEBUG:
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
             else:
-                for car in cars:
-                    car.erase()
+                WINDOW.blit(variables.BACKGROUND, variables.RECT_BLIT, variables.RECT_BLIT)  # We delete only the cars
 
-            activate_buttons()  # Draw the buttons and do the corresponding action
+            activate_ui()  # Draw the buttons and do the corresponding action
             if SEE_CHECKPOINTS:
                 display_checkpoints()   # Display the checkpoints
 
             all_dead = True     # True if all cars are dead
+            rects = []          # List of rects for the blit
             for car in cars:    # For each car
                 if not car.dead:
                     all_dead = False    # At least one car is alive
                     car.move()          # Move the car
+                    rects.append(car.rotated_rect)    # Draw the car and add the rect to the list
                 car.draw()  # Draw the car
+
+            variables.RECT_BLIT = union_rect(rects)  # Union of the rects for the blit
+            # pygame.draw.rect(WINDOW, (120, 0, 0), variables.RECT_BLIT, 1)  # Draw the rect for the blit
 
             pygame.display.update()  # Update the screen
 

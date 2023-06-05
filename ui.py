@@ -1,7 +1,7 @@
 import pygame  # To use pygame
 import sys  # To quit the game
 import variables  # Import the variables
-from constants import WINDOW, FONT  # Import constants
+from constants import WINDOW, FONT, CLOCK, SMALL_FONT  # Import constants
 from button import Button  # Import the button
 
 # Buttons
@@ -54,7 +54,7 @@ def detect_events_ui():
                     variables.STR_NB_CARS += event.unicode
 
 
-def activate_buttons():
+def activate_ui():
     """
     Draw the buttons and change the state of the variables
     """
@@ -76,3 +76,6 @@ def activate_buttons():
     if variables.CHANGE_NB_CARS:
         TEXT_NB_CARS = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
     WINDOW.blit(TEXT_NB_CARS, (1200, 62))  # Draw the text of the nb cars button
+
+    # Display the FPS
+    WINDOW.blit(SMALL_FONT.render("FPS : " + str(int(CLOCK.get_fps())), True, (0, 0, 0), (128, 128, 128)), (1, 1))

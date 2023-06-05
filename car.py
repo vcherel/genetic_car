@@ -147,6 +147,35 @@ class Car:
         if variables.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
             self.kill()  # Collision with the walls of the circuit
 
+    def determine_size_cone(self):
+        """
+        Determine the size of the detection cone according to the speed of the car
+
+        Returns:
+            width, height (int, int): the width and the height of the detection cone
+        """
+        if self.speed < MIN_MEDIUM_SPEED:
+            width = self.genetic.width_slow
+            height = self.genetic.height_slow
+        elif self.speed < MIN_HIGH_SPEED:
+            width = self.genetic.width_medium
+            height = self.genetic.height_medium
+        else:
+            width = self.genetic.width_fast
+            height = self.genetic.height_fast
+        return width, height
+
+    def determine_front_of_car(self):
+        """
+        Compute the coordinates of the front of the car
+        Args:
+
+        Returns:
+            front_of_car (tuple(int, int)): the coordinates of the front of the car
+        """
+        return self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2,\
+            self.pos[1] + math.sin(math.radians(-self.angle)) * self.image.get_width() / 2
+
     def kill(self):
         """
         Kill the car
@@ -183,31 +212,5 @@ class Car:
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.height_fast)
         pygame.draw.polygon(WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
 
-    def determine_size_cone(self):
-        """
-        Determine the size of the detection cone according to the speed of the car
-
-        Returns:
-            width, height (int, int): the width and the height of the detection cone
-        """
-        if self.speed < MIN_MEDIUM_SPEED:
-            width = self.genetic.width_slow
-            height = self.genetic.height_slow
-        elif self.speed < MIN_HIGH_SPEED:
-            width = self.genetic.width_medium
-            height = self.genetic.height_medium
-        else:
-            width = self.genetic.width_fast
-            height = self.genetic.height_fast
-        return width, height
-
-    def determine_front_of_car(self):
-        """
-        Compute the coordinates of the front of the car
-        Args:
-
-        Returns:
-            front_of_car (tuple(int, int)): the coordinates of the front of the car
-        """
-        return self.pos[0] + math.cos(math.radians(-self.angle)) * self.image.get_width() / 2,\
-            self.pos[1] + math.sin(math.radians(-self.angle)) * self.image.get_width() / 2
+    def update_cords_blit(self):
+        print(self.rotated_rect)

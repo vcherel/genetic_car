@@ -6,12 +6,15 @@ DEBUG = False  # True for debug mode, False for normal mode
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 SEE_CURSOR = False  # True to see the cursor position and color when clicking
 
+RECT_BLIT = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the screen
+
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
 PAUSE = False  # Pause the game (True or False)
 
 CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 SEE_CHECKPOINTS = False  # See the checkpoints
+CHECKPOINTS = None  # List of checkpoints
 
 NUM_MAP = 0  # Map number
 
@@ -22,7 +25,6 @@ STR_NB_CARS = str(NB_CARS)  # Text of the number of cars
 BACKGROUND = None  # Image of the background
 BACKGROUND_MASK = None    # Mask of the black pixels of the background (used to detect collisions)
 CAR_IMAGE = None  # Image of the car
-CHECKPOINTS = None  # List of checkpoints
 
 USE_GENETIC = True  # True to use the genetic algorithm, False to just play
 
