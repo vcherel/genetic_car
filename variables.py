@@ -16,9 +16,12 @@ CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 SEE_CHECKPOINTS = False  # See the checkpoints
 CHECKPOINTS = None  # List of checkpoints
 
-NUM_MAP = 0  # Map number
+# We open the file parameters to read the number of the map and the number of cars
+with open("data/parameters", "r") as file_parameters_read:
+    num_map, nb_cars = file_parameters_read.readlines()
+    NUM_MAP = int(num_map)  # Map number
+    NB_CARS = int(nb_cars)  # Number of cars
 
-NB_CARS = 20  # Number of cars
 CHANGE_NB_CARS = False  # Change the number of cars
 STR_NB_CARS = str(NB_CARS)  # Text of the number of cars
 
@@ -29,15 +32,18 @@ CAR_IMAGE = None  # Image of the car
 USE_GENETIC = True  # True to use the genetic algorithm, False to just play
 
 
-def change_map(num_map):
+def change_map(num):
     """
     Change the map and all the variables associated
 
     Args:
-        num_map (int): number of the new map
+        num (int): number of the new map
     """
     global NUM_MAP, BACKGROUND, BACKGROUND_MASK, CAR_IMAGE, CHECKPOINTS
-    NUM_MAP = num_map  # New map number
+    NUM_MAP = num  # New map number
+    # We change the variable in the file parameters
+    with open("data/parameters", "w") as file_parameters_write:
+        file_parameters_write.write(str(NUM_MAP) + "\n" + str(NB_CARS))
 
     BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)

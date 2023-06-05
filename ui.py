@@ -37,6 +37,9 @@ def detect_events_ui():
                     # Process the entered text
                     try:
                         variables.NB_CARS = int(variables.STR_NB_CARS)  # Convert the text to an integer
+                        # We change the variable in the file parameters
+                        with open("data/parameters", "w") as file_parameters_write:
+                            file_parameters_write.write(str(variables.NUM_MAP) + "\n" + str(variables.NB_CARS))
                     except ValueError:
                         variables.NB_CARS = 0
                         variables.STR_NB_CARS = "0"  # Reset the text
