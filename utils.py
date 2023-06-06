@@ -1,5 +1,9 @@
 import math  # To use math
+import sys
+
 import pygame  # To use pygame
+
+import variables
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
 
 
@@ -129,3 +133,11 @@ def text_rec(text, pos):
     rect = text.get_rect()  # Get the rect of the text
     rect.x, rect.y = pos[0], pos[1]  # Change the position of the rect
     return rect
+
+
+def exit_game():
+    """
+    Exit the game
+    """
+    variables.save_variables()  # Save the cars
+    sys.exit()  # Quit pygame

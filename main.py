@@ -1,14 +1,13 @@
-import sys  # To quit the game
 import time  # To get the time
 import pygame  # To use pygame
 import variables  # Import the variables
 import random  # To generate random numbers
-from constants import WINDOW, START_POS, CLOCK, FPS, TIME_GENERATION, SEED   # Import the constants
-from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map, init_variables  # Import the variables
+from constants import WINDOW, START_POSITIONS, CLOCK, FPS, SEED   # Import the constants
+from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map, init_variables, load_variables  # Import the variables
 from display import display_checkpoints, edit_background  # To see the checkpoints
+from ui import detect_events_ui, detect_buttons_click, init_ui  # Import the ui
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from utils import union_rect  # Import the union_rect function
-from ui import detect_events_ui, detect_buttons_click  # Import the ui
+from utils import union_rect, exit_game  # Import the utils
 from car import Car  # Import the car
 
 
@@ -32,7 +31,7 @@ def open_window():
                     # We detect the mouse click to write the coordinates in the file
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
-                            sys.exit()  # Quitter le jeu
+                            exit_game()
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             if event.button == 1:
                                 x, y = event.pos
@@ -59,8 +58,10 @@ def play(cars=None):
     Args:
         cars (list): list of cars (if None, it is the first time we play)
     """
-    if cars is None:
-        cars = [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP]) for _ in range(variables.NB_CARS)]  # List of cars
+    if cars is None:  # If it is the first time we play
+        cars = [Car() for _ in range(variables.NB_CARS)]  # List of cars
+    else:           # If we already played
+        init_variables()  # Initialize the variables
 
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action
@@ -100,7 +101,7 @@ def play(cars=None):
             if variables.NB_CARS_ALIVE == 0 or time.time() - variables.START_TIME - variables.DURATION_PAUSES > variables.TIME_REMAINING:    # If all cars are dead
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
                 if variables.USE_GENETIC:
-                    variables.GENERATION += 1  # Increment the number of generation
+                    variables.NUM_GENERATION += 1  # Increment the number of generation
                     cars = apply_genetic(cars)  # Genetic algorithm
                     play(cars)  # Restart the game with the new cars
                 else:
@@ -117,6 +118,8 @@ if __name__ == '__main__':
     """
     if SEED:
         random.seed(SEED)  # Initialize the random seed
+    load_variables()  # Load the variables
     change_map(variables.NUM_MAP)  # Change the map to the first one
+    init_ui()  # Initialize the ui
     edit_background()  # Add elements not clickable to the background
     open_window()  # Start the game

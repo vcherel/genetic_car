@@ -1,6 +1,6 @@
 import random  # Used to generate random numbers
 import variables  # Variables of the game
-from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, START_POS, CROSSOVER_CHANCE, MUTATION_CHANCE  # Constants of the game
+from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, CROSSOVER_CHANCE, MUTATION_CHANCE  # Constants of the game
 from car import Car  # Import the car
 
 
@@ -15,16 +15,21 @@ def apply_genetic(cars):
         list: list of cars with the genetic algorithm applied
     """
     cars = sorted(cars, key=lambda car: car.score, reverse=True)  # Sort the cars by score
+    best_car = Car(cars[0].genetic)  # Get the best car
+    variables.MEMORY_CARS.append(["run_" + str(variables.ACTUAL_ID_MEMORY) + "_generation_" + str(variables.NUM_GENERATION), best_car.genetic])  # Add the best car to the memory
+
     cars = select_best_cars(cars)  # Select the best cars
     cars = mutate(cars)  # Mutate the cars
     cars = crossover(cars)  # Crossover the cars
+
+    cars.append(best_car)  # Add the best car to the list
     return cars
 
 
 def select_best_cars(cars):
     """
     Select the best cars to keep for the next generation
-    We keep the best car and we copy them
+    We keep the best car, and we copy it to have the same number of cars
 
     Args:
         cars (list): list of cars
@@ -32,7 +37,7 @@ def select_best_cars(cars):
     Returns:
         list: list of the best cars
     """
-    return [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP], cars[0].genetic) for _ in range(variables.NB_CARS)]  # List of cars
+    return [Car(cars[0].genetic) for _ in range(variables.NB_CARS - 1)]  # List of cars (-1 because we will add the best car)
 
 
 def mutate(cars):

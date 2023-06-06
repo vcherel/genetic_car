@@ -2,7 +2,7 @@ import pygame  # To use pygame
 import time  # To get the time
 
 # Game
-START_POS = [(600, 165)]  # Start position
+START_POSITIONS = [(600, 165)]  # Start position
 START_TIME = time.time()  # Start time of the game
 RADIUS_CHECKPOINT = 80  # Radius of the checkpoint
 
@@ -53,4 +53,4 @@ HEIGHT_MULTIPLIER = 17  # Height multiplier of the cone
 MUTATION_CHANCE = 0.1  # Chance of mutation
 CROSSOVER_CHANCE = 0.1  # Chance of crossover
 
-TIME_GENERATION = 20  # Time of a generation (s)
+TIME_GENERATION = 25  # Time of a generation (s)

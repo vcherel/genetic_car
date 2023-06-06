@@ -7,28 +7,27 @@ from genetic import Genetic  # Genetic algorithm of the car
 
 
 class Car:
-    def __init__(self, image, pos, genetic=None):
+    def __init__(self, genetic=None):
         """
         Initialization of the car
 
         Args:
-            image (pygame.surface.Surface): image of the car
-            pos (tuple(int,int)): position of the car
             genetic (Genetic): genetic of the car to copy (if None, create a new genetic)
         """
         if genetic is None:
             self.genetic = Genetic()  # Genetic of the car
         else:
             self.genetic = Genetic(genetic)
+
         self.dead = False  # True if the car is dead, False otherwise
 
         self.speed = 0  # Current speed of the car
         self.acceleration = 0  # Current acceleration of the car
 
         self.angle = 0  # Current angle of the car
-        self.pos = pos  # Current position of the car
+        self.pos = variables.START_POSITION  # Current position of the car
 
-        self.image = image  # Image of the car
+        self.image = variables.CAR_IMAGE  # Image of the car
         self.rotated_image = self.image  # Rotated image of the car
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
 
@@ -110,7 +109,6 @@ class Car:
                 self.speed += self.acceleration
             else:
                 self.speed = 0
-
         else:
             # Change the speed of the car
             self.speed += self.acceleration  # Update the speed of the car
@@ -218,11 +216,3 @@ class Car:
             pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
-
-        if variables.DEBUG:
-            # Draw the detection cone
-            # pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, self.points_detection_cone[0], self.points_detection_cone[1], self.points_detection_cone[2]), 3)
-            pass
-
-    def update_cords_blit(self):
-        print(self.rotated_rect)
