@@ -84,7 +84,6 @@ def play(cars=None):
                 WINDOW.blit(variables.BACKGROUND, rect, rect)  # We delete the ui
             variables.RECTS_BLIT_UI = []  # We reset the list of rects to blit the ui
 
-            activate_ui()  # Draw the buttons and do the corresponding action
             if SEE_CHECKPOINTS:
                 display_checkpoints()   # Display the checkpoints
 
@@ -97,6 +96,8 @@ def play(cars=None):
 
             variables.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(WINDOW, (120, 0, 0), variables.RECT_BLIT, 1)  # Draw the rect for the blit of the cars
+
+            activate_ui()  # Draw the buttons and do the corresponding action
 
             pygame.display.update()  # Update the screen
 

@@ -1,8 +1,6 @@
-import pygame  # To use pygame
 import math  # To use math
-import random  # To use random
-import variables  # To use the variables
-from constants import WIDTH_SCREEN, HEIGHT_SCREEN
+import pygame  # To use pygame
+from constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
 
 
 def scale_image(img, factor):
@@ -79,30 +77,6 @@ def detect_wall(front_of_car, point):
         if point_out_of_window((x, y)) or surface_display.get_at((x, y)) == (0, 0, 0, 255):
             return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
     return False  # There is no wall
-
-
-def random_attribution(value):
-    """
-    We want to attribute a random value to a variable, but we want that values close to the actual value has more chance
-
-    Args:
-        value (int): the actual value (between 1 and 6)
-
-    Returns:
-        value (int): the new value (between 1 and 6)
-    """
-    rand = random.random()
-    if rand < 1/5:
-        value = value + random.uniform(-5, 5)  # We add a random value between -1 and 1
-    elif rand < 1/4:
-        value = value + random.uniform(-4, 4)
-    elif rand < 1/3:
-        value = value + random.uniform(-3, 3)
-    elif rand < 1/2:
-        value = value + random.uniform(-2, 2)
-    else:
-        value = value + random.uniform(-1, 1)
-    return max(1, min(6, round(value)))  # We round the value between 1 and 6
 
 
 def point_out_of_window(point):

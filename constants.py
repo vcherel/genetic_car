@@ -23,6 +23,8 @@ pygame.display.set_caption("Genetic algorithm")  # Window title
 FONT = pygame.font.SysFont("Arial", 20)  # Font
 SMALL_FONT = pygame.font.SysFont("Arial", 10)  # Small font
 
+RECT_GARAGE = (220, 125, 500, 550)  # Position of the garage
+
 # Car
 CAR_SIZES = [0.15]
 

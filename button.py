@@ -21,7 +21,8 @@ class Button:
         self.rect.topleft = (x, y)  # Position of the button
         self.check_box = check_box   # True if the button is a checkbox, False otherwise
         self.writing_rectangle = writing_rectangle   # True if the button is a writing rectangle, False otherwise
-        self.checked = False    # True if the checkbox is checked, False otherwise
+        self.activated = False    # True if the checkbox is checked, False otherwise
+        self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been activated ; -1 if the button has just been deactivated
         self.time_clicked = 0   # Time when the button is clicked
 
         if image_hover is not None:
@@ -38,7 +39,7 @@ class Button:
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
 
         Returns:
-            bool: True if the button is clicked (or activated), False otherwise
+            bool: True if button activated ; False otherwise
         """
         image = self.image  # Image of the button
 
@@ -46,33 +47,38 @@ class Button:
             if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 150:    # Mouse clicked for the first time
                 self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
                 if self.check_box:
-                    self.checked = not self.checked  # Change the state of the checkbox
+                    self.activated = not self.activated  # Change the state of the checkbox
                 else:
-                    self.checked = True     # Activate the button
+                    self.activated = True     # Activate the button
+                if self.activated:
+                    self.just_clicked = 1
+                else:
+                    self.just_clicked = -1
 
             else:
+                self.just_clicked = 0   # The button has not just been clicked
                 if not self.check_box and not self.writing_rectangle:
-                    self.checked = False  # Change the state if it's a simple button
+                    self.activated = False  # Change the state if it's a simple button
 
             if self.image_hover is not None:
                 image = self.image_hover   # Change the image if it's possible
 
-        if self.checked and self.image_clicked is not None:
+        if self.activated and self.image_clicked is not None:
             image = self.image_clicked  # Change the image if it's possible
 
         # Draw button on screen
         WINDOW.blit(image, (self.rect.x, self.rect.y))
 
-        return self.checked  # Return True if the button is clicked (or activated), False otherwise
+        return self.activated  # Return True if the button is clicked (or activated), False otherwise
 
-    def uncheck_button(self):
+    def activate_button(self):
         """
-        Uncheck the button
+        Activate the button
         """
-        self.checked = False    # Uncheck the button
+        self.activated = False    # Uncheck the button
 
-    def check_button(self):
+    def deactivate_button(self):
         """
-        Check the button
+        Deactivate the button
         """
-        self.checked = True     # Check the button
+        self.activated = True     # Check the button
