@@ -12,7 +12,11 @@ RECT_BLIT_UI = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to e
 
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
+
 PAUSE = False  # Pause the game (True or False)
+DURATION_PAUSES = 0  # Duration of all the pauses
+START_TIME_PAUSE = 0  # Time when the game has been paused
+TIME_REMAINING_PAUSE = 0  # Time remaining when the game has been paused
 
 CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 SEE_CHECKPOINTS = False  # See the checkpoints

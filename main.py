@@ -62,9 +62,12 @@ def play(cars=None):
 
     variables.TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
     variables.START_TIME = time.time()  # Start time of the generation
+    variables.DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
 
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action
+
+        # If the game is paused
         if variables.PAUSE:
             activate_ui()  # Activate the buttons
             pygame.display.update()  # Update the screen
@@ -95,7 +98,7 @@ def play(cars=None):
 
             pygame.display.update()  # Update the screen
 
-            if all_dead or time.time() - variables.START_TIME > variables.TIME_REMAINING:    # If all cars are dead
+            if all_dead or time.time() - variables.START_TIME - variables.DURATION_PAUSES > variables.TIME_REMAINING:    # If all cars are dead
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
                 if variables.USE_GENETIC:
                     cars = apply_genetic(cars)  # Genetic algorithm

@@ -66,10 +66,15 @@ def activate_ui():
 
     variables.DEBUG = DEBUG_BUTTON.activate()  # Draw the debug button
     variables.PLAY = not STOP_BUTTON.activate()  # Draw the stop button
+
     pause_before = variables.PAUSE
     variables.PAUSE = PAUSE_BUTTON.activate()  # Draw the pause button
-    if pause_before and not variables.PAUSE:  # If the pause button is unchecked, we resume the simulation and blit the screen
-        WINDOW.blit(variables.BACKGROUND, (0, 0))
+    if pause_before and not variables.PAUSE:  # Pause button is unchecked
+        WINDOW.blit(variables.BACKGROUND, (0, 0))  # We blit the screen to remove the cones
+        variables.DURATION_PAUSES += time.time() - variables.START_TIME_PAUSE  # We add the duration of the pause to the total duration of the pause
+    elif not pause_before and variables.PAUSE:  # Pause button is checked
+        variables.START_TIME_PAUSE = time.time()  # We get the time when the pause started
+        variables.TIME_REMAINING_PAUSE = int(variables.TIME_REMAINING + variables.DURATION_PAUSES - (time.time() - variables.START_TIME)) + 1  # We save the time remaining before the pause
 
     variables.START = START_BUTTON.activate()  # Draw the start button
     if variables.START and variables.PAUSE:    # We also resume the simulation if the start button is pressed
@@ -85,13 +90,14 @@ def activate_ui():
     WINDOW.blit(SMALL_FONT.render("FPS : " + str(int(CLOCK.get_fps())), True, (0, 0, 0), (128, 128, 128)), (1, 1))
 
     # Display the time remaining
-    if variables.TIME_REMAINING == 0:  # If the time is over, we display 0
-        time_remaining = 0
+    if variables.PAUSE:
+        time_remaining = variables.TIME_REMAINING_PAUSE
     else:
-        time_remaining = int(variables.TIME_REMAINING - (time.time() - variables.START_TIME))
-    text_time_remaining = FONT.render("Temps restant : " + str(time_remaining) + "s", True, (0, 0, 0), (128, 128, 128))
-    pos = (1, 20)  # Position of the text
-    WINDOW.blit(text_time_remaining, pos)  # Draw the text
-    rect = text_time_remaining.get_rect()  # Get the rect of the text
-    rect.x, rect.y = pos[0], pos[1]  # Change the position of the rect
-    variables.RECT_BLIT_UI = rect  # Change the rect of the ui
+        time_remaining = int(variables.TIME_REMAINING + variables.DURATION_PAUSES - (time.time() - variables.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
+    if time_remaining >= 0:  # We don't display the time remaining if it's negative
+        text_time_remaining = FONT.render("Temps restant : " + str(time_remaining) + "s", True, (0, 0, 0), (128, 128, 128))
+        pos = (1, 20)  # Position of the text
+        WINDOW.blit(text_time_remaining, pos)  # Draw the text
+        rect = text_time_remaining.get_rect()  # Get the rect of the text
+        rect.x, rect.y = pos[0], pos[1]  # Change the position of the rect
+        variables.RECT_BLIT_UI = rect  # Change the rect of the ui
