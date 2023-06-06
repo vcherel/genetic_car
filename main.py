@@ -3,8 +3,8 @@ import time  # To get the time
 import pygame  # To use pygame
 import variables  # Import the variables
 import random  # To generate random numbers
+from constants import WINDOW, START_POS, CLOCK, FPS, TIME_GENERATION, SEED   # Import the constants
 from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import the variables
-from constants import WINDOW, START_POS, CLOCK, FPS, TIME_GENERATION   # Import the constants
 from display import display_checkpoints, edit_background  # To see the checkpoints
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from utils import union_rect  # Import the union_rect function
@@ -118,8 +118,8 @@ if __name__ == '__main__':
     """
     Main program
     """
-    if variables.SEED:
-        random.seed(variables.SEED)  # Initialize the random seed
+    if SEED:
+        random.seed(SEED)  # Initialize the random seed
     change_map(variables.NUM_MAP)  # Change the map to the first one
     edit_background()  # Add elements not clickable to the background
     open_window()  # Start the game

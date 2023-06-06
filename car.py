@@ -1,9 +1,8 @@
 import pygame  # Pygame library
 import math  # Math library
 import variables  # Variables of the game
-from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT  # Constants of the game
+from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT, KEYBOARD_CONTROL  # Constants of the game
 from utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
-from variables import KEYBOARD_CONTROL, BACKGROUND  # Variables of the game
 from genetic import Genetic  # Genetic algorithm of the car
 
 

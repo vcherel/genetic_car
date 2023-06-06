@@ -3,9 +3,6 @@ from constants import WIDTH_SCREEN, HEIGHT_SCREEN, CAR_SIZES  # Import the scree
 from utils import scale_image  # Import the scale_image function
 
 DEBUG = False  # True for debug mode, False for normal mode
-KEYBOARD_CONTROL = False  # True to control the car with the keyboard
-SEE_CURSOR = False  # True to see the cursor position and color when clicking
-SEED = None  # Seed of the random (None to not use a seed)
 
 RECT_BLIT_CAR = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
@@ -41,6 +38,8 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 
 TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
+
+DISPLAY_GARAGE = False  # True to see the garage
 
 
 def change_map(num):

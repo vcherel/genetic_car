@@ -70,3 +70,9 @@ class Button:
         Uncheck the button
         """
         self.checked = False    # Uncheck the button
+
+    def check_button(self):
+        """
+        Check the button
+        """
+        self.checked = True     # Check the button
