@@ -20,10 +20,11 @@ WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to a
 WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
 pygame.display.set_caption("Genetic algorithm")  # Window title
 
+LARGE_FONT = pygame.font.SysFont("Arial", 30)  # Large font
 FONT = pygame.font.SysFont("Arial", 20)  # Font
 SMALL_FONT = pygame.font.SysFont("Arial", 10)  # Small font
 
-RECT_GARAGE = (220, 125, 500, 550)  # Position of the garage
+RECT_GARAGE = (500, 125, 500, 550)  # Position of the garage
 
 # Car
 CAR_SIZES = [0.15]

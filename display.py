@@ -1,6 +1,6 @@
 import pygame  # To use pygame
 import variables  # Import the variables
-from constants import WINDOW, RADIUS_CHECKPOINT, FONT, RECT_GARAGE  # Import the constants
+from constants import WINDOW, RADIUS_CHECKPOINT, FONT, RECT_GARAGE, LARGE_FONT  # Import the constants
 from utils import text_rec  # Import the text_rec function
 
 
@@ -40,6 +40,7 @@ def display_garage():
     # Create rectangles for the garage
     pygame.draw.rect(WINDOW, (128, 128, 128), RECT_GARAGE, 0)
     pygame.draw.rect(WINDOW, (115, 205, 255), RECT_GARAGE, 2)
+    WINDOW.blit(LARGE_FONT.render("Super garage", True, (0, 0, 0), (128, 128, 128)), (RECT_GARAGE[0] + 165, RECT_GARAGE[1] + 10))
 
 
 def erase_garage():

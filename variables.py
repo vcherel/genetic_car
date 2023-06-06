@@ -1,5 +1,6 @@
+import time  # To use time
 import pygame  # To use pygame
-from constants import WIDTH_SCREEN, HEIGHT_SCREEN, CAR_SIZES  # Import the screen size
+from constants import WIDTH_SCREEN, HEIGHT_SCREEN, CAR_SIZES, TIME_GENERATION  # Import the screen size
 from utils import scale_image  # Import the scale_image function
 
 DEBUG = False  # True for debug mode, False for normal mode
@@ -65,3 +66,13 @@ def change_map(num):
         for checkpoint in checkpoints:
             a, b = checkpoint.split(" ")
             CHECKPOINTS.append((int(a), int(b)))
+
+
+def init_variables():
+    global NB_CARS_ALIVE, TIME_REMAINING, START_TIME, DURATION_PAUSES, DISPLAY_GARAGE
+
+    NB_CARS_ALIVE = NB_CARS  # Number of cars alive
+    TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
+    START_TIME = time.time()  # Start time of the generation
+    DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
+    DISPLAY_GARAGE = False  # We don't display the garage

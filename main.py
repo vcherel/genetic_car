@@ -4,19 +4,21 @@ import pygame  # To use pygame
 import variables  # Import the variables
 import random  # To generate random numbers
 from constants import WINDOW, START_POS, CLOCK, FPS, TIME_GENERATION, SEED   # Import the constants
-from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import the variables
+from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map, init_variables  # Import the variables
 from display import display_checkpoints, edit_background  # To see the checkpoints
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from utils import union_rect  # Import the union_rect function
-from ui import detect_events_ui, activate_ui  # Import the ui
+from ui import detect_events_ui, detect_buttons_click  # Import the ui
 from car import Car  # Import the car
 
 
 def open_window():
-    WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
     """
     Open the window of the game and manage the events until the game is started or closed
     """
+    init_variables()  # Initialize the variables
+    WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
+
     while 1:
         # If we want to change the checkpoints
         if CHANGE_CHECKPOINT:
@@ -36,9 +38,9 @@ def open_window():
                                 x, y = event.pos
                                 file_checkpoint_write.write(str(x) + " " + str(y) + "\n")
 
-        detect_events_ui()  # Detect events in the ui and do the corresponding action
+        detect_events_ui()  # Detect events in the ui and do the corresponding action=
+        detect_buttons_click()  # Activate the buttons
 
-        activate_ui()  # Activate the buttons
         if SEE_CHECKPOINTS:
             display_checkpoints()   # Display the checkpoints
 
@@ -60,18 +62,12 @@ def play(cars=None):
     if cars is None:
         cars = [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP]) for _ in range(variables.NB_CARS)]  # List of cars
 
-    variables.NB_CARS_ALIVE = variables.NB_CARS  # Number of cars alive
-
-    variables.TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
-    variables.START_TIME = time.time()  # Start time of the generation
-    variables.DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
-
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action
 
         # If the game is paused
         if variables.PAUSE:
-            activate_ui()  # Activate the buttons
+            detect_buttons_click()  # Activate the buttons
             pygame.display.update()  # Update the screen
 
         if not variables.PAUSE:
@@ -97,7 +93,7 @@ def play(cars=None):
             variables.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(WINDOW, (120, 0, 0), variables.RECT_BLIT, 1)  # Draw the rect for the blit of the cars
 
-            activate_ui()  # Draw the buttons and do the corresponding action
+            detect_buttons_click()  # Draw the buttons and do the corresponding action
 
             pygame.display.update()  # Update the screen
 

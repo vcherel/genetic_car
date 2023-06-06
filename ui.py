@@ -60,7 +60,7 @@ def detect_events_ui():
                     variables.STR_NB_CARS += event.unicode
 
 
-def activate_ui():
+def detect_buttons_click():
     """
     Draw the buttons and change the state of the variables
     """
@@ -73,10 +73,8 @@ def activate_ui():
 
     # Stop button
     stopped = STOP_BUTTON.activate()  # Draw the stop button
-    variables.PLAY = not stopped  # We invert the state of the button
-    if STOP_BUTTON.just_clicked and stopped:
-        unpause()  # We unpause the simulation
-        erase_garage()  # We erase the garage
+    if STOP_BUTTON.just_clicked and variables.PLAY:
+        variables.PLAY = False  # We stop the simulation
 
     # Pause button
     variables.PAUSE = PAUSE_BUTTON.activate()  # Draw the pause button
@@ -88,10 +86,10 @@ def activate_ui():
 
     # Start button
     variables.START = START_BUTTON.activate()  # Draw the start button
+    if START_BUTTON.just_clicked and variables.START:
+        variables.PLAY = True  # We start the simulation
     if variables.START and variables.PAUSE:    # We also resume the simulation if the start button is pressed
         unpause()  # We unpause the simulation
-        if variables.DISPLAY_GARAGE:
-            erase_garage()
 
     # Nb cars button
     variables.CHANGE_NB_CARS = NB_CARS_BUTTON.activate()  # Draw the nb cars button
@@ -103,7 +101,9 @@ def activate_ui():
     WINDOW.blit(SMALL_FONT.render("FPS : " + str(int(CLOCK.get_fps())), True, (0, 0, 0), (128, 128, 128)), (1, 1))
 
     # Time remaining
-    if variables.PAUSE:
+    if not variables.PLAY:
+        time_remaining = variables.TIME_REMAINING
+    elif variables.PAUSE:
         time_remaining = variables.TIME_REMAINING_PAUSE
     else:
         time_remaining = int(variables.TIME_REMAINING + variables.DURATION_PAUSES - (time.time() - variables.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
@@ -151,5 +151,8 @@ def unpause(from_button=False):
     if not from_button:  # If the unpause is not from the pause button we have to uncheck the button
         variables.PAUSE = False  # We unpause the simulation
         PAUSE_BUTTON.activate_button()  # We uncheck the pause button
+
+    if variables.DISPLAY_GARAGE:
+        erase_garage()
 
     variables.DURATION_PAUSES += time.time() - variables.START_TIME_PAUSE  # We add the duration of the pause to the total duration of the pause
