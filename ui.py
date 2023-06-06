@@ -1,5 +1,6 @@
-import pygame  # To use pygame
 import sys  # To quit the game
+import time  # To get the time
+import pygame  # To use pygame
 import variables  # Import the variables
 from constants import WINDOW, FONT, CLOCK, SMALL_FONT  # Import constants
 from button import Button  # Import the button
@@ -82,3 +83,15 @@ def activate_ui():
 
     # Display the FPS
     WINDOW.blit(SMALL_FONT.render("FPS : " + str(int(CLOCK.get_fps())), True, (0, 0, 0), (128, 128, 128)), (1, 1))
+
+    # Display the time remaining
+    if variables.TIME_REMAINING == 0:  # If the time is over, we display 0
+        time_remaining = 0
+    else:
+        time_remaining = int(variables.TIME_REMAINING - (time.time() - variables.START_TIME))
+    text_time_remaining = FONT.render("Temps restant : " + str(time_remaining) + "s", True, (0, 0, 0), (128, 128, 128))
+    pos = (1, 20)  # Position of the text
+    WINDOW.blit(text_time_remaining, pos)  # Draw the text
+    rect = text_time_remaining.get_rect()  # Get the rect of the text
+    rect.x, rect.y = pos[0], pos[1]  # Change the position of the rect
+    variables.RECT_BLIT_UI = rect  # Change the rect of the ui

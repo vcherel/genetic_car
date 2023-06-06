@@ -1,10 +1,11 @@
 import sys  # To quit the game
+import time  # To get the time
 import pygame  # To use pygame
 import variables  # Import the variables
 import random  # To generate random numbers
 from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map  # Import the variables
+from constants import WINDOW, START_POS, CLOCK, FPS, TIME_GENERATION   # Import the constants
 from display import display_checkpoints, edit_background  # To see the checkpoints
-from constants import WINDOW, START_POS, CLOCK, FPS   # Import the constants
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from utils import union_rect  # Import the union_rect function
 from ui import detect_events_ui, activate_ui  # Import the ui
@@ -59,6 +60,9 @@ def play(cars=None):
     if cars is None:
         cars = [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP]) for _ in range(variables.NB_CARS)]  # List of cars
 
+    variables.TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
+    variables.START_TIME = time.time()  # Start time of the generation
+
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action
         if variables.PAUSE:
@@ -70,7 +74,8 @@ def play(cars=None):
             if variables.DEBUG:
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
             else:
-                WINDOW.blit(variables.BACKGROUND, variables.RECT_BLIT, variables.RECT_BLIT)  # We delete only the cars
+                WINDOW.blit(variables.BACKGROUND, variables.RECT_BLIT_CAR, variables.RECT_BLIT_CAR)  # We delete only the cars
+            WINDOW.blit(variables.BACKGROUND, variables.RECT_BLIT_UI, variables.RECT_BLIT_UI)  # We delete the ui
 
             activate_ui()  # Draw the buttons and do the corresponding action
             if SEE_CHECKPOINTS:
@@ -85,12 +90,12 @@ def play(cars=None):
                     rects.append(car.rotated_rect)    # Draw the car and add the rect to the list
                 car.draw()  # Draw the car
 
-            variables.RECT_BLIT = union_rect(rects)  # Union of the rects for the blit
+            variables.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(WINDOW, (120, 0, 0), variables.RECT_BLIT, 1)  # Draw the rect for the blit
 
             pygame.display.update()  # Update the screen
 
-            if all_dead:    # If all cars are dead
+            if all_dead or time.time() - variables.START_TIME > variables.TIME_REMAINING:    # If all cars are dead
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
                 if variables.USE_GENETIC:
                     cars = apply_genetic(cars)  # Genetic algorithm

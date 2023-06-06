@@ -1,6 +1,7 @@
 import pygame  # To use pygame
 import math  # To use math
 import random  # To use random
+from constants import WIDTH_SCREEN, HEIGHT_SCREEN
 
 
 def scale_image(img, factor):
@@ -56,19 +57,19 @@ def detect_wall(front_of_car, point):
     x1, y1 = front_of_car  # Coordinates of the front of the car
     x2, y2 = point  # Coordinates of the point
 
+    surface_display = pygame.display.get_surface()  # We get the surface of the window
+
     if x1 == x2:  # If the car is parallel to the wall
         # We check if there is a wall between the front of the car and the point
         for y in range(int(min(y1, y2)), int(max(y1, y2))):
             x1 = int(x1)
             # We check if the pixel is black (wall)
-            if point_out_of_window((x1, y)) or pygame.display.get_surface().get_at((x1, y)) == (0, 0, 0, 255):
+            if point_out_of_window((x1, y)) or surface_display.get_at((x1, y)) == (0, 0, 0, 255):
                 return True  # There is a wall
 
     # We determine the equation of the line between the front of the car and the point (y = ax + b)
     a = (y2 - y1) / (x2 - x1)
     b = y1 - a * x1
-
-    surface_display = pygame.display.get_surface()  # We get the surface of the window
 
     # We check if there is a wall between the front of the car and the point
     for x in range(int(min(x1, x2)), int(max(x1, x2))):
@@ -76,7 +77,6 @@ def detect_wall(front_of_car, point):
         # We check if the pixel is black (wall)
         if point_out_of_window((x, y)) or surface_display.get_at((x, y)) == (0, 0, 0, 255):
             return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
-
     return False  # There is no wall
 
 
@@ -114,8 +114,7 @@ def point_out_of_window(point):
     Returns:
         True if the point is out of the window, False otherwise
     """
-    return point[0] < 0 or point[0] >= pygame.display.get_surface().get_width() or \
-        point[1] < 0 or point[1] >= pygame.display.get_surface().get_height()
+    return point[0] < 0 or point[0] >= WIDTH_SCREEN or point[1] < 0 or point[1] >= HEIGHT_SCREEN
 
 
 def union_rect(rects):

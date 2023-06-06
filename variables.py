@@ -7,7 +7,8 @@ KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 SEE_CURSOR = False  # True to see the cursor position and color when clicking
 SEED = None  # Seed of the random (None to not use a seed)
 
-RECT_BLIT = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the screen
+RECT_BLIT_CAR = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
+RECT_BLIT_UI = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the ui of the screen
 
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
@@ -31,6 +32,8 @@ BACKGROUND_MASK = None    # Mask of the black pixels of the background (used to 
 CAR_IMAGE = None  # Image of the car
 
 USE_GENETIC = True  # True to use the genetic algorithm, False to just play
+TIME_REMAINING = 0  # Time remaining for the genetic algorithm
+START_TIME = 0  # Start time of the genetic algorithm
 
 
 def change_map(num):
