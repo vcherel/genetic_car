@@ -177,6 +177,7 @@ class Car:
         Kill the car
         """
         self.dead = True  # The car is dead
+        variables.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
 
     def draw(self):
         """

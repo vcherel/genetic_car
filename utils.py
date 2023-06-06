@@ -1,6 +1,7 @@
 import pygame  # To use pygame
 import math  # To use math
 import random  # To use random
+import variables  # To use the variables
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN
 
 
@@ -138,3 +139,19 @@ def union_rect(rects):
     return_rect.width = max([rect.x + rect.width for rect in rects]) - return_rect.x
     return_rect.height = max([rect.y + rect.height for rect in rects]) - return_rect.y
     return return_rect
+
+
+def text_rec(text, pos):
+    """
+    Compute the rect corresponding to the text
+
+    Args:
+        text (pygame.surface.Surface): the surface of the text
+        pos (tuple(int, int)): the position of the text
+
+    Returns:
+        rect (pygame.Rect): the rect of the text
+    """
+    rect = text.get_rect()  # Get the rect of the text
+    rect.x, rect.y = pos[0], pos[1]  # Change the position of the rect
+    return rect

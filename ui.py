@@ -3,6 +3,8 @@ import time  # To get the time
 import pygame  # To use pygame
 import variables  # Import the variables
 from constants import WINDOW, FONT, CLOCK, SMALL_FONT  # Import constants
+from utils import text_rec  # Import the add_text_rect function
+from display import display_text_ui  # Import the display_text_variable function
 from button import Button  # Import the button
 
 # Buttons
@@ -94,10 +96,12 @@ def activate_ui():
         time_remaining = variables.TIME_REMAINING_PAUSE
     else:
         time_remaining = int(variables.TIME_REMAINING + variables.DURATION_PAUSES - (time.time() - variables.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
-    if time_remaining >= 0:  # We don't display the time remaining if it's negative
-        text_time_remaining = FONT.render("Temps restant : " + str(time_remaining) + "s", True, (0, 0, 0), (128, 128, 128))
-        pos = (1, 20)  # Position of the text
-        WINDOW.blit(text_time_remaining, pos)  # Draw the text
-        rect = text_time_remaining.get_rect()  # Get the rect of the text
-        rect.x, rect.y = pos[0], pos[1]  # Change the position of the rect
-        variables.RECT_BLIT_UI = rect  # Change the rect of the ui
+    if time_remaining < 0:
+        time_remaining = 0
+    display_text_ui("Temps restant : " + str(time_remaining) + "s", (1, 20))
+
+    # Display the number of cars in the simulation
+    display_text_ui("Nombre de voitures restantes : " + str(variables.NB_CARS_ALIVE), (1, 50))
+
+    # Display the number of the generation
+    display_text_ui("Génération : " + str(variables.GENERATION), (1, 80))

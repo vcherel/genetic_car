@@ -60,6 +60,8 @@ def play(cars=None):
     if cars is None:
         cars = [Car(variables.CAR_IMAGE, START_POS[variables.NUM_MAP]) for _ in range(variables.NB_CARS)]  # List of cars
 
+    variables.NB_CARS_ALIVE = variables.NB_CARS  # Number of cars alive
+
     variables.TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
     variables.START_TIME = time.time()  # Start time of the generation
     variables.DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
@@ -78,29 +80,30 @@ def play(cars=None):
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
             else:
                 WINDOW.blit(variables.BACKGROUND, variables.RECT_BLIT_CAR, variables.RECT_BLIT_CAR)  # We delete only the cars
-            WINDOW.blit(variables.BACKGROUND, variables.RECT_BLIT_UI, variables.RECT_BLIT_UI)  # We delete the ui
+            for rect in variables.RECTS_BLIT_UI:
+                WINDOW.blit(variables.BACKGROUND, rect, rect)  # We delete the ui
+            variables.RECTS_BLIT_UI = []  # We reset the list of rects to blit the ui
 
             activate_ui()  # Draw the buttons and do the corresponding action
             if SEE_CHECKPOINTS:
                 display_checkpoints()   # Display the checkpoints
 
-            all_dead = True     # True if all cars are dead
             rects = []          # List of rects for the blit
             for car in cars:    # For each car
-                if not car.dead:
-                    all_dead = False    # At least one car is alive
+                if not car.dead:    # If the car is not dead
                     car.move()          # Move the car
                     rects.append(car.rotated_rect)    # Draw the car and add the rect to the list
                 car.draw()  # Draw the car
 
             variables.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
-            # pygame.draw.rect(WINDOW, (120, 0, 0), variables.RECT_BLIT, 1)  # Draw the rect for the blit
+            # pygame.draw.rect(WINDOW, (120, 0, 0), variables.RECT_BLIT, 1)  # Draw the rect for the blit of the cars
 
             pygame.display.update()  # Update the screen
 
-            if all_dead or time.time() - variables.START_TIME - variables.DURATION_PAUSES > variables.TIME_REMAINING:    # If all cars are dead
+            if variables.NB_CARS_ALIVE == 0 or time.time() - variables.START_TIME - variables.DURATION_PAUSES > variables.TIME_REMAINING:    # If all cars are dead
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
                 if variables.USE_GENETIC:
+                    variables.GENERATION += 1  # Increment the number of generation
                     cars = apply_genetic(cars)  # Genetic algorithm
                     play(cars)  # Restart the game with the new cars
                 else:
