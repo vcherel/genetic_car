@@ -8,6 +8,7 @@ from display import display_checkpoints, edit_background  # To see the checkpoin
 from ui import detect_events_ui, detect_buttons_click, init_ui  # Import the ui
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from utils import union_rect, exit_game  # Import the utils
+from garage import add_garage_cars  # Import the garage
 from car import Car  # Import the car
 
 
@@ -59,7 +60,9 @@ def play(cars=None):
     """
     if cars is None:  # If it is the first time we play
         cars = [Car() for _ in range(variables.NB_CARS)]  # List of cars
+        cars = add_garage_cars(cars)  # Add the cars in the garage
         init_variables()
+
     else:           # If we already played
         init_variables(replay=True)  # Initialize the variables
 
@@ -101,7 +104,8 @@ def play(cars=None):
             if variables.NB_CARS_ALIVE == 0 or time.time() - variables.START_TIME - variables.DURATION_PAUSES > variables.TIME_REMAINING:    # If all cars are dead
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
                 if variables.USE_GENETIC:
-                    cars = apply_genetic(cars)  # Genetic algorithm
+                    if cars:  # We check in case we don't have any cars
+                        cars = apply_genetic(cars)  # Genetic algorithm
                     play(cars)  # Restart the game with the new cars
                 else:
                     play()  # Restart the game

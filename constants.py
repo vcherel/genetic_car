@@ -11,7 +11,7 @@ FPS = 60  # Frame per second
 
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 SEE_CURSOR = False  # True to see the cursor position and color when clicking
-SEED = 69  # Seed of the random (None to not use a seed)
+SEED = 0  # Seed of the random (None to not use a seed)
 
 # Display
 pygame.init()  # Pygame initialization

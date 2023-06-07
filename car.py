@@ -44,6 +44,15 @@ class Car:
 
         self.points_detection_cone = []  # Points of the detection cone if DEBUG is True
 
+    def __str__(self):
+        """
+        Return the string representation of the car
+
+        Return:
+            str: string representation of the car
+        """
+        return "Car: " + str(self.genetic)
+
     def move(self):
         """
         Move the car and update its state

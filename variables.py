@@ -125,23 +125,24 @@ def load_variables():
         Format of names for dice cars:
         dice_x_number_y
         """
-        cars = file_cars_read.readlines()
-        for car in cars:
-            car = car.split(" ")
+        lines = file_cars_read.readlines()
+        for line in lines:
+            line = line.split(" ")
             # We add the car to the memory
-            id_run = int(car[0].split("_")[1])
-            id_generation = int(car[0].split("_")[3])
+            id_run = int(line[0].split("_")[1])
+            id_generation = int(line[0].split("_")[3])
+
             if MEMORY_CARS.get(id_run) is None:
                 MEMORY_CARS[id_run] = [(
-                    id_generation, Genetic(width_fast=int(car[1]), height_fast=int(car[2]), width_medium=int(car[3]),
-                                           height_medium=int(car[4]), width_slow=int(car[5]), height_slow=int(car[6])))]
+                    id_generation, Genetic(width_fast=int(line[1]), height_fast=int(line[2]), width_medium=int(line[3]),
+                                           height_medium=int(line[4]), width_slow=int(line[5]), height_slow=int(line[6])))]
             else:
                 MEMORY_CARS.get(id_run).append(
-                    (id_generation, Genetic(width_fast=int(car[1]), height_fast=int(car[2]), width_medium=int(car[3]),
-                                            height_medium=int(car[4]), width_slow=int(car[5]), height_slow=int(car[6]))))
-            if car[0].startswith("run") and id_run > ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
+                    (id_generation, Genetic(width_fast=int(line[1]), height_fast=int(line[2]), width_medium=int(line[3]),
+                                            height_medium=int(line[4]), width_slow=int(line[5]), height_slow=int(line[6]))))
+            if line[0].startswith("run") and id_run > ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
                 ACTUAL_ID_MEMORY_GENETIC = id_run
-            elif car[0].startswith("dice") and id_run > ACTUAL_ID_MEMORY_DICE:
+            elif line[0].startswith("dice") and id_run > ACTUAL_ID_MEMORY_DICE:
                 ACTUAL_ID_MEMORY_DICE = id_run
 
 

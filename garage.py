@@ -53,7 +53,7 @@ def display_garage():
                     for car in variables.MEMORY_CARS.get(key):
                         TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Dé " + car[0], num, car[1]))
                 else:
-                    TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Génération " + str(key), num, variables.MEMORY_CARS.get(key)))
+                    TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Génétique " + str(key), num, variables.MEMORY_CARS.get(key)))
 
                 num += 1  # We add one to the number to identify the id of the rectangle
                 # We change the values of the variables
@@ -98,3 +98,16 @@ def update_variables():
     else:
         ACTUAL_X += 240
     CHANGE_Y = not CHANGE_Y  # At the next rectangle, we are going to change of axis
+
+
+def add_garage_cars(cars):
+    """
+    Add the cars from the garage to the list of cars
+    """
+    if variables.CAR_FROM_GARAGE:  # If we have a car from the garage
+        if type(variables.CAR_FROM_GARAGE) is list:  # If we have a car from the garage
+            for car in variables.CAR_FROM_GARAGE:
+                cars.append(car)  # Add cars from the garage to the list
+        else:
+            cars.append(variables.CAR_FROM_GARAGE)  # Add the car from the garage to the list
+    return cars

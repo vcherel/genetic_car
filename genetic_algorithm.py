@@ -1,6 +1,7 @@
 import random  # Used to generate random numbers
 import variables  # Variables of the game
 from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, CROSSOVER_CHANCE, MUTATION_CHANCE   # Constants of the game
+from garage import add_garage_cars  # Add the cars from the garage
 from car import Car  # Import the car
 
 
@@ -26,16 +27,8 @@ def apply_genetic(cars):
     cars = crossover(cars)  # Crossover the cars
 
     cars.append(best_car)  # Add the best car to the list
+    cars = add_garage_cars(cars)  # We add the car from the garage to the list
 
-    # We add the car from the garage to the list
-    """
-    if variables.CAR_FROM_GARAGE is not None:  # If we have a car from the garage
-        if type(variables.CAR_FROM_GARAGE) is list:  # If we have a car from the garage
-            for car in variables.CAR_FROM_GARAGE:
-                cars.append(car)  # Add cars from the garage to the list
-        else:
-            cars.append(variables.CAR_FROM_GARAGE)  # Add the car from the garage to the list
-    """
     return cars
 
 

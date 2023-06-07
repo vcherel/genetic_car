@@ -13,7 +13,25 @@ class Genetic:
         Args:
             genetic (Genetic): genetic algorithm to copy
         """
-        if genetic is None:     # If we don't have a genetic algorithm to copy
+        if width_fast is not None:        # If we have the parameters of the genetic algorithm
+            self.width_fast = width_fast
+            self.height_fast = height_fast
+
+            self.width_medium = width_medium
+            self.height_medium = height_medium
+
+            self.width_slow = width_slow
+            self.height_slow = height_slow
+        elif genetic is not None:  # If we have a genetic algorithm to copy
+            self.width_fast = genetic.width_fast
+            self.height_fast = genetic.height_fast
+
+            self.width_medium = genetic.width_medium
+            self.height_medium = genetic.height_medium
+
+            self.width_slow = genetic.width_slow
+            self.height_slow = genetic.height_slow
+        else:  # If we don't have a genetic algorithm to copy
             self.width_fast = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going fast
             self.height_fast = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going fast
 
@@ -23,22 +41,15 @@ class Genetic:
             self.width_slow = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going slow
             self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
 
-        elif width_fast:        # If we have the parameters of the genetic algorithm
-            self.width_fast = width_fast
-            self.height_fast = height_fast
 
-            self.width_medium = width_medium
-            self.height_medium = height_medium
 
-            self.width_slow = width_slow
-            self.height_slow = height_slow
 
-        else:                   # If we have a genetic algorithm to copy
-            self.width_fast = genetic.width_fast
-            self.height_fast = genetic.height_fast
 
-            self.width_medium = genetic.width_medium
-            self.height_medium = genetic.height_medium
+    def __str__(self):
+        """
+        String representation of the genetic algorithm
 
-            self.width_slow = genetic.width_slow
-            self.height_slow = genetic.height_slow
+        Returns:
+            str: string representation of the genetic algorithm
+        """
+        return f"Genetic algorithm: width_fast={self.width_fast}, height_fast={self.height_fast}, width_medium={self.width_medium}, height_medium={self.height_medium}, width_slow={self.width_slow}, height_slow={self.height_slow}"
