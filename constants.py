@@ -24,8 +24,6 @@ LARGE_FONT = pygame.font.SysFont("Arial", 30)  # Large font
 FONT = pygame.font.SysFont("Arial", 20)  # Font
 SMALL_FONT = pygame.font.SysFont("Arial", 10)  # Small font
 
-RECT_GARAGE = (500, 125, 500, 550)  # Position of the garage
-
 # Car
 CAR_SIZES = [0.15]
 

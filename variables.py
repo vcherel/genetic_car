@@ -140,8 +140,6 @@ def load_variables():
             elif car[0].startswith("dice") and id_run > ACTUAL_ID_MEMORY_DICE:
                 ACTUAL_ID_MEMORY_DICE = id_run
 
-        print(MEMORY_CARS)
-
 
 def save_variables():
     """

@@ -2,7 +2,8 @@ import time  # To get the time
 import pygame  # To use pygame
 import variables  # Import the variables
 from constants import WINDOW, FONT, CLOCK, SMALL_FONT, SEE_CURSOR  # Import constants
-from display import display_text_ui, display_garage, erase_garage  # Import functions from display
+from garage import init_garage, display_garage, erase_garage  # Import functions from garage
+from display import display_text_ui  # Import functions from display
 from utils import exit_game  # Import the exit_game function
 from button import Button  # Import the button
 
@@ -87,8 +88,11 @@ def detect_buttons_click():
 
     # Stop button
     STOP_BUTTON.activate()  # Draw the stop button
-    if STOP_BUTTON.just_clicked and variables.PLAY:
-        variables.PLAY = False  # We stop the simulation
+    if STOP_BUTTON.just_clicked:
+        if variables.PLAY:
+            variables.PLAY = False  # We stop the simulation
+        if variables.DISPLAY_GARAGE:
+            delete_garage()
 
     # Pause button
     variables.PAUSE = PAUSE_BUTTON.activate()  # Draw the pause button
@@ -100,8 +104,10 @@ def detect_buttons_click():
 
     # Start button
     variables.START = START_BUTTON.activate()  # Draw the start button
-    if START_BUTTON.just_clicked and variables.START:
+    if START_BUTTON.just_clicked:
         variables.PLAY = True  # We start the simulation
+        if variables.DISPLAY_GARAGE:
+            delete_garage()  # We erase the garage
     if variables.START and variables.PAUSE:    # We also resume the simulation if the start button is pressed
         unpause()  # We unpause the simulation
 
@@ -134,10 +140,13 @@ def detect_buttons_click():
     if GARAGE_BUTTON.just_clicked:  # Garage button is just clicked
         if variables.DISPLAY_GARAGE:
             pause()
-            display_garage()
+            init_garage()
         else:
             unpause()
-            erase_garage()
+            delete_garage()
+
+    if variables.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
+        display_garage()
 
 
 def pause(from_button=False):
@@ -167,6 +176,12 @@ def unpause(from_button=False):
         PAUSE_BUTTON.activate_button()  # We uncheck the pause button
 
     if variables.DISPLAY_GARAGE:
-        erase_garage()
+        delete_garage()
 
     variables.DURATION_PAUSES += time.time() - variables.START_TIME_PAUSE  # We add the duration of the pause to the total duration of the pause
+
+
+def delete_garage():
+    variables.DISPLAY_GARAGE = False
+    GARAGE_BUTTON.activated = False
+    erase_garage()

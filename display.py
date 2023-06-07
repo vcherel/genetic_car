@@ -1,6 +1,6 @@
 import pygame  # To use pygame
 import variables  # Import the variables
-from constants import WINDOW, RADIUS_CHECKPOINT, FONT, RECT_GARAGE, LARGE_FONT  # Import the constants
+from constants import WINDOW, RADIUS_CHECKPOINT, FONT  # Import the constants
 from utils import text_rec  # Import the text_rec function
 
 
@@ -31,22 +31,3 @@ def display_text_ui(caption, pos):
     text = FONT.render(caption, True, (0, 0, 0), (128, 128, 128))  # Create the text
     WINDOW.blit(text, pos)  # Draw the text
     variables.RECTS_BLIT_UI.append(text_rec(text, pos))  # Add the rectangle of the text to the list of rectangles to blit
-
-
-def display_garage():
-    """
-    Display the garage
-    """
-    # Create rectangles for the garage
-    pygame.draw.rect(WINDOW, (128, 128, 128), RECT_GARAGE, 0)
-    pygame.draw.rect(WINDOW, (115, 205, 255), RECT_GARAGE, 2)
-    WINDOW.blit(LARGE_FONT.render("Super garage", True, (0, 0, 0), (128, 128, 128)), (RECT_GARAGE[0] + 165, RECT_GARAGE[1] + 10))
-
-
-def erase_garage():
-    """
-    Erase the garage
-    """
-    rect = pygame.Rect(RECT_GARAGE)  # We create a rectangle with the position of the garage
-    WINDOW.blit(variables.BACKGROUND, rect, rect)  # We erase the garage
-    variables.DISPLAY_GARAGE = False  # We stop the display of the garage
