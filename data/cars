@@ -1,1 +1,7 @@
 run_1_generation_1 30 51 75 51 60 17
+run_2_generation_1 30 51 90 85 90 17
+run_2_generation_2 30 51 90 68 90 17
+run_2_generation_3 30 51 90 68 90 17
+run_2_generation_4 30 51 90 68 90 17
+run_2_generation_5 30 51 90 68 90 17
+run_4_generation_1 60 51 90 102 90 17

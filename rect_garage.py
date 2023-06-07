@@ -1,6 +1,5 @@
 import pygame  # Import pygame to load the image of the button
 import variables  # Import the variables
-from car import Car  # Import the car
 from button import Button  # Import the button class
 from constants import WINDOW, FONT  # Import the constants
 
@@ -49,15 +48,13 @@ class RectGarage:
         WINDOW.blit(FONT.render(self.name, True, (0, 0, 0), (128, 128, 128)),
                     (self.pos[0] + 10, self.pos[1] + 10))
 
-        variables.CAR_FROM_GARAGE = []  # We reset the list of the cars from the garage
-
         # We add the button
         if self.button.check_state():
             dict_checked[self.id] = True  # We take in memory the state of the button
             if type(self.genetic is list):
                 for genetic in self.genetic:
-                    variables.CAR_FROM_GARAGE.append(Car(genetic, view_only=True))
+                    variables.GENETICS_FROM_GARAGE.append(genetic)
             else:
-                variables.CAR_FROM_GARAGE.append(Car(self.genetic, view_only=True))
+                variables.GENETICS_FROM_GARAGE.append(self.genetic)
         else:
             dict_checked[self.id] = False  # We take in memory the state of the button

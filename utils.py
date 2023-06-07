@@ -135,6 +135,31 @@ def text_rec(text, pos):
     return rect
 
 
+def convert_to_grayscale(image):
+    """
+    Convert an image to grayscale
+    """
+    # Create a new surface with the same dimensions and transparency settings as the original image
+    grayscale_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
+    grayscale_image.convert_alpha()
+
+    # Iterate over each pixel in the original image
+    for x in range(image.get_width()):
+        for y in range(image.get_height()):
+            # Get the color of the pixel at (x, y)
+            color = image.get_at((x, y))
+
+            # Check if the pixel is transparent
+            if color.a != 0:
+                # Calculate the grayscale value using the average of the RGB components
+                gray_value = sum(color[:3]) // 3
+
+                # Set the pixel in the grayscale image to the gray value
+                grayscale_image.set_at((x, y), (gray_value, gray_value, gray_value, color.a))
+
+    return grayscale_image
+
+
 def exit_game():
     """
     Exit the game

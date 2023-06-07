@@ -2,6 +2,8 @@ import pygame  # To use pygame
 import variables  # Import the variables
 from constants import WINDOW, LARGE_FONT, FONT  # Import the constants
 from rect_garage import RectGarage  # Import the rectangle garage
+from car import Car  # Import the car
+
 
 RECT_GARAGE = (500, 125, 500, 550)  # Position of the garage
 NB_RECTANGLE_MAX = 10  # Maximum number of rectangle in the garage
@@ -63,6 +65,8 @@ def display_garage():
 
         CHANGE_PAGE = False  # We don't have to change the page of the garage anymore
 
+    variables.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
+
     for rect_garage in TAB_RECTANGLE:  # For each rectangle in the garage
         rect_garage.draw()  # We draw the next rectangle in the garage
 
@@ -104,10 +108,10 @@ def add_garage_cars(cars):
     """
     Add the cars from the garage to the list of cars
     """
-    if variables.CAR_FROM_GARAGE:  # If we have a car from the garage
-        if type(variables.CAR_FROM_GARAGE) is list:  # If we have a car from the garage
-            for car in variables.CAR_FROM_GARAGE:
-                cars.append(car)  # Add cars from the garage to the list
+    if variables.GENETICS_FROM_GARAGE:  # If we have a car from the garage
+        if type(variables.GENETICS_FROM_GARAGE) is list:  # If we have a car from the garage
+            for gen in variables.GENETICS_FROM_GARAGE:
+                cars.append(Car(gen, view_only=True))  # Add cars from the garage to the list
         else:
-            cars.append(variables.CAR_FROM_GARAGE)  # Add the car from the garage to the list
+            cars.append(Car(variables.GENETICS_FROM_GARAGE, view_only=True))  # Add the car from the garage to the list
     return cars

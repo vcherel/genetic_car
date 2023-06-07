@@ -61,10 +61,10 @@ def play(cars=None):
     if cars is None:  # If it is the first time we play
         cars = [Car() for _ in range(variables.NB_CARS)]  # List of cars
         cars = add_garage_cars(cars)  # Add the cars in the garage
-        init_variables()
+        init_variables(len(cars))
 
     else:           # If we already played
-        init_variables(replay=True)  # Initialize the variables
+        init_variables(len(cars), replay=True)  # Initialize the variables
 
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action

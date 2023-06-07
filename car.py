@@ -35,12 +35,10 @@ class Car:
         self.rotated_image = self.image  # Rotated image of the car
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
 
-        if view_only:  # If the car is in view only mode, we don't need to update its state
-            self.score = -1
-            self.next_checkpoint = -1
-        else:
-            self.next_checkpoint = 0  # Next checkpoint to reach
-            self.score = 0  # Score of the car
+        self.view_only = view_only  # True if the car is in view only mode, False otherwise
+
+        self.next_checkpoint = 0  # Next checkpoint to reach
+        self.score = 0  # Score of the car
 
         self.points_detection_cone = []  # Points of the detection cone if DEBUG is True
 
@@ -57,8 +55,7 @@ class Car:
         """
         Move the car and update its state
         """
-        if self.score != -1:  # If the car is not in view only mode
-            self.detect_checkpoint()  # Detect if the car has reached a checkpoint
+        self.detect_checkpoint()  # Detect if the car has reached a checkpoint
         self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead
@@ -192,8 +189,7 @@ class Car:
         Kill the car
         """
         self.dead = True  # The car is dead
-        if self.score != -1:   # If the car is not in view only mode
-            variables.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
+        variables.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
 
     def draw(self):
         """

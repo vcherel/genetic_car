@@ -1,7 +1,7 @@
 import time  # To use time
 import pygame  # To use pygame
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN, CAR_SIZES, TIME_GENERATION, START_POSITIONS  # Import the screen size
-from utils import scale_image  # Import the scale_image function
+from utils import scale_image, convert_to_grayscale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
 
 DEBUG = False  # True for debug mode, False for normal mode
@@ -47,7 +47,7 @@ NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
 
 DISPLAY_GARAGE = False  # True to see the garage
-CAR_FROM_GARAGE = []  # Car from the garage
+GENETICS_FROM_GARAGE = []  # Car from the garage
 
 
 def change_map(num):
@@ -63,7 +63,7 @@ def change_map(num):
     BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
     RED_CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
-    GREY_CAR_IMAGE = scale_image(pygame.image.load("images/grey_car.png"), CAR_SIZES[NUM_MAP])    # Image of the car in view only mode
+    GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
     START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
 
     CHECKPOINTS = []  # List of checkpoints
@@ -80,10 +80,13 @@ def change_map(num):
             CHECKPOINTS.append((int(a), int(b)))
 
 
-def init_variables(replay=False):
+def init_variables(nb_cars, replay=False):
+    """
+    Initialize the variables of the game (number of car alive, time remaining, start time, ...)
+    """
     global NB_CARS_ALIVE, TIME_REMAINING, START_TIME, DURATION_PAUSES, DISPLAY_GARAGE, NUM_GENERATION, ACTUAL_ID_MEMORY_GENETIC
 
-    NB_CARS_ALIVE = NB_CARS  # Number of cars alive
+    NB_CARS_ALIVE = nb_cars  # Number of cars alive
     TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
     START_TIME = time.time()  # Start time of the generation
     DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
