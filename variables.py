@@ -26,7 +26,9 @@ START_TIME = 0  # Start time of the genetic algorithm
 
 NUM_MAP = 0  # Number of the map
 START_POSITION = None  # Start position of the car
-CAR_IMAGE = None  # Image of the car
+
+RED_CAR_IMAGE = None  # Image of the original car
+GREY_CAR_IMAGE = None  # Image of the car in view only mode
 
 MEMORY_CARS = {}  # Memory of the cars : {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}
 ACTUAL_ID_MEMORY_GENETIC = 0  # Biggest id of the memory for the genetic cars
@@ -45,6 +47,7 @@ NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
 
 DISPLAY_GARAGE = False  # True to see the garage
+CAR_FROM_GARAGE = []  # Car from the garage
 
 
 def change_map(num):
@@ -54,12 +57,13 @@ def change_map(num):
     Args:
         num (int): number of the new map
     """
-    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, CAR_IMAGE, CHECKPOINTS, START_POSITION
+    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, CHECKPOINTS, START_POSITION
     NUM_MAP = num  # New map number
 
     BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), (WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
-    CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
+    RED_CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
+    GREY_CAR_IMAGE = scale_image(pygame.image.load("images/grey_car.png"), CAR_SIZES[NUM_MAP])    # Image of the car in view only mode
     START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
 
     CHECKPOINTS = []  # List of checkpoints

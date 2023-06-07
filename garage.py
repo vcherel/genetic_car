@@ -46,14 +46,16 @@ def display_garage():
         TAB_RECTANGLE = []  # We reset the list of the rectangle in the garage
 
         # Create the rectangles for the pages
+        num = 0   # The number to identify the id of the rectangle
         for key in variables.MEMORY_CARS:
             if NB_RECTANGLE_MAX * ACTUAL_PAGE <= NB_RECTANGLE < NB_RECTANGLE_MAX * (ACTUAL_PAGE + 1):  # If the rectangle is in the good page
                 if key == "dice":
                     for car in variables.MEMORY_CARS.get(key):
-                        TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Dé " + car[0], car[1]))
+                        TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Dé " + car[0], num, car[1]))
                 else:
-                    TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Génération " + str(key), variables.MEMORY_CARS.get(key)))
+                    TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Génération " + str(key), num, variables.MEMORY_CARS.get(key)))
 
+                num += 1  # We add one to the number to identify the id of the rectangle
                 # We change the values of the variables
                 update_variables()
 
@@ -62,7 +64,7 @@ def display_garage():
         CHANGE_PAGE = False  # We don't have to change the page of the garage anymore
 
     for rect_garage in TAB_RECTANGLE:  # For each rectangle in the garage
-        draw_next_rect(rect_garage)  # We draw the next rectangle in the garage
+        rect_garage.draw()  # We draw the next rectangle in the garage
 
 
 def erase_garage():
@@ -71,19 +73,6 @@ def erase_garage():
     """
     rect = pygame.Rect(RECT_GARAGE)  # We create a rectangle with the position of the garage
     WINDOW.blit(variables.BACKGROUND, rect, rect)  # We erase the garage
-
-
-def draw_next_rect(rect_garage):
-    """
-    Draw the next rectangle in the garage
-
-    Args:
-        rect_garage (RectGarage): rectangle to draw
-    """
-    # We draw the rectangle
-    pygame.draw.rect(WINDOW, (0, 0, 0), (rect_garage.pos[0], rect_garage.pos[1], 225, 75), 2)
-    # We write the name of the save
-    WINDOW.blit(FONT.render(rect_garage.name, True, (0, 0, 0), (128, 128, 128)), (rect_garage.pos[0] + 10, rect_garage.pos[1] + 10))
 
 
 def reset_variables():

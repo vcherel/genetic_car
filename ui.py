@@ -7,38 +7,38 @@ from display import display_text_ui  # Import functions from display
 from utils import exit_game  # Import the exit_game function
 from button import Button  # Import the button
 
-DEBUG_BUTTON = Button()  # Button to activate the debug mode
-STOP_BUTTON = Button()  # Button to stop the game
-PAUSE_BUTTON = Button()  # Button to pause the game
-START_BUTTON = Button()  # Button to start the game
-NB_CARS_BUTTON = Button()  # Button to change the number of cars
-GARAGE_BUTTON = Button()  # Button to open the garage
-TEXT_NB_CARS = Button()  # Text to display the number of cars
+debug_button = Button()  # Button to activate the debug mode
+stop_button = Button()  # Button to stop the game
+pause_button = Button()  # Button to pause the game
+start_button = Button()  # Button to start the game
+nb_cars_button = Button()  # Button to change the number of cars
+garage_button = Button()  # Button to open the garage
+text_nb_cars = Button()  # Text to display the number of cars
 
 
 def init_ui():
-    global DEBUG_BUTTON, STOP_BUTTON, PAUSE_BUTTON, START_BUTTON, NB_CARS_BUTTON, GARAGE_BUTTON, TEXT_NB_CARS
+    global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, text_nb_cars
     # Buttons
-    DEBUG_BUTTON = Button(1435, 642, pygame.image.load("images/checkbox_1.png"),
+    debug_button = Button(1435, 642, pygame.image.load("images/checkbox_1.png"),
                           pygame.image.load("images/checkbox_2.png"),
                           pygame.image.load("images/checkbox_3.png"), check_box=True, scale=0.03)
-    STOP_BUTTON = Button(1420, 4, pygame.image.load("images/stop_button.png"), scale=0.1)
-    PAUSE_BUTTON = Button(1417, 56, pygame.image.load("images/pause_button.png"), check_box=True, scale=0.11)
-    START_BUTTON = Button(1310, 15, pygame.image.load("images/start_button.png"), scale=0.18)
-    NB_CARS_BUTTON = Button(1049, 58, pygame.image.load("images/writing_rectangle_1.png"),
+    stop_button = Button(1420, 4, pygame.image.load("images/stop_button.png"), scale=0.1)
+    pause_button = Button(1417, 56, pygame.image.load("images/pause_button.png"), check_box=True, scale=0.11)
+    start_button = Button(1310, 15, pygame.image.load("images/start_button.png"), scale=0.18)
+    nb_cars_button = Button(1049, 58, pygame.image.load("images/writing_rectangle_1.png"),
                             pygame.image.load("images/writing_rectangle_2.png"),
                             pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.8)
-    GARAGE_BUTTON = Button(400, 30, pygame.image.load("images/garage_button.png"), scale=0.2, check_box=True)
+    garage_button = Button(400, 30, pygame.image.load("images/garage_button.png"), scale=0.2, check_box=True)
 
     # Texts
-    TEXT_NB_CARS = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
+    text_nb_cars = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
 
 
 def detect_events_ui():
     """
     Detect events in the ui and do the corresponding action
     """
-    global TEXT_NB_CARS
+    global text_nb_cars
 
     # Pygame events
     for event in pygame.event.get():
@@ -64,8 +64,8 @@ def detect_events_ui():
 
                     variables.STR_NB_CARS = str(variables.NB_CARS)  # Reset the text
                     variables.CHANGE_NB_CARS = False  # Stop the change of the nb cars
-                    NB_CARS_BUTTON.activate_button()  # Uncheck the button
-                    TEXT_NB_CARS = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
+                    nb_cars_button.activate_button()  # Uncheck the button
+                    text_nb_cars = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
 
                 elif event.key == pygame.K_BACKSPACE:
                     # Remove the last character
@@ -79,32 +79,32 @@ def detect_buttons_click():
     """
     Draw the buttons and change the state of the variables
     """
-    global TEXT_NB_CARS
+    global text_nb_cars
 
     # Debug button
-    variables.DEBUG = DEBUG_BUTTON.activate()  # Draw the debug button
-    if DEBUG_BUTTON.just_clicked and not variables.DEBUG:
+    variables.DEBUG = debug_button.check_state()  # Draw the debug button
+    if debug_button.just_clicked and not variables.DEBUG:
         WINDOW.blit(variables.BACKGROUND, (0, 0))  # We redraw the background
 
     # Stop button
-    STOP_BUTTON.activate()  # Draw the stop button
-    if STOP_BUTTON.just_clicked:
+    stop_button.check_state()  # Draw the stop button
+    if stop_button.just_clicked:
         if variables.PLAY:
             variables.PLAY = False  # We stop the simulation
         if variables.DISPLAY_GARAGE:
             delete_garage()
 
     # Pause button
-    variables.PAUSE = PAUSE_BUTTON.activate()  # Draw the pause button
-    if PAUSE_BUTTON.just_clicked:  # Pause button is just clicked
+    variables.PAUSE = pause_button.check_state()  # Draw the pause button
+    if pause_button.just_clicked:  # Pause button is just clicked
         if variables.PAUSE:
             pause(from_button=True)  # We pause the simulation
         else:
             unpause(from_button=True)  # We unpause the simulation
 
     # Start button
-    variables.START = START_BUTTON.activate()  # Draw the start button
-    if START_BUTTON.just_clicked:
+    variables.START = start_button.check_state()  # Draw the start button
+    if start_button.just_clicked:
         variables.PLAY = True  # We start the simulation
         if variables.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
@@ -112,10 +112,10 @@ def detect_buttons_click():
         unpause()  # We unpause the simulation
 
     # Nb cars button
-    variables.CHANGE_NB_CARS = NB_CARS_BUTTON.activate()  # Draw the nb cars button
+    variables.CHANGE_NB_CARS = nb_cars_button.check_state()  # Draw the nb cars button
     if variables.CHANGE_NB_CARS:
-        TEXT_NB_CARS = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
-    WINDOW.blit(TEXT_NB_CARS, (1200, 62))  # Draw the text of the nb cars button
+        text_nb_cars = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
+    WINDOW.blit(text_nb_cars, (1200, 62))  # Draw the text of the nb cars button
 
     # FPS
     WINDOW.blit(SMALL_FONT.render("FPS : " + str(int(CLOCK.get_fps())), True, (0, 0, 0), (128, 128, 128)), (1, 1))
@@ -136,8 +136,8 @@ def detect_buttons_click():
     display_text_ui("Génération : " + str(variables.NUM_GENERATION), (1, 80))
 
     # Garage
-    variables.DISPLAY_GARAGE = GARAGE_BUTTON.activate()  # Draw the garage button
-    if GARAGE_BUTTON.just_clicked:  # Garage button is just clicked
+    variables.DISPLAY_GARAGE = garage_button.check_state()  # Draw the garage button
+    if garage_button.just_clicked:  # Garage button is just clicked
         if variables.DISPLAY_GARAGE:
             pause()
             init_garage()
@@ -158,7 +158,7 @@ def pause(from_button=False):
     """
     if not from_button:  # If the pause is not from the pause button we have to check the button
         variables.PAUSE = True  # We pause the simulation
-        PAUSE_BUTTON.deactivate_button()  # We check the pause button
+        pause_button.deactivate_button()  # We check the pause button
 
     variables.START_TIME_PAUSE = time.time()  # We get the time when the pause started
     variables.TIME_REMAINING_PAUSE = int(variables.TIME_REMAINING + variables.DURATION_PAUSES - (time.time() - variables.START_TIME)) + 1  # We save the time remaining before the pause
@@ -173,7 +173,7 @@ def unpause(from_button=False):
     """
     if not from_button:  # If the unpause is not from the pause button we have to uncheck the button
         variables.PAUSE = False  # We unpause the simulation
-        PAUSE_BUTTON.activate_button()  # We uncheck the pause button
+        pause_button.activate_button()  # We uncheck the pause button
 
     if variables.DISPLAY_GARAGE:
         delete_garage()
@@ -183,5 +183,5 @@ def unpause(from_button=False):
 
 def delete_garage():
     variables.DISPLAY_GARAGE = False
-    GARAGE_BUTTON.activated = False
+    garage_button.activated = False
     erase_garage()

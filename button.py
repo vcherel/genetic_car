@@ -35,7 +35,7 @@ class Button:
             else:
                 self.image_clicked = None  # Image of the button when it is clicked
 
-    def activate(self):
+    def check_state(self):
         """
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
 
