@@ -7,7 +7,7 @@ START_TIME = time.time()  # Start time of the game
 RADIUS_CHECKPOINT = 80  # Radius of the checkpoint
 
 CLOCK = pygame.time.Clock()  # Clock
-FPS = 60  # Frame per second
+FPS = 144  # Frame per second
 
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 SEE_CURSOR = False  # True to see the cursor position and color when clicking

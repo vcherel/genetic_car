@@ -16,7 +16,10 @@ def apply_genetic(cars):
     """
     cars = sorted(cars, key=lambda car: car.score, reverse=True)  # Sort the cars by score
     best_car = Car(cars[0].genetic)  # Get the best car
-    variables.MEMORY_CARS.append(["run_" + str(variables.ACTUAL_ID_MEMORY) + "_generation_" + str(variables.NUM_GENERATION), best_car.genetic])  # Add the best car to the memory
+    if variables.MEMORY_CARS.get(variables.ACTUAL_ID_MEMORY_GENETIC) is None:  # If it is the first time we run the genetic algorithm
+        variables.MEMORY_CARS[variables.ACTUAL_ID_MEMORY_GENETIC] = [[1, best_car.genetic]]  # Add the best car to the memory
+    else:
+        variables.MEMORY_CARS[variables.ACTUAL_ID_MEMORY_GENETIC].append((variables.NUM_GENERATION, best_car.genetic))  # Add the best car to the memory
 
     cars = select_best_cars(cars)  # Select the best cars
     cars = mutate(cars)  # Mutate the cars

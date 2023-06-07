@@ -28,8 +28,9 @@ NUM_MAP = 0  # Number of the map
 START_POSITION = None  # Start position of the car
 CAR_IMAGE = None  # Image of the car
 
-MEMORY_CARS = []  # Memory of the cars
-ACTUAL_ID_MEMORY = 0  # Biggest id of the memory
+MEMORY_CARS = {}  # Memory of the cars : {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}
+ACTUAL_ID_MEMORY_GENETIC = 0  # Biggest id of the memory for the genetic cars
+ACTUAL_ID_MEMORY_DICE = 0  # Biggest id of the memory for the dice cars
 
 NB_CARS = 0  # Number of cars
 CHANGE_NB_CARS = False  # Change the number of cars
@@ -40,7 +41,7 @@ BACKGROUND_MASK = None    # Mask of the black pixels of the background (used to 
 
 
 USE_GENETIC = True  # True to use the genetic algorithm, False to just play
-NUM_GENERATION = 0  # Number of the generation
+NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
 
 DISPLAY_GARAGE = False  # True to see the garage
@@ -75,22 +76,26 @@ def change_map(num):
             CHECKPOINTS.append((int(a), int(b)))
 
 
-def init_variables():
-    global NB_CARS_ALIVE, TIME_REMAINING, START_TIME, DURATION_PAUSES, DISPLAY_GARAGE, ACTUAL_ID_MEMORY
+def init_variables(replay=False):
+    global NB_CARS_ALIVE, TIME_REMAINING, START_TIME, DURATION_PAUSES, DISPLAY_GARAGE, NUM_GENERATION, ACTUAL_ID_MEMORY_GENETIC
 
     NB_CARS_ALIVE = NB_CARS  # Number of cars alive
     TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
     START_TIME = time.time()  # Start time of the generation
     DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
     DISPLAY_GARAGE = False  # We don't display the garage
-    ACTUAL_ID_MEMORY += 1  # We increment the actual id of the memory
+    if replay:      # If we replay from the last cars
+        NUM_GENERATION += 1
+    else:           # If we start a new run
+        NUM_GENERATION = 1  # Number of the generation
+        ACTUAL_ID_MEMORY_GENETIC += 1  # We increment the id of the memory
 
 
 def load_variables():
     """
     Load the variables of the game (number of the map, number of cars, cars, ...)
     """
-    global NUM_MAP, NB_CARS, STR_NB_CARS, ACTUAL_ID_MEMORY
+    global NUM_MAP, NB_CARS, STR_NB_CARS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE
 
     # We open the file parameters to read the number of the map and the number of cars
     with open("data/parameters", "r") as file_parameters_read:
@@ -110,16 +115,32 @@ def load_variables():
         name1   width_fast1   height_fast1   width_medium1   height_medium1   width_slow1   height_slow1
         name2   width_fast2   height_fast2   width_medium2   height_medium2   width_slow2   height_slow2
         ...
+        
+        Format of names for genetic cars:
+        run_x_generation_y
+        Format of names for dice cars:
+        dice_x_number_y
         """
         cars = file_cars_read.readlines()
         for car in cars:
             car = car.split(" ")
             # We add the car to the memory
-            MEMORY_CARS.append(
-                [car[0], Genetic(width_fast=int(car[1]), height_fast=int(car[2]), width_medium=int(car[3]),
-                                 height_medium=int(car[4]), width_slow=int(car[5]), height_slow=int(car[6]))])
-            if int(car[0][0]) > ACTUAL_ID_MEMORY:  # We change the biggest id of the memory if necessary
-                ACTUAL_ID_MEMORY = int(car[0][0])
+            id_run = int(car[0].split("_")[1])
+            id_generation = int(car[0].split("_")[3])
+            if MEMORY_CARS.get(id_run) is None:
+                MEMORY_CARS[id_run] = [(
+                    id_generation, Genetic(width_fast=int(car[1]), height_fast=int(car[2]), width_medium=int(car[3]),
+                                           height_medium=int(car[4]), width_slow=int(car[5]), height_slow=int(car[6])))]
+            else:
+                MEMORY_CARS.get(id_run).append(
+                    (id_generation, Genetic(width_fast=int(car[1]), height_fast=int(car[2]), width_medium=int(car[3]),
+                                            height_medium=int(car[4]), width_slow=int(car[5]), height_slow=int(car[6]))))
+            if car[0].startswith("run") and id_run > ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
+                ACTUAL_ID_MEMORY_GENETIC = id_run
+            elif car[0].startswith("dice") and id_run > ACTUAL_ID_MEMORY_DICE:
+                ACTUAL_ID_MEMORY_DICE = id_run
+
+        print(MEMORY_CARS)
 
 
 def save_variables():
@@ -131,7 +152,16 @@ def save_variables():
         file_parameters_write.write(str(NUM_MAP) + "\n" + str(NB_CARS))
 
     with open("data/cars", "w") as file_cars_write:
-        for car in MEMORY_CARS:
-            file_cars_write.write(car[0] + " " + str(car[1].width_fast) + " " + str(car[1].height_fast) + " " +
-                                  str(car[1].width_medium) + " " + str(car[1].height_medium) + " " +
-                                  str(car[1].width_slow) + " " + str(car[1].height_slow) + "\n")
+        for key in MEMORY_CARS.keys():
+            if key == "dice":
+                for car in MEMORY_CARS.get(key):
+                    file_cars_write.write("dice_" + str(key) + "_number_" + str(car[0]) + " " +
+                                          str(car[1].width_fast) + " " + str(car[1].height_fast) + " " +
+                                          str(car[1].width_medium) + " " + str(car[1].height_medium) + " " +
+                                          str(car[1].width_slow) + " " + str(car[1].height_slow) + "\n")
+            else:
+                for car in MEMORY_CARS.get(key):
+                    file_cars_write.write("run_" + str(key) + "_generation_" + str(car[0]) + " " +
+                                          str(car[1].width_fast) + " " + str(car[1].height_fast) + " " +
+                                          str(car[1].width_medium) + " " + str(car[1].height_medium) + " " +
+                                          str(car[1].width_slow) + " " + str(car[1].height_slow) + "\n")

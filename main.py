@@ -15,7 +15,6 @@ def open_window():
     """
     Open the window of the game and manage the events until the game is started or closed
     """
-    init_variables()  # Initialize the variables
     WINDOW.blit(variables.BACKGROUND, (0, 0))  # Screen initialization
 
     while 1:
@@ -60,8 +59,9 @@ def play(cars=None):
     """
     if cars is None:  # If it is the first time we play
         cars = [Car() for _ in range(variables.NB_CARS)]  # List of cars
+        init_variables()
     else:           # If we already played
-        init_variables()  # Initialize the variables
+        init_variables(replay=True)  # Initialize the variables
 
     while variables.PLAY:  # While the game is not stopped
         detect_events_ui()  # Detect events in the ui and do the corresponding action
@@ -101,7 +101,6 @@ def play(cars=None):
             if variables.NB_CARS_ALIVE == 0 or time.time() - variables.START_TIME - variables.DURATION_PAUSES > variables.TIME_REMAINING:    # If all cars are dead
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
                 if variables.USE_GENETIC:
-                    variables.NUM_GENERATION += 1  # Increment the number of generation
                     cars = apply_genetic(cars)  # Genetic algorithm
                     play(cars)  # Restart the game with the new cars
                 else:
