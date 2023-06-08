@@ -88,9 +88,12 @@ def draw_circles(circles_to_draw, image):
         cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
 
 
-def optimize_parameters():
+def optimize_parameters(image):
     """
     Optimize the parameters of the HoughCircles function by testing different values and printing the results
+
+    Args:
+        image (numpy.ndarray): Image on which to optimize the parameters
     """
     dico_p1 = {}
     dico_p2 = {}
@@ -101,7 +104,7 @@ def optimize_parameters():
         for p2 in range(1, 200):
             for dp in range(1, 30):
                 if p1 > p2:
-                    c = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=dp / 10, minDist=1, param1=p1, param2=p2, minRadius=1, maxRadius=30)
+                    c = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=dp / 10, minDist=1, param1=p1, param2=p2, minRadius=1, maxRadius=30)
                     if c is not None and len(c[0, :]) == 5:
                         if p1 not in dico_p1:
                             dico_p1[p1] = 1
@@ -124,50 +127,69 @@ def optimize_parameters():
     print(dico_p1, dico_p2, dico_dp)
 
 
+def recognize_score(color):
+    """
+    Recognize the score of the dice and display it on the image
 
-capture_stabilized_image()  # We capture a stabilized image
+    Args:
+        color (str): Color of the dice
+    """
+    # Create a VideoCapture object
+    cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
-img = cv2.imread('camera/image.jpg')  # We read the image
+    while True:
+        ret, frame = cap.read()  # Read a frame from the camera
 
-rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # We convert the image from BGR to RGB
-gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
+        rgb_img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # We convert the image from BGR to RGB
+        gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
 
-gray_img = cv2.medianBlur(gray_img, 5)  # We apply a median blur to the image to erase useless details
-plt.imshow(gray_img, cmap='gray')  # Gray image
+        gray_img = cv2.medianBlur(gray_img, 5)  # We apply a median blur to the image to erase useless details
 
-thresh = cv2.threshold(gray_img, 30, 255, cv2.THRESH_BINARY_INV)[1]  # We apply a threshold to the image : it turns the image into a black and white image
-plt.imshow(thresh, cmap='gray')  # Black and white image
+        thresh = cv2.threshold(gray_img, 30, 255, cv2.THRESH_BINARY_INV)[
+            1]  # We apply a threshold to the image : it turns the image into a black and white image
 
-detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges
-plt.imshow(detected_edges, cmap='gray')  # Edges detected
+        detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges
 
-# Draw the circles around the points of the dice
-circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=1.6, minDist=5, param1=63, param2=25, minRadius=2, maxRadius=10)  # Find the circles in the image (corresponding to the points of the dice)
-if circles is not None:
-    circles = circles[0, :]  # The array is in an array, we take the first element
-    draw_circles(circles, rgb_img)  # We draw the circles on the image
+        # Draw the circles around the points of the dice
+        circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=1.6, minDist=5, param1=63,
+                                   param2=25, minRadius=2,
+                                   maxRadius=10)  # Find the circles in the image (corresponding to the points of the dice)
+        if circles is not None:
+            circles = circles[0, :]  # The array is in an array, we take the first element
+            draw_circles(circles, rgb_img)  # We draw the circles on the image
+
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (
+        3, 3))  # We create a kernel to close the edges (a rectangular structuring element of size 2x2)
+        close = cv2.morphologyEx(detected_edges, cv2.MORPH_CLOSE, kernel,
+                                 iterations=2)  # Close the edges of the dice
+
+        # Draw the rectangle around the dice
+        contours, hierarchy = cv2.findContours(close, cv2.RETR_EXTERNAL,
+                                               cv2.CHAIN_APPROX_SIMPLE)  # Find the contours of the dice
+        # cv2.drawContours(rgb_img, contours, -1, (0, 0, 255), 3)  # Draw the contour of the dice
+
+        if contours:
+            x0, y0, w0, h0 = cv2.boundingRect(contours[
+                                                  0])  # Find the coordinates of the rectangle around the dice (x0, y0) is the upper left corner, w0 and h0 are the width and height of the rectangle
+            cv2.rectangle(rgb_img, (x0, y0), (x0 + w0, y0 + h0), (255, 0, 0),
+                          5)  # Draw the rectangle around the dice
+
+            if circles is not None:
+                score = len(circles)  # We count the number of circles
+            else:
+                score = 0
+            cv2.putText(rgb_img, f'score: {score}', (x0, y0), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255),
+                        2)  # We write the value of the dice on the image
+
+        cv2.imshow('Camera', rgb_img)  # Display the frame
+
+        # If the user presses 'q', we exit the loop
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()  # Release the VideoCapture object
+    cv2.destroyAllWindows()  # Destroy all the windows
 
 
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))  # We create a kernel to close the edges (a rectangular structuring element of size 2x2)
-close = cv2.morphologyEx(detected_edges, cv2.MORPH_CLOSE, kernel, iterations=2)  # Close the edges of the dice
-plt.imshow(close, cmap='gray')
-
-# Draw the rectangle around the dice
-contours, hierarchy = cv2.findContours(close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  # Find the contours of the dice
-# cv2.drawContours(rgb_img, contours, -1, (0, 0, 255), 3)  # Draw the contour of the dice
-
-x0, y0, w0, h0 = cv2.boundingRect(contours[0])  # Find the coordinates of the rectangle around the dice (x0, y0) is the upper left corner, w0 and h0 are the width and height of the rectangle
-cv2.rectangle(rgb_img, (x0, y0), (x0 + w0, y0 + h0), (255, 0, 0), 5)  # Draw the rectangle around the dice
-
-if circles is not None:
-    score = len(circles)  # We count the number of circles
-else:
-    score = 0
-
-cv2.putText(rgb_img, f'score: {score}', (x0, y0), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)  # We write the value of the dice on the image
-
-plt.imshow(rgb_img)
-plt.show()
-
-
-
+if __name__ == '__main__':
+    recognize_score('black')
