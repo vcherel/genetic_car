@@ -49,20 +49,20 @@ def display_garage():
 
         # Create the rectangles for the pages
         num = 0   # The number to identify the id of the rectangle
+
+        # We first add the rectangles for the dice
+        if variables.MEMORY_CARS.get("dice"):
+            for car in variables.MEMORY_CARS.get("dice"):
+                if NB_RECTANGLE_MAX * ACTUAL_PAGE <= NB_RECTANGLE < NB_RECTANGLE_MAX * (ACTUAL_PAGE + 1):  # If the rectangle is in the good page
+                    TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Dés " + str(car[0]), num, car[1]))
+                    num += 1  # We add one to the number to identify the id of the rectangle
+                    update_variables()  # We change the values of the variables
+                NB_RECTANGLE += 1  # We add one to the number of rectangle in the garage
+
+        # We add the rectangles for the genetics
         for key in variables.MEMORY_CARS:
-            if NB_RECTANGLE_MAX * ACTUAL_PAGE <= NB_RECTANGLE < NB_RECTANGLE_MAX * (ACTUAL_PAGE + 1):  # If the rectangle is in the good page
-
-                if key == "dice":
-                    for car in variables.MEMORY_CARS.get(key):
-                        if NB_RECTANGLE_MAX * ACTUAL_PAGE <= NB_RECTANGLE < NB_RECTANGLE_MAX * (ACTUAL_PAGE + 1):  # If the rectangle is in the good page
-                            TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Dés " + str(car[0]), num, car[1]))
-                            num += 1  # We add one to the number to identify the id of the rectangle
-                            update_variables()  # We change the values of the variables
-                        NB_RECTANGLE += 1  # We add one to the number of rectangle in the garage
-
-                else:
-                    TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Génétique " + str(key), num, variables.MEMORY_CARS.get(key)))
-
+            if NB_RECTANGLE_MAX * ACTUAL_PAGE <= NB_RECTANGLE < NB_RECTANGLE_MAX * (ACTUAL_PAGE + 1) and key != "dice":  # If the rectangle is in the good page and it's not the dice
+                TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Génétique " + str(key), num, variables.MEMORY_CARS.get(key)))
                 num += 1  # We add one to the number to identify the id of the rectangle
                 update_variables()  # We change the values of the variables
 

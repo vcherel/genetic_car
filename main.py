@@ -67,6 +67,8 @@ def play(cars=None):
         init_variables(len(cars), replay=True)  # Initialize the variables
 
     while variables.PLAY:  # While the game is not stopped
+        time_begin_turn = time.time()
+
         detect_events_ui()  # Detect events in the ui and do the corresponding action
 
         # If the game is paused
@@ -109,7 +111,8 @@ def play(cars=None):
                 else:
                     play()  # Restart the game
 
-            CLOCK.tick(FPS)  # Limit FPS
+        while time.time() - time_begin_turn < 1 / FPS:  # Wait to have the right FPS
+            pass
 
     open_window()  # Restart the game
 

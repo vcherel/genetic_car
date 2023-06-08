@@ -9,3 +9,10 @@ run_4_generation_1 90 102 90 85 30 17
 run_4_generation_2 90 102 90 17 30 17
 run_5_generation_1 60 34 75 68 90 17
 run_5_generation_2 75 34 75 68 90 17
+run_7_generation_1 15 51 90 34 60 34
+run_7_generation_2 15 51 90 34 60 17
+run_7_generation_3 15 51 90 34 60 17
+run_7_generation_4 15 51 90 34 60 17
+run_7_generation_5 15 68 75 34 60 17
+run_8_generation_1 60 85 90 85 90 51
+run_8_generation_2 60 85 90 85 90 51
