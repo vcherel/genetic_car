@@ -1,7 +1,7 @@
 import time  # To use time
 import pygame  # To use pygame
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN, CAR_SIZES, TIME_GENERATION, START_POSITIONS  # Import the screen size
-from utils import scale_image, convert_to_grayscale  # Import the utils functions
+from utils import scale_image, convert_to_grayscale, have_black_pixel # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
 
 DEBUG = False  # True for debug mode, False for normal mode
@@ -30,9 +30,16 @@ START_POSITION = None  # Start position of the car
 RED_CAR_IMAGE = None  # Image of the original car
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
 
-MEMORY_CARS = {}  # Memory of the cars : {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}
-ACTUAL_ID_MEMORY_GENETIC = 0  # Biggest id of the memory for the genetic cars
-ACTUAL_ID_MEMORY_DICE = 0  # Biggest id of the memory for the dice cars
+MEMORY_CARS = {}  # Memory of the cars
+"""
+Format of MEMORY_CARS:   {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}
+Format of car:   (id, Genetic)
+"""
+
+# car1 = (id, Genetic)
+
+ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
+ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
 NB_CARS = 0  # Number of cars
 CHANGE_NB_CARS = False  # Change the number of cars
@@ -47,7 +54,7 @@ NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
 
 DISPLAY_GARAGE = False  # True to see the garage
-GENETICS_FROM_GARAGE = []  # Car from the garage
+GENETICS_FROM_GARAGE = []  # Genetics from the garage
 
 
 def change_map(num):
@@ -64,6 +71,7 @@ def change_map(num):
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
     RED_CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
+
     START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
 
     CHECKPOINTS = []  # List of checkpoints
@@ -133,20 +141,28 @@ def load_variables():
             line = line.split(" ")
             # We add the car to the memory
             id_run = int(line[0].split("_")[1])
-            id_generation = int(line[0].split("_")[3])
+            genetic = Genetic(width_fast=int(line[1]), height_fast=int(line[2]), width_medium=int(line[3]),
+                              height_medium=int(line[4]), width_slow=int(line[5]), height_slow=int(line[6]))
 
-            if MEMORY_CARS.get(id_run) is None:
-                MEMORY_CARS[id_run] = [(
-                    id_generation, Genetic(width_fast=int(line[1]), height_fast=int(line[2]), width_medium=int(line[3]),
-                                           height_medium=int(line[4]), width_slow=int(line[5]), height_slow=int(line[6])))]
-            else:
-                MEMORY_CARS.get(id_run).append(
-                    (id_generation, Genetic(width_fast=int(line[1]), height_fast=int(line[2]), width_medium=int(line[3]),
-                                            height_medium=int(line[4]), width_slow=int(line[5]), height_slow=int(line[6]))))
-            if line[0].startswith("run") and id_run > ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
-                ACTUAL_ID_MEMORY_GENETIC = id_run
-            elif line[0].startswith("dice") and id_run > ACTUAL_ID_MEMORY_DICE:
-                ACTUAL_ID_MEMORY_DICE = id_run
+            if line[0].startswith("run"):   # If it's a genetic car
+                id_generation = int(line[0].split("_")[3])  # Id of the generation
+
+                if MEMORY_CARS.get(id_run):  # If the run doesn't exist in the memory
+                    MEMORY_CARS.get(id_run).append((id_generation, genetic))
+                else:   # If the run already exists in the memory
+                    MEMORY_CARS[id_run] = [(id_generation, genetic)]
+
+                if id_run > ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
+                    ACTUAL_ID_MEMORY_GENETIC = id_run
+
+            else:   # If it's a dice car
+                if MEMORY_CARS.get("dice"):  # If there is already a dice car in the memory
+                    MEMORY_CARS.get("dice").append((id_run, genetic))
+                else:   # If there is no dice car in the memory
+                    MEMORY_CARS["dice"] = [(id_run, genetic)]
+
+                if id_run > ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
+                    ACTUAL_ID_MEMORY_DICE = id_run
 
 
 def save_variables():
@@ -161,7 +177,7 @@ def save_variables():
         for key in MEMORY_CARS.keys():
             if key == "dice":
                 for car in MEMORY_CARS.get(key):
-                    file_cars_write.write("dice_" + str(key) + "_number_" + str(car[0]) + " " +
+                    file_cars_write.write("dice_" + str(car[0]) + " " +
                                           str(car[1].width_fast) + " " + str(car[1].height_fast) + " " +
                                           str(car[1].width_medium) + " " + str(car[1].height_medium) + " " +
                                           str(car[1].width_slow) + " " + str(car[1].height_slow) + "\n")

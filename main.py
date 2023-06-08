@@ -104,8 +104,7 @@ def play(cars=None):
             if variables.NB_CARS_ALIVE == 0 or time.time() - variables.START_TIME - variables.DURATION_PAUSES > variables.TIME_REMAINING:    # If all cars are dead
                 WINDOW.blit(variables.BACKGROUND, (0, 0))  # Reset the screen
                 if variables.USE_GENETIC:
-                    if cars:  # We check in case we don't have any cars
-                        cars = apply_genetic(cars)  # Genetic algorithm
+                    cars = apply_genetic(cars)  # Genetic algorithm
                     play(cars)  # Restart the game with the new cars
                 else:
                     play()  # Restart the game

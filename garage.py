@@ -51,15 +51,20 @@ def display_garage():
         num = 0   # The number to identify the id of the rectangle
         for key in variables.MEMORY_CARS:
             if NB_RECTANGLE_MAX * ACTUAL_PAGE <= NB_RECTANGLE < NB_RECTANGLE_MAX * (ACTUAL_PAGE + 1):  # If the rectangle is in the good page
+
                 if key == "dice":
                     for car in variables.MEMORY_CARS.get(key):
-                        TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Dé " + car[0], num, car[1]))
+                        if NB_RECTANGLE_MAX * ACTUAL_PAGE <= NB_RECTANGLE < NB_RECTANGLE_MAX * (ACTUAL_PAGE + 1):  # If the rectangle is in the good page
+                            TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Dés " + str(car[0]), num, car[1]))
+                            num += 1  # We add one to the number to identify the id of the rectangle
+                            update_variables()  # We change the values of the variables
+                        NB_RECTANGLE += 1  # We add one to the number of rectangle in the garage
+
                 else:
                     TAB_RECTANGLE.append(RectGarage((ACTUAL_X, ACTUAL_Y), "Génétique " + str(key), num, variables.MEMORY_CARS.get(key)))
 
                 num += 1  # We add one to the number to identify the id of the rectangle
-                # We change the values of the variables
-                update_variables()
+                update_variables()  # We change the values of the variables
 
             NB_RECTANGLE += 1  # We add one to the number of rectangle in the garage
 

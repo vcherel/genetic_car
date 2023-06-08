@@ -4,6 +4,7 @@ import variables  # Import the variables
 from constants import WINDOW, FONT, CLOCK, SMALL_FONT, SEE_CURSOR  # Import constants
 from garage import init_garage, display_garage, erase_garage  # Import functions from garage
 from display import display_text_ui  # Import functions from display
+from genetic import Genetic  # Import the genetic class
 from utils import exit_game  # Import the exit_game function
 from button import Button  # Import the button
 
@@ -13,11 +14,12 @@ pause_button = Button()  # Button to pause the game
 start_button = Button()  # Button to start the game
 nb_cars_button = Button()  # Button to change the number of cars
 garage_button = Button()  # Button to open the garage
+dice_button = Button()  # Button to see the dice
 text_nb_cars = Button()  # Text to display the number of cars
 
 
 def init_ui():
-    global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, text_nb_cars
+    global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, text_nb_cars
     # Buttons
     debug_button = Button(1435, 642, pygame.image.load("images/checkbox_1.png"),
                           pygame.image.load("images/checkbox_2.png"),
@@ -29,8 +31,9 @@ def init_ui():
                             pygame.image.load("images/writing_rectangle_2.png"),
                             pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.8)
     garage_button = Button(400, 30, pygame.image.load("images/garage_button.png"), scale=0.2, check_box=True)
+    dice_button = Button(600, 28, pygame.image.load("images/dice_button.png"), scale=0.4, check_box=False)
 
-    # Texts
+    # Text
     text_nb_cars = FONT.render(variables.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
 
 
@@ -147,6 +150,15 @@ def detect_buttons_click():
 
     if variables.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
         display_garage()
+
+    # Dice
+    dice_button.check_state()  # Draw the dice button
+    if dice_button.just_clicked:   # Dice button is just clicked
+        if variables.MEMORY_CARS.get("dice"):   # If the memory of the dice already exists
+            variables.MEMORY_CARS.get("dice").append((variables.ACTUAL_ID_MEMORY_DICE, Genetic()))
+        else:                               # If the memory of the dice doesn't exist
+            variables.MEMORY_CARS["dice"] = [(variables.ACTUAL_ID_MEMORY_DICE, Genetic())]
+        variables.ACTUAL_ID_MEMORY_DICE += 1
 
 
 def pause(from_button=False):

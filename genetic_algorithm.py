@@ -17,18 +17,19 @@ def apply_genetic(cars):
     """
     cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
     cars = sorted(cars, key=lambda c: c.score, reverse=True)  # Sort the cars by score
-    best_car = Car(cars[0].genetic)  # Get the best car
+    if cars:  # If there is at least one car
+        best_car = Car(cars[0].genetic)  # Get the best car
 
-    if variables.MEMORY_CARS.get(variables.ACTUAL_ID_MEMORY_GENETIC) is None:  # If it is the first time we run the genetic algorithm
-        variables.MEMORY_CARS[variables.ACTUAL_ID_MEMORY_GENETIC] = [(1, best_car.genetic)]  # Add the best car to the memory
-    else:
-        variables.MEMORY_CARS[variables.ACTUAL_ID_MEMORY_GENETIC].append((variables.NUM_GENERATION, best_car.genetic))  # Add the best car to the memory
+        if variables.MEMORY_CARS.get(variables.ACTUAL_ID_MEMORY_GENETIC) is None:  # If it is the first time we run the genetic algorithm
+            variables.MEMORY_CARS[variables.ACTUAL_ID_MEMORY_GENETIC] = [(1, best_car.genetic)]  # Add the best car to the memory
+        else:
+            variables.MEMORY_CARS[variables.ACTUAL_ID_MEMORY_GENETIC].append((variables.NUM_GENERATION, best_car.genetic))  # Add the best car to the memory
 
-    cars = select_best_cars(cars)  # Select the best cars
-    cars = mutate(cars)  # Mutate the cars
-    cars = crossover(cars)  # Crossover the cars
+        cars = select_best_cars(cars)  # Select the best cars
+        cars = mutate(cars)  # Mutate the cars
+        cars = crossover(cars)  # Crossover the cars
 
-    cars.append(best_car)  # Add the best car to the list
+        cars.append(best_car)  # Add the best car to the list
     cars = add_garage_cars(cars)  # We add the car from the garage to the list
 
     return cars

@@ -138,6 +138,12 @@ def text_rec(text, pos):
 def convert_to_grayscale(image):
     """
     Convert an image to grayscale
+
+    Args:
+        image (pygame.surface.Surface): the image to convert
+
+    Returns:
+        grayscale_image (pygame.surface.Surface): the grayscale image
     """
     # Create a new surface with the same dimensions and transparency settings as the original image
     grayscale_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
@@ -158,6 +164,30 @@ def convert_to_grayscale(image):
                 grayscale_image.set_at((x, y), (gray_value, gray_value, gray_value, color.a))
 
     return grayscale_image
+
+
+def have_black_pixel(image):
+    """
+    Check if there is a black pixel (0, 0, 0, 255) in a Pygame image.
+
+    Args:
+        image (pygame.Surface): The Pygame image to check.
+
+    Returns:
+        bool: True if a black pixel is found, False otherwise.
+    """
+    pixel_array = pygame.PixelArray(image)
+    black_pixel_found = False
+
+    for x in range(image.get_width()):
+        for y in range(image.get_height()):
+            pixel = pixel_array[x, y]
+            if pixel == (0, 0, 0, 255):
+                black_pixel_found = True
+                break
+
+    pixel_array.close()
+    return black_pixel_found
 
 
 def exit_game():

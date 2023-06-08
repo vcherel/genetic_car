@@ -31,7 +31,7 @@ class RectGarage:
             for gen in genetic:
                 self.genetic.append(gen[1])  # We only keep the genetic (gen[0] is the id)
         else:
-            self.genetic = genetic[1]  # Genetic of the car
+            self.genetic = genetic  # Genetic of the car
 
         self.button = Button(x=pos[0] + 190, y=pos[1] + 8, image=image_check_box_1, image_hover=image_check_box_2,
                              image_clicked=image_check_box_3, check_box=True, scale=0.035)  # Button of the rectangle
@@ -51,7 +51,7 @@ class RectGarage:
         # We add the button
         if self.button.check_state():
             dict_checked[self.id] = True  # We take in memory the state of the button
-            if type(self.genetic is list):
+            if type(self.genetic) is list:
                 for genetic in self.genetic:
                     variables.GENETICS_FROM_GARAGE.append(genetic)
             else:
