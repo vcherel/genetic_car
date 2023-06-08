@@ -1,9 +1,7 @@
+import sys  # To exit the program
 import math  # To use math
-import sys
-
 import pygame  # To use pygame
-
-import variables
+import variables  # Import the variables
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
 
 
@@ -111,7 +109,7 @@ def union_rect(rects):
     elif len(rects) == 1:
         return rects[0]
 
-    return_rect = pygame.Rect(0, 0, 0, 0)
+    return_rect = pygame.Rect(0, 0, 0, 0)  # The union of the two rectangles we will return
     return_rect.x = min([rect.x for rect in rects])
     return_rect.y = min([rect.y for rect in rects])
     return_rect.width = max([rect.x + rect.width for rect in rects]) - return_rect.x
@@ -164,30 +162,6 @@ def convert_to_grayscale(image):
                 grayscale_image.set_at((x, y), (gray_value, gray_value, gray_value, color.a))
 
     return grayscale_image
-
-
-def have_black_pixel(image):
-    """
-    Check if there is a black pixel (0, 0, 0, 255) in a Pygame image.
-
-    Args:
-        image (pygame.Surface): The Pygame image to check.
-
-    Returns:
-        bool: True if a black pixel is found, False otherwise.
-    """
-    pixel_array = pygame.PixelArray(image)
-    black_pixel_found = False
-
-    for x in range(image.get_width()):
-        for y in range(image.get_height()):
-            pixel = pixel_array[x, y]
-            if pixel == (0, 0, 0, 255):
-                black_pixel_found = True
-                break
-
-    pixel_array.close()
-    return black_pixel_found
 
 
 def exit_game():

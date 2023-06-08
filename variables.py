@@ -1,7 +1,7 @@
 import time  # To use time
 import pygame  # To use pygame
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN, CAR_SIZES, TIME_GENERATION, START_POSITIONS  # Import the screen size
-from utils import scale_image, convert_to_grayscale, have_black_pixel # Import the utils functions
+from utils import scale_image, convert_to_grayscale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
 
 DEBUG = False  # True for debug mode, False for normal mode
