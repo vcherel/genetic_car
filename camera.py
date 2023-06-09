@@ -1,60 +1,8 @@
 import cv2  # To use OpenCV
 from statistics import mean  # To compute the mean of a list
-import matplotlib.pyplot as plt  # To display images
-import numpy as np  # To use numpy arrays
-
+from utils import overlapping_rectangles, draw_circles  # Utils functions
 
 param_thresh = {"black": 30, "orange": 120, "green": 100, "yellow": 165, "purple": 100, "red": 100, "dark_green": 75, "dark_yellow": 50}
-
-
-def overlapping_rectangles(rect1, rect2, area_threshold=0.5):
-    """
-    Check if two rectangles are overlapping for more than half of their area
-
-    Args:
-        rect1 (tuple(int, int, int, int)): the first rectangle (x, y, w, h)
-        rect2 (tuple(int, int, int, int)): the second rectangle (x, y, w, h)
-        area_threshold (float): the minimum overlapping area threshold
-
-    Returns:
-        bool: True if the rectangles are overlapping, False otherwise
-    """
-    x1, y1, w1, h1 = rect1
-    x2, y2, w2, h2 = rect2
-
-    # Calculate the coordinates of the intersection rectangle
-    x_left = max(x1, x2)
-    y_top = max(y1, y2)
-    x_right = min(x1 + w1, x2 + w2)
-    y_bottom = min(y1 + h1, y2 + h2)
-
-    # Check if the rectangles are not overlapping
-    if x_right <= x_left or y_bottom <= y_top:
-        return False
-
-    # Calculate the areas of the rectangles and the intersection
-    area1 = w1 * h1
-    area2 = w2 * h2
-    intersection_area = (x_right - x_left) * (y_bottom - y_top)
-
-    # Check if the intersection area is greater than half of each rectangle's area
-    return intersection_area > area_threshold * min(area1, area2)
-
-
-def draw_circles(circles_to_draw, image):
-    """
-    Draw the circles on the image
-
-    Args:
-        circles_to_draw (numpy.ndarray): List of circles to draw
-        image (numpy.ndarray): Image on which to draw the circles
-    """
-    # Draw the circles
-    for circle in circles_to_draw:
-        # draw the outer circle
-        cv2.circle(image, (int(circle[0]), int(circle[1])), int(circle[2]), (0, 255, 0), 2)
-        # draw the center of the circle
-        cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
 
 
 def find_rectangles(img, rectangles):

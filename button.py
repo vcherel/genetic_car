@@ -1,5 +1,5 @@
 import pygame  # To use pygame
-from constants import WINDOW  # Import the window
+import variables as var  # Import the variables
 
 
 class Button:
@@ -68,7 +68,7 @@ class Button:
             image = self.image_clicked  # Change the image if it's possible
 
         # Draw button on screen
-        WINDOW.blit(image, (self.rect.x, self.rect.y))
+        var.WINDOW.blit(image, (self.rect.x, self.rect.y))
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 

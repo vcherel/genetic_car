@@ -1,7 +1,6 @@
 import pygame  # Import pygame to load the image of the button
-import variables  # Import the variables
+import variables as var  # Import the variables
 from button import Button  # Import the button class
-from constants import WINDOW, FONT  # Import the constants
 
 image_check_box_1 = pygame.image.load("images/checkbox_1.png")  # Image of the checkbox when it is checked
 image_check_box_2 = pygame.image.load("images/checkbox_2.png")  # Image of the checkbox when it is not checked
@@ -43,9 +42,9 @@ class RectGarage:
         Draw the rectangle in the garage menu
         """
         # We draw the rectangle
-        pygame.draw.rect(WINDOW, (0, 0, 0), (self.pos[0], self.pos[1], 225, 75), 2)
+        pygame.draw.rect(var.WINDOW, (0, 0, 0), (self.pos[0], self.pos[1], 225, 75), 2)
         # We write the name of the save
-        WINDOW.blit(FONT.render(self.name, True, (0, 0, 0), (128, 128, 128)),
+        var.WINDOW.blit(var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128)),
                     (self.pos[0] + 10, self.pos[1] + 10))
 
         # We add the button
@@ -53,8 +52,8 @@ class RectGarage:
             dict_checked[self.id] = True  # We take in memory the state of the button
             if type(self.genetic) is list:
                 for genetic in self.genetic:
-                    variables.GENETICS_FROM_GARAGE.append(genetic)
+                    var.GENETICS_FROM_GARAGE.append(genetic)
             else:
-                variables.GENETICS_FROM_GARAGE.append(self.genetic)
+                var.GENETICS_FROM_GARAGE.append(self.genetic)
         else:
             dict_checked[self.id] = False  # We take in memory the state of the button

@@ -1,7 +1,7 @@
 import pygame  # Pygame library
 import math  # Math library
-import variables  # Variables of the game
-from constants import WINDOW, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT, KEYBOARD_CONTROL  # Constants of the game
+import variables as var  # Variables of the game
+from constants import MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT, KEYBOARD_CONTROL, WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
 from utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
 from genetic import Genetic  # Genetic algorithm of the car
 
@@ -25,12 +25,12 @@ class Car:
         self.acceleration = 0  # Current acceleration of the car
 
         self.angle = 0  # Current angle of the car
-        self.pos = variables.START_POSITION  # Current position of the car
+        self.pos = var.START_POSITION  # Current position of the car
 
         if view_only:
-            self.image = variables.GREY_CAR_IMAGE  # Image of the car but grey
+            self.image = var.GREY_CAR_IMAGE  # Image of the car but grey
         else:
-            self.image = variables.RED_CAR_IMAGE  # Image of the car
+            self.image = var.RED_CAR_IMAGE  # Image of the car
 
         self.rotated_image = self.image  # Rotated image of the car
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
@@ -68,13 +68,13 @@ class Car:
             bool: True if the car has reached a checkpoint, False otherwise
         """
         checkpoint_passed = False  # True if the car has passed a checkpoint, False otherwise
-        actual_checkpoint = variables.CHECKPOINTS[self.next_checkpoint]  # Actual checkpoint to reach
+        actual_checkpoint = var.CHECKPOINTS[self.next_checkpoint]  # Actual checkpoint to reach
         if actual_checkpoint[0] - RADIUS_CHECKPOINT < self.pos[0] < actual_checkpoint[0] + RADIUS_CHECKPOINT and\
                 actual_checkpoint[1] - RADIUS_CHECKPOINT < self.pos[1] < actual_checkpoint[1] + RADIUS_CHECKPOINT:
             self.score += 1
             self.next_checkpoint += 1
             checkpoint_passed = True
-            if self.next_checkpoint == len(variables.CHECKPOINTS):
+            if self.next_checkpoint == len(var.CHECKPOINTS):
                 self.next_checkpoint = 0
 
         if checkpoint_passed:   # If the car has passed a checkpoint, we check if it has passed multiple checkpoints
@@ -148,11 +148,11 @@ class Car:
         """
         Detect collision of the car with the walls
         """
-        if self.pos[0] < 0 or self.pos[0] > WINDOW.get_width() or self.pos[1] < 0 or self.pos[1] > WINDOW.get_height():
+        if self.pos[0] < 0 or self.pos[0] > WIDTH_SCREEN or self.pos[1] < 0 or self.pos[1] > HEIGHT_SCREEN:
             self.kill()  # Collision with the wall of the window
 
         car_mask = pygame.mask.from_surface(self.rotated_image)
-        if variables.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
+        if var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
             self.kill()  # Collision with the walls of the circuit
 
     def determine_size_cone(self):
@@ -189,21 +189,21 @@ class Car:
         Kill the car
         """
         self.dead = True  # The car is dead
-        variables.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
+        var.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
 
     def draw(self):
         """
         Draw the car
         """
-        WINDOW.blit(self.rotated_image, self.rotated_rect)  # We display the car
-        if variables.DEBUG and not self.dead:
+        var.WINDOW.blit(self.rotated_image, self.rotated_rect)  # We display the car
+        if var.DEBUG and not self.dead:
             self.draw_detection_cone()  # Draw the detection cone of the car
 
     def erase(self):
         """
         Erase the car
         """
-        WINDOW.blit(variables.BACKGROUND, self.rotated_rect, self.rotated_rect)  # Erase the car
+        var.WINDOW.blit(var.BACKGROUND, self.rotated_rect, self.rotated_rect)  # Erase the car
 
     def draw_detection_cone(self):
         """
@@ -214,20 +214,20 @@ class Car:
         # Slow detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.height_slow)
         if self.speed < MIN_MEDIUM_SPEED:
-            pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
-            pygame.draw.polygon(WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
+            pygame.draw.polygon(var.WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
 
         # Medium detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.height_medium)
         if MIN_MEDIUM_SPEED < self.speed < MIN_HIGH_SPEED:
-            pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
-            pygame.draw.polygon(WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
+            pygame.draw.polygon(var.WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
 
         # Fast detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.height_fast)
         if self.speed > MIN_HIGH_SPEED:
-            pygame.draw.polygon(WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
-            pygame.draw.polygon(WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+            pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)

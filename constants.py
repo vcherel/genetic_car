@@ -1,4 +1,3 @@
-import pygame  # To use pygame
 import time  # To get the time
 
 # Game
@@ -6,21 +5,12 @@ START_POSITIONS = [(600, 165)]  # Start position
 START_TIME = time.time()  # Start time of the game
 RADIUS_CHECKPOINT = 80  # Radius of the checkpoint
 
-# CLOCK = pygame.time.Clock()  # Clock
+# Game
 FPS = 60  # Frame per second
-
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 SEE_CURSOR = False  # True to see the cursor position and color when clicking
 SEED = 69  # Seed of the random (None to not use a seed)
-
-# Display
-pygame.init()  # Pygame initialization
-pygame.display.set_caption("Algorithme génétique")  # Window title
 WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to avoid lag)
-WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
-LARGE_FONT = pygame.font.SysFont("Arial", 30)  # Large font
-FONT = pygame.font.SysFont("Arial", 20)  # Font
-SMALL_FONT = pygame.font.SysFont("Arial", 10)  # Small font
 
 # Car
 CAR_SIZES = [0.15]
