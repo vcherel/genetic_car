@@ -7,10 +7,13 @@ RADIUS_CHECKPOINT = 80  # Radius of the checkpoint
 
 # Game
 FPS = 60  # Frame per second
-KEYBOARD_CONTROL = False  # True to control the car with the keyboard
-SEE_CURSOR = False  # True to see the cursor position and color when clicking
 SEED = 69  # Seed of the random (None to not use a seed)
 WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to avoid lag)
+
+# Debug
+DONT_USE_CAMERA = True  # True to not use the camera, False to use the camera
+KEYBOARD_CONTROL = False  # True to control the car with the keyboard
+SEE_CURSOR = False  # True to see the cursor position and color when clicking
 
 # Car
 CAR_SIZES = [0.15]
@@ -39,4 +42,4 @@ HEIGHT_MULTIPLIER = 17  # Height multiplier of the cone
 MUTATION_CHANCE = 0.1  # Chance of mutation
 CROSSOVER_CHANCE = 0.1  # Chance of crossover
 
-TIME_GENERATION = 25  # Time of a generation (s)
+TIME_GENERATION = 30  # Time of a generation (s)

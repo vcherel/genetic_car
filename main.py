@@ -48,6 +48,8 @@ def open_window():
         if var.START:   # When the game starts
             play()  # Play the game
 
+        var.CLOCK.tick(FPS)  # Limit FPS
+
 
 def play(cars=None):
     """
@@ -95,7 +97,7 @@ def play(cars=None):
                 car.draw()  # Draw the car
 
             var.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
-            # pygame.draw.rect(WINDOW, (120, 0, 0), variables.RECT_BLIT, 1)  # Draw the rect for the blit of the cars
+            pygame.draw.rect(var.WINDOW, (120, 0, 0), var.RECT_BLIT_CAR, 1)  # Draw the rect for the blit of the cars
 
             detect_buttons_click()  # Draw the buttons and do the corresponding action
 
@@ -108,9 +110,11 @@ def play(cars=None):
                     play(cars)  # Restart the game with the new cars
                 else:
                     play()  # Restart the game
-
+        var.ACTUAL_FPS = int(1 / (time.time() - time_begin_turn))  # Actual FPS
         while time.time() - time_begin_turn < 1 / FPS:  # Wait to have the right FPS
+            var.ACTUAL_FPS = FPS
             pass
+
 
     open_window()  # Restart the game
 

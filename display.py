@@ -1,3 +1,4 @@
+import cv2  # To use OpenCV
 import pygame  # To use pygame
 import variables as var  # Import the variables
 from constants import RADIUS_CHECKPOINT  # Import the constants
@@ -20,14 +21,30 @@ def display_checkpoints():
         pygame.draw.circle(var.WINDOW, (255, 0, 0), checkpoint, RADIUS_CHECKPOINT, 1)
 
 
-def display_text_ui(caption, pos):
+def display_text_ui(caption, pos, font, background_color=(128, 128, 128)):
     """
     Display a text with a variable
 
     Args:
         caption (str): caption of the text
         pos (tuple): position of the text
+        font (pygame.font.Font): font of the text
+        background_color (tuple): background color of the text
     """
-    text = var.FONT.render(caption, True, (0, 0, 0), (128, 128, 128))  # Create the text
+    text = font.render(caption, True, (0, 0, 0), background_color)  # Create the text
     var.WINDOW.blit(text, pos)  # Draw the text
     var.RECTS_BLIT_UI.append(text_rec(text, pos))  # Add the rectangle of the text to the list of rectangles to blit
+
+
+def draw_circle(circle, image):
+    """
+    Draw the circles on the image
+
+    Args:
+        circle (numpy.ndarray): The circle to draw
+        image (numpy.ndarray): Image on which to draw the circles
+    """
+    # Draw the outer circle
+    cv2.circle(image, (int(circle[0]), int(circle[1])), int(circle[2]), (0, 255, 0), 2)
+    # Draw the center of the circle
+    cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)

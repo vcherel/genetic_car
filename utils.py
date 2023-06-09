@@ -113,6 +113,11 @@ def union_rect(rects):
     return_rect.y = min([rect.y for rect in rects])
     return_rect.width = max([rect.x + rect.width for rect in rects]) - return_rect.x
     return_rect.height = max([rect.y + rect.height for rect in rects]) - return_rect.y
+    offset = 5
+    return_rect.x -= offset
+    return_rect.y -= offset
+    return_rect.width += 2 * offset
+    return_rect.height += 2 * offset
     return return_rect
 
 
@@ -194,21 +199,4 @@ def overlapping_rectangles(rect1, rect2, area_threshold=0.5):
     area2 = w2 * h2
     intersection_area = (x_right - x_left) * (y_bottom - y_top)
 
-    # Check if the intersection area is greater than half of each rectangle's area
     return intersection_area > area_threshold * min(area1, area2)
-
-
-def draw_circles(circles_to_draw, image):
-    """
-    Draw the circles on the image
-
-    Args:
-        circles_to_draw (numpy.ndarray): List of circles to draw
-        image (numpy.ndarray): Image on which to draw the circles
-    """
-    # Draw the circles
-    for circle in circles_to_draw:
-        # draw the outer circle
-        cv2.circle(image, (int(circle[0]), int(circle[1])), int(circle[2]), (0, 255, 0), 2)
-        # draw the center of the circle
-        cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)

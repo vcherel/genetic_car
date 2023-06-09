@@ -1,27 +1,28 @@
 import cv2  # To use OpenCV
 import numpy as np  # To use numpy
-from statistics import mean  # To compute the mean of a list
-from utils import overlapping_rectangles, draw_circles  # Utils functions
+from display import draw_circle  # To draw the circles
+from utils import overlapping_rectangles  # Utils functions
+import matplotlib.pyplot as plt  # To plot the images
 
 
 # The parameters of the threshold to make a black and white image for each color
 param_thresh = {"black": 25, "orange": 120, "green": 100, "purple": 100, "red": 100, "dark_yellow": 50}
 # The BGR values of each color (observation)
-bgr_values = {"black": (55, 66, 57), "orange": (52, 107, 165), "green": (65, 128, 49), "purple": (39, 74, 59), "red": (53, 87, 123), "dark_yellow": (51, 86, 134), "white": (100, 146, 95)}
+bgr_values = {"black": (66, 66, 66), "orange": (52, 107, 165), "green": (65, 128, 49), "purple": (53, 67, 68), "red": (53, 87, 123), "dark_yellow": (51, 86, 134), "white": (150, 130, 126)}
 # The BGR values of each color (real)
 real_bgr_values = {"black": (0, 0, 0), "orange": (0, 102, 204), "green": (76, 153, 0), "purple": (102, 0, 102), "red": (0, 0, 204), "dark_yellow": (0, 102, 102)}
 
 
-def find_rectangles(img, rectangles):
+def find_rectangles(image, rectangles):
     """
     Find the rectangles on the image
 
     Args:
-        img (numpy.ndarray): Image on which to find the rectangles
+        image (numpy.ndarray): Image on which to find the rectangles
         rectangles (list): List of rectangles to draw
     """
     for p in param_thresh.values():
-        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
+        gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
         gray_img = cv2.medianBlur(gray_img, 5)  # We apply a median blur to the image to erase useless details
 
         # We apply a threshold to the image : it turns the image into a black and white image
@@ -46,7 +47,7 @@ def find_rectangles(img, rectangles):
                 for rect in rectangles:
                     if rect_is_in_list:
                         break
-                    if overlapping_rectangles(rect, (x, y, w, h)):
+                    if overlapping_rectangles(rect, (x, y, w, h), area_threshold=0.7):
                         rect_is_in_list = True
 
                 # If the rectangle is not in the list, we add it
@@ -54,22 +55,21 @@ def find_rectangles(img, rectangles):
                     rectangles.append((x, y, w, h))
 
 
-def determine_color(img):
+def determine_color(image):
     """
     Determine the color of the dice on the image
 
     Args:
-        img (numpy.ndarray): Image of the dice
+        image (numpy.ndarray): Image of the dice
 
     Returns:
         (str): Color of the dice
     """
     # Convert the image to a numpy array
-    image_array = np.array(img)
+    image_array = np.array(image)
 
     # Calculate the mean BGR values
     mean_bgr = np.mean(image_array, axis=(0, 1))
-    print(mean_bgr)
 
     # Calculate the distance between the mean BGR values and the BGR values of each color
     distances = {}
@@ -82,34 +82,76 @@ def determine_color(img):
     return color
 
 
-def determine_score(img, color):
+def determine_score(image, color, frame, scores):
     """
     Determine the score of the dice
 
     Args:
-        img (numpy.ndarray): Image of the dice
+        image (numpy.ndarray): Image of the dice
         color (str): Color of the dice
+        frame (numpy.ndarray): Frame of the video
+        scores (list): List of the previous scores of the dice
 
     Returns:
         (int): Score of the dice
     """
-    thresh = cv2.threshold(img, param_thresh[color], 255, cv2.THRESH_BINARY_INV)[1]  # Black and white image
+    thresh = cv2.threshold(image, param_thresh[color], 255, cv2.THRESH_BINARY_INV)[1]  # Black and white image
+
     detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges
 
     # Find the circles in the image (corresponding to the points of the dice)
-    circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=1.6, minDist=10,
-                               param1=63, param2=25, minRadius=2, maxRadius=10)
+    circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=1.6, minDist=15,
+                               param1=63, param2=25, minRadius=5, maxRadius=10)
     if circles is not None:
         circles = circles[0, :]  # The array is in an array, we take the first element
-        draw_circles(circles, img)  # We draw the circles on the image
+
         score = len(circles)  # We count the number of circles
+        for circle in circles:
+            draw_circle(circle, image)
     else:
         score = 0
 
     if score > 6:
         score = 6
 
+    scores.append(score)  # We add the score to the list of scores
+    if len(scores) > 50:
+        scores.pop(0)  # We remove the first score
+
+    # We find the number the most present in the list of scores
+    score = max(set(scores), key=scores.count)
+
     return score
+
+
+def verify_circle(circle, frame):
+    """
+    Verify that the circle is not a false positive (a circle that is not a point of the dice)
+
+    Args:
+        circle (numpy.ndarray): Circle to verify
+        frame (numpy.ndarray): Frame of the video
+
+    Returns:
+        (bool): True if the circle is not a false positive, False otherwise
+    """
+
+    x, y = int(circle[0]), int(circle[1])  # Coordinates of the center of the circle
+
+    color_center = frame[x, y]  # Color of the center of the circle
+
+    bgr_center = np.array([color_center[0], color_center[1], color_center[2]])  # BGR values of the center of the circle
+
+    # We calculate the distance between the mean BGR values and the BGR values of each color
+    distance = np.linalg.norm(bgr_center-bgr_values["white"])
+
+    # We get the color with a distance less than the threshold
+    threshold = 75
+
+    if distance < threshold:
+        return True
+    else:
+        return False
 
 
 def main():
@@ -119,7 +161,7 @@ def main():
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
-    scores = {"black": [], "orange": [], "green": [], "purple": [], "red": [], "dark_yellow": []}
+    scores_all_colors = {"black": [], "orange": [], "green": [], "purple": [], "red": [], "dark_yellow": []}
 
     while True:
         ret, frame = cap.read()  # Read a frame from the camera
@@ -135,13 +177,7 @@ def main():
                 # We draw the rectangle on the image
                 cv2.rectangle(frame, (x, y), (x + w, y + h), real_bgr_values[color], 5)
 
-                score = determine_score(img_rect, color)  # We determine the score of the dice
-
-                scores[color].append(score)  # We add the score to the list of scores
-                if len(scores[color]) > 50:  # If there are more than 10 scores in the list, we remove the first one
-                    scores[color].pop(0)  # We remove the first score
-
-                score = int(mean(scores[color]))  # We compute the mean of the scores
+                score = determine_score(img_rect, color, frame, scores_all_colors[color])  # We determine the score of the dice
 
                 # We write the value of the dice on the image
                 cv2.putText(frame, f'score: {score}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)

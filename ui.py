@@ -1,7 +1,7 @@
 import time  # To get the time
 import pygame  # To use pygame
 import variables as var  # Import the variables
-from constants import SEE_CURSOR  # Import constants
+from constants import SEE_CURSOR, FPS  # Import constants
 from garage import init_garage, display_garage, erase_garage  # Import functions from garage
 from display import display_text_ui  # Import functions from display
 from genetic import Genetic  # Import the genetic class
@@ -116,11 +116,16 @@ def detect_buttons_click():
     # Nb cars button
     var.CHANGE_NB_CARS = nb_cars_button.check_state()  # Draw the nb cars button
     if var.CHANGE_NB_CARS:
-        text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
-    var.WINDOW.blit(text_nb_cars, (1200, 62))  # Draw the text of the nb cars button
+        display_text_ui(var.STR_NB_CARS, (1200, 62), var.FONT, background_color=(255, 255, 255))  # Display the text of the nb cars button
+    else:
+        var.WINDOW.blit(text_nb_cars, (1200, 62))  # Draw the text of the nb cars button
 
     # FPS
-    var.WINDOW.blit(var.SMALL_FONT.render("FPS : " + str(int(var.CLOCK.get_fps())), True, (0, 0, 0), (128, 128, 128)), (1, 1))
+    if var.PLAY:
+        fps = str(var.ACTUAL_FPS)
+    else:
+        fps = str(int(var.CLOCK.get_fps()))
+    display_text_ui("FPS : " + fps, (1, 1), var.SMALL_FONT)
 
     # Time remaining
     if not var.PLAY:
@@ -131,11 +136,11 @@ def detect_buttons_click():
         time_remaining = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
     if time_remaining < 0:
         time_remaining = 0
-    display_text_ui("Temps restant : " + str(time_remaining) + "s", (1, 20))
+    display_text_ui("Temps restant : " + str(time_remaining) + "s", (1, 20), var.FONT)
 
     # Num generation and nb cars alive
-    display_text_ui("Nombre de voitures restantes : " + str(var.NB_CARS_ALIVE), (1, 50))
-    display_text_ui("Génération : " + str(var.NUM_GENERATION), (1, 80))
+    display_text_ui("Nombre de voitures restantes : " + str(var.NB_CARS_ALIVE), (1, 50), var.FONT)
+    display_text_ui("Génération : " + str(var.NUM_GENERATION), (1, 80), var.FONT)
 
     # Garage
     var.DISPLAY_GARAGE = garage_button.check_state()  # Draw the garage button

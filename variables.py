@@ -32,6 +32,8 @@ TIME_REMAINING_PAUSE = 0  # Time remaining when the game has been paused
 TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
 
+ACTUAL_FPS = 0  # Actual FPS
+
 NUM_MAP = 0  # Number of the map
 START_POSITION = None  # Start position of the car
 
@@ -185,8 +187,8 @@ def load_variables():
                 else:   # If the run already exists in the memory
                     MEMORY_CARS[id_run] = [(id_generation, genetic)]
 
-                if id_run > ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
-                    ACTUAL_ID_MEMORY_GENETIC = id_run
+                if id_run >= ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
+                    ACTUAL_ID_MEMORY_GENETIC = id_run + 1
 
             else:   # If it's a dice car
                 if MEMORY_CARS.get("dice"):  # If there is already a dice car in the memory
@@ -194,8 +196,8 @@ def load_variables():
                 else:   # If there is no dice car in the memory
                     MEMORY_CARS["dice"] = [(id_run, genetic)]
 
-                if id_run > ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
-                    ACTUAL_ID_MEMORY_DICE = id_run
+                if id_run >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
+                    ACTUAL_ID_MEMORY_DICE = id_run + 1
 
 
 def save_variables():
