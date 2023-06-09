@@ -11,7 +11,7 @@ SEED = 69  # Seed of the random (None to not use a seed)
 WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to avoid lag)
 
 # Debug
-DONT_USE_CAMERA = True  # True to not use the camera, False to use the camera
+DONT_USE_CAMERA = False  # True to not use the camera, False to use the camera
 KEYBOARD_CONTROL = False  # True to control the car with the keyboard
 SEE_CURSOR = False  # True to see the cursor position and color when clicking
 

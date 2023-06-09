@@ -1,6 +1,8 @@
 import time  # To use time
 import sys  # To quit the game
 import pygame  # To use pygame
+
+import variables
 from constants import CAR_SIZES, TIME_GENERATION, START_POSITIONS, WINDOW_SIZE  # Import the screen size
 from utils import scale_image, convert_to_grayscale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
@@ -40,7 +42,7 @@ START_POSITION = None  # Start position of the car
 RED_CAR_IMAGE = None  # Image of the original car
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
 
-MEMORY_CARS = {}  # Memory of the cars
+MEMORY_CARS = {"dice": []}  # Memory of the cars
 """
 Format of MEMORY_CARS:   {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}
 Format of car:   (id, Genetic)
@@ -171,7 +173,7 @@ def load_variables():
         Format of names for dice cars:
         dice_x_number_y
         """
-        lines = file_cars_read.readlines()
+        lines = file_cars_read.readlines()  # We read the file
         for line in lines:
             line = line.split(" ")
             # We add the car to the memory
@@ -182,20 +184,16 @@ def load_variables():
             if line[0].startswith("run"):   # If it's a genetic car
                 id_generation = int(line[0].split("_")[3])  # Id of the generation
 
-                if MEMORY_CARS.get(id_run):  # If the run doesn't exist in the memory
-                    MEMORY_CARS.get(id_run).append((id_generation, genetic))
-                else:   # If the run already exists in the memory
-                    MEMORY_CARS[id_run] = [(id_generation, genetic)]
+                if str(id_run) in MEMORY_CARS:  # If the id of the run is already in the memory
+                    MEMORY_CARS[str(id_run)].append((id_generation, genetic))  # We add the car to the memory
+                else:  # If the id of the run is not in the memory
+                    MEMORY_CARS[str(id_run)] = [(id_generation, genetic)]  # We add the car to the memory
 
                 if id_run >= ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
                     ACTUAL_ID_MEMORY_GENETIC = id_run + 1
 
             else:   # If it's a dice car
-                if MEMORY_CARS.get("dice"):  # If there is already a dice car in the memory
-                    MEMORY_CARS.get("dice").append((id_run, genetic))
-                else:   # If there is no dice car in the memory
-                    MEMORY_CARS["dice"] = [(id_run, genetic)]
-
+                MEMORY_CARS.get("dice").append((id_run, genetic))
                 if id_run >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                     ACTUAL_ID_MEMORY_DICE = id_run + 1
 

@@ -1,10 +1,11 @@
 import time  # To get the time
 import pygame  # To use pygame
 import variables as var  # Import the variables
-from constants import SEE_CURSOR, FPS  # Import constants
+from constants import SEE_CURSOR, DONT_USE_CAMERA  # Import constants
 from garage import init_garage, display_garage, erase_garage  # Import functions from garage
 from display import display_text_ui  # Import functions from display
 from genetic import Genetic  # Import the genetic class
+from camera import capture_dice  # Import the function to capture the dice
 from button import Button  # Import the button
 
 debug_button = Button()  # Button to activate the debug mode
@@ -30,7 +31,7 @@ def init_ui():
                             pygame.image.load("images/writing_rectangle_2.png"),
                             pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.8)
     garage_button = Button(400, 30, pygame.image.load("images/garage_button.png"), scale=0.2, check_box=True)
-    dice_button = Button(600, 28, pygame.image.load("images/dice_button.png"), scale=0.4, check_box=False)
+    dice_button = Button(600, 28, pygame.image.load("images/dice_button.png"), scale=0.4)
 
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the debug text
@@ -158,11 +159,15 @@ def detect_buttons_click():
     # Dice
     dice_button.check_state()  # Draw the dice button
     if dice_button.just_clicked:   # Dice button is just clicked
-        if var.MEMORY_CARS.get("dice"):   # If the memory of the dice already exists
-            var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))
-        else:                               # If the memory of the dice doesn't exist
-            var.MEMORY_CARS["dice"] = [(var.ACTUAL_ID_MEMORY_DICE, Genetic())]
-        var.ACTUAL_ID_MEMORY_DICE += 1
+        if DONT_USE_CAMERA:
+            var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
+        else:
+            dict_dice = capture_dice()  # We get the dice
+            genetic = Genetic(height_slow=dict_dice.get("dark_yellow"), width_slow=dict_dice.get("green"),
+                              height_medium=dict_dice.get("orange"), width_medium=dict_dice.get("purple"),
+                              height_fast=dict_dice.get("red"), width_fast=dict_dice.get("black"))
+            var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, genetic))  # We add the dice to the memory
+        var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
 
 
 def pause(from_button=False):

@@ -1,4 +1,6 @@
+import time  # To get the time
 import cv2  # To use OpenCV
+import random  # To generate random numbers
 import numpy as np  # To use numpy
 from display import draw_circle  # To draw the circles
 from utils import overlapping_rectangles  # Utils functions
@@ -154,14 +156,23 @@ def verify_circle(circle, frame):
         return False
 
 
-def main():
+def capture_dice():
     """
-        Main program
+    Main program
+
+    Returns:
+        (dict): Dictionary containing the score of each color
     """
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
     scores_all_colors = {"black": [], "orange": [], "green": [], "purple": [], "red": [], "dark_yellow": []}
+
+    # The scores we will return, initialized to random values
+    final_score = {"black": random.randint(1, 6), "orange": random.randint(1, 6), "green": random.randint(1, 6),
+                   "purple": random.randint(1, 6), "red": random.randint(1, 6), "dark_yellow": random.randint(1, 6)}
+
+    start_time = time.time()  # We get the current time
 
     while True:
         ret, frame = cap.read()  # Read a frame from the camera
@@ -178,21 +189,22 @@ def main():
                 cv2.rectangle(frame, (x, y), (x + w, y + h), real_bgr_values[color], 5)
 
                 score = determine_score(img_rect, color, frame, scores_all_colors[color])  # We determine the score of the dice
+                final_score[color] = score  # We add the score to the final score
 
                 # We write the value of the dice on the image
                 cv2.putText(frame, f'score: {score}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
         cv2.imshow('Camera', frame)  # Display the frame
 
-        # If the user presses 'q', we exit the loop
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            # We quit the program if the user presses the 'q' key
+            break
+
+        if time.time() - start_time > 10:  # If 10 seconds have passed
+            # We quit the program after 10 seconds
             break
 
     cap.release()  # Release the VideoCapture object
-    cv2.destroyAllWindows()  # Destroy all the windows
+    cv2.destroyAllWindows()  # Close all windows
 
-
-if __name__ == "__main__":
-    main()
-
-
+    return final_score

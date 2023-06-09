@@ -97,7 +97,7 @@ def play(cars=None):
                 car.draw()  # Draw the car
 
             var.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
-            pygame.draw.rect(var.WINDOW, (120, 0, 0), var.RECT_BLIT_CAR, 1)  # Draw the rect for the blit of the cars
+            # pygame.draw.rect(var.WINDOW, (120, 0, 0), var.RECT_BLIT_CAR, 1)  # Draw the rect for the blit of the cars
 
             detect_buttons_click()  # Draw the buttons and do the corresponding action
 

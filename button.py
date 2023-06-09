@@ -35,6 +35,17 @@ class Button:
             else:
                 self.image_clicked = None  # Image of the button when it is clicked
 
+    def __str__(self):
+        """
+        String representation of the button
+
+        Returns:
+            str: string representation of the button
+        """
+        return "Button : activated = " + str(self.activated) + " ; just_clicked = " + str(self.just_clicked) + \
+            " ; time_clicked = " + str(self.time_clicked) + " ; check_box = " + str(self.check_box) + \
+            " ; writing_rectangle = " + str(self.writing_rectangle)
+
     def check_state(self):
         """
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
@@ -43,7 +54,6 @@ class Button:
             bool: True if button activated ; False otherwise
         """
         image = self.image  # Image of the button
-
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
             if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 150:    # Mouse clicked for the first time
                 self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
@@ -63,6 +73,8 @@ class Button:
 
             if self.image_hover is not None:
                 image = self.image_hover   # Change the image if it's possible
+        else:
+            self.just_clicked = 0   # The button has not just been clicked
 
         if self.activated and self.image_clicked is not None:
             image = self.image_clicked  # Change the image if it's possible
