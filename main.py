@@ -1,3 +1,4 @@
+import sys  # To quit the game
 import time  # To get the time
 import pygame  # To use pygame
 import variables  # Import the variables
@@ -7,9 +8,17 @@ from variables import CHANGE_CHECKPOINT, SEE_CHECKPOINTS, change_map, init_varia
 from display import display_checkpoints, edit_background  # To see the checkpoints
 from ui import detect_events_ui, detect_buttons_click, init_ui  # Import the ui
 from genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from utils import union_rect, exit_game  # Import the utils
+from utils import union_rect  # Import the utils
 from garage import add_garage_cars  # Import the garage
 from car import Car  # Import the car
+
+
+def exit_game():
+    """
+    Exit the game
+    """
+    variables.save_variables()  # Save the cars
+    sys.exit()  # Quit pygame
 
 
 def open_window():

@@ -1,7 +1,6 @@
-import sys  # To exit the program
+import cv2  # To use OpenCV
 import math  # To use math
 import pygame  # To use pygame
-import variables  # Import the variables
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
 
 
@@ -87,6 +86,8 @@ def point_out_of_window(point):
 
     Args:
         point (tuple(int, int)): the coordinates of the point
+        width_screen (int): the width of the window
+        height_screen (int): the height of the window
 
     Returns:
         True if the point is out of the window, False otherwise
@@ -162,11 +163,3 @@ def convert_to_grayscale(image):
                 grayscale_image.set_at((x, y), (gray_value, gray_value, gray_value, color.a))
 
     return grayscale_image
-
-
-def exit_game():
-    """
-    Exit the game
-    """
-    variables.save_variables()  # Save the cars
-    sys.exit()  # Quit pygame

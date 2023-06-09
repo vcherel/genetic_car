@@ -14,11 +14,14 @@ plt.imshow(gray_img, cmap='gray')  # Gray image
 
 
 detected_edges = cv2.Canny(gray_img, 9, 150, 3)  # Detect edges
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))  # We create a kernel to close the edges (a rectangular structuring element of size 9x9)
+# We create a kernel to close the edges (a rectangular structuring element of size 9x9)
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
 close = cv2.morphologyEx(detected_edges, cv2.MORPH_CLOSE, kernel, iterations=2)  # Close the edges of the dice
 plt.imshow(close, cmap='gray')  # Image with the edges
 
-circles = cv2.HoughCircles(image=close, method=cv2.HOUGH_GRADIENT, dp=1.1, minDist=20, param1=50, param2=30, minRadius=5, maxRadius=55)  # Find the circles in the image (corresponding to the points of the dice)
+# Find the circles in the image (corresponding to the points of the dice)
+circles = cv2.HoughCircles(image=close, method=cv2.HOUGH_GRADIENT, dp=1.1, minDist=20,
+                           param1=50, param2=30, minRadius=5, maxRadius=55)
 circles = circles[0, :]  # The array is in an array, we take the first element
 # Draw the circles
 for i in circles:
@@ -30,7 +33,9 @@ plt.imshow(rgb_img)  # Image with the circles
 
 
 contours, _ = cv2.findContours(close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  # Find the contours of the dice
-x0, y0, w0, h0 = cv2.boundingRect(contours[0])  # Find the coordinates of the rectangle around the dice (x0, y0) is the upper left corner, w0 and h0 are the width and height of the rectangle
+# Find the coordinates of the rectangle around the dice (x0, y0) is the upper left corner
+# w0 and h0 are the width and height of the rectangle
+x0, y0, w0, h0 = cv2.boundingRect(contours[0])
 cv2.rectangle(rgb_img, (x0, y0), (x0 + w0, y0 + h0), (0, 255, 0), 5)  # Draw the rectangle around the dice
 plt.imshow(rgb_img)  # Image with the rectangle and circles
 
@@ -38,11 +43,13 @@ plt.imshow(rgb_img)  # Image with the rectangle and circles
 dice0 = close[y0:y0+h0, x0:x0+w0]  # We crop the image to keep only the dice
 plt.imshow(dice0, cmap='gray')  # Image of the dice zoomed in with the edges
 
-circles0 = cv2.HoughCircles(image=dice0, method=cv2.HOUGH_GRADIENT, dp=1.3, minDist=20, param1=50, param2=30, minRadius=5, maxRadius=55)   # Find the circles in the image (corresponding to the points of the dice)
+# Find the circles in the image (corresponding to the points of the dice)
+circles0 = cv2.HoughCircles(image=dice0, method=cv2.HOUGH_GRADIENT, dp=1.3, minDist=20,
+                            param1=50, param2=30, minRadius=5, maxRadius=55)
 circles0 = circles0[0, :]  # The array is in an array, we take the first element
 
-
-cv2.putText(rgb_img, f'score: {len(circles0)}', (x0, y0), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)  # We write the value of the dice on the image
+# We write the value of the dice on the image
+cv2.putText(rgb_img, f'score: {len(circles0)}', (x0, y0), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 plt.imshow(rgb_img)  # Image with the rectangle and circles and the value of the dice
 
 
@@ -57,15 +64,18 @@ plt.imshow(rgb_img)  # RGB image
 gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
 plt.imshow(gray_img, cmap='gray')  # Gray image
 
-thresh = cv2.threshold(gray_img, 220, 255, cv2.THRESH_BINARY_INV)[1]  # We apply a threshold to the image : it turns the image into a black and white image
+# We apply a threshold to the image : it turns the image into a black and white image
+thresh = cv2.threshold(gray_img, 220, 255, cv2.THRESH_BINARY_INV)[1]
 plt.imshow(thresh, cmap='gray')  # Black and white image
 
 detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges
-circles = cv2.HoughCircles(detected_edges, cv2.HOUGH_GRADIENT, 1.2, 20, param1=50, param2=25, minRadius=3, maxRadius=35)  # Find the circles in the image (corresponding to the points of the dice)
+# Find the circles in the image (corresponding to the points of the dice)
+circles = cv2.HoughCircles(detected_edges, cv2.HOUGH_GRADIENT, 1.2, 20, param1=50, param2=25, minRadius=3, maxRadius=35)
 circles = circles[0, :]  # The array is in an array, we take the first element
 plt.imshow(detected_edges, cmap='gray')  # Image with the edges
 
-contours, hierarchy = cv2.findContours(detected_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  # Find the contours of the dice
+# Find the contours of the dice
+contours, hierarchy = cv2.findContours(detected_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 # Since we have 2 dices, and we want score of each one we need to split them into two image then recognise their scores.
 x0, y0, w0, h0 = cv2.boundingRect(contours[0])  # Find the rectangle around the first dice
@@ -111,9 +121,11 @@ plt.imshow(rgb_img)  # RGB image
 gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
 plt.imshow(gray_img, cmap='gray')  # Gray image
 
-thresh = cv2.threshold(gray_img, 250, 255, cv2.THRESH_BINARY_INV)[1]  # We apply a threshold to the image : it turns the image into a black and white image
+# We apply a threshold to the image : it turns the image into a black and white image
+thresh = cv2.threshold(gray_img, 250, 255, cv2.THRESH_BINARY_INV)[1]
 detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges
-circles = cv2.HoughCircles(detected_edges, cv2.HOUGH_GRADIENT, 1.2, 20, param1=50, param2=25, minRadius=3, maxRadius=35)  # Find the circles in the image (corresponding to the points of the dice)
+# Find the circles in the image (corresponding to the points of the dice)
+circles = cv2.HoughCircles(detected_edges, cv2.HOUGH_GRADIENT, 1.2, 20, param1=50, param2=25, minRadius=3, maxRadius=35)
 circles = circles[0, :]  # The array is in an array, we take the first element
 plt.imshow(detected_edges, cmap='gray')  # Image with the edges
 
@@ -125,9 +137,10 @@ for i in circles:
     cv2.circle(rgb_img, (int(i[0]), int(i[1])), 2, (0, 0, 255), 3)
 plt.imshow(rgb_img)  # Image with the circles and the values of the dices
 
-
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))  # We create a kernel to dilate the image (a rectangular structuring element of size 3x3)
-dil = cv2.dilate(detected_edges, kernel, iterations=1)  # We dilate the image to make it easier to find the contours
+# We create a kernel to dilate the image (a rectangular structuring element of size 3x3)
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+# We dilate the image to make it easier to find the contours
+dil = cv2.dilate(detected_edges, kernel, iterations=1)
 
 contours, hierarchy = cv2.findContours(dil, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)  # We find the contours of the dices
 
