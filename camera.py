@@ -1,8 +1,15 @@
 import cv2  # To use OpenCV
+import numpy as np  # To use numpy
 from statistics import mean  # To compute the mean of a list
 from utils import overlapping_rectangles, draw_circles  # Utils functions
 
-param_thresh = {"black": 30, "orange": 120, "green": 100, "yellow": 165, "purple": 100, "red": 100, "dark_green": 75, "dark_yellow": 50}
+
+# The parameters of the threshold to make a black and white image for each color
+param_thresh = {"black": 25, "orange": 120, "green": 100, "purple": 100, "red": 100, "dark_yellow": 50}
+# The BGR values of each color (observation)
+bgr_values = {"black": (55, 66, 57), "orange": (52, 107, 165), "green": (65, 128, 49), "purple": (39, 74, 59), "red": (53, 87, 123), "dark_yellow": (51, 86, 134), "white": (100, 146, 95)}
+# The BGR values of each color (real)
+real_bgr_values = {"black": (0, 0, 0), "orange": (0, 102, 204), "green": (76, 153, 0), "purple": (102, 0, 102), "red": (0, 0, 204), "dark_yellow": (0, 102, 102)}
 
 
 def find_rectangles(img, rectangles):
@@ -46,11 +53,6 @@ def find_rectangles(img, rectangles):
                 if not rect_is_in_list:
                     rectangles.append((x, y, w, h))
 
-    # We draw the rectangles
-    for rect in rectangles:
-        x, y, w, h = rect
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 5)
-
 
 def determine_color(img):
     """
@@ -58,66 +60,56 @@ def determine_color(img):
 
     Args:
         img (numpy.ndarray): Image of the dice
+
+    Returns:
+        (str): Color of the dice
     """
-    pass
+    # Convert the image to a numpy array
+    image_array = np.array(img)
+
+    # Calculate the mean BGR values
+    mean_bgr = np.mean(image_array, axis=(0, 1))
+    print(mean_bgr)
+
+    # Calculate the distance between the mean BGR values and the BGR values of each color
+    distances = {}
+    for color, bgr in bgr_values.items():
+        distances[color] = np.linalg.norm(mean_bgr - bgr)
+
+    # We get the color with the minimum distance
+    color = min(distances, key=distances.get)
+
+    return color
 
 
-def determine_score(img, color, tab_score):
+def determine_score(img, color):
     """
     Determine the score of the dice
 
     Args:
         img (numpy.ndarray): Image of the dice
         color (str): Color of the dice
-        tab_score (list): List of the scores of the dice
 
     Returns:
-        (img, int): Image of the dice with the score
+        (int): Score of the dice
     """
-
-    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
-    gray_img = cv2.medianBlur(gray_img, 5)  # We apply a median blur to the image to erase useless details
-
-    # We apply a threshold to the image : it turns the image into a black and white image
-    thresh = cv2.threshold(gray_img, param_thresh.get(color), 255, cv2.THRESH_BINARY_INV)[1]
-
+    thresh = cv2.threshold(img, param_thresh[color], 255, cv2.THRESH_BINARY_INV)[1]  # Black and white image
     detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges
 
     # Find the circles in the image (corresponding to the points of the dice)
-    circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=1.6, minDist=5,
+    circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=1.6, minDist=10,
                                param1=63, param2=25, minRadius=2, maxRadius=10)
     if circles is not None:
         circles = circles[0, :]  # The array is in an array, we take the first element
         draw_circles(circles, img)  # We draw the circles on the image
+        score = len(circles)  # We count the number of circles
+    else:
+        score = 0
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))  # We create a kernel to close the edges
-    close = cv2.morphologyEx(detected_edges, cv2.MORPH_CLOSE, kernel, iterations=2)  # Close the edges of the dice
+    if score > 6:
+        score = 6
 
-    # Find the contours of the dice
-    contours, hierarchy = cv2.findContours(close, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # cv2.drawContours(frame, contours, -1, (0, 0, 255), 3)  # Draw the contour of the dice
-
-    score = 0
-    if contours:  # If there is a contour (if the dice is in the image)
-        # Find the coordinates of the rectangle around the dice
-        # (x0, y0) is the upper left corner, w0 and h0 are the width and height of the rectangle
-        x0, y0, w0, h0 = cv2.boundingRect(contours[0])
-        cv2.rectangle(img, (x0, y0), (x0 + w0, y0 + h0), (255, 0, 0), 5)  # Draw the rectangle around the dice
-
-        if circles is not None:
-            score = len(circles)  # We count the number of circles
-        else:
-            score = 0
-
-        tab_score.append(score)  # We add the score to the list of scores
-        if len(tab_score) > 50:  # If there are more than 10 scores in the list, we remove the first one
-            tab_score.pop(0)  # We remove the first score
-
-        score = int(mean(tab_score))  # We reset the actual score
-        # We write the value of the dice on the image
-        cv2.putText(img, f'score: {score}', (x0, y0), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-
-    return img, score
+    return score
 
 
 def main():
@@ -127,18 +119,32 @@ def main():
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
-    tab_score = []  # List of the scores of the dice
+    scores = {"black": [], "orange": [], "green": [], "purple": [], "red": [], "dark_yellow": []}
 
     while True:
-        color = "black"
-
-        rectangles = []  # List of the rectangles on the image
-
         ret, frame = cap.read()  # Read a frame from the camera
 
+        rectangles = []  # List of the rectangles on the image
         find_rectangles(frame, rectangles)  # Find the rectangles on the image
 
-        # frame, score = determine_score(frame, color, tab_score)  # Determine the score of the dice
+        for rect in rectangles:
+            x, y, w, h = rect
+            img_rect = frame[y:y+h, x:x+w]  # We get the image of the rectangle
+            color = determine_color(img_rect)  # We determine the color of the rectangle
+            if color != 'white':
+                # We draw the rectangle on the image
+                cv2.rectangle(frame, (x, y), (x + w, y + h), real_bgr_values[color], 5)
+
+                score = determine_score(img_rect, color)  # We determine the score of the dice
+
+                scores[color].append(score)  # We add the score to the list of scores
+                if len(scores[color]) > 50:  # If there are more than 10 scores in the list, we remove the first one
+                    scores[color].pop(0)  # We remove the first score
+
+                score = int(mean(scores[color]))  # We compute the mean of the scores
+
+                # We write the value of the dice on the image
+                cv2.putText(frame, f'score: {score}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
         cv2.imshow('Camera', frame)  # Display the frame
 
