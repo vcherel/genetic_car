@@ -57,7 +57,7 @@ class Button:
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
             if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 150:    # Mouse clicked for the first time
                 self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
-                if self.check_box:
+                if self.check_box or self.writing_rectangle:
                     self.activated = not self.activated  # Change the state of the checkbox
                 else:
                     self.activated = True     # Activate the button
@@ -88,10 +88,54 @@ class Button:
         """
         Activate the button
         """
-        self.activated = False    # Uncheck the button
+        self.activated = True    # Uncheck the button
 
     def deactivate_button(self):
         """
         Deactivate the button
         """
-        self.activated = True     # Check the button
+        self.activated = False     # Check the button
+
+    def update_writing_rectangle(self, event, variable, str_variable, text, nb_cars=False):
+        """
+        Save the text in the writing rectangle
+        """
+        bool_active = True
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                variable, str_variable, bool_active, text = self.save_writing_rectangle(str_variable, nb_cars)
+
+            elif event.key == pygame.K_BACKSPACE:
+                # Remove the last character
+                str_variable = str_variable[:-1]
+                var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))
+            else:
+                # Append the entered character to the text
+                str_variable += event.unicode
+
+        return variable, str_variable, bool_active, text
+
+
+    def save_writing_rectangle(self, str_variable, nb_cars=False):
+        """
+        Save the text in the writing rectangle
+        """
+        try:
+            variable = int(str_variable)  # Convert the text to an integer
+
+            if nb_cars:  # If it's the number of cars we change the variable in the file parameters
+                with open("data/parameters", "w") as file_parameters_write:
+                    file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(variable))
+
+        except ValueError:
+            print("Erreur sur la valeur rentrée")
+            variable = 0
+
+        str_variable = str(variable)  # Reset the text
+        bool_active = False  # Make it so that we stop changing the text
+        self.deactivate_button()  # Uncheck the button
+        text = var.FONT.render(str_variable, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
+
+        return variable, str_variable, bool_active, text
+

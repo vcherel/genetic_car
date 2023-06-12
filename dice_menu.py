@@ -13,6 +13,9 @@ x1, x2, x3, y1, y2 = 120, 420, 720, 100, 325
 
 # Buttons
 button_check = Button(1185, 575, pygame.image.load('images/check.png'), scale=0.15)
+button_dark_yellow = Button(380, 375, pygame.image.load("images/writing_rectangle_1.png"),
+                            pygame.image.load("images/writing_rectangle_2.png"),
+                            pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.8)
 
 
 def draw_dice(x, y, color):
@@ -92,6 +95,7 @@ def display_dice_menu():
     draw_dice(x=x3, y=y2, color='black')
 
     # Display the buttons
+    button_dark_yellow.check_state()
     button_check.check_state()
 
     # If the button is checked we close the window
