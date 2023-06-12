@@ -1,12 +1,14 @@
 import time  # To get the time
 import pygame  # To use pygame
 import variables as var  # Import the variables
-from constants import SEE_CURSOR, DONT_USE_CAMERA  # Import constants
 from garage import init_garage, display_garage, erase_garage  # Import functions from garage
+from constants import SEE_CURSOR, DONT_USE_CAMERA  # Import constants
+from dice_menu import display_dice_menu, erase_dice_menu  # Import functions from dice_menu
 from display import display_text_ui  # Import functions from display
-from genetic import Genetic  # Import the genetic class
 from camera import capture_dice  # Import the function to capture the dice
+from genetic import Genetic  # Import the genetic class
 from button import Button  # Import the button
+
 
 debug_button = Button()  # Button to activate the debug mode
 stop_button = Button()  # Button to stop the game
@@ -45,8 +47,9 @@ def detect_events_ui():
 
     # Pygame events
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            var.exit_game()  # Quit the game
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            var.exit_game()  # Exit the game if the user click on the cross or press escape
+
         # Detection of clicks
         elif SEE_CURSOR and event.type == pygame.MOUSEBUTTONDOWN:
             print("Click at position", pygame.mouse.get_pos())  # Print the position of the click
@@ -111,6 +114,9 @@ def detect_buttons_click():
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
+        if var.DISPLAY_DICE_MENU:
+            erase_dice_menu()  # We erase the dice menu
+
     if var.START and var.PAUSE:    # We also resume the simulation if the start button is pressed
         unpause()  # We unpause the simulation
 
@@ -151,7 +157,7 @@ def detect_buttons_click():
             init_garage()
         else:
             unpause()
-            delete_garage()
+            erase_garage()
 
     if var.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
         display_garage()
@@ -159,15 +165,20 @@ def detect_buttons_click():
     # Dice
     dice_button.check_state()  # Draw the dice button
     if dice_button.just_clicked:   # Dice button is just clicked
-        if DONT_USE_CAMERA:
+        pause()
+
+        if var.DISPLAY_DICE_MENU:
+            erase_dice_menu()
+        elif DONT_USE_CAMERA:
             var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
         else:
-            dict_dice = capture_dice()  # We get the dice
-            genetic = Genetic(height_slow=dict_dice.get("dark_yellow"), width_slow=dict_dice.get("green"),
-                              height_medium=dict_dice.get("orange"), width_medium=dict_dice.get("purple"),
-                              height_fast=dict_dice.get("red"), width_fast=dict_dice.get("black"))
-            var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, genetic))  # We add the dice to the memory
-        var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
+            var.ACTUAL_DICT_DICE = capture_dice()  # We get the dice
+            var.DISPLAY_DICE_MENU = True  # We display the dice menu
+
+    if var.DISPLAY_DICE_MENU:
+        dice_validated = display_dice_menu()  # We display the dice menu
+        if dice_validated:
+            erase_dice_menu()  # We erase the dice menu
 
 
 def pause(from_button=False):

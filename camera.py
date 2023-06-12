@@ -4,13 +4,12 @@ import random  # To generate random numbers
 import numpy as np  # To use numpy
 from display import draw_circle  # To draw the circles
 from utils import overlapping_rectangles  # Utils functions
-import matplotlib.pyplot as plt  # To plot the images
 
 
 # The parameters of the threshold to make a black and white image for each color
 param_thresh = {"black": 25, "orange": 120, "green": 100, "purple": 100, "red": 100, "dark_yellow": 50}
 # The BGR values of each color (observation)
-bgr_values = {"black": (66, 66, 66), "orange": (52, 107, 165), "green": (65, 128, 49), "purple": (53, 67, 68), "red": (53, 87, 123), "dark_yellow": (51, 86, 134), "white": (150, 130, 126)}
+bgr_values = {"black": (38, 38, 38), "orange": (52, 107, 165), "green": (65, 128, 49), "purple": (53, 67, 68), "red": (53, 87, 123), "dark_yellow": (51, 86, 134), "white": (150, 130, 126)}
 # The BGR values of each color (real)
 real_bgr_values = {"black": (0, 0, 0), "orange": (0, 102, 204), "green": (76, 153, 0), "purple": (102, 0, 102), "red": (0, 0, 204), "dark_yellow": (0, 102, 102)}
 
@@ -49,7 +48,7 @@ def find_rectangles(image, rectangles):
                 for rect in rectangles:
                     if rect_is_in_list:
                         break
-                    if overlapping_rectangles(rect, (x, y, w, h), area_threshold=0.7):
+                    if overlapping_rectangles(rect, (x, y, w, h), area_threshold=0.9):
                         rect_is_in_list = True
 
                 # If the rectangle is not in the list, we add it
@@ -163,6 +162,8 @@ def capture_dice():
     Returns:
         (dict): Dictionary containing the score of each color
     """
+    return {"black": 1, "orange": 2, "green": 3, "purple": 4, "red": 5, "dark_yellow": 6}
+
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
@@ -200,8 +201,7 @@ def capture_dice():
             # We quit the program if the user presses the 'q' key
             break
 
-        if time.time() - start_time > 10:  # If 10 seconds have passed
-            # We quit the program after 10 seconds
+        if time.time() - start_time > 15:  # After a while, we stop the program
             break
 
     cap.release()  # Release the VideoCapture object

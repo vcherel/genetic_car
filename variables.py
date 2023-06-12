@@ -1,8 +1,6 @@
 import time  # To use time
 import sys  # To quit the game
 import pygame  # To use pygame
-
-import variables
 from constants import CAR_SIZES, TIME_GENERATION, START_POSITIONS, WINDOW_SIZE  # Import the screen size
 from utils import scale_image, convert_to_grayscale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
@@ -14,59 +12,61 @@ SMALL_FONT = None  # Small font of the game
 LARGE_FONT = None  # Big font of the game
 CLOCK = None  # Clock of the game
 
+# Map variables
+BACKGROUND = None  # Image of the background
+BACKGROUND_MASK = None    # Mask of the black pixels of the background (used to detect collisions)
+NUM_MAP = 0  # Number of the map
+START_POSITION = None  # Start position of the car
+RED_CAR_IMAGE = None  # Image of the original car
+GREY_CAR_IMAGE = None  # Image of the car in view only mode
+
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
 CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
 SEE_CHECKPOINTS = False  # See the checkpoints
 CHECKPOINTS = None  # List of checkpoints
 
-RECT_BLIT_CAR = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
-RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
-
+# Game variables
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
+ACTUAL_FPS = 0  # Actual FPS
 
+# Pause variables
 PAUSE = False  # Pause the game (True or False)
 DURATION_PAUSES = 0  # Duration of all the pauses
 START_TIME_PAUSE = 0  # Time when the game has been paused
 TIME_REMAINING_PAUSE = 0  # Time remaining when the game has been paused
 
+# Genetic variables
 TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
+USE_GENETIC = True  # True to use the genetic algorithm, False to just play
+NUM_GENERATION = 1  # Number of the generation
+NB_CARS_ALIVE = 0  # Number of cars alive
 
-ACTUAL_FPS = 0  # Actual FPS
-
-NUM_MAP = 0  # Number of the map
-START_POSITION = None  # Start position of the car
-
-RED_CAR_IMAGE = None  # Image of the original car
-GREY_CAR_IMAGE = None  # Image of the car in view only mode
-
+# Garage variables
+DISPLAY_GARAGE = False  # True to see the garage
+GENETICS_FROM_GARAGE = []  # Genetics from the garage
 MEMORY_CARS = {"dice": []}  # Memory of the cars
 """
 Format of MEMORY_CARS:   {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}
 Format of car:   (id, Genetic)
 """
-
-# car1 = (id, Genetic)
-
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
 ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
+# Car variables
 NB_CARS = 0  # Number of cars
 CHANGE_NB_CARS = False  # Change the number of cars
 STR_NB_CARS = ""  # Text of the number of cars
 
-BACKGROUND = None  # Image of the background
-BACKGROUND_MASK = None    # Mask of the black pixels of the background (used to detect collisions)
+# Screen variables
+RECT_BLIT_CAR = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
+RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 
-
-USE_GENETIC = True  # True to use the genetic algorithm, False to just play
-NUM_GENERATION = 1  # Number of the generation
-NB_CARS_ALIVE = 0  # Number of cars alive
-
-DISPLAY_GARAGE = False  # True to see the garage
-GENETICS_FROM_GARAGE = []  # Genetics from the garage
+# Dice capture variables
+DISPLAY_DICE_MENU = False  # True to see the dice after capturing the dice with the camera
+ACTUAL_DICT_DICE = {}  # Actual dict of the dice
 
 
 def exit_game():
