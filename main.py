@@ -71,12 +71,7 @@ def play(cars=None):
 
         detect_events_ui()  # Detect events in the ui and do the corresponding action
 
-        # If the game is paused
-        if var.PAUSE:
-            detect_buttons_click()  # Activate the buttons
-            pygame.display.update()  # Update the screen
-
-        if not var.PAUSE:
+        if not var.PAUSE:  # If the game is not paused
             # Erase the screen
             if var.DEBUG:
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
@@ -99,10 +94,6 @@ def play(cars=None):
             var.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), var.RECT_BLIT_CAR, 1)  # Draw the rect for the blit of the cars
 
-            detect_buttons_click()  # Draw the buttons and do the corresponding action
-
-            pygame.display.update()  # Update the screen
-
             if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING:    # If all cars are dead
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
                 if var.USE_GENETIC:
@@ -110,11 +101,13 @@ def play(cars=None):
                     play(cars)  # Restart the game with the new cars
                 else:
                     play()  # Restart the game
+
+        detect_buttons_click()  # Activate the buttons
+        pygame.display.update()  # Update the screen
+
         var.ACTUAL_FPS = int(1 / (time.time() - time_begin_turn))  # Actual FPS
         while time.time() - time_begin_turn < 1 / FPS:  # Wait to have the right FPS
             var.ACTUAL_FPS = FPS
-            pass
-
 
     open_window()  # Restart the game
 

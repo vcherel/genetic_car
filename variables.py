@@ -68,6 +68,12 @@ RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the scree
 DISPLAY_DICE_MENU = False  # True to see the dice after capturing the dice with the camera
 ACTUAL_DICT_DICE = {}  # Actual dict of the dice
 
+DICE_BUTTONS = []           # To store the dice buttons
+DICE_VARIABLES = []         # To store the dice variables (the number of dots on each dice)
+DICE_STR_VARIABLES = []     # To store the dice variables (the number of dots on each dice in string format)
+DICE_TEXTS = []             # To store the dice texts (the number of dots on each dice in pygame text format)
+DICE_BOOLS = []             # To store the boolean values of the dice buttons (are we actually changing the dice variable or not)
+
 
 def exit_game():
     """

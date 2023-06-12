@@ -2,6 +2,8 @@ import pygame  # Import pygame module
 import variables as var  # Import the variables
 from button import Button  # Import the button class
 from genetic import Genetic  # Import the genetic class
+from display import display_text_ui  # Import the display_text_ui function
+from utils import dice_button  # Import the dice_button function
 
 
 rect_dice_menu = (300, 125, 1000, 550)  # Display rectangle of the dice menu
@@ -9,13 +11,40 @@ rect_dice_menu = (300, 125, 1000, 550)  # Display rectangle of the dice menu
 rgb_values = {"black": (0, 0, 0), "orange": (204, 102, 0), "green": (0, 153, 76), "purple": (102, 0, 102), "red": (204, 0, 0), "dark_yellow": (102, 102, 0)}
 
 # Positions of the dice
-x1, x2, x3, y1, y2 = 120, 420, 720, 100, 325
+x1, x2, x3 = 120, 420, 720  # x coordinates of the dice
+y1, y2 = 100, 325           # y coordinates of the dice
 
 # Buttons
-button_check = Button(1185, 575, pygame.image.load('images/check.png'), scale=0.15)
-button_dark_yellow = Button(380, 375, pygame.image.load("images/writing_rectangle_1.png"),
-                            pygame.image.load("images/writing_rectangle_2.png"),
-                            pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.8)
+button_check = Button(1220, 595, pygame.image.load('images/check.png'), scale=0.12)
+
+
+def init_dice_buttons():
+    """
+    To initialize the dice buttons
+    """
+    var.DICE_BUTTONS = [dice_button(x1, y1), dice_button(x2, y1), dice_button(x3, y1),
+                        dice_button(x1, y2), dice_button(x2, y2), dice_button(x3, y2)]
+
+
+def init_dice_variables():
+    """
+    To initialize the dice variables
+    """
+    for button in var.DICE_BUTTONS:
+        button.activated = False
+
+
+    var.DICE_VARIABLES = [var.ACTUAL_DICT_DICE.get('dark_yellow'), var.ACTUAL_DICT_DICE.get('orange'), var.ACTUAL_DICT_DICE.get('red'),
+                          var.ACTUAL_DICT_DICE.get('green'), var.ACTUAL_DICT_DICE.get('purple'), var.ACTUAL_DICT_DICE.get('black')]
+
+    var.DICE_STR_VARIABLES = []
+    var.DICE_TEXTS = []
+    for number in var.DICE_VARIABLES:
+        str_number = str(number)
+        var.DICE_STR_VARIABLES.append(str_number)
+        var.DICE_TEXTS.append(var.FONT.render(str_number, True, (0, 0, 0), (255, 255, 255)))
+
+    var.DICE_BOOLS = [False] * 6
 
 
 def draw_dice(x, y, color):
@@ -95,7 +124,15 @@ def display_dice_menu():
     draw_dice(x=x3, y=y2, color='black')
 
     # Display the buttons
-    button_dark_yellow.check_state()
+    for index, button in enumerate(var.DICE_BUTTONS):
+        var.DICE_BOOLS[index] = button.check_state()
+
+    for index, dice_bool in enumerate(var.DICE_BOOLS):
+        if dice_bool:
+            display_text_ui(var.DICE_STR_VARIABLES[index], (var.DICE_BUTTONS[index].x + 102, var.DICE_BUTTONS[index].y + 6), var.FONT, background_color=(255, 255, 255))
+        else:
+            var.WINDOW.blit(var.DICE_TEXTS[index], (var.DICE_BUTTONS[index].x + 102, var.DICE_BUTTONS[index].y + 6))
+
     button_check.check_state()
 
     # If the button is checked we close the window
@@ -110,8 +147,8 @@ def erase_dice_menu():
     rect = pygame.Rect(rect_dice_menu)  # We create a rectangle with the coordinates of the dice menu
     var.WINDOW.blit(var.BACKGROUND, rect, rect)  # We erase the dice menu
 
-    genetic = Genetic(height_slow=var.ACTUAL_DICT_DICE.get("dark_yellow"), width_slow=var.ACTUAL_DICT_DICE.get("green"),
-                      height_medium=var.ACTUAL_DICT_DICE.get("orange"), width_medium=var.ACTUAL_DICT_DICE.get("purple"),
-                      height_fast=var.ACTUAL_DICT_DICE.get("red"), width_fast=var.ACTUAL_DICT_DICE.get("black"))
+    genetic = Genetic(height_slow=var.DICE_VARIABLES[0], height_medium=var.DICE_VARIABLES[1], height_fast=var.DICE_VARIABLES[2],
+                      width_slow=var.DICE_VARIABLES[3], width_medium=var.DICE_VARIABLES[4], width_fast=var.DICE_VARIABLES[5])
+
     var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, genetic))  # We add the dice to the memory
     var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice

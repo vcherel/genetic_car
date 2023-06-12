@@ -3,7 +3,7 @@ import pygame  # To use pygame
 import variables as var  # Import the variables
 from garage import init_garage, display_garage, erase_garage  # Import functions from garage
 from constants import SEE_CURSOR, DONT_USE_CAMERA  # Import constants
-from dice_menu import display_dice_menu, erase_dice_menu  # Import functions from dice_menu
+from dice_menu import display_dice_menu, erase_dice_menu, init_dice_variables, init_dice_buttons  # Import functions from dice_menu
 from display import display_text_ui  # Import functions from display
 from camera import capture_dice  # Import the function to capture the dice
 from genetic import Genetic  # Import the genetic class
@@ -17,7 +17,7 @@ start_button = Button()  # Button to start the game
 nb_cars_button = Button()  # Button to change the number of cars
 garage_button = Button()  # Button to open the garage
 dice_button = Button()  # Button to see the dice
-text_nb_cars = Button()  # Text to display the number of cars
+text_nb_cars = None  # Text to display the number of cars
 
 
 def init_ui():
@@ -38,6 +38,9 @@ def init_ui():
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
 
+    # Dice menu
+    init_dice_buttons()  # Initialize the dice buttons
+
 
 def detect_events_ui():
     """
@@ -53,16 +56,17 @@ def detect_events_ui():
         # Detection of clicks
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if var.CHANGE_NB_CARS:  # If we click outside the writing rectangle, we stop changing the number of cars
-                var.NB_CARS, var.STR_NB_CARS, var.CHANGE_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, True)
+                var.NB_CARS, var.STR_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, text_nb_cars, nb_cars=True)
+                var.CHANGE_NB_CARS = False
+
 
             if SEE_CURSOR:
-                print("Click at position", pygame.mouse.get_pos())  # Print the position of the click
-                print("Color of the pixel", var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
+                print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
+                print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
         if var.CHANGE_NB_CARS:
             var.NB_CARS, var.STR_NB_CARS, var.CHANGE_NB_CARS, text_nb_cars = nb_cars_button.update_writing_rectangle(
                 event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
-
 
 
 
@@ -109,9 +113,9 @@ def detect_buttons_click():
     var.CHANGE_NB_CARS = nb_cars_button.check_state()  # Draw the nb cars button
     # Draw the number of cars
     if var.CHANGE_NB_CARS:
-        display_text_ui(var.STR_NB_CARS, (1200, 62), var.FONT, background_color=(255, 255, 255))
+        display_text_ui(var.STR_NB_CARS, (1195, 62), var.FONT, background_color=(255, 255, 255))
     else:
-        var.WINDOW.blit(text_nb_cars, (1200, 62))
+        var.WINDOW.blit(text_nb_cars, (1195, 62))
 
     # FPS
     if var.PLAY:
@@ -144,27 +148,27 @@ def detect_buttons_click():
         else:
             unpause()
             erase_garage()
-
     if var.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
         display_garage()
 
     # Dice
     dice_button.check_state()  # Draw the dice button
     if dice_button.just_clicked:   # Dice button is just clicked
-        pause()
-
-        if var.DISPLAY_DICE_MENU:
+        if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we erase it
             erase_dice_menu()
-        elif DONT_USE_CAMERA:
+            unpause()
+
+        elif DONT_USE_CAMERA:  # If we don't use the camera we create a random dice
             var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
-        else:
+        else:  # If we use the camera we capture the dice
+            pause()
             var.ACTUAL_DICT_DICE = capture_dice()  # We get the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
+            init_dice_variables()  # We initialize the variables of the dice
 
-    if var.DISPLAY_DICE_MENU:
-        dice_validated = display_dice_menu()  # We display the dice menu
-        if dice_validated:
-            erase_dice_menu()  # We erase the dice menu
+    if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
+        if display_dice_menu():
+            erase_dice_menu()  # We erase the dice menu when the check button is pressed
 
 
 def pause(from_button=False):
@@ -176,7 +180,7 @@ def pause(from_button=False):
     """
     if not from_button:  # If the pause is not from the pause button we have to check the button
         var.PAUSE = True  # We pause the simulation
-        pause_button.activate_button()  # We check the pause button
+        pause_button.activated = True  # We check the pause button
 
     var.START_TIME_PAUSE = time.time()  # We get the time when the pause started
     var.TIME_REMAINING_PAUSE = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We save the time remaining before the pause
@@ -191,7 +195,7 @@ def unpause(from_button=False):
     """
     if not from_button:  # If the unpause is not from the pause button we have to uncheck the button
         var.PAUSE = False  # We unpause the simulation
-        pause_button.deactivate_button()  # We uncheck the pause button
+        pause_button.activated = False  # We uncheck the pause button
 
     if var.DISPLAY_GARAGE:
         delete_garage()

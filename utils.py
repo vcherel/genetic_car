@@ -1,7 +1,7 @@
-import cv2  # To use OpenCV
 import math  # To use math
 import pygame  # To use pygame
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
+from button import Button  # Import the Button class
 
 
 def scale_image(img, factor):
@@ -200,3 +200,19 @@ def overlapping_rectangles(rect1, rect2, area_threshold=0.5):
     intersection_area = (x_right - x_left) * (y_bottom - y_top)
 
     return intersection_area > area_threshold * min(area1, area2)
+
+
+def dice_button(x, y):
+    """
+    To create a dice button
+
+    Args:
+        x (int): x coordinate of the button
+        y (int): y coordinate of the button
+
+    Returns:
+        Button: The dice button
+    """
+    return Button(x + 250, y + 275, pygame.image.load("images/writing_rectangle_1.png"),
+                  pygame.image.load("images/writing_rectangle_2.png"),
+                  pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.9)

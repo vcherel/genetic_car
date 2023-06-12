@@ -162,7 +162,8 @@ def capture_dice():
     Returns:
         (dict): Dictionary containing the score of each color
     """
-    return {"black": 1, "orange": 2, "green": 3, "purple": 4, "red": 5, "dark_yellow": 6}
+    return {"black": random.randint(1, 6), "orange": random.randint(1, 6), "green": random.randint(1, 6),
+            "purple": random.randint(1, 6), "red": random.randint(1, 6), "dark_yellow": random.randint(1, 6)}
 
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras

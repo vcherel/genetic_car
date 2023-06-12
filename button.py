@@ -17,6 +17,8 @@ class Button:
             check_box (bool): True if the button is a checkbox, False otherwise
         """
         if x is not None:  # If it's a real object
+            self.x = x  # x position of the button
+            self.y = y  # y position of the button
             self.image = pygame.transform.scale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))  # Image of the button
             self.rect = self.image.get_rect()  # Rectangle of the button
             self.rect.topleft = (x, y)  # Position of the button
@@ -42,9 +44,9 @@ class Button:
         Returns:
             str: string representation of the button
         """
-        return "Button : activated = " + str(self.activated) + " ; just_clicked = " + str(self.just_clicked) + \
-            " ; time_clicked = " + str(self.time_clicked) + " ; check_box = " + str(self.check_box) + \
-            " ; writing_rectangle = " + str(self.writing_rectangle)
+        return "Button : x = " + str(self.x) + " ; y = " + str(self.y) + " ; activated = " + str(self.activated) + \
+            " ; just_clicked = " + str(self.just_clicked) + " ; time_clicked = " + str(self.time_clicked) +\
+            " ; check_box = " + str(self.check_box) + " ; writing_rectangle = " + str(self.writing_rectangle)
 
     def check_state(self):
         """
@@ -71,12 +73,12 @@ class Button:
                 if not self.check_box and not self.writing_rectangle:
                     self.activated = False  # Change the state if it's a simple button
 
-            if self.image_hover is not None:
+            if self.image_hover:
                 image = self.image_hover   # Change the image if it's possible
         else:
             self.just_clicked = 0   # The button has not just been clicked
 
-        if self.activated and self.image_clicked is not None:
+        if self.activated and self.image_clicked:
             image = self.image_clicked  # Change the image if it's possible
 
         # Draw button on screen
@@ -84,27 +86,16 @@ class Button:
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 
-    def activate_button(self):
-        """
-        Activate the button
-        """
-        self.activated = True    # Uncheck the button
-
-    def deactivate_button(self):
-        """
-        Deactivate the button
-        """
-        self.activated = False     # Check the button
-
     def update_writing_rectangle(self, event, variable, str_variable, text, nb_cars=False):
         """
         Save the text in the writing rectangle
         """
-        bool_active = True
+        bool_active = True  # True if the writing rectangle is active, False otherwise
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
-                variable, str_variable, bool_active, text = self.save_writing_rectangle(str_variable, nb_cars)
+                variable, str_variable, text = self.save_writing_rectangle(str_variable, text, nb_cars)
+                bool_active = False  # Deactivate the writing rectangle
 
             elif event.key == pygame.K_BACKSPACE:
                 # Remove the last character
@@ -117,7 +108,7 @@ class Button:
         return variable, str_variable, bool_active, text
 
 
-    def save_writing_rectangle(self, str_variable, nb_cars=False):
+    def save_writing_rectangle(self, str_variable, text, nb_cars=False):
         """
         Save the text in the writing rectangle
         """
@@ -133,9 +124,9 @@ class Button:
             variable = 0
 
         str_variable = str(variable)  # Reset the text
-        bool_active = False  # Make it so that we stop changing the text
-        self.deactivate_button()  # Uncheck the button
+        self.activated = False  # Uncheck the button
+        var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))
         text = var.FONT.render(str_variable, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
 
-        return variable, str_variable, bool_active, text
+        return variable, str_variable, text
 
