@@ -116,8 +116,17 @@ class Button:
             variable = int(str_variable)  # Convert the text to an integer
 
             if nb_cars:  # If it's the number of cars we change the variable in the file parameters
+                if variable < 0:
+                    variable = 0
                 with open("data/parameters", "w") as file_parameters_write:
                     file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(variable))
+
+            # We check if the value is correct for a dice
+            else:
+                if variable < 1:
+                    variable = 1
+                elif variable > 6:
+                    variable = 6
 
         except ValueError:
             print("Erreur sur la valeur rentrée")

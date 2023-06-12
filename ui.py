@@ -59,6 +59,11 @@ def detect_events_ui():
                 var.NB_CARS, var.STR_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, text_nb_cars, nb_cars=True)
                 var.CHANGE_NB_CARS = False
 
+            for index, dice_bool in enumerate(var.DICE_BOOLS):
+                if dice_bool:
+                    var.DICE_VARIABLES[index], var.DICE_STR_VARIABLES[index], var.DICE_TEXTS[index] =\
+                        var.DICE_BUTTONS[index].save_writing_rectangle(var.DICE_STR_VARIABLES[index], var.DICE_TEXTS[index])
+                    var.DICE_BOOLS[index] = False
 
             if SEE_CURSOR:
                 print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
@@ -67,6 +72,11 @@ def detect_events_ui():
         if var.CHANGE_NB_CARS:
             var.NB_CARS, var.STR_NB_CARS, var.CHANGE_NB_CARS, text_nb_cars = nb_cars_button.update_writing_rectangle(
                 event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
+
+        for index, dice_bool in enumerate(var.DICE_BOOLS):
+            if dice_bool:
+                var.DICE_VARIABLES[index], var.DICE_STR_VARIABLES[index], var.DICE_BOOLS[index], var.DICE_TEXTS[index] =\
+                    var.DICE_BUTTONS[index].update_writing_rectangle(event, var.DICE_VARIABLES[index], var.DICE_STR_VARIABLES[index], var.DICE_TEXTS[index])
 
 
 

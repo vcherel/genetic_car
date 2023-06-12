@@ -83,14 +83,13 @@ def determine_color(image):
     return color
 
 
-def determine_score(image, color, frame, scores):
+def determine_score(image, color, scores):
     """
     Determine the score of the dice
 
     Args:
         image (numpy.ndarray): Image of the dice
         color (str): Color of the dice
-        frame (numpy.ndarray): Frame of the video
         scores (list): List of the previous scores of the dice
 
     Returns:
@@ -110,7 +109,7 @@ def determine_score(image, color, frame, scores):
         for circle in circles:
             draw_circle(circle, image)
     else:
-        score = 0
+        score = random.randint(1, 6)  # If we don't find any circle, we choose a random number between 1 and 6
 
     if score > 6:
         score = 6
@@ -162,9 +161,6 @@ def capture_dice():
     Returns:
         (dict): Dictionary containing the score of each color
     """
-    return {"black": random.randint(1, 6), "orange": random.randint(1, 6), "green": random.randint(1, 6),
-            "purple": random.randint(1, 6), "red": random.randint(1, 6), "dark_yellow": random.randint(1, 6)}
-
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
@@ -190,7 +186,7 @@ def capture_dice():
                 # We draw the rectangle on the image
                 cv2.rectangle(frame, (x, y), (x + w, y + h), real_bgr_values[color], 5)
 
-                score = determine_score(img_rect, color, frame, scores_all_colors[color])  # We determine the score of the dice
+                score = determine_score(img_rect, color, scores_all_colors[color])  # We determine the score of the dice
                 final_score[color] = score  # We add the score to the final score
 
                 # We write the value of the dice on the image

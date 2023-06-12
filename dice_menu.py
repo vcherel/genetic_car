@@ -7,8 +7,8 @@ from utils import dice_button  # Import the dice_button function
 
 
 rect_dice_menu = (300, 125, 1000, 550)  # Display rectangle of the dice menu
-
-rgb_values = {"black": (0, 0, 0), "orange": (204, 102, 0), "green": (0, 153, 76), "purple": (102, 0, 102), "red": (204, 0, 0), "dark_yellow": (102, 102, 0)}
+rgb_values = [(102, 102, 0), (204, 102, 0), (204, 0, 0), (0, 153, 76), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
+# The order is: dark_yellow, orange, red, green, purple, black
 
 # Positions of the dice
 x1, x2, x3 = 120, 420, 720  # x coordinates of the dice
@@ -47,21 +47,23 @@ def init_dice_variables():
     var.DICE_BOOLS = [False] * 6
 
 
-def draw_dice(x, y, color):
+def draw_dice(x, y, index):
     """
     To draw a dice
 
     Args:
         x (int): x coordinate of the dice
         y (int): y coordinate of the dice
-        color (str): Color of the dice
+        index (int): Index of the dice (0 to 5)
     """
-    pygame.draw.rect(var.WINDOW, rgb_values.get(color), (rect_dice_menu[0] + x, rect_dice_menu[1] + y, 120, 120), 0)
+
+    pygame.draw.rect(var.WINDOW, rgb_values[index], (rect_dice_menu[0] + x, rect_dice_menu[1] + y, 120, 120), 0)
     pygame.draw.rect(var.WINDOW, (100, 100, 100), (rect_dice_menu[0] + x, rect_dice_menu[1] + y, 120, 120), 3)
-    if color == 'dark_yellow':
-        draw_dots(rect_dice_menu[0] + x, rect_dice_menu[1] + y, var.ACTUAL_DICT_DICE.get(color), (0, 0, 0))
+
+    if not index:   # If the dice is dark_yellow the dots are black
+        draw_dots(rect_dice_menu[0] + x, rect_dice_menu[1] + y, var.DICE_VARIABLES[index], (0, 0, 0))
     else:
-        draw_dots(rect_dice_menu[0] + x, rect_dice_menu[1] + y, var.ACTUAL_DICT_DICE.get(color))
+        draw_dots(rect_dice_menu[0] + x, rect_dice_menu[1] + y, var.DICE_VARIABLES[index])
 
 
 def draw_dots(x, y, nb_dots, color=(255, 255, 255)):
@@ -74,6 +76,7 @@ def draw_dots(x, y, nb_dots, color=(255, 255, 255)):
         nb_dots (int): Number of dots on the dice
         color (tuple): Color of the dots. Defaults to (255, 255, 255).
     """
+
     dot_radius = 10
     dot_padding = 32
     position_dot = []
@@ -116,16 +119,18 @@ def display_dice_menu():
     var.WINDOW.blit(var.LARGE_FONT.render('Dés sélectionnés', True, (0, 0, 0), (128, 128, 128)), (rect_dice_menu[0] + 350, rect_dice_menu[1] + 20))
 
     # Display the dice
-    draw_dice(x=x1, y=y1, color='dark_yellow')
-    draw_dice(x=x2, y=y1, color='orange')
-    draw_dice(x=x3, y=y1, color='red')
-    draw_dice(x=x1, y=y2, color='green')
-    draw_dice(x=x2, y=y2, color='purple')
-    draw_dice(x=x3, y=y2, color='black')
+    draw_dice(x=x1, y=y1, index=0)
+    draw_dice(x=x2, y=y1, index=1)
+    draw_dice(x=x3, y=y1, index=2)
+    draw_dice(x=x1, y=y2, index=3)
+    draw_dice(x=x2, y=y2, index=4)
+    draw_dice(x=x3, y=y2, index=5)
 
     # Display the buttons
     for index, button in enumerate(var.DICE_BUTTONS):
         var.DICE_BOOLS[index] = button.check_state()
+        if button.just_clicked:  # We erase the value of the dice if the user has clicked on the button
+            var.DICE_STR_VARIABLES[index] = ''
 
     for index, dice_bool in enumerate(var.DICE_BOOLS):
         if dice_bool:
