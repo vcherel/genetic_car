@@ -162,7 +162,7 @@ def convert_to_grayscale(image):
                 # Calculate the grayscale value using the average of the RGB components
                 gray_value = sum(color[:3]) // 3
 
-                # Set the pixel in the grayscale image to the gray value
+                # Set the pixel in the gray275scale image to the gray value
                 grayscale_image.set_at((x, y), (gray_value, gray_value, gray_value, color.a))
 
     return grayscale_image
@@ -200,19 +200,3 @@ def overlapping_rectangles(rect1, rect2, area_threshold=0.5):
     intersection_area = (x_right - x_left) * (y_bottom - y_top)
 
     return intersection_area > area_threshold * min(area1, area2)
-
-
-def dice_button(x, y):
-    """
-    To create a dice button
-
-    Args:
-        x (int): x coordinate of the button
-        y (int): y coordinate of the button
-
-    Returns:
-        Button: The dice button
-    """
-    return Button(x + 250, y + 275, pygame.image.load("images/writing_rectangle_1.png"),
-                  pygame.image.load("images/writing_rectangle_2.png"),
-                  pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.9)

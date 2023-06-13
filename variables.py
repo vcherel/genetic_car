@@ -67,8 +67,13 @@ RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the scree
 # Dice capture variables
 DISPLAY_DICE_MENU = False  # True to see the dice after capturing the dice with the camera
 DICE_RECT_GARAGE = None  # None if it's dice from camera, else RectGarage we are modifying
-ACTUAL_DICT_DICE = {}  # Actual dict of the dice
 
+CAMERA_FRAME = None  # Frame of the camera at the last update
+RECT_CAMERA_FRAME = None  # Rect of the camera frame
+
+BUTTON_CHECK = None  # Button to check the dice
+
+ACTUAL_DICT_DICE = {}  # Actual dict of the dice
 DICE_BUTTONS = []           # To store the dice buttons
 DICE_VARIABLES = []         # To store the dice variables (the number of dots on each dice)
 DICE_STR_VARIABLES = []     # To store the dice variables (the number of dots on each dice in string format)

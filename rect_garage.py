@@ -63,6 +63,6 @@ class RectGarage:
             dict_checked[self.id] = False  # We take in memory the state of the button
 
         if self.edit_button is not None and self.edit_button.check_state():  # We check the state of the button
+            var.DICE_RECT_GARAGE = self  # We don't display the dice from camera but from the garage
             init_dice_variables(self.genetic)  # We initialize the dice variables
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
-            var.DICE_RECT_GARAGE = self  # We don't display the dice from camera but from the garage

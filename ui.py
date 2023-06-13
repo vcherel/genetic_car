@@ -3,11 +3,12 @@ import pygame  # To use pygame
 import variables as var  # Import the variables
 from garage import init_garage, display_garage, erase_garage  # Import functions from garage
 from constants import SEE_CURSOR, DONT_USE_CAMERA  # Import constants
-from dice_menu import display_dice_menu, erase_dice_menu, init_dice_variables, init_dice_buttons  # Import functions from dice_menu
+from dice_menu import display_dice_menu, erase_dice_menu, init_dice_variables  # Import functions from dice_menu
 from display import display_text_ui  # Import functions from display
 from camera import capture_dice  # Import the function to capture the dice
 from genetic import Genetic  # Import the genetic class
 from button import Button  # Import the button
+
 
 
 debug_button = Button()  # Button to activate the debug mode
@@ -37,9 +38,6 @@ def init_ui():
 
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
-
-    # Dice menu
-    init_dice_buttons()  # Initialize the dice buttons
 
 
 def detect_events_ui():

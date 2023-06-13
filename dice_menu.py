@@ -4,10 +4,9 @@ from button import Button  # Import the button class
 from genetic import Genetic  # Import the genetic class
 from constants import HEIGHT_MULTIPLIER, WIDTH_MULTIPLIER  # Import the constants
 from display import display_text_ui  # Import the display_text_ui function
-from utils import dice_button  # Import the dice_button function
 
 
-rect_dice_menu = (300, 125, 1000, 550)  # Display rectangle of the dice menu
+rect_dice_menu = pygame.rect.Rect(0, 125, 1000, 550)  # Display rectangle of the dice menu
 rgb_values = [(102, 102, 0), (204, 102, 0), (204, 0, 0), (0, 153, 76), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
 # The order is: dark_yellow, orange, red, green, purple, black
 
@@ -15,16 +14,21 @@ rgb_values = [(102, 102, 0), (204, 102, 0), (204, 0, 0), (0, 153, 76), (102, 0, 
 x1, x2, x3 = 120, 420, 720  # x coordinates of the dice
 y1, y2 = 100, 325           # y coordinates of the dice
 
-# Buttons
-button_check = Button(1220, 595, pygame.image.load('images/check.png'), scale=0.12)
 
+def dice_button(x, y):
+    """
+    To create a dice button
 
-def init_dice_buttons():
+    Args:
+        x (int): x coordinate of the button
+        y (int): y coordinate of the button
+
+    Returns:
+        Button: The dice button
     """
-    To initialize the dice buttons
-    """
-    var.DICE_BUTTONS = [dice_button(x1, y1), dice_button(x2, y1), dice_button(x3, y1),
-                        dice_button(x1, y2), dice_button(x2, y2), dice_button(x3, y2)]
+    return Button(rect_dice_menu[0] + x - 50, rect_dice_menu[1] + y + 140, pygame.image.load("images/writing_rectangle_1.png"),
+                  pygame.image.load("images/writing_rectangle_2.png"),
+                  pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.9)
 
 
 def init_dice_variables(genetic=None):
@@ -34,6 +38,16 @@ def init_dice_variables(genetic=None):
     Args:
         genetic (Genetic) : the genetic of the car if we are loading a car from the garage menu
     """
+    if genetic:   # If we are modifying dice from the garage
+        rect_dice_menu[0] = 200
+    else:
+        rect_dice_menu[0] = 500
+
+    var.DICE_BUTTONS = [dice_button(x1, y1), dice_button(x2, y1), dice_button(x3, y1),
+                        dice_button(x1, y2), dice_button(x2, y2), dice_button(x3, y2)]
+
+    var.BUTTON_CHECK = Button(rect_dice_menu[0] + 917, rect_dice_menu[1] + 460, pygame.image.load('images/check.png'), scale=0.12)
+
     for button in var.DICE_BUTTONS:
         button.activated = False
 
@@ -145,9 +159,15 @@ def display_dice_menu():
         else:
             var.WINDOW.blit(var.DICE_TEXTS[index], (var.DICE_BUTTONS[index].x + 102, var.DICE_BUTTONS[index].y + 6))
 
-    button_check.check_state()
+    # Display the image of the last frame of the camera
+    if not var.DICE_RECT_GARAGE:   # If we are modifying dice from the camera
+        var.WINDOW.blit(var.CAMERA_FRAME, (var.RECT_CAMERA_FRAME.x, var.RECT_CAMERA_FRAME.y))
+        pygame.draw.rect(var.WINDOW, (115, 205, 255), var.RECT_CAMERA_FRAME, 2)
 
-    return button_check.just_clicked
+    # Display the button to validate the value of the dice
+    var.BUTTON_CHECK.check_state()
+
+    return var.BUTTON_CHECK.just_clicked
 
 
 def erase_dice_menu():
@@ -155,8 +175,7 @@ def erase_dice_menu():
     To erase the dice menu and save the value of the dice
     """
     var.DISPLAY_DICE_MENU = False  # We don't display the dice menu anymore
-    rect = pygame.Rect(rect_dice_menu)  # We create a rectangle with the coordinates of the dice menu
-    var.WINDOW.blit(var.BACKGROUND, rect, rect)  # We erase the dice menu
+    var.WINDOW.blit(var.BACKGROUND, rect_dice_menu, rect_dice_menu)  # We erase the dice menu
 
     genetic = Genetic(height_slow=var.DICE_VARIABLES[0], height_medium=var.DICE_VARIABLES[1], height_fast=var.DICE_VARIABLES[2],
                       width_slow=var.DICE_VARIABLES[3], width_medium=var.DICE_VARIABLES[4], width_fast=var.DICE_VARIABLES[5])
@@ -164,5 +183,24 @@ def erase_dice_menu():
     if var.DICE_RECT_GARAGE:  # We are modifying dice from garage
         var.DICE_RECT_GARAGE.genetic = genetic
     else:  # We are modifying dice from camera
+        var.WINDOW.blit(var.BACKGROUND, var.RECT_CAMERA_FRAME, var.RECT_CAMERA_FRAME)  # We erase the dice menu
+
         var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, genetic))  # We add the dice to the memory
         var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
+
+
+def save_camera_frame(frame):
+    """
+    To modify the camera frame
+    """
+    frame = pygame.surfarray.make_surface(frame)  # Convert the camera frame to a surface
+    # Resize, rotate and flip the camera frame
+    frame = pygame.transform.scale(frame, (int(frame.get_width() * 0.8), int(frame.get_height() * 0.8)))
+    frame = pygame.transform.rotate(frame, -90)
+    var.CAMERA_FRAME = pygame.transform.flip(frame, True, False)
+
+    # Get the rectangle of the camera frame
+    var.RECT_CAMERA_FRAME = var.CAMERA_FRAME.get_rect()
+    var.RECT_CAMERA_FRAME.x = 0
+    var.RECT_CAMERA_FRAME.y = 200
+

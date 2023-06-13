@@ -4,6 +4,7 @@ import random  # To generate random numbers
 import numpy as np  # To use numpy
 from display import draw_circle  # To draw the circles
 from utils import overlapping_rectangles  # Utils functions
+from dice_menu import save_camera_frame  # To save the camera frame
 
 
 # The parameters of the threshold to make a black and white image for each color
@@ -48,7 +49,7 @@ def find_rectangles(image, rectangles):
                 for rect in rectangles:
                     if rect_is_in_list:
                         break
-                    if overlapping_rectangles(rect, (x, y, w, h), area_threshold=0.9):
+                    if overlapping_rectangles(rect, (x, y, w, h), area_threshold=0.8):
                         rect_is_in_list = True
 
                 # If the rectangle is not in the list, we add it
@@ -159,7 +160,7 @@ def capture_dice():
     Main program
 
     Returns:
-        (dict): Dictionary containing the score of each color
+        (dict) : The scores of the dice
     """
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
@@ -203,5 +204,8 @@ def capture_dice():
 
     cap.release()  # Release the VideoCapture object
     cv2.destroyAllWindows()  # Close all windows
+
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
+    save_camera_frame(frame)  # Save the image into the variables (CAMERA_FRAME and RECT_CAMERA_FRAME)
 
     return final_score
