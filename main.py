@@ -105,7 +105,11 @@ def play(cars=None):
         detect_buttons_click()  # Activate the buttons
         pygame.display.update()  # Update the screen
 
-        var.ACTUAL_FPS = int(1 / (time.time() - time_begin_turn))  # Actual FPS
+        try:  # To avoid division by 0
+            var.ACTUAL_FPS = int(1 / (time.time() - time_begin_turn))  # Actual FPS
+        except ZeroDivisionError:
+            var.ACTUAL_FPS = 0
+
         while time.time() - time_begin_turn < 1 / FPS:  # Wait to have the right FPS
             var.ACTUAL_FPS = FPS
 

@@ -176,7 +176,7 @@ def detect_buttons_click():
             var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
-            var.ACTUAL_DICT_DICE = capture_dice()  # We get the dice
+            var.ACTUAL_DICE = capture_dice()  # We get the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
             var.DICE_RECT_GARAGE = None  # We are from camera, there is no RectGarage
             init_dice_variables()  # We initialize the variables of the dice

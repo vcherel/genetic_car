@@ -47,11 +47,9 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 # Garage variables
 DISPLAY_GARAGE = False  # True to see the garage
 GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
-MEMORY_CARS = {"dice": []}  # Memory of the cars
-"""
-Format of MEMORY_CARS:   {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}
-Format of car:   (id, Genetic)
-"""
+MEMORY_CARS = {"dice": [], "genetic": []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
+# Format of MEMORY_CARS:   {"dice": [(id, Genetic), ...], "genetic": [(id, Genetic), ...]}
+
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
 ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
@@ -73,7 +71,7 @@ RECT_CAMERA_FRAME = None  # Rect of the camera frame
 
 BUTTON_CHECK = None  # Button to check the dice
 
-ACTUAL_DICT_DICE = {}  # Actual dict of the dice
+ACTUAL_DICE = {}  # Actual dict of the dice
 DICE_BUTTONS = []           # To store the dice buttons
 DICE_VARIABLES = []         # To store the dice variables (the number of dots on each dice)
 DICE_STR_VARIABLES = []     # To store the dice variables (the number of dots on each dice in string format)
@@ -181,33 +179,27 @@ def load_variables():
         ...
         
         Format of names for genetic cars:
-        run_x_generation_y
+        genetic_x    (with x a unique int for each generation)
         Format of names for dice cars:
-        dice_x_number_y
+        dice_y          (with y a unique int for each dice car)
         """
         lines = file_cars_read.readlines()  # We read the file
         for line in lines:
             line = line.split(" ")
-            # We add the car to the memory
-            id_run = int(line[0].split("_")[1])
+
+            name = line[0].split("_")  # [generation/dice, id]
+            print(name)
+            id_generation = int(name[1])  # Id of the car
+            type_car = name[0]  # Type of the car (generation or dice)
+
             genetic = Genetic(height_slow=int(line[1]), height_medium=int(line[2]), height_fast=int(line[3]),
                               width_slow=int(line[4]), width_medium=int(line[5]), width_fast=int(line[6]))
 
-            if line[0].startswith("run"):   # If it's a genetic car
-                id_generation = int(line[0].split("_")[3])  # Id of the generation
-
-                if str(id_run) in MEMORY_CARS:  # If the id of the run is already in the memory
-                    MEMORY_CARS[str(id_run)].append((id_generation, genetic))  # We add the car to the memory
-                else:  # If the id of the run is not in the memory
-                    MEMORY_CARS[str(id_run)] = [(id_generation, genetic)]  # We add the car to the memory
-
-                if id_run >= ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
-                    ACTUAL_ID_MEMORY_GENETIC = id_run + 1
-
-            else:   # If it's a dice car
-                MEMORY_CARS.get('dice').append((id_run, genetic))
-                if id_run >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
-                    ACTUAL_ID_MEMORY_DICE = id_run + 1
+            MEMORY_CARS.get(type_car).append((id_generation, genetic))  # We add the car to the memory
+            if type_car == "genetic" and id_generation >= ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
+                ACTUAL_ID_MEMORY_GENETIC = id_generation + 1
+            elif id_generation >= ACTUAL_ID_MEMORY_DICE:
+                ACTUAL_ID_MEMORY_DICE = id_generation + 1
 
 
 def save_variables():
@@ -220,15 +212,8 @@ def save_variables():
 
     with open("data/cars", "w") as file_cars_write:
         for key in MEMORY_CARS.keys():
-            if key == "dice":
-                for car in MEMORY_CARS.get(key):
-                    file_cars_write.write("dice_" + str(car[0]) + " " +
-                                          str(car[1].height_slow // HEIGHT_MULTIPLIER) + " " + str(car[1].height_medium // HEIGHT_MULTIPLIER) + " " +
-                                          str(car[1].height_fast // HEIGHT_MULTIPLIER) + " " + str(car[1].width_slow // WIDTH_MULTIPLIER) + " " +
-                                          str(car[1].width_medium // WIDTH_MULTIPLIER) + " " + str(car[1].width_fast // WIDTH_MULTIPLIER) + "\n")
-            else:
-                for car in MEMORY_CARS.get(key):
-                    file_cars_write.write("run_" + str(key) + "_generation_" + str(car[0]) + " " +
-                                          str(car[1].height_slow // HEIGHT_MULTIPLIER) + " " + str(car[1].height_medium // HEIGHT_MULTIPLIER) + " " +
-                                          str(car[1].height_fast // HEIGHT_MULTIPLIER) + " " + str(car[1].width_slow // WIDTH_MULTIPLIER) + " " +
-                                          str(car[1].width_medium // WIDTH_MULTIPLIER) + " " + str(car[1].width_fast // WIDTH_MULTIPLIER) + "\n")
+            for car in MEMORY_CARS.get(key):
+                file_cars_write.write(key + "_" + str(car[0]) + " " +
+                                      str(car[1].height_slow // HEIGHT_MULTIPLIER) + " " + str(car[1].height_medium // HEIGHT_MULTIPLIER) + " " +
+                                      str(car[1].height_fast // HEIGHT_MULTIPLIER) + " " + str(car[1].width_slow // WIDTH_MULTIPLIER) + " " +
+                                      str(car[1].width_medium // WIDTH_MULTIPLIER) + " " + str(car[1].width_fast // WIDTH_MULTIPLIER) + "\n")

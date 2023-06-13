@@ -52,8 +52,8 @@ def init_dice_variables(genetic=None):
         button.activated = False
 
     if not genetic:
-        var.DICE_VARIABLES = [var.ACTUAL_DICT_DICE.get('dark_yellow'), var.ACTUAL_DICT_DICE.get('orange'), var.ACTUAL_DICT_DICE.get('red'),
-                              var.ACTUAL_DICT_DICE.get('green'), var.ACTUAL_DICT_DICE.get('purple'), var.ACTUAL_DICT_DICE.get('black')]
+        var.DICE_VARIABLES = [var.ACTUAL_DICE.get('dark_yellow'), var.ACTUAL_DICE.get('orange'), var.ACTUAL_DICE.get('red'),
+                              var.ACTUAL_DICE.get('green'), var.ACTUAL_DICE.get('purple'), var.ACTUAL_DICE.get('black')]
     else:
         var.DICE_VARIABLES = [genetic.height_slow // HEIGHT_MULTIPLIER, genetic.height_medium // HEIGHT_MULTIPLIER, genetic.height_fast // HEIGHT_MULTIPLIER,
                               genetic.width_slow // WIDTH_MULTIPLIER, genetic.width_medium // WIDTH_MULTIPLIER, genetic.width_fast // WIDTH_MULTIPLIER]

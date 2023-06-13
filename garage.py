@@ -15,17 +15,19 @@ actual_x = 0        # Actual x position to write the rectangles
 change_y = False    # True if the y position has to change in the next rectangle (it means we are at the right of the garage)
 
 actual_page = 0     # Actual page of the garage
-change_page = True   # True if we have to change the page of the garage (for example at the beginning)
+reload_page = True   # True if we have to change the page of the garage (for example at the beginning)
+
+time_since_last_delete = pygame.time.get_ticks()  # Time since the last delete of a car
 
 
 def init_garage():
     """
     Initialize the garage
     """
-    global change_page, actual_page
+    global reload_page, actual_page
 
     actual_page = 0  # Actual page of the garage
-    change_page = True  # We have to change the page of the garage
+    reload_page = True  # We have to change the page of the garage
     display_garage()  # Display the garage
 
 
@@ -33,7 +35,7 @@ def display_garage():
     """
     Display the garage
     """
-    global actual_y, actual_x, change_y, nb_rectangle, change_page, tab_rectangle
+    global actual_y, actual_x, change_y, nb_rectangle, reload_page, tab_rectangle, time_since_last_delete
 
     # Create rectangles for the garage
     pygame.draw.rect(var.WINDOW, (128, 128, 128), rect_display_garage, 0)
@@ -43,36 +45,30 @@ def display_garage():
     # Reset the variables
     reset_variables()
 
-    if change_page:  # If we have to change the page of the garage
+    if reload_page:  # If we have to change the page of the garage
         tab_rectangle = []  # We reset the list of the rectangle in the garage
 
         # Create the rectangles for the pages
         num = 0   # The number to identify the id of the rectangle
 
         # We first add the rectangles for the dice
-        if var.MEMORY_CARS.get('dice'):
-            for car in var.MEMORY_CARS.get('dice'):
+        for key in var.MEMORY_CARS.keys():
+            str_name = 'Dé ' if key == 'dice' else 'Génération '
+            for car in var.MEMORY_CARS.get(key):
                 if nb_rectangle_max * actual_page <= nb_rectangle < nb_rectangle_max * (actual_page + 1):  # If the rectangle is in the good page
-                    tab_rectangle.append(RectGarage((actual_x, actual_y), 'Dé ' + str(car[0]), num, car[1]))
+                    tab_rectangle.append(RectGarage((actual_x, actual_y), str_name + str(car[0]), num, car[1], key))
                     num += 1  # We add one to the number to identify the id of the rectangle
                     update_variables()  # We change the values of the variables
                 nb_rectangle += 1  # We add one to the number of rectangle in the garage
 
-        # We add the rectangles for the genetics
-        for key in var.MEMORY_CARS:
-            if nb_rectangle_max * actual_page <= nb_rectangle < nb_rectangle_max * (actual_page + 1) and key != "dice":  # If the rectangle is in the good page and it's not the dice
-                tab_rectangle.append(RectGarage((actual_x, actual_y), 'Génétique ' + str(key), num, var.MEMORY_CARS.get(key)))
-                num += 1  # We add one to the number to identify the id of the rectangle
-                update_variables()  # We change the values of the variables
-
-            nb_rectangle += 1  # We add one to the number of rectangle in the garage
-
-        change_page = False  # We don't have to change the page of the garage anymore
+        reload_page = False  # We don't have to change the page of the garage anymore
 
     var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
 
     for rect_garage in tab_rectangle:  # For each rectangle in the garage
-        rect_garage.draw()  # We draw the next rectangle in the garage
+        if rect_garage.draw(time_since_last_delete):  # We draw the next rectangle in the garage
+            reload_page = True  # We have to change the page of the garage
+            time_since_last_delete = pygame.time.get_ticks()  # We reset the time since the last delete of a car
 
 
 def erase_garage():
