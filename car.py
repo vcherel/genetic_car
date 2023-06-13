@@ -13,6 +13,7 @@ class Car:
 
         Args:
             genetic (Genetic): genetic of the car to copy (if None, create a new genetic)
+            view_only (bool): True if the car is in view only mode, False otherwise (view only is when the car is grey)
         """
         if genetic is None:
             self.genetic = Genetic()  # Genetic of the car

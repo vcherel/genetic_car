@@ -96,7 +96,7 @@ circles0 = cv2.HoughCircles(dice0, cv2.HOUGH_GRADIENT, 1.2, 20, param1=50, param
 circles1 = cv2.HoughCircles(dice1, cv2.HOUGH_GRADIENT, 1.2, 20, param1=50, param2=25, minRadius=3, maxRadius=35)
 circles0 = circles0[0, :]
 circles1 = circles1[0, :]
-print(len(circles0), len(circles1))  # We print the number of circles found on each image
+
 # We draw the circles on the image
 for i in circles:
     # draw the outer circle

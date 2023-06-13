@@ -14,14 +14,14 @@ class Genetic:
             genetic (Genetic): genetic algorithm to copy
         """
         if width_fast is not None:        # If we have the parameters of the genetic algorithm
-            self.width_fast = width_fast
-            self.height_fast = height_fast
+            self.width_fast = WIDTH_MULTIPLIER * width_fast
+            self.height_fast = HEIGHT_MULTIPLIER * height_fast
 
-            self.width_medium = width_medium
-            self.height_medium = height_medium
+            self.width_medium = WIDTH_MULTIPLIER * width_medium
+            self.height_medium = HEIGHT_MULTIPLIER * height_medium
 
-            self.width_slow = width_slow
-            self.height_slow = height_slow
+            self.width_slow = WIDTH_MULTIPLIER * width_slow
+            self.height_slow = HEIGHT_MULTIPLIER * height_slow
         elif genetic is not None:  # If we have a genetic algorithm to copy
             self.width_fast = genetic.width_fast
             self.height_fast = genetic.height_fast
@@ -52,4 +52,4 @@ class Genetic:
         Returns:
             str: string representation of the genetic algorithm
         """
-        return f"Genetic algorithm: width_fast={self.width_fast}, height_fast={self.height_fast}, width_medium={self.width_medium}, height_medium={self.height_medium}, width_slow={self.width_slow}, height_slow={self.height_slow}"
+        return f"Genetic algorithm: height_slow={self.height_slow}, height_medium={self.height_medium}, height_fast={self.height_fast}, width_slow={self.width_slow}, width_medium={self.width_medium}, width_fast={self.width_fast}"

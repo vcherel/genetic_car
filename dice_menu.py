@@ -2,6 +2,7 @@ import pygame  # Import pygame module
 import variables as var  # Import the variables
 from button import Button  # Import the button class
 from genetic import Genetic  # Import the genetic class
+from constants import HEIGHT_MULTIPLIER, WIDTH_MULTIPLIER  # Import the constants
 from display import display_text_ui  # Import the display_text_ui function
 from utils import dice_button  # Import the dice_button function
 
@@ -26,16 +27,22 @@ def init_dice_buttons():
                         dice_button(x1, y2), dice_button(x2, y2), dice_button(x3, y2)]
 
 
-def init_dice_variables():
+def init_dice_variables(genetic=None):
     """
     To initialize the dice variables
+
+    Args:
+        genetic (Genetic) : the genetic of the car if we are loading a car from the garage menu
     """
     for button in var.DICE_BUTTONS:
         button.activated = False
 
-
-    var.DICE_VARIABLES = [var.ACTUAL_DICT_DICE.get('dark_yellow'), var.ACTUAL_DICT_DICE.get('orange'), var.ACTUAL_DICT_DICE.get('red'),
-                          var.ACTUAL_DICT_DICE.get('green'), var.ACTUAL_DICT_DICE.get('purple'), var.ACTUAL_DICT_DICE.get('black')]
+    if not genetic:
+        var.DICE_VARIABLES = [var.ACTUAL_DICT_DICE.get('dark_yellow'), var.ACTUAL_DICT_DICE.get('orange'), var.ACTUAL_DICT_DICE.get('red'),
+                              var.ACTUAL_DICT_DICE.get('green'), var.ACTUAL_DICT_DICE.get('purple'), var.ACTUAL_DICT_DICE.get('black')]
+    else:
+        var.DICE_VARIABLES = [genetic.height_slow // HEIGHT_MULTIPLIER, genetic.height_medium // HEIGHT_MULTIPLIER, genetic.height_fast // HEIGHT_MULTIPLIER,
+                              genetic.width_slow // WIDTH_MULTIPLIER, genetic.width_medium // WIDTH_MULTIPLIER, genetic.width_fast // WIDTH_MULTIPLIER]
 
     var.DICE_STR_VARIABLES = []
     var.DICE_TEXTS = []
@@ -140,7 +147,6 @@ def display_dice_menu():
 
     button_check.check_state()
 
-    # If the button is checked we close the window
     return button_check.just_clicked
 
 
@@ -155,5 +161,8 @@ def erase_dice_menu():
     genetic = Genetic(height_slow=var.DICE_VARIABLES[0], height_medium=var.DICE_VARIABLES[1], height_fast=var.DICE_VARIABLES[2],
                       width_slow=var.DICE_VARIABLES[3], width_medium=var.DICE_VARIABLES[4], width_fast=var.DICE_VARIABLES[5])
 
-    var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, genetic))  # We add the dice to the memory
-    var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
+    if var.DICE_RECT_GARAGE:  # We are modifying dice from garage
+        var.DICE_RECT_GARAGE.genetic = genetic
+    else:  # We are modifying dice from camera
+        var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, genetic))  # We add the dice to the memory
+        var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice

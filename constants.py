@@ -7,7 +7,7 @@ RADIUS_CHECKPOINT = 80  # Radius of the checkpoint
 
 # Game
 FPS = 60  # Frame per second
-SEED = 69  # Seed of the random (None to not use a seed)
+SEED = 1  # Seed of the random (None to not use a seed)
 WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to avoid lag)
 
 # Debug

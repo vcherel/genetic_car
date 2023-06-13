@@ -164,6 +164,9 @@ def detect_buttons_click():
     # Dice
     dice_button.check_state()  # Draw the dice button
     if dice_button.just_clicked:   # Dice button is just clicked
+        if var.DISPLAY_GARAGE:
+            delete_garage()  # We erase the garage when the dice button is pressed
+
         if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we erase it
             erase_dice_menu()
             unpause()
@@ -174,7 +177,9 @@ def detect_buttons_click():
             pause()
             var.ACTUAL_DICT_DICE = capture_dice()  # We get the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
+            var.DICE_RECT_GARAGE = None  # We are from camera, there is no RectGarage
             init_dice_variables()  # We initialize the variables of the dice
+
 
     if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
         if display_dice_menu():

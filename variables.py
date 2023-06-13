@@ -1,7 +1,7 @@
 import time  # To use time
 import sys  # To quit the game
 import pygame  # To use pygame
-from constants import CAR_SIZES, TIME_GENERATION, START_POSITIONS, WINDOW_SIZE  # Import the screen size
+from constants import CAR_SIZES, TIME_GENERATION, START_POSITIONS, WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the screen size
 from utils import scale_image, convert_to_grayscale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
 
@@ -66,6 +66,7 @@ RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the scree
 
 # Dice capture variables
 DISPLAY_DICE_MENU = False  # True to see the dice after capturing the dice with the camera
+DICE_RECT_GARAGE = None  # None if it's dice from camera, else RectGarage we are modifying
 ACTUAL_DICT_DICE = {}  # Actual dict of the dice
 
 DICE_BUTTONS = []           # To store the dice buttons
@@ -184,8 +185,8 @@ def load_variables():
             line = line.split(" ")
             # We add the car to the memory
             id_run = int(line[0].split("_")[1])
-            genetic = Genetic(width_fast=int(line[1]), height_fast=int(line[2]), width_medium=int(line[3]),
-                              height_medium=int(line[4]), width_slow=int(line[5]), height_slow=int(line[6]))
+            genetic = Genetic(height_slow=int(line[1]), height_medium=int(line[2]), height_fast=int(line[3]),
+                              width_slow=int(line[4]), width_medium=int(line[5]), width_fast=int(line[6]))
 
             if line[0].startswith("run"):   # If it's a genetic car
                 id_generation = int(line[0].split("_")[3])  # Id of the generation
@@ -199,17 +200,17 @@ def load_variables():
                     ACTUAL_ID_MEMORY_GENETIC = id_run + 1
 
             else:   # If it's a dice car
-                MEMORY_CARS.get("dice").append((id_run, genetic))
+                MEMORY_CARS.get('dice').append((id_run, genetic))
                 if id_run >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                     ACTUAL_ID_MEMORY_DICE = id_run + 1
 
 
 def save_variables():
-    """
+    """"
     Load the variables of the game (number of the map, number of cars, cars, ...)
     """
     # We change the variable in the file parameters
-    with open("data/parameters", "w") as file_parameters_write:
+    with open('data/parameters', 'w') as file_parameters_write:
         file_parameters_write.write(str(NUM_MAP) + "\n" + str(NB_CARS))
 
     with open("data/cars", "w") as file_cars_write:
@@ -217,12 +218,12 @@ def save_variables():
             if key == "dice":
                 for car in MEMORY_CARS.get(key):
                     file_cars_write.write("dice_" + str(car[0]) + " " +
-                                          str(car[1].width_fast) + " " + str(car[1].height_fast) + " " +
-                                          str(car[1].width_medium) + " " + str(car[1].height_medium) + " " +
-                                          str(car[1].width_slow) + " " + str(car[1].height_slow) + "\n")
+                                          str(car[1].height_slow // HEIGHT_MULTIPLIER) + " " + str(car[1].height_medium // HEIGHT_MULTIPLIER) + " " +
+                                          str(car[1].height_fast // HEIGHT_MULTIPLIER) + " " + str(car[1].width_slow // WIDTH_MULTIPLIER) + " " +
+                                          str(car[1].width_medium // WIDTH_MULTIPLIER) + " " + str(car[1].width_fast // WIDTH_MULTIPLIER) + "\n")
             else:
                 for car in MEMORY_CARS.get(key):
                     file_cars_write.write("run_" + str(key) + "_generation_" + str(car[0]) + " " +
-                                          str(car[1].width_fast) + " " + str(car[1].height_fast) + " " +
-                                          str(car[1].width_medium) + " " + str(car[1].height_medium) + " " +
-                                          str(car[1].width_slow) + " " + str(car[1].height_slow) + "\n")
+                                          str(car[1].height_slow // HEIGHT_MULTIPLIER) + " " + str(car[1].height_medium // HEIGHT_MULTIPLIER) + " " +
+                                          str(car[1].height_fast // HEIGHT_MULTIPLIER) + " " + str(car[1].width_slow // WIDTH_MULTIPLIER) + " " +
+                                          str(car[1].width_medium // WIDTH_MULTIPLIER) + " " + str(car[1].width_fast // WIDTH_MULTIPLIER) + "\n")
