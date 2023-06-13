@@ -46,7 +46,7 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 
 # Garage variables
 DISPLAY_GARAGE = False  # True to see the garage
-GENETICS_FROM_GARAGE = []  # Genetics from the garage
+GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
 MEMORY_CARS = {"dice": []}  # Memory of the cars
 """
 Format of MEMORY_CARS:   {id_run1: [car1, car2, ...], id_run2: [car1, car2, ...], dice: [car1, car2, ...]}

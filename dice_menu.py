@@ -7,7 +7,7 @@ from display import display_text_ui  # Import the display_text_ui function
 
 
 rect_dice_menu = pygame.rect.Rect(0, 125, 1000, 550)  # Display rectangle of the dice menu
-rgb_values = [(102, 102, 0), (204, 102, 0), (204, 0, 0), (0, 153, 76), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
+rgb_values = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
 # The order is: dark_yellow, orange, red, green, purple, black
 
 # Positions of the dice

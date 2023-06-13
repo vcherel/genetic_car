@@ -8,11 +8,11 @@ from dice_menu import save_camera_frame  # To save the camera frame
 
 
 # The parameters of the threshold to make a black and white image for each color
-param_thresh = {"black": 25, "orange": 120, "green": 100, "purple": 100, "red": 100, "dark_yellow": 50}
+param_thresh = {"dark_yellow": 50, "orange": 120, "red": 100, "green": 100, "purple": 100, "black": 25}
 # The BGR values of each color (observation)
-bgr_values = {"black": (38, 38, 38), "orange": (52, 107, 165), "green": (65, 128, 49), "purple": (53, 67, 68), "red": (53, 87, 123), "dark_yellow": (51, 86, 134), "white": (150, 130, 126)}
+bgr_values = {"dark_yellow": (51, 86, 134), "orange": (52, 107, 165), "red": (53, 87, 123), "green": (65, 128, 49), "purple": (53, 67, 68), "black": (38, 38, 38), "white": (150, 130, 126)}
 # The BGR values of each color (real)
-real_bgr_values = {"black": (0, 0, 0), "orange": (0, 102, 204), "green": (76, 153, 0), "purple": (102, 0, 102), "red": (0, 0, 204), "dark_yellow": (0, 102, 102)}
+real_bgr_values = {"dark_yellow": (25, 170, 240), "orange": (0, 100, 255), "red": (0, 0, 204), "green": (0, 200, 0), "purple": (102, 0, 102), "black": (0, 0, 0), "white": (255, 255, 255)}
 
 
 def find_rectangles(image, rectangles):

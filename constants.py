@@ -35,11 +35,11 @@ MIN_MEDIUM_SPEED = MAX_SPEED / 3
 MIN_HIGH_SPEED = MAX_SPEED / 3 * 2
 
 # Cone
-WIDTH_MULTIPLIER = 15  # Width multiplier of the cone
-HEIGHT_MULTIPLIER = 17  # Height multiplier of the cone
+WIDTH_MULTIPLIER = 16  # Width multiplier of the cone
+HEIGHT_MULTIPLIER = 19  # Height multiplier of the cone
 
 # Genetic algorithm
-MUTATION_CHANCE = 0.1  # Chance of mutation
-CROSSOVER_CHANCE = 0.1  # Chance of crossover
+MUTATION_CHANCE = 0.2  # Chance of mutation
+CROSSOVER_CHANCE = 0.2  # Chance of crossover
 
 TIME_GENERATION = 30  # Time of a generation (s)

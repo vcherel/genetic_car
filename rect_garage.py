@@ -38,7 +38,10 @@ class RectGarage:
             self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image=pygame.image.load("images/pen.png"), scale=0.032)  # Button to edit the car
 
         self.select_button = Button(x=pos[0] + 190, y=pos[1] + 8, image=image_check_box_1, image_hover=image_check_box_2,
-                                    image_clicked=image_check_box_3, check_box=True, scale=0.035)  # Button of the rectangle
+                                    image_clicked=image_check_box_3, check_box=True, scale=0.035)  # Button of the writing rectangle
+
+        self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 4, image=pygame.image.load("images/trash.png"), scale=0.059)  # Button to delete the car
+
         if dict_checked[self.id]:  # If the car is checked
             self.select_button.activated = True  # Activate the button
 
@@ -51,7 +54,7 @@ class RectGarage:
         # We write the name of the save
         var.WINDOW.blit(var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128)), (self.pos[0] + 10, self.pos[1] + 10))
 
-        # We add the button
+        # We add the buttons
         if self.select_button.check_state():
             dict_checked[self.id] = True  # We take in memory the state of the button
             if type(self.genetic) is list:
@@ -66,3 +69,6 @@ class RectGarage:
             var.DICE_RECT_GARAGE = self  # We don't display the dice from camera but from the garage
             init_dice_variables(self.genetic)  # We initialize the dice variables
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
+
+        if self.delete_button.check_state():
+            print("J'ai pas encore ajouté ça...")

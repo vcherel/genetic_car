@@ -60,15 +60,18 @@ def mutate(cars):
         list: list of cars mutated
     """
     for car in cars:
-        for attribute_name, attribute_value in vars(car.genetic).items():
-            if random.random() < MUTATION_CHANCE:
-                # See if it is a width or a height
-                if attribute_name.startswith("width"):
-                    multiplier = WIDTH_MULTIPLIER
-                else:
-                    multiplier = HEIGHT_MULTIPLIER
-                actual_value = int(getattr(car.genetic, attribute_name) / multiplier)  # Get the actual value of the attribute
-                setattr(car.genetic, attribute_name, multiplier * random_attribution(actual_value))
+        has_muted = False
+        while not has_muted:
+            for attribute_name, attribute_value in vars(car.genetic).items():
+                if random.random() < MUTATION_CHANCE:
+                    has_muted = True
+                    # See if it is a width or a height
+                    if attribute_name.startswith("width"):
+                        multiplier = WIDTH_MULTIPLIER
+                    else:
+                        multiplier = HEIGHT_MULTIPLIER
+                    actual_value = int(getattr(car.genetic, attribute_name) / multiplier)  # Get the actual value of the attribute
+                    setattr(car.genetic, attribute_name, multiplier * random_attribution(actual_value))
     return cars
 
 

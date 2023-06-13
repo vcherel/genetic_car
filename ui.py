@@ -107,7 +107,7 @@ def detect_buttons_click():
 
     # Start button
     var.START = start_button.check_state()  # Draw the start button
-    if start_button.just_clicked:
+    if start_button.just_clicked and (var.NB_CARS != 0 or var.GENETICS_FROM_GARAGE):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
@@ -119,6 +119,9 @@ def detect_buttons_click():
 
     # Nb cars button
     var.CHANGE_NB_CARS = nb_cars_button.check_state()  # Draw the nb cars button
+    if nb_cars_button.just_clicked:
+        var.STR_NB_CARS = ''  # We empty the string for the number of cars
+
     # Draw the number of cars
     if var.CHANGE_NB_CARS:
         display_text_ui(var.STR_NB_CARS, (1195, 62), var.FONT, background_color=(255, 255, 255))
