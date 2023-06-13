@@ -138,4 +138,3 @@ class Button:
         text = var.FONT.render(str_variable, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
 
         return variable, str_variable, text
-

@@ -1,10 +1,11 @@
 import time  # To get the time
 import pygame  # To use pygame
 import variables as var  # Import the variables
-from garage import init_garage, display_garage, erase_garage  # Import functions from garage
+from garage import erase_garage  # Import functions from garage
 from constants import SEE_CURSOR, DONT_USE_CAMERA  # Import constants
 from dice_menu import display_dice_menu, erase_dice_menu, init_dice_variables  # Import functions from dice_menu
 from display import display_text_ui  # Import functions from display
+from structures import GARAGE  # Import the garage
 from camera import capture_dice  # Import the function to capture the dice
 from genetic import Genetic  # Import the genetic class
 from button import Button  # Import the button
@@ -155,12 +156,12 @@ def detect_buttons_click():
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
-            init_garage()
+            GARAGE.init_garage()
         else:
             unpause()
             erase_garage()
     if var.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
-        display_garage()
+        GARAGE.display_garage()
 
     # Dice
     dice_button.check_state()  # Draw the dice button

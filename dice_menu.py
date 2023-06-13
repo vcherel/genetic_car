@@ -203,4 +203,3 @@ def save_camera_frame(frame):
     var.RECT_CAMERA_FRAME = var.CAMERA_FRAME.get_rect()
     var.RECT_CAMERA_FRAME.x = 0
     var.RECT_CAMERA_FRAME.y = 200
-

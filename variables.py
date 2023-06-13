@@ -188,7 +188,6 @@ def load_variables():
             line = line.split(" ")
 
             name = line[0].split("_")  # [generation/dice, id]
-            print(name)
             id_generation = int(name[1])  # Id of the car
             type_car = name[0]  # Type of the car (generation or dice)
 

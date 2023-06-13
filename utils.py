@@ -1,7 +1,6 @@
 import math  # To use math
 import pygame  # To use pygame
 from constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
-from button import Button  # Import the Button class
 
 
 def scale_image(img, factor):
