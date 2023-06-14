@@ -42,9 +42,6 @@ class Genetic:
             self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
 
 
-
-
-
     def __str__(self):
         """
         String representation of the genetic algorithm
@@ -53,3 +50,50 @@ class Genetic:
             str: string representation of the genetic algorithm
         """
         return f"Genetic algorithm: height_slow={self.height_slow}, height_medium={self.height_medium}, height_fast={self.height_fast}, width_slow={self.width_slow}, width_medium={self.width_medium}, width_fast={self.width_fast}"
+
+    def get_dice_value(self, index):
+        """
+        Get the value of the dice at the given index
+        Order of the index : [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
+
+        Args:
+            index (int): index of the dice value to get
+
+        Returns:
+            (int): value of the dice at the given index
+        """
+        if index == 0:
+            return self.height_slow
+        elif index == 1:
+            return self.height_medium
+        elif index == 2:
+            return self.height_fast
+        elif index == 3:
+            return self.width_slow
+        elif index == 4:
+            return self.width_medium
+        elif index == 5:
+            return self.width_fast
+
+
+    def set_dice_value(self, index, value):
+        """
+        Modify the value of the dice at the given index
+        Order of the index : [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
+
+        Args:
+            index (int): index of the dice value to modify
+            value (int): new value of the dice
+        """
+        if index == 0:
+            self.height_slow = value
+        elif index == 1:
+            self.height_medium = value
+        elif index == 2:
+            self.height_fast = value
+        elif index == 3:
+            self.width_slow = value
+        elif index == 4:
+            self.width_medium = value
+        elif index == 5:
+            self.width_fast = value

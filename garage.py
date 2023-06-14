@@ -11,7 +11,20 @@ nb_rectangle_max = 10  # Maximum number of rectangle in the garage
 class Garage:
     def __init__(self):
         """
-        Initialization of the garage
+        Initialize the garage (in the structures.py file)
+        """
+        self.nb_rectangle = None  # Number of rectangle in the garage
+        self.tab_rectangle = None  # List of the rectangle in the garage
+        self.actual_x = None  # Actual x position to write the rectangles
+        self.actual_y = None  # Actual y position to write the rectangles
+        self.change_y = None  # True if the y position has to change in the next rectangle (it means we are at the right of the garage)
+        self.actual_page = None  # Actual page of the garage
+        self.reload_page = None  # True if we have to change the page of the garage (for example at the beginning)
+        self.time_since_last_delete = None  # Time since the last delete of a car
+
+    def init_garage(self):
+        """
+        Initialize the garage during the game
         """
         self.nb_rectangle = 0  # Number of rectangle in the garage
         self.tab_rectangle = []  # List of the rectangle in the garage
@@ -21,13 +34,6 @@ class Garage:
         self.actual_page = 0  # Actual page of the garage
         self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning)
         self.time_since_last_delete = 0  # Time since the last delete of a car
-
-    def init_garage(self):
-        """
-        Initialize the garage
-        """
-        self.actual_page = 0
-        self.reload_page = True
         self.display_garage()
 
     def display_garage(self):
@@ -49,7 +55,6 @@ class Garage:
             # Create the rectangles for the pages
             num = 0  # The number to identify the id of the rectangle
 
-            # We first add the rectangles for the dice
             for key in var.MEMORY_CARS.keys():
                 str_name = 'Dé ' if key == 'dice' else 'Génération '
                 for car in var.MEMORY_CARS.get(key):

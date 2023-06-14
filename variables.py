@@ -1,9 +1,12 @@
 import time  # To use time
 import sys  # To quit the game
 import pygame  # To use pygame
-from constants import CAR_SIZES, TIME_GENERATION, START_POSITIONS, WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the screen size
+from constants import CAR_SIZES, TIME_GENERATION, WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the screen size
 from utils import scale_image, convert_to_grayscale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
+
+
+start_positions = [(600, 165)]  # Start position
 
 # Pygame variables
 WINDOW = None  # Window of the game
@@ -22,8 +25,6 @@ GREY_CAR_IMAGE = None  # Image of the car in view only mode
 
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
-CHANGE_CHECKPOINT = False  # Change the checkpoint for the actual map
-SEE_CHECKPOINTS = False  # See the checkpoints
 CHECKPOINTS = None  # List of checkpoints
 
 # Game variables
@@ -64,19 +65,9 @@ RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the scree
 
 # Dice capture variables
 DISPLAY_DICE_MENU = False  # True to see the dice after capturing the dice with the camera
-DICE_RECT_GARAGE = None  # None if it's dice from camera, else RectGarage we are modifying
 
 CAMERA_FRAME = None  # Frame of the camera at the last update
 RECT_CAMERA_FRAME = None  # Rect of the camera frame
-
-BUTTON_CHECK = None  # Button to check the dice
-
-ACTUAL_DICE = {}  # Actual dict of the dice
-DICE_BUTTONS = []           # To store the dice buttons
-DICE_VARIABLES = []         # To store the dice variables (the number of dots on each dice)
-DICE_STR_VARIABLES = []     # To store the dice variables (the number of dots on each dice in string format)
-DICE_TEXTS = []             # To store the dice texts (the number of dots on each dice in pygame text format)
-DICE_BOOLS = []             # To store the boolean values of the dice buttons (are we actually changing the dice variable or not)
 
 
 def exit_game():
@@ -102,7 +93,7 @@ def change_map(num):
     RED_CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
 
-    START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
+    START_POSITION = start_positions[NUM_MAP]  # Start position of the car
 
     CHECKPOINTS = []  # List of checkpoints
     with open("data/checkpoints_" + str(NUM_MAP), "r") as file_checkpoint_read:

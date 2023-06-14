@@ -1,8 +1,7 @@
-import time  # To get the time
 import pygame  # To play the game
+import structures as struct  # Import the structures
 import variables as var  # Import the variables
 from button import Button  # Import the button class
-from dice_menu import init_dice_variables, display_dice_menu  # Import the function to use the dice menu
 
 
 image_check_box_1 = pygame.image.load("images/checkbox_1.png")  # Image of the checkbox when it is checked
@@ -62,8 +61,7 @@ class RectGarage:
                 var.GENETICS_FROM_GARAGE.remove(self.genetic)
 
         if self.edit_button is not None and self.edit_button.check_state():  # We check the state of the button
-            var.DICE_RECT_GARAGE = self  # We don't display the dice from camera but from the garage
-            init_dice_variables(self.genetic)  # We initialize the dice variables
+            struct.DICE_MENU.init(self.id, genetic=self.genetic)  # We initialize the dice variables
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
         if self.delete_button.check_state() and pygame.time.get_ticks() - time_since_last_delete > 500:  # We check the state of the button

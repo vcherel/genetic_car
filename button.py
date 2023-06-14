@@ -111,6 +111,16 @@ class Button:
     def save_writing_rectangle(self, str_variable, text, nb_cars=False):
         """
         Save the text in the writing rectangle
+
+        Args:
+            str_variable (str): text in the writing rectangle
+            text (pygame.Surface): text to display
+            nb_cars (bool): True if the writing rectangle is for the number of cars, False otherwise (it's for a dice)
+
+        Returns:
+            int: variable corresponding to the text
+            str: text in the writing rectangle
+            pygame.Surface: text to display
         """
         try:
             variable = int(str_variable)  # Convert the text to an integer
@@ -123,14 +133,12 @@ class Button:
 
             # We check if the value is correct for a dice
             else:
-                if variable < 1:
-                    variable = 1
-                elif variable > 6:
-                    variable = 6
+                variable = max(1, variable)
+                variable = min(6, variable)
 
         except ValueError:
             print("Erreur sur la valeur rentrée")
-            variable = 0
+            variable = 1
 
         str_variable = str(variable)  # Reset the text
         self.activated = False  # Uncheck the button

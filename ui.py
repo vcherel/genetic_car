@@ -1,16 +1,16 @@
 import time  # To get the time
 import pygame  # To use pygame
 import variables as var  # Import the variables
+import structures as st  # Import the structures
 from garage import erase_garage  # Import functions from garage
-from constants import SEE_CURSOR, DONT_USE_CAMERA  # Import constants
-from dice_menu import display_dice_menu, erase_dice_menu, init_dice_variables  # Import functions from dice_menu
+from constants import SEE_CURSOR  # Import constants
 from display import display_text_ui  # Import functions from display
-from structures import GARAGE  # Import the garage
 from camera import capture_dice  # Import the function to capture the dice
 from genetic import Genetic  # Import the genetic class
 from button import Button  # Import the button
 
 
+use_camera = True  # If we don't use the camera
 
 debug_button = Button()  # Button to activate the debug mode
 stop_button = Button()  # Button to stop the game
@@ -58,25 +58,40 @@ def detect_events_ui():
                 var.NB_CARS, var.STR_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, text_nb_cars, nb_cars=True)
                 var.CHANGE_NB_CARS = False
 
-            for index, dice_bool in enumerate(var.DICE_BOOLS):
-                if dice_bool:
-                    var.DICE_VARIABLES[index], var.DICE_STR_VARIABLES[index], var.DICE_TEXTS[index] =\
-                        var.DICE_BUTTONS[index].save_writing_rectangle(var.DICE_STR_VARIABLES[index], var.DICE_TEXTS[index])
-                    var.DICE_BOOLS[index] = False
+            if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
+                for index, dice_bool in enumerate(st.DICE_MENU.bool_scores):
+                    if dice_bool:
+                        st.DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
+                        st.DICE_MENU.save_values()  # Save the values of the dice
+                        # TODO : save the value of the dice in the genetic algorithm
 
             if SEE_CURSOR:
                 print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
                 print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
         if var.CHANGE_NB_CARS:
-            var.NB_CARS, var.STR_NB_CARS, var.CHANGE_NB_CARS, text_nb_cars = nb_cars_button.update_writing_rectangle(
-                event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
+            var.NB_CARS, var.STR_NB_CARS, var.CHANGE_NB_CARS, text_nb_cars = \
+                nb_cars_button.update_writing_rectangle(event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
 
-        for index, dice_bool in enumerate(var.DICE_BOOLS):
-            if dice_bool:
-                var.DICE_VARIABLES[index], var.DICE_STR_VARIABLES[index], var.DICE_BOOLS[index], var.DICE_TEXTS[index] =\
-                    var.DICE_BUTTONS[index].update_writing_rectangle(event, var.DICE_VARIABLES[index], var.DICE_STR_VARIABLES[index], var.DICE_TEXTS[index])
+        if var.DISPLAY_DICE_MENU:  # We check if the dice menu has been opened
+            for index, dice_bool in enumerate(st.DICE_MENU.bool_scores):
+                if dice_bool:
+                    # We change the value of the dice using the writing rectangle
+                    writing_rectangle = st.DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
+                    score = st.DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
+                    str_score_before = st.DICE_MENU.str_scores[index]  # Get the string before the change
+                    text_score_before = st.DICE_MENU.text_scores[index]  # Get the text before the change
+                    # TODO : test what happen if I don't save before and after
 
+                    dice_value, str_score, dice_bool, text_score = writing_rectangle.update_writing_rectangle(event, score, str_score_before, text_score_before)
+
+                    st.DICE_MENU.genetic.set_dice_value(index, dice_value)  # Change the value of the dice
+                    st.DICE_MENU.str_scores[index] = str_score  # Change the string of the score
+                    st.DICE_MENU.text_scores[index] = text_score  # Change the text of the score
+
+                    if not dice_bool:
+                        st.DICE_MENU.bool_scores[index] = False
+                        # TODO : save the value of the dice in the genetic algorithm
 
 
 def detect_buttons_click():
@@ -113,7 +128,7 @@ def detect_buttons_click():
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
         if var.DISPLAY_DICE_MENU:
-            erase_dice_menu()  # We erase the dice menu
+            st.DICE_MENU.erase_dice_menu()  # We erase the dice menu
 
     if var.START and var.PAUSE:    # We also resume the simulation if the start button is pressed
         unpause()  # We unpause the simulation
@@ -156,12 +171,12 @@ def detect_buttons_click():
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
-            GARAGE.init_garage()
+            st.GARAGE.init_garage()
         else:
             unpause()
             erase_garage()
     if var.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
-        GARAGE.display_garage()
+        st.GARAGE.display_garage()
 
     # Dice
     dice_button.check_state()  # Draw the dice button
@@ -170,22 +185,20 @@ def detect_buttons_click():
             delete_garage()  # We erase the garage when the dice button is pressed
 
         if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we erase it
-            erase_dice_menu()
+            st.DICE_MENU.erase_dice_menu()
             unpause()
 
-        elif DONT_USE_CAMERA:  # If we don't use the camera we create a random dice
+        elif not use_camera:  # If we don't use the camera we create a random dice
             var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
-            var.ACTUAL_DICE = capture_dice()  # We get the dice
+            st.DICE_MENU.init(dict_scores=capture_dice())  # We initialize the variables of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
-            var.DICE_RECT_GARAGE = None  # We are from camera, there is no RectGarage
-            init_dice_variables()  # We initialize the variables of the dice
 
 
     if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
-        if display_dice_menu():
-            erase_dice_menu()  # We erase the dice menu when the check button is pressed
+        if st.DICE_MENU.display_dice_menu():
+            st.DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
 
 
 def pause(from_button=False):
