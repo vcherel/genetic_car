@@ -1,8 +1,12 @@
 import random  # Used to generate random numbers
 import variables as var  # Variables of the game
-from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, CROSSOVER_CHANCE, MUTATION_CHANCE   # Constants of the game
+from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER   # Constants of the game
 from garage import add_garage_cars  # Add the cars from the garage
 from car import Car  # Import the car
+
+
+mutation_chance = 0.2  # Chance of mutation
+crossover_chance = 0.2  # Chance of crossover
 
 
 def apply_genetic(cars):
@@ -60,7 +64,7 @@ def mutate(cars):
         has_muted = False
         while not has_muted:
             for attribute_name, attribute_value in vars(car.genetic).items():
-                if random.random() < MUTATION_CHANCE:
+                if random.random() < mutation_chance:
                     has_muted = True
                     # See if it is a width or a height
                     if attribute_name.startswith("width"):
@@ -84,7 +88,7 @@ def crossover(cars):
     """
     for i in range(len(cars)):
         for j in range(i + 1, len(cars)):  # We search for all pairs of cars
-            if random.random() < CROSSOVER_CHANCE:  # If we do a crossover
+            if random.random() < crossover_chance:  # If we do a crossover
                 car1, car2 = (cars[i], cars[j])
                 id_changed_attribute = random.randint(0, 5)  # We choose a random attribute to exchange
                 for k, (attribute_name, attribute_value) in enumerate(vars(car1.genetic).items()):

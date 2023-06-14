@@ -96,6 +96,7 @@ def determine_score(image, color, scores):
     Returns:
         (int): Score of the dice
     """
+
     thresh = cv2.threshold(image, param_thresh[color], 255, cv2.THRESH_BINARY_INV)[1]  # Black and white image
 
     detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges

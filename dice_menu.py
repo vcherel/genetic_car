@@ -3,15 +3,27 @@ import variables as var  # Import the variables
 from button import Button  # Import the button class
 from genetic import Genetic  # Import the genetic class
 from constants import HEIGHT_MULTIPLIER, WIDTH_MULTIPLIER  # Import the constants
-from display import display_text_ui  # Import the display_text_ui function
+from display import display_text_ui, draw_detection_cone  # Import the display functions
 
 
 rgb_values = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
 # The order is: dark_yellow, orange, red, green, purple, black
 
 # Positions of the dice
-x1, x2, x3 = 120, 420, 720  # x coordinates of the dice
-y1, y2 = 100, 325           # y coordinates of the dice
+x1, x2, x3 = 90, 300, 510  # x coordinates of the dice
+y1, y2 = 170, 365           # y coordinates of the dice
+
+# Camera
+camera_frame = pygame.image.load('images/check.png')  # Frame of the camera at the last update
+rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
+
+# Display
+text_selected_dice = var.LARGE_FONT.render('Dés sélectionnés', True, (0, 0, 0), (128, 128, 128))  # Text of the selected dice
+text_slow = var.LARGE_FONT.render('Lent', True, (0, 0, 255), (128, 128, 128))  # Text of the slow button
+text_medium = var.LARGE_FONT.render('Moyen', True, (0, 255, 0), (128, 128, 128))  # Text of the medium button
+text_fast = var.LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
+
+car_image = pygame.transform.rotate(pygame.image.load('images/car.bmp'), 90)  # Image of the car
 
 
 class DiceMenu:
@@ -58,7 +70,6 @@ class DiceMenu:
         """
         self.type_car = type_car
         self.id_car = id_car
-        print(self.id_car)
 
         if genetic:
             self.genetic = genetic  # Genetic corresponding to the dice
@@ -128,7 +139,15 @@ class DiceMenu:
         # We display the window
         pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)  # Display the background
         pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)  # Display the border
-        var.WINDOW.blit(var.LARGE_FONT.render('Dés sélectionnés', True, (0, 0, 0), (128, 128, 128)), (self.rect[0] + 350, self.rect[1] + 20))
+
+        var.WINDOW.blit(text_selected_dice, (self.rect[0] + 350, self.rect[1] + 20))
+        var.WINDOW.blit(text_slow, (self.rect[0] + x1 + 30, self.rect[1] + 100))
+        var.WINDOW.blit(text_medium, (self.rect[0] + x2 + 14, self.rect[1] + 100))
+        var.WINDOW.blit(text_fast, (self.rect[0] + x3 + 14, self.rect[1] + 100))
+
+        var.WINDOW.blit(car_image, (self.rect[0] + 685, self.rect[1] + 290))
+        draw_detection_cone((self.rect[0] + 810, self.rect[1] + 315), self.genetic, 2.5)
+
 
         # Display the dice
         self.draw_dice(x=x1, y=y1, index=0)
@@ -153,8 +172,8 @@ class DiceMenu:
 
         # Display the image of the last frame of the camera
         if self.by_camera:  # If we are modifying dice from the camera
-            var.WINDOW.blit(var.CAMERA_FRAME, (var.RECT_CAMERA_FRAME.x, var.RECT_CAMERA_FRAME.y))
-            pygame.draw.rect(var.WINDOW, (115, 205, 255), var.RECT_CAMERA_FRAME, 2)
+            var.WINDOW.blit(camera_frame, (rect_camera_frame.x, rect_camera_frame.y))
+            pygame.draw.rect(var.WINDOW, (115, 205, 255), rect_camera_frame, 2)
 
         # Display the button to validate the value of the dice
         self.check_button.check_state()
@@ -169,7 +188,7 @@ class DiceMenu:
         var.WINDOW.blit(var.BACKGROUND, self.rect, self.rect)  # We erase the dice menu
 
         if self.by_camera:
-            var.WINDOW.blit(var.BACKGROUND, var.RECT_CAMERA_FRAME, var.RECT_CAMERA_FRAME)  # We erase the dice menu
+            var.WINDOW.blit(var.BACKGROUND, rect_camera_frame, rect_camera_frame)  # We erase the dice menu
             var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, self.genetic))  # We add the dice to the memory
             var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
 
@@ -228,13 +247,15 @@ def save_camera_frame(frame):
     """
     We save the frame of the camera in variables (CAMERA_FRAME, RECT_CAMERA_FRAME) to display it on the screen
     """
+    global camera_frame, rect_camera_frame
+
     frame = pygame.surfarray.make_surface(frame)  # Convert the camera frame to a surface
     # Resize, rotate and flip the camera frame
     frame = pygame.transform.scale(frame, (int(frame.get_width() * 0.8), int(frame.get_height() * 0.8)))
     frame = pygame.transform.rotate(frame, -90)
-    var.CAMERA_FRAME = pygame.transform.flip(frame, True, False)
+    camera_frame = pygame.transform.flip(frame, True, False)
 
     # Get the rectangle of the camera frame
-    var.RECT_CAMERA_FRAME = var.CAMERA_FRAME.get_rect()
-    var.RECT_CAMERA_FRAME.x = 0
-    var.RECT_CAMERA_FRAME.y = 200
+    rect_camera_frame = camera_frame.get_rect()
+    rect_camera_frame.x = 0
+    rect_camera_frame.y = 200

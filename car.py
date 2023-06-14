@@ -1,9 +1,20 @@
 import pygame  # Pygame library
 import math  # Math library
 import variables as var  # Variables of the game
-from constants import MAX_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, DECELERATION, ACCELERATION, TURN_ANGLE, MIN_SPEED, RADIUS_CHECKPOINT, KEYBOARD_CONTROL, WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
+from constants import RADIUS_CHECKPOINT, WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
 from utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
 from genetic import Genetic  # Genetic algorithm of the car
+
+
+# Constants
+keyboard_control = False  # True to control the car with the keyboard
+max_speed = 8  # Maximum speed of the car
+min_speed = 1  # Minimum speed of the car
+min_medium_speed = max_speed / 3
+min_high_speed = max_speed / 3 * 2
+turn_angle = 5  # Angle of rotation of the car
+acceleration = 0.2  # Acceleration of the car
+deceleration = -1  # Deceleration of the car
 
 
 class Car:
@@ -100,27 +111,27 @@ class Car:
 
         # If there is a wall in front of the car, we decelerate it
         if wall_at_top:
-            self.acceleration = DECELERATION
+            self.acceleration = deceleration
         else:
-            self.acceleration = ACCELERATION
+            self.acceleration = acceleration
         
         # If there is a wall on the left or on the right of the car, we turn it
         if wall_at_left:
-            self.angle -= TURN_ANGLE
+            self.angle -= turn_angle
         if wall_at_right:
-            self.angle += TURN_ANGLE
+            self.angle += turn_angle
 
     def update_pos(self):
         """
         Update the position and the angle of the car
         """
-        if KEYBOARD_CONTROL:
+        if keyboard_control:
             # Control of the car with the keyboard
             keys = pygame.key.get_pressed()  # Key pressed
             if keys[pygame.K_LEFT]:
-                self.angle += TURN_ANGLE
+                self.angle += turn_angle
             elif keys[pygame.K_RIGHT]:
-                self.angle -= TURN_ANGLE
+                self.angle -= turn_angle
             if keys[pygame.K_UP]:
                 self.speed += self.acceleration
             else:
@@ -130,10 +141,10 @@ class Car:
             self.speed += self.acceleration  # Update the speed of the car
 
         # Limit the speed of the car (between MIN_SPEED and MAX_SPEED)
-        if self.speed > MAX_SPEED:  # If the speed is too high
-            self.speed = MAX_SPEED  # Set the speed to the maximum speed
-        elif self.speed < MIN_SPEED:  # If the speed is negative
-            self.speed = MIN_SPEED  # Set the speed to 0
+        if self.speed > max_speed:  # If the speed is too high
+            self.speed = max_speed  # Set the speed to the maximum speed
+        elif self.speed < min_speed:  # If the speed is negative
+            self.speed = min_speed  # Set the speed to 0
 
         # Move the car
         radians = math.radians(-self.angle)  # Convert the angle to radians
@@ -163,10 +174,10 @@ class Car:
         Returns:
             width, height (int, int): the width and the height of the detection cone
         """
-        if self.speed < MIN_MEDIUM_SPEED:
+        if self.speed < min_medium_speed:
             width = self.genetic.width_slow
             height = self.genetic.height_slow
-        elif self.speed < MIN_HIGH_SPEED:
+        elif self.speed < min_high_speed:
             width = self.genetic.width_medium
             height = self.genetic.height_medium
         else:
@@ -214,21 +225,23 @@ class Car:
 
         # Slow detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.height_slow)
-        if self.speed < MIN_MEDIUM_SPEED:
+        if self.speed < min_medium_speed:
             pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
 
         # Medium detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.height_medium)
-        if MIN_MEDIUM_SPEED < self.speed < MIN_HIGH_SPEED:
+        if min_medium_speed < self.speed < min_high_speed:
             pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
 
         # Fast detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.height_fast)
-        if self.speed > MIN_HIGH_SPEED:
+        if self.speed > min_high_speed:
             pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+
+

@@ -2,7 +2,7 @@ import cv2  # To use OpenCV
 import pygame  # To use pygame
 import variables as var  # Import the variables
 from constants import RADIUS_CHECKPOINT  # Import the constants
-from utils import text_rec  # Import the text_rec function
+from utils import text_rec, compute_detection_cone_points  # Import the utils functions
 
 
 def edit_background():
@@ -48,3 +48,22 @@ def draw_circle(circle, image):
     cv2.circle(image, (int(circle[0]), int(circle[1])), int(circle[2]), (0, 255, 0), 2)
     # Draw the center of the circle
     cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
+
+
+def draw_detection_cone(pos, genetic, factor=1):
+    """
+    Draw the detection cones for a car
+
+    Args:
+        pos (int, int): position of the car
+        genetic (Genetic): genetic of the car
+        factor (int): factor to multiply the width and height of the detection cone
+    """
+    left, top, right = compute_detection_cone_points(90, pos, genetic.width_slow * factor, genetic.height_slow * factor)
+    pygame.draw.polygon(var.WINDOW, (0, 0, 255), (pos, left, top, right), 5)
+
+    left, top, right = compute_detection_cone_points(90, pos, genetic.width_medium * factor, genetic.height_medium * factor)
+    pygame.draw.polygon(var.WINDOW, (0, 255, 0), (pos, left, top, right), 5)
+
+    left, top, right = compute_detection_cone_points(90, pos, genetic.width_fast * factor, genetic.height_fast * factor)
+    pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), 5)

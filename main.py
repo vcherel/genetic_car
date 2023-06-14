@@ -14,6 +14,9 @@ seed = 1  # Seed of the game
 
 change_checkpoint = False  # Change the checkpoint for the actual map
 see_checkpoints = False  # See the checkpoints
+use_genetic = True  # True to use the genetic algorithm, False to just play
+
+rect_blit_car = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
 
 
 def open_window():
@@ -62,6 +65,8 @@ def play(cars=None):
     Args:
         cars (list): list of cars (if None, it is the first time we play)
     """
+    global rect_blit_car
+
     if cars is None:  # If it is the first time we play
         cars = [Car() for _ in range(var.NB_CARS)]  # List of cars
         cars = add_garage_cars(cars)  # Add the cars in the garage
@@ -80,7 +85,7 @@ def play(cars=None):
             if var.DEBUG:
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
             else:
-                var.WINDOW.blit(var.BACKGROUND, var.RECT_BLIT_CAR, var.RECT_BLIT_CAR)  # We delete only the cars
+                var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # We delete only the cars
             for rect in var.RECTS_BLIT_UI:
                 var.WINDOW.blit(var.BACKGROUND, rect, rect)  # We delete the ui
             var.RECTS_BLIT_UI = []  # We reset the list of rects to blit the ui
@@ -95,12 +100,12 @@ def play(cars=None):
                     rects.append(car.rotated_rect)    # Draw the car and add the rect to the list
                 car.draw()  # Draw the car
 
-            var.RECT_BLIT_CAR = union_rect(rects)  # Union of the rects for the blit
+            rect_blit_car = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), var.RECT_BLIT_CAR, 1)  # Draw the rect for the blit of the cars
 
             if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING:    # If all cars are dead
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
-                if var.USE_GENETIC:
+                if use_genetic:
                     cars = apply_genetic(cars)  # Genetic algorithm
                     play(cars)  # Restart the game with the new cars
                 else:
@@ -124,7 +129,6 @@ if __name__ == '__main__':
     """
     Main program
     """
-    var.init_variables_pygame()  # Initialize the variables
     if seed:
         random.seed(seed)  # Initialize the random seed
     var.load_variables()  # Load the variables

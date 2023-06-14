@@ -1,19 +1,25 @@
 import time  # To use time
 import sys  # To quit the game
 import pygame  # To use pygame
-from constants import CAR_SIZES, TIME_GENERATION, WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the screen size
+from constants import WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the screen size
 from utils import scale_image, convert_to_grayscale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
 
 
 start_positions = [(600, 165)]  # Start position
+car_sizes = [0.15]
+time_generation = 30  # Time of a generation (s)
+
 
 # Pygame variables
-WINDOW = None  # Window of the game
-FONT = None  # Font of the game
-SMALL_FONT = None  # Small font of the game
-LARGE_FONT = None  # Big font of the game
-CLOCK = None  # Clock of the game
+pygame.init()  # Pygame initialization
+pygame.display.set_caption("Algorithme génétique")  # Window title
+
+WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
+FONT = pygame.font.SysFont("Arial", 20)  # Font of the text
+SMALL_FONT = pygame.font.SysFont("Arial", 10)  # Font of the text
+LARGE_FONT = pygame.font.SysFont("Arial", 30)  # Font of the text
+CLOCK = pygame.time.Clock()  # Clock of the game
 
 # Map variables
 BACKGROUND = None  # Image of the background
@@ -31,17 +37,16 @@ CHECKPOINTS = None  # List of checkpoints
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
 ACTUAL_FPS = 0  # Actual FPS
+RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 
 # Pause variables
 PAUSE = False  # Pause the game (True or False)
 DURATION_PAUSES = 0  # Duration of all the pauses
 START_TIME_PAUSE = 0  # Time when the game has been paused
-TIME_REMAINING_PAUSE = 0  # Time remaining when the game has been paused
 
 # Genetic variables
 TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
-USE_GENETIC = True  # True to use the genetic algorithm, False to just play
 NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
 
@@ -56,18 +61,10 @@ ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
 # Car variables
 NB_CARS = 0  # Number of cars
-CHANGE_NB_CARS = False  # Change the number of cars
 STR_NB_CARS = ""  # Text of the number of cars
-
-# Screen variables
-RECT_BLIT_CAR = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
-RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 
 # Dice capture variables
 DISPLAY_DICE_MENU = False  # True to see the dice after capturing the dice with the camera
-
-CAMERA_FRAME = None  # Frame of the camera at the last update
-RECT_CAMERA_FRAME = None  # Rect of the camera frame
 
 
 def exit_game():
@@ -90,7 +87,7 @@ def change_map(num):
 
     BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), WINDOW_SIZE)  # Image of the background
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
-    RED_CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), CAR_SIZES[NUM_MAP])    # Image of the car
+    RED_CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), car_sizes[NUM_MAP])    # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
 
     START_POSITION = start_positions[NUM_MAP]  # Start position of the car
@@ -109,22 +106,6 @@ def change_map(num):
             CHECKPOINTS.append((int(a), int(b)))
 
 
-def init_variables_pygame():
-    """
-    Initialize the variables of pygame (window, font, clock, ...)
-    """
-    global WINDOW, FONT, SMALL_FONT, LARGE_FONT, CLOCK
-
-    pygame.init()  # Pygame initialization
-    pygame.display.set_caption("Algorithme génétique")  # Window title
-
-    WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
-    FONT = pygame.font.SysFont("Arial", 20)  # Font of the text
-    SMALL_FONT = pygame.font.SysFont("Arial", 10)  # Font of the text
-    LARGE_FONT = pygame.font.SysFont("Arial", 30)  # Font of the text
-    CLOCK = pygame.time.Clock()  # Clock of the game
-
-
 def init_variables(nb_cars, replay=False):
     """
     Initialize the variables of the game (number of car alive, time remaining, start time, ...)
@@ -133,7 +114,7 @@ def init_variables(nb_cars, replay=False):
         ACTUAL_ID_MEMORY_GENETIC
 
     NB_CARS_ALIVE = nb_cars  # Number of cars alive
-    TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
+    TIME_REMAINING = time_generation  # Time remaining for the generation
     START_TIME = time.time()  # Start time of the generation
     DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
     DISPLAY_GARAGE = False  # We don't display the garage

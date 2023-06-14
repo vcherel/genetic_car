@@ -11,6 +11,8 @@ from button import Button  # Import the button
 
 
 use_camera = True  # If we don't use the camera
+time_remaining_pause = 0  # Time remaining when the game has been paused
+change_nb_cars = False  # Change the number of cars
 
 debug_button = Button()  # Button to activate the debug mode
 stop_button = Button()  # Button to stop the game
@@ -45,7 +47,7 @@ def detect_events_ui():
     """
     Detect events in the ui and do the corresponding action
     """
-    global text_nb_cars
+    global text_nb_cars, change_nb_cars
 
     # Pygame events
     for event in pygame.event.get():
@@ -54,9 +56,9 @@ def detect_events_ui():
 
         # Detection of clicks
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if var.CHANGE_NB_CARS:  # If we click outside the writing rectangle, we stop changing the number of cars
+            if change_nb_cars:  # If we click outside the writing rectangle, we stop changing the number of cars
                 var.NB_CARS, var.STR_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, text_nb_cars, nb_cars=True)
-                var.CHANGE_NB_CARS = False
+                change_nb_cars = False
 
             if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
                 for index, dice_bool in enumerate(st.DICE_MENU.bool_scores):
@@ -78,8 +80,8 @@ def detect_events_ui():
                 print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
                 print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
-        if var.CHANGE_NB_CARS:
-            var.NB_CARS, var.STR_NB_CARS, var.CHANGE_NB_CARS, text_nb_cars = \
+        if change_nb_cars:
+            var.NB_CARS, var.STR_NB_CARS, change_nb_cars, text_nb_cars = \
                 nb_cars_button.update_writing_rectangle(event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
 
         if var.DISPLAY_DICE_MENU:  # We check if the dice menu has been opened
@@ -106,7 +108,7 @@ def detect_buttons_click():
     """
     Draw the buttons and change the state of the variables
     """
-    global text_nb_cars
+    global text_nb_cars, change_nb_cars
 
     # Debug button
     var.DEBUG = debug_button.check_state()  # Draw the debug button
@@ -142,12 +144,12 @@ def detect_buttons_click():
         unpause()  # We unpause the simulation
 
     # Nb cars button
-    var.CHANGE_NB_CARS = nb_cars_button.check_state()  # Draw the nb cars button
+    change_nb_cars = nb_cars_button.check_state()  # Draw the nb cars button
     if nb_cars_button.just_clicked:
         var.STR_NB_CARS = ''  # We empty the string for the number of cars
 
     # Draw the number of cars
-    if var.CHANGE_NB_CARS:
+    if change_nb_cars:
         display_text_ui(var.STR_NB_CARS, (1195, 62), var.FONT, background_color=(255, 255, 255))
     else:
         var.WINDOW.blit(text_nb_cars, (1195, 62))
@@ -163,7 +165,7 @@ def detect_buttons_click():
     if not var.PLAY:
         time_remaining = var.TIME_REMAINING
     elif var.PAUSE:
-        time_remaining = var.TIME_REMAINING_PAUSE
+        time_remaining = time_remaining_pause
     else:
         time_remaining = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
     if time_remaining < 0:
@@ -216,12 +218,14 @@ def pause(from_button=False):
     Args:
         from_button (bool): If the pause is from the pause button
     """
+    global time_remaining_pause
+
     if not from_button:  # If the pause is not from the pause button we have to check the button
         var.PAUSE = True  # We pause the simulation
         pause_button.activated = True  # We check the pause button
 
     var.START_TIME_PAUSE = time.time()  # We get the time when the pause started
-    var.TIME_REMAINING_PAUSE = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We save the time remaining before the pause
+    time_remaining_pause = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We save the time remaining before the pause
 
 
 def unpause(from_button=False):
