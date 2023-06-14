@@ -54,9 +54,9 @@ class DiceMenu:
             Button: The dice button
         """
         return Button(self.rect[0] + x - 50, self.rect[1] + y + 140,
-                      pygame.image.load("images/writing_rectangle_1.png"),
-                      pygame.image.load("images/writing_rectangle_2.png"),
-                      pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.9)
+                      pygame.image.load('images/writing_rectangle_1.png'),
+                      pygame.image.load('images/writing_rectangle_2.png'),
+                      pygame.image.load('images/writing_rectangle_3.png'), writing_rectangle=True, scale=0.9)
 
     def init(self, type_car, id_car=None, dict_scores=None, genetic=None):
         """
@@ -75,12 +75,12 @@ class DiceMenu:
             self.genetic = genetic  # Genetic corresponding to the dice
             self.by_camera = False  # True if the dice menu is called by the camera
         else:
-            self.genetic = Genetic(height_slow=dict_scores.get("dark_yellow"),
-                                   height_medium=dict_scores.get("orange"),
-                                   height_fast=dict_scores.get("red"),
-                                   width_slow=dict_scores.get("green"),
-                                   width_medium=dict_scores.get("purple"),
-                                   width_fast=dict_scores.get("black"))
+            self.genetic = Genetic(height_slow=dict_scores.get('dark_yellow'),
+                                   height_medium=dict_scores.get('orange'),
+                                   height_fast=dict_scores.get('red'),
+                                   width_slow=dict_scores.get('green'),
+                                   width_medium=dict_scores.get('purple'),
+                                   width_fast=dict_scores.get('black'))
             self.by_camera = True
 
         if dict_scores:
@@ -189,7 +189,7 @@ class DiceMenu:
 
         if self.by_camera:
             var.WINDOW.blit(var.BACKGROUND, rect_camera_frame, rect_camera_frame)  # We erase the dice menu
-            var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, self.genetic))  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, self.genetic))  # We add the dice to the memory
             var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
 
     def save_values(self):

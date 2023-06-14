@@ -10,7 +10,7 @@ from garage import add_garage_cars  # Import the garage
 from car import Car  # Import the car
 
 fps = 60  # FPS of the game
-seed = 1  # Seed of the game
+seed = 21  # Seed of the game
 
 change_checkpoint = False  # Change the checkpoint for the actual map
 see_checkpoints = False  # See the checkpoints
@@ -29,11 +29,11 @@ def open_window():
         # If we want to change the checkpoints
         if change_checkpoint:
             # We display the image that explain that we are in the checkpoint mode
-            image_checkpoint = pygame.image.load("images/checkpoint.png")  # Image of the checkpoint
+            image_checkpoint = pygame.image.load('images/checkpoint.png')  # Image of the checkpoint
             var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
             pygame.display.flip()  # Update the screen
             # We open the file to write the checkpoints
-            with open("data/checkpoints_" + str(var.NUM_MAP), "w") as file_checkpoint_write:
+            with open('data/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
                 while 1:
                     # We detect the mouse click to write the coordinates in the file
                     for event in pygame.event.get():
@@ -42,7 +42,7 @@ def open_window():
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             if event.button == 1:
                                 x, y = event.pos
-                                file_checkpoint_write.write(str(x) + " " + str(y) + "\n")
+                                file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
 
         detect_events_ui()  # Detect events in the ui and do the corresponding action=
         detect_buttons_click()  # Activate the buttons

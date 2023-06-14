@@ -22,7 +22,7 @@ def apply_genetic(cars):
     cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
     cars = sorted(cars, key=lambda c: c.score, reverse=True)  # Sort the cars by score
     if cars:  # If there is at least one car
-        best_car = Car(cars[0].genetic)  # Get the best car
+        best_car = Car(cars[0].genetic, best_car=True)  # Get the best car
 
         var.MEMORY_CARS.get('genetic').append((var.NUM_GENERATION, best_car.genetic))  # Add the best car to the memory
 
@@ -67,7 +67,7 @@ def mutate(cars):
                 if random.random() < mutation_chance:
                     has_muted = True
                     # See if it is a width or a height
-                    if attribute_name.startswith("width"):
+                    if attribute_name.startswith('width'):
                         multiplier = WIDTH_MULTIPLIER
                     else:
                         multiplier = HEIGHT_MULTIPLIER

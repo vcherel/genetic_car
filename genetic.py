@@ -2,6 +2,9 @@ import random  # Used to generate random numbers
 from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Constants of the game
 
 
+
+
+
 class Genetic:
     """
     The class is used to represent a genetic algorithm and store the genetic parameters of a car
@@ -41,7 +44,6 @@ class Genetic:
             self.width_slow = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going slow
             self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
 
-
     def __str__(self):
         """
         String representation of the genetic algorithm
@@ -49,7 +51,7 @@ class Genetic:
         Returns:
             str: string representation of the genetic algorithm
         """
-        return f"Genetic algorithm: height_slow={self.height_slow}, height_medium={self.height_medium}, height_fast={self.height_fast}, width_slow={self.width_slow}, width_medium={self.width_medium}, width_fast={self.width_fast}"
+        return f'Genetic algorithm: height_slow={self.height_slow}, height_medium={self.height_medium}, height_fast={self.height_fast}, width_slow={self.width_slow}, width_medium={self.width_medium}, width_fast={self.width_fast}'
 
     def get_dice_value(self, index):
         """

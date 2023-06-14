@@ -8,4 +8,3 @@ SEE_CURSOR = False  # True to see the cursor position and color when clicking
 # Cone
 WIDTH_MULTIPLIER = 16  # Width multiplier of the cone
 HEIGHT_MULTIPLIER = 19  # Height multiplier of the cone
-

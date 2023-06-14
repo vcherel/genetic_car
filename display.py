@@ -10,8 +10,8 @@ def edit_background():
     Add elements to the background for the rest of the game
     """
     # Add a text for the debug mode
-    var.BACKGROUND.blit(var.FONT.render("Activer debug :", True, (255, 255, 255), (0, 0, 0)), (1290, 640))  # Add the debug text
-    var.BACKGROUND.blit(var.FONT.render("Nombre de voitures", True, (0, 0, 0), (128, 128, 128)), (1060, 25))  # Add the yes text
+    var.BACKGROUND.blit(var.FONT.render('Activer debug :', True, (255, 255, 255), (0, 0, 0)), (1290, 640))  # Add the debug text
+    var.BACKGROUND.blit(var.FONT.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), (1060, 25))  # Add the yes text
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (1280, 120), (1280, 0), 2)  # Line at the right
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (325, 120), (325, 0), 2)  # Line at the left
 
@@ -57,7 +57,7 @@ def draw_detection_cone(pos, genetic, factor=1):
     Args:
         pos (int, int): position of the car
         genetic (Genetic): genetic of the car
-        factor (int): factor to multiply the width and height of the detection cone
+        factor (float): factor to multiply the width and height of the detection cone
     """
     left, top, right = compute_detection_cone_points(90, pos, genetic.width_slow * factor, genetic.height_slow * factor)
     pygame.draw.polygon(var.WINDOW, (0, 0, 255), (pos, left, top, right), 5)

@@ -2,7 +2,7 @@ import time  # To use time
 import sys  # To quit the game
 import pygame  # To use pygame
 from constants import WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the screen size
-from utils import scale_image, convert_to_grayscale  # Import the utils functions
+from utils import scale_image, convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
 from genetic import Genetic  # Import the Genetic class
 
 
@@ -13,12 +13,12 @@ time_generation = 30  # Time of a generation (s)
 
 # Pygame variables
 pygame.init()  # Pygame initialization
-pygame.display.set_caption("Algorithme génétique")  # Window title
+pygame.display.set_caption('Algorithme génétique')  # Window title
 
 WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
-FONT = pygame.font.SysFont("Arial", 20)  # Font of the text
-SMALL_FONT = pygame.font.SysFont("Arial", 10)  # Font of the text
-LARGE_FONT = pygame.font.SysFont("Arial", 30)  # Font of the text
+FONT = pygame.font.SysFont('Arial', 20)  # Font of the text
+SMALL_FONT = pygame.font.SysFont('Arial', 10)  # Font of the text
+LARGE_FONT = pygame.font.SysFont('Arial', 30)  # Font of the text
 CLOCK = pygame.time.Clock()  # Clock of the game
 
 # Map variables
@@ -28,6 +28,7 @@ NUM_MAP = 0  # Number of the map
 START_POSITION = None  # Start position of the car
 RED_CAR_IMAGE = None  # Image of the original car
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
+YELLOW_CAR_IMAGE = None  # Image of the best car
 
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
@@ -53,7 +54,7 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 # Garage variables
 DISPLAY_GARAGE = False  # True to see the garage
 GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
-MEMORY_CARS = {"dice": [], "genetic": []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
+MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
 # Format of MEMORY_CARS:   {"dice": [(id, Genetic), ...], "genetic": [(id, Genetic), ...]}
 
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
@@ -61,10 +62,10 @@ ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
 # Car variables
 NB_CARS = 0  # Number of cars
-STR_NB_CARS = ""  # Text of the number of cars
+STR_NB_CARS = ''  # Text of the number of cars
 
 # Dice capture variables
-DISPLAY_DICE_MENU = False  # True to see the dice after capturing the dice with the camera
+DISPLAY_DICE_MENU = False  # True
 
 
 def exit_game():
@@ -82,18 +83,19 @@ def change_map(num):
     Args:
         num (int): number of the new map
     """
-    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, CHECKPOINTS, START_POSITION
+    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, CHECKPOINTS, START_POSITION
     NUM_MAP = num  # New map number
 
-    BACKGROUND = pygame.transform.scale(pygame.image.load("images/background_" + str(NUM_MAP) + ".png"), WINDOW_SIZE)  # Image of the background
+    BACKGROUND = pygame.transform.scale(pygame.image.load('images/background_' + str(NUM_MAP) + '.png'), WINDOW_SIZE)  # Image of the background
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
-    RED_CAR_IMAGE = scale_image(pygame.image.load("images/car.bmp"), car_sizes[NUM_MAP])    # Image of the car
+    RED_CAR_IMAGE = scale_image(pygame.image.load('images/car.bmp'), car_sizes[NUM_MAP])    # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
+    YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
 
     START_POSITION = start_positions[NUM_MAP]  # Start position of the car
 
     CHECKPOINTS = []  # List of checkpoints
-    with open("data/checkpoints_" + str(NUM_MAP), "r") as file_checkpoint_read:
+    with open('data/checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:
         """
         Format of the file checkpoints:
         x1 y1
@@ -102,7 +104,7 @@ def change_map(num):
         """
         checkpoints = file_checkpoint_read.readlines()
         for checkpoint in checkpoints:
-            a, b = checkpoint.split(" ")
+            a, b = checkpoint.split(' ')
             CHECKPOINTS.append((int(a), int(b)))
 
 
@@ -132,7 +134,7 @@ def load_variables():
     global NUM_MAP, NB_CARS, STR_NB_CARS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE
 
     # We open the file parameters to read the number of the map and the number of cars
-    with open("data/parameters", "r") as file_parameters_read:
+    with open('data/parameters', 'r') as file_parameters_read:
         """
         Format of the file parameters:
         num_map
@@ -143,7 +145,7 @@ def load_variables():
         NB_CARS = int(nb_cars)  # Number of cars
         STR_NB_CARS = nb_cars  # Text of the number of cars
 
-    with open("data/cars", "r") as file_cars_read:
+    with open('data/cars', 'r') as file_cars_read:
         """
         Format of the file cars:
         name1   width_fast1   height_fast1   width_medium1   height_medium1   width_slow1   height_slow1
@@ -157,9 +159,9 @@ def load_variables():
         """
         lines = file_cars_read.readlines()  # We read the file
         for line in lines:
-            line = line.split(" ")
+            line = line.split(' ')
 
-            name = line[0].split("_")  # [generation/dice, id]
+            name = line[0].split('_')  # [generation/dice, id]
             id_generation = int(name[1])  # Id of the car
             type_car = name[0]  # Type of the car (generation or dice)
 
@@ -167,9 +169,7 @@ def load_variables():
                               width_slow=int(line[4]), width_medium=int(line[5]), width_fast=int(line[6]))
 
             MEMORY_CARS.get(type_car).append((id_generation, genetic))  # We add the car to the memory
-            if type_car == "genetic" and id_generation >= ACTUAL_ID_MEMORY_GENETIC:  # We change the biggest id of the memory if necessary
-                ACTUAL_ID_MEMORY_GENETIC = id_generation + 1
-            elif id_generation >= ACTUAL_ID_MEMORY_DICE:
+            if type_car == 'dice' and id_generation >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                 ACTUAL_ID_MEMORY_DICE = id_generation + 1
 
 
@@ -181,10 +181,10 @@ def save_variables():
     with open('data/parameters', 'w') as file_parameters_write:
         file_parameters_write.write(str(NUM_MAP) + "\n" + str(NB_CARS))
 
-    with open("data/cars", "w") as file_cars_write:
+    with open('data/cars', 'w') as file_cars_write:
         for key in MEMORY_CARS.keys():
             for car in MEMORY_CARS.get(key):
-                file_cars_write.write(key + "_" + str(car[0]) + " " +
-                                      str(car[1].height_slow // HEIGHT_MULTIPLIER) + " " + str(car[1].height_medium // HEIGHT_MULTIPLIER) + " " +
-                                      str(car[1].height_fast // HEIGHT_MULTIPLIER) + " " + str(car[1].width_slow // WIDTH_MULTIPLIER) + " " +
-                                      str(car[1].width_medium // WIDTH_MULTIPLIER) + " " + str(car[1].width_fast // WIDTH_MULTIPLIER) + "\n")
+                file_cars_write.write(key + '_' + str(car[0]) + ' ' +
+                                      str(car[1].height_slow // HEIGHT_MULTIPLIER) + ' ' + str(car[1].height_medium // HEIGHT_MULTIPLIER) + ' ' +
+                                      str(car[1].height_fast // HEIGHT_MULTIPLIER) + ' ' + str(car[1].width_slow // WIDTH_MULTIPLIER) + ' ' +
+                                      str(car[1].width_medium // WIDTH_MULTIPLIER) + ' ' + str(car[1].width_fast // WIDTH_MULTIPLIER) + '\n')

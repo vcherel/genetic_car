@@ -18,7 +18,7 @@ deceleration = -1  # Deceleration of the car
 
 
 class Car:
-    def __init__(self, genetic=None, view_only=False):
+    def __init__(self, genetic=None, view_only=False, best_car=False):
         """
         Initialization of the car
 
@@ -41,6 +41,8 @@ class Car:
 
         if view_only:
             self.image = var.GREY_CAR_IMAGE  # Image of the car but grey
+        elif best_car:
+            self.image = var.YELLOW_CAR_IMAGE  # Image of the car but yellow
         else:
             self.image = var.RED_CAR_IMAGE  # Image of the car
 
@@ -243,5 +245,3 @@ class Car:
             pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
-
-

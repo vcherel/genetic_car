@@ -27,17 +27,17 @@ text_nb_cars = None  # Text to display the number of cars
 def init_ui():
     global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, text_nb_cars
     # Buttons
-    debug_button = Button(1435, 642, pygame.image.load("images/checkbox_1.png"),
-                          pygame.image.load("images/checkbox_2.png"),
-                          pygame.image.load("images/checkbox_3.png"), check_box=True, scale=0.03)
-    stop_button = Button(1420, 4, pygame.image.load("images/stop_button.png"), scale=0.1)
-    pause_button = Button(1417, 56, pygame.image.load("images/pause_button.png"), check_box=True, scale=0.11)
-    start_button = Button(1310, 15, pygame.image.load("images/start_button.png"), scale=0.18)
-    nb_cars_button = Button(1049, 58, pygame.image.load("images/writing_rectangle_1.png"),
-                            pygame.image.load("images/writing_rectangle_2.png"),
-                            pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.8)
-    garage_button = Button(400, 30, pygame.image.load("images/garage_button.png"), scale=0.2, check_box=True)
-    dice_button = Button(600, 28, pygame.image.load("images/dice_button.png"), scale=0.4)
+    debug_button = Button(1435, 642, pygame.image.load('images/checkbox_1.png'),
+                          pygame.image.load('images/checkbox_2.png'),
+                          pygame.image.load('images/checkbox_3.png'), check_box=True, scale=0.03)
+    stop_button = Button(1420, 4, pygame.image.load('images/stop_button.png'), scale=0.1)
+    pause_button = Button(1417, 56, pygame.image.load('images/pause_button.png'), check_box=True, scale=0.11)
+    start_button = Button(1310, 15, pygame.image.load('images/start_button.png'), scale=0.18)
+    nb_cars_button = Button(1049, 58, pygame.image.load('images/writing_rectangle_1.png'),
+                            pygame.image.load('images/writing_rectangle_2.png'),
+                            pygame.image.load('images/writing_rectangle_3.png'), writing_rectangle=True, scale=0.8)
+    garage_button = Button(400, 30, pygame.image.load('images/garage_button.png'), scale=0.2, check_box=True)
+    dice_button = Button(600, 28, pygame.image.load('images/dice_button.png'), scale=0.4)
 
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
@@ -159,7 +159,7 @@ def detect_buttons_click():
         fps = str(var.ACTUAL_FPS)
     else:
         fps = str(int(var.CLOCK.get_fps()))
-    display_text_ui("FPS : " + fps, (1, 1), var.SMALL_FONT)
+    display_text_ui('FPS : ' + fps, (1, 1), var.SMALL_FONT)
 
     # Time remaining
     if not var.PLAY:
@@ -170,11 +170,11 @@ def detect_buttons_click():
         time_remaining = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
     if time_remaining < 0:
         time_remaining = 0
-    display_text_ui("Temps restant : " + str(time_remaining) + "s", (1, 20), var.FONT)
+    display_text_ui('Temps restant : ' + str(time_remaining) + 's', (1, 20), var.FONT)
 
     # Num generation and nb cars alive
-    display_text_ui("Nombre de voitures restantes : " + str(var.NB_CARS_ALIVE), (1, 50), var.FONT)
-    display_text_ui("Génération : " + str(var.NUM_GENERATION), (1, 80), var.FONT)
+    display_text_ui('Nombre de voitures restantes : ' + str(var.NB_CARS_ALIVE), (1, 50), var.FONT)
+    display_text_ui('Génération : ' + str(var.NUM_GENERATION), (1, 80), var.FONT)
 
     # Garage
     var.DISPLAY_GARAGE = garage_button.check_state()  # Draw the garage button
@@ -199,10 +199,10 @@ def detect_buttons_click():
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
-            st.DICE_MENU.init("dice", dict_scores=capture_dice())  # We initialize the variables of the dice
+            st.DICE_MENU.init('dice', dict_scores=capture_dice())  # We initialize the variables of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
 

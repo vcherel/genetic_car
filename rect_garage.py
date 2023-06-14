@@ -4,9 +4,9 @@ import variables as var  # Import the variables
 from button import Button  # Import the button class
 
 
-image_check_box_1 = pygame.image.load("images/checkbox_1.png")  # Image of the checkbox when it is checked
-image_check_box_2 = pygame.image.load("images/checkbox_2.png")  # Image of the checkbox when it is not checked
-image_check_box_3 = pygame.image.load("images/checkbox_3.png")  # Image of the checkbox when the mouse is over it
+image_check_box_1 = pygame.image.load('images/checkbox_1.png')  # Image of the checkbox when it is checked
+image_check_box_2 = pygame.image.load('images/checkbox_2.png')  # Image of the checkbox when it is not checked
+image_check_box_3 = pygame.image.load('images/checkbox_3.png')  # Image of the checkbox when the mouse is over it
 
 dict_checked = [False] * 10  # List of the checked rect
 
@@ -32,10 +32,10 @@ class RectGarage:
         self.type_car = type_car  # Type of the car
 
         # Buttons
-        self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image=pygame.image.load("images/pen.png"), scale=0.032)  # Button to edit the car
+        self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image=pygame.image.load('images/pen.png'), scale=0.032)  # Button to edit the car
         self.select_button = Button(x=pos[0] + 190, y=pos[1] + 8, image=image_check_box_1, image_hover=image_check_box_2,
                                     image_clicked=image_check_box_3, check_box=True, scale=0.035)  # Button of the writing rectangle
-        self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 4, image=pygame.image.load("images/trash.png"), scale=0.059)  # Button to delete the car
+        self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 4, image=pygame.image.load('images/trash.png'), scale=0.059)  # Button to delete the car
 
         if dict_checked[self.id_rect]:  # If the car is checked
             self.select_button.activated = True  # Activate the button
@@ -65,7 +65,7 @@ class RectGarage:
             struct.DICE_MENU.init(self.type_car, self.id_car, genetic=self.genetic)  # We initialize the dice variables
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
-        if self.delete_button.check_state() and pygame.time.get_ticks() - time_since_last_delete > 500:  # We check the state of the button
+        if self.delete_button.check_state() and pygame.time.get_ticks() - time_since_last_delete > 200:  # We check the state of the button
             for item in var.MEMORY_CARS.get(self.type_car):
                 if item[1] == self.genetic:
                     var.MEMORY_CARS.get(self.type_car).remove(item)
