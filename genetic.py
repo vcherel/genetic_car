@@ -63,17 +63,17 @@ class Genetic:
             (int): value of the dice at the given index
         """
         if index == 0:
-            return self.height_slow
+            return self.height_slow // HEIGHT_MULTIPLIER
         elif index == 1:
-            return self.height_medium
+            return self.height_medium // HEIGHT_MULTIPLIER
         elif index == 2:
-            return self.height_fast
+            return self.height_fast // HEIGHT_MULTIPLIER
         elif index == 3:
-            return self.width_slow
+            return self.width_slow // WIDTH_MULTIPLIER
         elif index == 4:
-            return self.width_medium
+            return self.width_medium // WIDTH_MULTIPLIER
         elif index == 5:
-            return self.width_fast
+            return self.width_fast // WIDTH_MULTIPLIER
 
 
     def set_dice_value(self, index, value):
@@ -86,14 +86,14 @@ class Genetic:
             value (int): new value of the dice
         """
         if index == 0:
-            self.height_slow = value
+            self.height_slow = value * HEIGHT_MULTIPLIER
         elif index == 1:
-            self.height_medium = value
+            self.height_medium = value * HEIGHT_MULTIPLIER
         elif index == 2:
-            self.height_fast = value
+            self.height_fast = value * HEIGHT_MULTIPLIER
         elif index == 3:
-            self.width_slow = value
+            self.width_slow = value * WIDTH_MULTIPLIER
         elif index == 4:
-            self.width_medium = value
+            self.width_medium = value * WIDTH_MULTIPLIER
         elif index == 5:
-            self.width_fast = value
+            self.width_fast = value * WIDTH_MULTIPLIER

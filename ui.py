@@ -61,9 +61,18 @@ def detect_events_ui():
             if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
                 for index, dice_bool in enumerate(st.DICE_MENU.bool_scores):
                     if dice_bool:
+                        writing_rectangle = st.DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
+                        str_score = st.DICE_MENU.str_scores[index]  # Get the value of the dice before the change
+                        text_score = st.DICE_MENU.text_scores[index]  # Get the text before the change
+
+                        score, str_score, text_score = writing_rectangle.save_writing_rectangle(str_score, text_score)
+
+                        st.DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
+                        st.DICE_MENU.str_scores[index] = str_score  # Change the string of the score
+                        st.DICE_MENU.text_scores[index] = text_score  # Change the text of the score
+
                         st.DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
                         st.DICE_MENU.save_values()  # Save the values of the dice
-                        # TODO : save the value of the dice in the genetic algorithm
 
             if SEE_CURSOR:
                 print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
@@ -79,19 +88,18 @@ def detect_events_ui():
                     # We change the value of the dice using the writing rectangle
                     writing_rectangle = st.DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
                     score = st.DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
-                    str_score_before = st.DICE_MENU.str_scores[index]  # Get the string before the change
-                    text_score_before = st.DICE_MENU.text_scores[index]  # Get the text before the change
-                    # TODO : test what happen if I don't save before and after
+                    str_score = st.DICE_MENU.str_scores[index]  # Get the string before the change
+                    text_score = st.DICE_MENU.text_scores[index]  # Get the text before the change
 
-                    dice_value, str_score, dice_bool, text_score = writing_rectangle.update_writing_rectangle(event, score, str_score_before, text_score_before)
+                    score, str_score, dice_bool, text_score = writing_rectangle.update_writing_rectangle(event, score, str_score, text_score)
 
-                    st.DICE_MENU.genetic.set_dice_value(index, dice_value)  # Change the value of the dice
+                    st.DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
                     st.DICE_MENU.str_scores[index] = str_score  # Change the string of the score
                     st.DICE_MENU.text_scores[index] = text_score  # Change the text of the score
 
                     if not dice_bool:
                         st.DICE_MENU.bool_scores[index] = False
-                        # TODO : save the value of the dice in the genetic algorithm
+                        st.DICE_MENU.save_values()  # Save the values of the dice
 
 
 def detect_buttons_click():
@@ -192,7 +200,7 @@ def detect_buttons_click():
             var.MEMORY_CARS.get("dice").append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
-            st.DICE_MENU.init(dict_scores=capture_dice())  # We initialize the variables of the dice
+            st.DICE_MENU.init("dice", dict_scores=capture_dice())  # We initialize the variables of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
 

@@ -6,7 +6,6 @@ from constants import HEIGHT_MULTIPLIER, WIDTH_MULTIPLIER  # Import the constant
 from display import display_text_ui  # Import the display_text_ui function
 
 
-rect_dice_menu = pygame.rect.Rect(0, 125, 1000, 550)  # Display rectangle of the dice menu
 rgb_values = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
 # The order is: dark_yellow, orange, red, green, purple, black
 
@@ -20,8 +19,9 @@ class DiceMenu:
         """
         Initialize the dice menu (in the structures.py file)
         """
+        self.type_car = None  # Type of the car ("dice" or "genetic")
         self.genetic = None  # Genetic corresponding to the dice
-        self.by_camera = None  # True if the dice menu is called by the camera
+        self.by_camera = None  # True if the dice menu is called by the camera, False if we are modifying the dice
         self.rect = None  # Rectangle of the dice menu
         self.writing_rectangles = None  # List of the rectangles to write the text
         self.check_button = None  # List of the check buttons
@@ -30,28 +30,46 @@ class DiceMenu:
         self.bool_scores = None  # Boolean of the scores of the dice
         self.id_car = None  # Id of the dice
 
-    def init(self, id_car=None, dict_scores=None, genetic=None):
+    def dice_button(self, x, y):
+        """
+        To create a dice button
+
+        Args:
+            x (int): x coordinate of the button
+            y (int): y coordinate of the button
+
+        Returns:
+            Button: The dice button
+        """
+        return Button(self.rect[0] + x - 50, self.rect[1] + y + 140,
+                      pygame.image.load("images/writing_rectangle_1.png"),
+                      pygame.image.load("images/writing_rectangle_2.png"),
+                      pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.9)
+
+    def init(self, type_car, id_car=None, dict_scores=None, genetic=None):
         """
         Initialize the dice menu during the game
 
         Args:
-
+            type_car (str): Type of the dice ("dice" or "genetic")
             id_car (int): Id of the dice
             dict_scores (dict): Dictionary of the scores of the dice
             genetic (Genetic): Genetic corresponding to the dice
         """
+        self.type_car = type_car
         self.id_car = id_car
+        print(self.id_car)
 
         if genetic:
             self.genetic = genetic  # Genetic corresponding to the dice
             self.by_camera = False  # True if the dice menu is called by the camera
         else:
-            self.genetic = Genetic(height_slow=dict_scores.get("dark_yellow") * HEIGHT_MULTIPLIER,
-                                   height_medium=dict_scores.get("orange") * HEIGHT_MULTIPLIER,
-                                   height_fast=dict_scores.get("red") * HEIGHT_MULTIPLIER,
-                                   width_slow=dict_scores.get("green") * WIDTH_MULTIPLIER,
-                                   width_medium=dict_scores.get("purple") * WIDTH_MULTIPLIER,
-                                   width_fast=dict_scores.get("black") * WIDTH_MULTIPLIER)
+            self.genetic = Genetic(height_slow=dict_scores.get("dark_yellow"),
+                                   height_medium=dict_scores.get("orange"),
+                                   height_fast=dict_scores.get("red"),
+                                   width_slow=dict_scores.get("green"),
+                                   width_medium=dict_scores.get("purple"),
+                                   width_fast=dict_scores.get("black"))
             self.by_camera = True
 
         if dict_scores:
@@ -60,8 +78,8 @@ class DiceMenu:
             self.rect = pygame.rect.Rect(200, 125, 1000, 550)
 
         # To store the buttons to write the score of each dice
-        self.writing_rectangles = [dice_button(x1, y1), dice_button(x2, y1), dice_button(x3, y1),
-                                   dice_button(x1, y2), dice_button(x2, y2), dice_button(x3, y2)]
+        self.writing_rectangles = [self.dice_button(x1, y1), self.dice_button(x2, y1), self.dice_button(x3, y1),
+                                   self.dice_button(x1, y2), self.dice_button(x2, y2), self.dice_button(x3, y2)]
         self.check_button = Button(self.rect[0] + 917, self.rect[1] + 460, pygame.image.load('images/check.png'), scale=0.12)
 
         self.str_scores = []  # To store the score of each dice (the number of dots on each dice in string format)
@@ -69,10 +87,10 @@ class DiceMenu:
 
         # We fill str_scores and text_scores
         for height in [self.genetic.height_slow, self.genetic.height_medium, self.genetic.height_fast]:
-            number = int(height / HEIGHT_MULTIPLIER)
+            number = height // HEIGHT_MULTIPLIER
             self.add_value(number)
         for width in [self.genetic.width_slow, self.genetic.width_medium, self.genetic.width_fast]:
-            number = int(width / WIDTH_MULTIPLIER)
+            number = width // WIDTH_MULTIPLIER
             self.add_value(number)
 
         self.bool_scores = [False] * 6  # To store the boolean values of the dice buttons (are we actually changing the score or not)
@@ -96,7 +114,7 @@ class DiceMenu:
         pygame.draw.rect(var.WINDOW, (100, 100, 100), (self.rect[0] + x, self.rect[1] + y, 120, 120), 3)
 
         if not index:  # If the dice is dark_yellow the dots are black
-            draw_dots(self.rect[0] + x, self.rect[0] + y, self.genetic.get_dice_value(index), (0, 0, 0))
+            draw_dots(self.rect[0] + x, self.rect[1] + y, self.genetic.get_dice_value(index), (0, 0, 0))
         else:
             draw_dots(self.rect[0] + x, self.rect[1] + y, self.genetic.get_dice_value(index))
 
@@ -160,27 +178,11 @@ class DiceMenu:
         To save the values of the dice in case we are editing a dice from the memory
         """
         if not self.by_camera:
-            for car in var.MEMORY_CARS.get("genetic"):
+            for car in var.MEMORY_CARS.get(self.type_car):
                 if car[0] == self.id_car:
-                    var.MEMORY_CARS.get("genetic").remove(car)
+                    var.MEMORY_CARS.get(self.type_car).remove(car)
                     break
-            var.MEMORY_CARS.get("genetic").append((self.id_car, self.genetic))
-
-
-def dice_button(x, y):
-    """
-    To create a dice button
-
-    Args:
-        x (int): x coordinate of the button
-        y (int): y coordinate of the button
-
-    Returns:
-        Button: The dice button
-    """
-    return Button(rect_dice_menu[0] + x - 50, rect_dice_menu[1] + y + 140, pygame.image.load("images/writing_rectangle_1.png"),
-                  pygame.image.load("images/writing_rectangle_2.png"),
-                  pygame.image.load("images/writing_rectangle_3.png"), writing_rectangle=True, scale=0.9)
+            var.MEMORY_CARS.get(self.type_car).append((self.id_car, self.genetic))
 
 
 def draw_dots(x, y, nb_dots, color=(255, 255, 255)):
@@ -193,7 +195,6 @@ def draw_dots(x, y, nb_dots, color=(255, 255, 255)):
         nb_dots (int): Number of dots on the dice
         color (tuple): Color of the dots. Defaults to (255, 255, 255).
     """
-
     dot_radius = 10
     dot_padding = 32
     position_dot = []

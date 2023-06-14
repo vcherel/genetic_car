@@ -60,7 +60,7 @@ class Garage:
                 for car in var.MEMORY_CARS.get(key):
                     if nb_rectangle_max * self.actual_page <= self.nb_rectangle < nb_rectangle_max * (
                             self.actual_page + 1):  # If the rectangle is in the good page
-                        self.tab_rectangle.append(RectGarage((self.actual_x, self.actual_y), str_name + str(car[0]), num, car[1], key))
+                        self.tab_rectangle.append(RectGarage(num, car[0], (self.actual_x, self.actual_y), str_name + str(car[0]), car[1], key))
                         num += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage

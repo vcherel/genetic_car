@@ -116,7 +116,7 @@ def determine_score(image, color, scores):
         score = 6
 
     scores.append(score)  # We add the score to the list of scores
-    if len(scores) > 50:
+    if len(scores) > 100:
         scores.pop(0)  # We remove the first score
 
     # We find the number the most present in the list of scores
