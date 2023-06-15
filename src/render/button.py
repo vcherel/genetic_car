@@ -90,21 +90,27 @@ class Button:
     def update_writing_rectangle(self, event, variable, str_variable, text, nb_cars=False):
         """
         Save the text in the writing rectangle
+
+        Args:
+            event (pygame.event.Event): event detected (keyboard)
+            variable (int): value of the int in the text
+            str_variable (str): text in the writing rectangle
+            text (pygame.Surface): text to display
+            nb_cars (bool): True if the writing rectangle is not limited (for unlimited cars) false otherwise (dice values)
         """
         bool_active = True  # True if the writing rectangle is active, False otherwise
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                variable, str_variable, text = self.save_writing_rectangle(str_variable, text, nb_cars)
-                bool_active = False  # Deactivate the writing rectangle
+        if event.key == pygame.K_RETURN:
+            variable, str_variable, text = self.save_writing_rectangle(str_variable, text, nb_cars)
+            bool_active = False  # Deactivate the writing rectangle
 
-            elif event.key == pygame.K_BACKSPACE:
-                # Remove the last character
-                str_variable = str_variable[:-1]
-                var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))
-            else:
-                # Append the entered character to the text
-                str_variable += event.unicode
+        elif event.key == pygame.K_BACKSPACE:
+            # Remove the last character
+            str_variable = str_variable[:-1]
+            var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))
+        else:
+            # Append the entered character to the text
+            str_variable += event.unicode
 
         return variable, str_variable, bool_active, text
 

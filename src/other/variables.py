@@ -1,14 +1,14 @@
+from src.game.constants import WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION  # Import the constants
 from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
-from src.game.constants import WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the screen size
 from src.game.genetic import Genetic  # Import the Genetic class
 import os.path  # To get the path of the file
 import pygame  # To use pygame
 import sys  # To quit the game
 import time  # To use time
 
+
 start_positions = [(600, 165)]  # Start position
 car_sizes = [0.15]
-time_generation = 30  # Time of a generation (s)
 
 path_data = os.path.dirname(__file__) + '/../../data/'  # Path of the data folder
 path_image = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
@@ -31,6 +31,13 @@ START_POSITION = None  # Start position of the car
 RED_CAR_IMAGE = None  # Image of the original car
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
 YELLOW_CAR_IMAGE = None  # Image of the best car
+
+# Show detection cones
+RED_CAR_CONE = pygame.transform.rotate(pygame.image.load(path_image + '/car.bmp'), 90)
+TEXT_SLOW = LARGE_FONT.render('Lent', True, (0, 0, 255), (128, 128, 128))  # Text of the slow button
+TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (0, 255, 0), (128, 128, 128))  # Text of the medium button
+TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
+
 
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
@@ -68,8 +75,8 @@ ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 NB_CARS = 0  # Number of cars
 STR_NB_CARS = ''  # Text of the number of cars
 
-# Dice capture variables
-DISPLAY_DICE_MENU = False  # True
+DISPLAY_DICE_MENU = False  # True if we are displaying the dice menu
+DISPLAY_CAR = False  # True if we are displaying the cone of a car
 
 
 def exit_game():
@@ -119,7 +126,7 @@ def init_variables(nb_cars, replay=False):
         ACTUAL_ID_MEMORY_GENETIC
 
     NB_CARS_ALIVE = nb_cars  # Number of cars alive
-    TIME_REMAINING = time_generation  # Time remaining for the generation
+    TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
     START_TIME = time.time()  # Start time of the generation
     DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
     DISPLAY_GARAGE = False  # We don't display the garage

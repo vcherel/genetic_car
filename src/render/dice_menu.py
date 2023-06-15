@@ -22,11 +22,7 @@ rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 # Display
 text_selected_dice = var.LARGE_FONT.render('Dés sélectionnés', True, (0, 0, 0), (128, 128, 128))  # Text of the selected dice
-text_slow = var.LARGE_FONT.render('Lent', True, (0, 0, 255), (128, 128, 128))  # Text of the slow button
-text_medium = var.LARGE_FONT.render('Moyen', True, (0, 255, 0), (128, 128, 128))  # Text of the medium button
-text_fast = var.LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
 
-car_image = pygame.transform.rotate(pygame.image.load(path_image + '/car.bmp'), 90)  # Image of the car
 
 
 class DiceMenu:
@@ -145,12 +141,13 @@ class DiceMenu:
         pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)  # Display the border
 
         var.WINDOW.blit(text_selected_dice, (self.rect[0] + 350, self.rect[1] + 20))
-        var.WINDOW.blit(text_slow, (self.rect[0] + x1 + 30, self.rect[1] + 100))
-        var.WINDOW.blit(text_medium, (self.rect[0] + x2 + 14, self.rect[1] + 100))
-        var.WINDOW.blit(text_fast, (self.rect[0] + x3 + 14, self.rect[1] + 100))
+        var.WINDOW.blit(var.TEXT_SLOW, (self.rect[0] + x1 + 30, self.rect[1] + 100))
+        var.WINDOW.blit(var.TEXT_MEDIUM, (self.rect[0] + x2 + 14, self.rect[1] + 100))
+        var.WINDOW.blit(var.TEXT_MEDIUM, (self.rect[0] + x3 + 14, self.rect[1] + 100))
 
-        var.WINDOW.blit(car_image, (self.rect[0] + 685, self.rect[1] + 290))
-        draw_detection_cone((self.rect[0] + 810, self.rect[1] + 315), self.genetic, 2.5)
+        x, y = self.rect[0] + 685, self.rect[1] + 290
+        var.WINDOW.blit(var.RED_CAR_CONE, (x, y))
+        draw_detection_cone((x + 125, y + 25), self.genetic, 2.5)
 
 
         # Display the dice

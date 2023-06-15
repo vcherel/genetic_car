@@ -4,6 +4,7 @@ from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.game.genetic import Genetic  # Import the genetic class
 from src.game.constants import SEE_CURSOR  # Import constants
+from src.render.display import show_car  # Import the function to show the car
 import src.other.variables as var  # Import the variables
 from src.render.button import Button  # Import the button
 import os.path  # To get the path of images
@@ -25,7 +26,7 @@ dice_button = Button()  # Button to see the dice
 text_nb_cars = None  # Text to display the number of cars
 
 
-def init_ui():
+def init():
     global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, text_nb_cars
 
     path_images = os.path.dirname(__file__) + '/../../images/'  # Path of the images
@@ -47,9 +48,12 @@ def init_ui():
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
 
 
-def detect_events_ui():
+def handle_events(cars=None):
     """
     Detect events in the ui and do the corresponding action
+
+    Args:
+        cars (list): List of cars in case we want to display a car by clicking on it
     """
     global change_nb_cars, text_nb_cars
 
@@ -60,55 +64,77 @@ def detect_events_ui():
 
         # Detection of clicks
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if change_nb_cars:  # If we click outside the writing rectangle, we stop changing the number of cars
-                var.NB_CARS, var.STR_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, text_nb_cars, nb_cars=True)
-                change_nb_cars = False
+            handle_clicks(cars)
 
-            if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
+        # If we press return (enter) or backspace (delete) we change the value of the writing rectangle if needed
+        if event.type == pygame.KEYDOWN:
+            if change_nb_cars:
+                var.NB_CARS, var.STR_NB_CARS, change_nb_cars, text_nb_cars = \
+                    nb_cars_button.update_writing_rectangle(event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
+
+            if var.DISPLAY_DICE_MENU:  # We check if the dice menu has been opened
                 for index, dice_bool in enumerate(DICE_MENU.bool_scores):
                     if dice_bool:
+                        # We change the value of the dice using the writing rectangle
                         writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
-                        str_score = DICE_MENU.str_scores[index]  # Get the value of the dice before the change
+                        score = DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
+                        str_score = DICE_MENU.str_scores[index]  # Get the string before the change
                         text_score = DICE_MENU.text_scores[index]  # Get the text before the change
 
-                        score, str_score, text_score = writing_rectangle.save_writing_rectangle(str_score, text_score)
+                        score, str_score, dice_bool, text_score = writing_rectangle.update_writing_rectangle(event, score, str_score, text_score)
 
                         DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
                         DICE_MENU.str_scores[index] = str_score  # Change the string of the score
                         DICE_MENU.text_scores[index] = text_score  # Change the text of the score
 
-                        DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
-                        DICE_MENU.save_values()  # Save the values of the dice
-
-            if SEE_CURSOR:
-                print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
-                print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
-
-        if change_nb_cars:
-            var.NB_CARS, var.STR_NB_CARS, change_nb_cars, text_nb_cars = \
-                nb_cars_button.update_writing_rectangle(event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
-
-        if var.DISPLAY_DICE_MENU:  # We check if the dice menu has been opened
-            for index, dice_bool in enumerate(DICE_MENU.bool_scores):
-                if dice_bool:
-                    # We change the value of the dice using the writing rectangle
-                    writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
-                    score = DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
-                    str_score = DICE_MENU.str_scores[index]  # Get the string before the change
-                    text_score = DICE_MENU.text_scores[index]  # Get the text before the change
-
-                    score, str_score, dice_bool, text_score = writing_rectangle.update_writing_rectangle(event, score, str_score, text_score)
-
-                    DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
-                    DICE_MENU.str_scores[index] = str_score  # Change the string of the score
-                    DICE_MENU.text_scores[index] = text_score  # Change the text of the score
-
-                    if not dice_bool:
-                        DICE_MENU.bool_scores[index] = False
-                        DICE_MENU.save_values()  # Save the values of the dice
+                        if not dice_bool:
+                            DICE_MENU.bool_scores[index] = False
+                            DICE_MENU.save_values()  # Save the values of the dice
 
 
-def check_buttons():
+def handle_clicks(cars):
+    """
+    Detect clicks in the ui and do the corresponding action
+
+    Args:
+        cars (list): List of cars in case we want to display a car by clicking on it
+    """
+    global change_nb_cars, text_nb_cars
+
+    if change_nb_cars:  # If we click outside the writing rectangle, we stop changing the number of cars
+        var.NB_CARS, var.STR_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, text_nb_cars, nb_cars=True)
+        change_nb_cars = False
+
+    if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
+        for index, dice_bool in enumerate(DICE_MENU.bool_scores):
+            if dice_bool:
+                writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
+                str_score = DICE_MENU.str_scores[index]  # Get the value of the dice before the change
+                text_score = DICE_MENU.text_scores[index]  # Get the text before the change
+
+                score, str_score, text_score = writing_rectangle.save_writing_rectangle(str_score, text_score)
+
+                DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
+                DICE_MENU.str_scores[index] = str_score  # Change the string of the score
+                DICE_MENU.text_scores[index] = text_score  # Change the text of the score
+
+                DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
+                DICE_MENU.save_values()  # Save the values of the dice
+
+    if SEE_CURSOR:
+        print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
+        print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
+
+    if cars:
+        found = False  # Boolean to know if we found a car
+        for car in cars:
+            if not found and car.rotated_rect.collidepoint(pygame.mouse.get_pos()):
+                found = True
+                pause()  # Pause the game
+                show_car(car)  # Display the car
+
+
+def display():
     """
     Draw the buttons and change the state of the variables
     """

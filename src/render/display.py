@@ -67,3 +67,25 @@ def draw_detection_cone(pos, genetic, factor=1):
 
     left, top, right = compute_detection_cone_points(90, pos, genetic.width_fast * factor, genetic.height_fast * factor)
     pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), 5)
+
+
+def show_car(car):
+    """
+    Display the car with the detection cones on the screen
+
+    Args:
+        car (Car): car to display
+    """
+    var.DISPLAY_CAR = True  # Display the car
+
+    rect = pygame.Rect(500, 125, 400, 550)  # Create the rectangle for the window
+    pygame.draw.rect(var.WINDOW, (128, 128, 128), rect, 0)  # Draw the rectangle (inside)
+    pygame.draw.rect(var.WINDOW, (115, 205, 255), rect, 2)  # Draw the rectangle (contour)
+
+    x, y = rect[0] + 100, rect[1] + 280  # Position of the car
+    var.WINDOW.blit(var.RED_CAR_CONE, (x, y))  # Draw the red car
+    draw_detection_cone((x + 125, y + 25), car.genetic, 2.5)  # Draw the detection cones
+
+    var.WINDOW.blit(var.TEXT_SLOW, (x - 50, y + 50))  # Draw the slow text
+    var.WINDOW.blit(var.TEXT_MEDIUM, (x - 50, y))  # Draw the medium text
+    var.WINDOW.blit(var.TEXT_FAST, (x - 50, y - 50))  # Draw the fast text

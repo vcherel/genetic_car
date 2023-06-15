@@ -1,23 +1,17 @@
-from game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from render.ui import detect_events_ui, check_buttons, init_ui  # Import the ui
-from render.garage import add_garage_cars  # Import the garage
-from game.genetic import Genetic  # Import the genetic class
-from other.utils import union_rect  # Import the utils
+from src.game.constants import CHANGE_CHECKPOINTS, SEE_CHECKPOINTS, FPS, USE_GENETIC, SEED  # Import the constants
+from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
+from src.render.garage import add_garage_cars  # Import the garage
+from src.game.genetic import Genetic  # Import the genetic class
+from src.other.utils import union_rect  # Import the utils
 import src.render.display as display  # Import the display
 import src.other.variables as var  # Import the variables
+from src.game.car import Car  # Import the car
 import os.path  # To get the path of the file
 import random  # To generate random numbers
-from game.car import Car  # Import the car
+import src.render.ui as ui  # Import the ui
 import pygame  # To use pygame
 import time  # To get the time
 
-
-fps = 60  # FPS of the game
-seed = 0  # Seed of the game
-
-change_checkpoint = False  # Change the checkpoint for the actual map
-see_checkpoints = False  # See the checkpoints
-use_genetic = True  # True to use the genetic algorithm, False to just play
 
 rect_blit_car = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
 
@@ -33,7 +27,7 @@ def open_window():
 
     while 1:
         # If we want to change the checkpoints
-        if change_checkpoint:
+        if CHANGE_CHECKPOINTS:
             # We display the image that explain that we are in the checkpoint mode
             image_checkpoint = pygame.image.load(os.path.dirname(__file__) + '/../images/checkpoint.png')  # Image of the checkpoint
             var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
@@ -50,10 +44,10 @@ def open_window():
                                 x, y = event.pos
                                 file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
 
-        detect_events_ui()  # Detect events in the ui and do the corresponding action=
-        check_buttons()  # Activate the buttons
+        ui.handle_events()  # Detect events in the ui and do the corresponding action=
+        ui.display()  # Activate the buttons
 
-        if see_checkpoints:
+        if SEE_CHECKPOINTS:
             display.show_checkpoints()   # Display the checkpoints
 
         pygame.display.flip()  # Update the screen
@@ -61,7 +55,7 @@ def open_window():
         if var.START:   # When the game starts
             play()  # Play the game
 
-        var.CLOCK.tick(fps)  # Limit FPS
+        var.CLOCK.tick(FPS)  # Limit FPS
 
 
 def play(cars=None):
@@ -84,7 +78,7 @@ def play(cars=None):
     while var.PLAY:  # While the game is not stopped
         time_begin_turn = time.time()
 
-        detect_events_ui()  # Detect events in the ui and do the corresponding action
+        ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
 
         if not var.PAUSE:  # If the game is not paused
             # Erase the screen
@@ -96,7 +90,7 @@ def play(cars=None):
                 var.WINDOW.blit(var.BACKGROUND, rect, rect)  # We delete the ui
             var.RECTS_BLIT_UI = []  # We reset the list of rects to blit the ui
 
-            if see_checkpoints:
+            if SEE_CHECKPOINTS:
                 display.show_checkpoints()   # Display the checkpoints
 
             rects = []          # List of rects for the blit
@@ -116,13 +110,13 @@ def play(cars=None):
                     for car in cars:
                         file.write(f'{car.genetic} {car.score}\n')  # Write the score of the car
                     return  # We stop the game
-                elif use_genetic:
+                elif USE_GENETIC:
                     cars = apply_genetic(cars)  # Genetic algorithm
                     play(cars)  # Restart the game with the new cars
                 else:
                     play()  # Restart the game
 
-        check_buttons()  # Activate the buttons (This is here because we have to do this after erasing the screen and
+        ui.display()  # Activate the buttons (This is here because we have to do this after erasing the screen and
         # we have ton continue to check the buttons even if the game is paused)
 
         pygame.display.update()  # Update the screen
@@ -132,8 +126,8 @@ def play(cars=None):
         except ZeroDivisionError:
             var.ACTUAL_FPS = 0
 
-        while time.time() - time_begin_turn < 1 / fps:  # Wait to have the right FPS
-            var.ACTUAL_FPS = fps
+        while time.time() - time_begin_turn < 1 / FPS:  # Wait to have the right FPS
+            var.ACTUAL_FPS = FPS
 
     open_window()  # Restart the game
 
@@ -142,11 +136,11 @@ if __name__ == '__main__':
     """
     Main program
     """
-    if seed:
-        random.seed(seed)  # Initialize the random seed
+    if SEED:
+        random.seed(SEED)  # Initialize the random seed
     var.load_variables()  # Load the variables
     var.change_map(var.NUM_MAP)  # Change the map to the first one
-    init_ui()  # Initialize the ui
+    ui.init()  # Initialize the ui
     display.edit_background()  # Add elements not clickable to the background
 
     if var.TEST_ALL_CARS:
