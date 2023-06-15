@@ -9,7 +9,7 @@ class Genetic:
     """
     The class is used to represent a genetic algorithm and store the genetic parameters of a car
     """
-    def __init__(self, genetic=None, width_fast=None, height_fast=None, width_medium=None, height_medium=None, width_slow=None, height_slow=None):
+    def __init__(self, genetic=None, width_slow=None, width_medium=None, width_fast=None, height_slow=None, height_medium=None, height_fast=None):
         """
         Initialization of the genetic algorithm
 
@@ -51,7 +51,8 @@ class Genetic:
         Returns:
             str: string representation of the genetic algorithm
         """
-        return f'Genetic algorithm: height_slow={self.height_slow}, height_medium={self.height_medium}, height_fast={self.height_fast}, width_slow={self.width_slow}, width_medium={self.width_medium}, width_fast={self.width_fast}'
+        return f' {self.height_slow // HEIGHT_MULTIPLIER} {self.height_medium // HEIGHT_MULTIPLIER} {self.height_fast // HEIGHT_MULTIPLIER} ' \
+               f'{self.width_slow // WIDTH_MULTIPLIER} {self.width_medium // WIDTH_MULTIPLIER} {self.width_fast // WIDTH_MULTIPLIER}'
 
     def get_dice_value(self, index):
         """

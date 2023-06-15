@@ -33,6 +33,7 @@ YELLOW_CAR_IMAGE = None  # Image of the best car
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
 CHECKPOINTS = None  # List of checkpoints
+TEST_ALL_CARS = False  # True to test_0 all the cars, False to play the game normally
 
 # Game variables
 START = False  # Start the game (True or False)

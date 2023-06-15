@@ -224,8 +224,10 @@ def convert_to_yellow_scale(image):
                 # Calculate the average value of the red, green, and blue channels
                 average_value = (color.r + color.g + color.b) // 3
 
+                light_value = min(average_value + 50, 255)  # To make the yellow lighter
+
                 # Create a new color with the average value for all channels
-                yellow_color = pygame.Color(average_value, average_value, 0)
+                yellow_color = pygame.Color(light_value, light_value, 0)
 
                 # Set the color of the corresponding pixel in the new surface
                 yellow_scale_image.set_at((x, y), yellow_color)

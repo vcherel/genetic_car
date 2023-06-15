@@ -7,7 +7,6 @@ from genetic import Genetic  # Genetic algorithm of the car
 
 
 # Constants
-keyboard_control = False  # True to control the car with the keyboard
 max_speed = 8  # Maximum speed of the car
 min_speed = 1  # Minimum speed of the car
 min_medium_speed = max_speed / 3
@@ -127,20 +126,8 @@ class Car:
         """
         Update the position and the angle of the car
         """
-        if keyboard_control:
-            # Control of the car with the keyboard
-            keys = pygame.key.get_pressed()  # Key pressed
-            if keys[pygame.K_LEFT]:
-                self.angle += turn_angle
-            elif keys[pygame.K_RIGHT]:
-                self.angle -= turn_angle
-            if keys[pygame.K_UP]:
-                self.speed += self.acceleration
-            else:
-                self.speed = 0
-        else:
-            # Change the speed of the car
-            self.speed += self.acceleration  # Update the speed of the car
+        # Change the speed of the car
+        self.speed += self.acceleration  # Update the speed of the car
 
         # Limit the speed of the car (between MIN_SPEED and MAX_SPEED)
         if self.speed > max_speed:  # If the speed is too high
