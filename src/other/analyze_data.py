@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # For plotting the histogram
 
 
 def analyze_file(file_name_read, file_name_write):
@@ -86,4 +86,4 @@ def analyze_file(file_name_read, file_name_write):
 
 
 if __name__ == '__main__':
-    analyze_file('data/test_1', 'data/result_analysis')
+    analyze_file('../../data/test_1', 'data/result_analysis')

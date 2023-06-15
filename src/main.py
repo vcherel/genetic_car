@@ -1,14 +1,16 @@
-import time  # To get the time
-import pygame  # To use pygame
-import variables as var  # Import the variables
+from game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
+from render.ui import detect_events_ui, check_buttons, init_ui  # Import the ui
+from render.garage import add_garage_cars  # Import the garage
+from game.genetic import Genetic  # Import the genetic class
+from other.utils import union_rect  # Import the utils
+import src.render.display as display  # Import the display
+import src.other.variables as var  # Import the variables
+import os.path  # To get the path of the file
 import random  # To generate random numbers
-from display import display_checkpoints, edit_background  # To see the checkpoints
-from ui import detect_events_ui, detect_buttons_click, init_ui  # Import the ui
-from genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from utils import union_rect  # Import the utils
-from garage import add_garage_cars  # Import the garage
-from genetic import Genetic  # Import the genetic class
-from car import Car  # Import the car
+from game.car import Car  # Import the car
+import pygame  # To use pygame
+import time  # To get the time
+
 
 fps = 60  # FPS of the game
 seed = 0  # Seed of the game
@@ -20,7 +22,7 @@ use_genetic = True  # True to use the genetic algorithm, False to just play
 rect_blit_car = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
 
 if var.TEST_ALL_CARS:  # If we want to test_0 all the cars
-    file = open('data/test_1', 'a')  # File to write the scores of every possible car if necessary
+    file = open(os.path.dirname(__file__) + '/../data/test_1', 'a')  # File to write the scores of every possible car if necessary
 
 
 def open_window():
@@ -33,11 +35,11 @@ def open_window():
         # If we want to change the checkpoints
         if change_checkpoint:
             # We display the image that explain that we are in the checkpoint mode
-            image_checkpoint = pygame.image.load('images/checkpoint.png')  # Image of the checkpoint
+            image_checkpoint = pygame.image.load(os.path.dirname(__file__) + '/../images/checkpoint.png')  # Image of the checkpoint
             var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
             pygame.display.flip()  # Update the screen
             # We open the file to write the checkpoints
-            with open('data/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
+            with open(os.path.dirname(__file__) + '/data/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
                 while 1:
                     # We detect the mouse click to write the coordinates in the file
                     for event in pygame.event.get():
@@ -49,10 +51,10 @@ def open_window():
                                 file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
 
         detect_events_ui()  # Detect events in the ui and do the corresponding action=
-        detect_buttons_click()  # Activate the buttons
+        check_buttons()  # Activate the buttons
 
         if see_checkpoints:
-            display_checkpoints()   # Display the checkpoints
+            display.show_checkpoints()   # Display the checkpoints
 
         pygame.display.flip()  # Update the screen
 
@@ -95,7 +97,7 @@ def play(cars=None):
             var.RECTS_BLIT_UI = []  # We reset the list of rects to blit the ui
 
             if see_checkpoints:
-                display_checkpoints()   # Display the checkpoints
+                display.show_checkpoints()   # Display the checkpoints
 
             rects = []          # List of rects for the blit
             for car in cars:    # For each car
@@ -120,7 +122,9 @@ def play(cars=None):
                 else:
                     play()  # Restart the game
 
-        detect_buttons_click()  # Activate the buttons
+        check_buttons()  # Activate the buttons (This is here because we have to do this after erasing the screen and
+        # we have ton continue to check the buttons even if the game is paused)
+
         pygame.display.update()  # Update the screen
 
         try:  # To avoid division by 0
@@ -143,7 +147,7 @@ if __name__ == '__main__':
     var.load_variables()  # Load the variables
     var.change_map(var.NUM_MAP)  # Change the map to the first one
     init_ui()  # Initialize the ui
-    edit_background()  # Add elements not clickable to the background
+    display.edit_background()  # Add elements not clickable to the background
 
     if var.TEST_ALL_CARS:
         var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization

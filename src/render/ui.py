@@ -1,13 +1,14 @@
-import time  # To get the time
+from src.other.camera import capture_dice  # Import the function to capture the dice
+from src.render.garage import erase_garage, GARAGE  # Import functions from garage
+from src.render.display import display_text_ui  # Import functions from display
+from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
+from src.game.genetic import Genetic  # Import the genetic class
+from src.game.constants import SEE_CURSOR  # Import constants
+import src.other.variables as var  # Import the variables
+from src.render.button import Button  # Import the button
+import os.path  # To get the path of images
 import pygame  # To use pygame
-import variables as var  # Import the variables
-import structures as st  # Import the structures
-from garage import erase_garage  # Import functions from garage
-from constants import SEE_CURSOR  # Import constants
-from display import display_text_ui  # Import functions from display
-from camera import capture_dice  # Import the function to capture the dice
-from genetic import Genetic  # Import the genetic class
-from button import Button  # Import the button
+import time  # To get the time
 
 
 use_camera = True  # If we don't use the camera
@@ -26,18 +27,21 @@ text_nb_cars = None  # Text to display the number of cars
 
 def init_ui():
     global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, text_nb_cars
+
+    path_images = os.path.dirname(__file__) + '/../../images/'  # Path of the images
+
     # Buttons
-    debug_button = Button(1435, 642, pygame.image.load('images/checkbox_1.png'),
-                          pygame.image.load('images/checkbox_2.png'),
-                          pygame.image.load('images/checkbox_3.png'), check_box=True, scale=0.03)
-    stop_button = Button(1420, 4, pygame.image.load('images/stop_button.png'), scale=0.1)
-    pause_button = Button(1417, 56, pygame.image.load('images/pause_button.png'), check_box=True, scale=0.11)
-    start_button = Button(1310, 15, pygame.image.load('images/start_button.png'), scale=0.18)
-    nb_cars_button = Button(1049, 58, pygame.image.load('images/writing_rectangle_1.png'),
-                            pygame.image.load('images/writing_rectangle_2.png'),
-                            pygame.image.load('images/writing_rectangle_3.png'), writing_rectangle=True, scale=0.8)
-    garage_button = Button(400, 30, pygame.image.load('images/garage_button.png'), scale=0.2, check_box=True)
-    dice_button = Button(600, 28, pygame.image.load('images/dice_button.png'), scale=0.4)
+    debug_button = Button(1435, 642, pygame.image.load(path_images + '/checkbox_1.png'),
+                          pygame.image.load(path_images + '/checkbox_2.png'),
+                          pygame.image.load(path_images + '/checkbox_3.png'), check_box=True, scale=0.03)
+    stop_button = Button(1420, 4, pygame.image.load(path_images + '/stop_button.png'), scale=0.1)
+    pause_button = Button(1417, 56, pygame.image.load(path_images + '/pause_button.png'), check_box=True, scale=0.11)
+    start_button = Button(1310, 15, pygame.image.load(path_images + '/start_button.png'), scale=0.18)
+    nb_cars_button = Button(1049, 58, pygame.image.load(path_images + '/writing_rectangle_1.png'),
+                            pygame.image.load(path_images + '/writing_rectangle_2.png'),
+                            pygame.image.load(path_images + '/writing_rectangle_3.png'), writing_rectangle=True, scale=0.8)
+    garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, check_box=True)
+    dice_button = Button(600, 28, pygame.image.load(path_images + '/dice_button.png'), scale=0.4)
 
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
@@ -47,7 +51,7 @@ def detect_events_ui():
     """
     Detect events in the ui and do the corresponding action
     """
-    global text_nb_cars, change_nb_cars
+    global change_nb_cars, text_nb_cars
 
     # Pygame events
     for event in pygame.event.get():
@@ -61,20 +65,20 @@ def detect_events_ui():
                 change_nb_cars = False
 
             if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
-                for index, dice_bool in enumerate(st.DICE_MENU.bool_scores):
+                for index, dice_bool in enumerate(DICE_MENU.bool_scores):
                     if dice_bool:
-                        writing_rectangle = st.DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
-                        str_score = st.DICE_MENU.str_scores[index]  # Get the value of the dice before the change
-                        text_score = st.DICE_MENU.text_scores[index]  # Get the text before the change
+                        writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
+                        str_score = DICE_MENU.str_scores[index]  # Get the value of the dice before the change
+                        text_score = DICE_MENU.text_scores[index]  # Get the text before the change
 
                         score, str_score, text_score = writing_rectangle.save_writing_rectangle(str_score, text_score)
 
-                        st.DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
-                        st.DICE_MENU.str_scores[index] = str_score  # Change the string of the score
-                        st.DICE_MENU.text_scores[index] = text_score  # Change the text of the score
+                        DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
+                        DICE_MENU.str_scores[index] = str_score  # Change the string of the score
+                        DICE_MENU.text_scores[index] = text_score  # Change the text of the score
 
-                        st.DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
-                        st.DICE_MENU.save_values()  # Save the values of the dice
+                        DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
+                        DICE_MENU.save_values()  # Save the values of the dice
 
             if SEE_CURSOR:
                 print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
@@ -85,81 +89,31 @@ def detect_events_ui():
                 nb_cars_button.update_writing_rectangle(event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
 
         if var.DISPLAY_DICE_MENU:  # We check if the dice menu has been opened
-            for index, dice_bool in enumerate(st.DICE_MENU.bool_scores):
+            for index, dice_bool in enumerate(DICE_MENU.bool_scores):
                 if dice_bool:
                     # We change the value of the dice using the writing rectangle
-                    writing_rectangle = st.DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
-                    score = st.DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
-                    str_score = st.DICE_MENU.str_scores[index]  # Get the string before the change
-                    text_score = st.DICE_MENU.text_scores[index]  # Get the text before the change
+                    writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
+                    score = DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
+                    str_score = DICE_MENU.str_scores[index]  # Get the string before the change
+                    text_score = DICE_MENU.text_scores[index]  # Get the text before the change
 
                     score, str_score, dice_bool, text_score = writing_rectangle.update_writing_rectangle(event, score, str_score, text_score)
 
-                    st.DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
-                    st.DICE_MENU.str_scores[index] = str_score  # Change the string of the score
-                    st.DICE_MENU.text_scores[index] = text_score  # Change the text of the score
+                    DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
+                    DICE_MENU.str_scores[index] = str_score  # Change the string of the score
+                    DICE_MENU.text_scores[index] = text_score  # Change the text of the score
 
                     if not dice_bool:
-                        st.DICE_MENU.bool_scores[index] = False
-                        st.DICE_MENU.save_values()  # Save the values of the dice
+                        DICE_MENU.bool_scores[index] = False
+                        DICE_MENU.save_values()  # Save the values of the dice
 
 
-def detect_buttons_click():
+def check_buttons():
     """
     Draw the buttons and change the state of the variables
     """
     global text_nb_cars, change_nb_cars
 
-    # Debug button
-    var.DEBUG = debug_button.check_state()  # Draw the debug button
-    if debug_button.just_clicked and not var.DEBUG:
-        var.WINDOW.blit(var.BACKGROUND, (0, 0))  # We redraw the background
-
-    # Stop button
-    stop_button.check_state()  # Draw the stop button
-    if stop_button.just_clicked:
-        if var.PLAY:
-            var.PLAY = False  # We stop the simulation
-        if var.DISPLAY_GARAGE:
-            delete_garage()
-
-    # Pause button
-    var.PAUSE = pause_button.check_state()  # Draw the pause button
-    if pause_button.just_clicked:  # Pause button is just clicked
-        if var.PAUSE:
-            pause(from_button=True)  # We pause the simulation
-        else:
-            unpause(from_button=True)  # We unpause the simulation
-
-    # Start button
-    var.START = start_button.check_state()  # Draw the start button
-    if start_button.just_clicked and (var.NB_CARS != 0 or var.GENETICS_FROM_GARAGE):
-        var.PLAY = True  # We start the simulation
-        if var.DISPLAY_GARAGE:
-            delete_garage()  # We erase the garage
-        if var.DISPLAY_DICE_MENU:
-            st.DICE_MENU.erase_dice_menu()  # We erase the dice menu
-
-    if var.START and var.PAUSE:    # We also resume the simulation if the start button is pressed
-        unpause()  # We unpause the simulation
-
-    # Nb cars button
-    change_nb_cars = nb_cars_button.check_state()  # Draw the nb cars button
-    if nb_cars_button.just_clicked:
-        var.STR_NB_CARS = ''  # We empty the string for the number of cars
-
-    # Draw the number of cars
-    if change_nb_cars:
-        display_text_ui(var.STR_NB_CARS, (1195, 62), var.FONT, background_color=(255, 255, 255))
-    else:
-        var.WINDOW.blit(text_nb_cars, (1195, 62))
-
-    # FPS
-    if var.PLAY:
-        fps = str(var.ACTUAL_FPS)
-    else:
-        fps = str(int(var.CLOCK.get_fps()))
-    display_text_ui('FPS : ' + fps, (1, 1), var.SMALL_FONT)
 
     # Time remaining
     if not var.PLAY:
@@ -172,21 +126,66 @@ def detect_buttons_click():
         time_remaining = 0
     display_text_ui('Temps restant : ' + str(time_remaining) + 's', (1, 20), var.FONT)
 
-    # Num generation and nb cars alive
+    # Text
     display_text_ui('Nombre de voitures restantes : ' + str(var.NB_CARS_ALIVE), (1, 50), var.FONT)
     display_text_ui('Génération : ' + str(var.NUM_GENERATION), (1, 80), var.FONT)
+
+
+    # Debug button
+    var.DEBUG = debug_button.check_state()  # Draw the debug button
+    if debug_button.just_clicked and not var.DEBUG:
+        var.WINDOW.blit(var.BACKGROUND, (0, 0))  # We redraw the background
+
+
+    # Stop button
+    stop_button.check_state()  # Draw the stop button
+    if stop_button.just_clicked:
+        if var.PLAY:
+            var.PLAY = False  # We stop the simulation
+        if var.DISPLAY_GARAGE:
+            delete_garage()
+
+
+    # Pause button
+    var.PAUSE = pause_button.check_state()  # Draw the pause button
+    if pause_button.just_clicked:  # Pause button is just clicked
+        if var.PAUSE:
+            pause(from_button=True)  # We pause the simulation
+        else:
+            unpause(from_button=True)  # We unpause the simulation
+
+
+    # Start button
+    var.START = start_button.check_state()  # Draw the start button
+    if start_button.just_clicked and (var.NB_CARS != 0 or var.GENETICS_FROM_GARAGE):
+        var.PLAY = True  # We start the simulation
+        if var.DISPLAY_GARAGE:
+            delete_garage()  # We erase the garage
+        if var.DISPLAY_DICE_MENU:
+            DICE_MENU.erase_dice_menu()  # We erase the dice menu
+
+    if var.START and var.PAUSE:    # We also resume the simulation if the start button is pressed
+        unpause()  # We unpause the simulation
+
+
+    # Nb cars button
+    change_nb_cars = nb_cars_button.check_state()  # Draw the nb cars button
+    if nb_cars_button.just_clicked:
+        var.STR_NB_CARS = ''  # We empty the string for the number of cars
+
 
     # Garage
     var.DISPLAY_GARAGE = garage_button.check_state()  # Draw the garage button
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
-            st.GARAGE.init_garage()
+            GARAGE.init_garage()
         else:
             unpause()
             erase_garage()
     if var.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
-        st.GARAGE.display_garage()
+        GARAGE.display_garage()
+
 
     # Dice
     dice_button.check_state()  # Draw the dice button
@@ -195,20 +194,36 @@ def detect_buttons_click():
             delete_garage()  # We erase the garage when the dice button is pressed
 
         if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we erase it
-            st.DICE_MENU.erase_dice_menu()
+            DICE_MENU.erase_dice_menu()
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
             var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
-            st.DICE_MENU.init('dice', dict_scores=capture_dice())  # We initialize the variables of the dice
+            DICE_MENU.init('dice', dict_scores=capture_dice())  # We initialize the variables of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
 
+    # Dice menu
     if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
-        if st.DICE_MENU.display_dice_menu():
-            st.DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
+        if DICE_MENU.display_dice_menu():
+            DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
+
+
+    # Draw the number of cars
+    if change_nb_cars:
+        display_text_ui(var.STR_NB_CARS, (1195, 62), var.FONT, background_color=(255, 255, 255))
+    else:
+        var.WINDOW.blit(text_nb_cars, (1195, 62))
+
+
+    # FPS
+    if var.PLAY:
+        fps = str(var.ACTUAL_FPS)
+    else:
+        fps = str(int(var.CLOCK.get_fps()))
+    display_text_ui('FPS : ' + fps, (1, 1), var.SMALL_FONT)
 
 
 def pause(from_button=False):

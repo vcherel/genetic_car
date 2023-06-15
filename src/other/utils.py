@@ -1,6 +1,6 @@
-import math  # To use math
+from src.game.constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
 import pygame  # To use pygame
-from constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
+import math  # To use math
 
 
 def scale_image(img, factor):

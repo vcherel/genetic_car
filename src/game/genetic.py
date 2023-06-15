@@ -1,8 +1,5 @@
+from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Constants of the game
 import random  # Used to generate random numbers
-from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Constants of the game
-
-
-
 
 
 class Genetic:

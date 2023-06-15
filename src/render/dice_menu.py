@@ -1,10 +1,13 @@
+from src.render.display import display_text_ui, draw_detection_cone  # Import the display functions
+from src.game.constants import HEIGHT_MULTIPLIER, WIDTH_MULTIPLIER  # Import the constants
+from src.render.button import Button  # Import the button class
+from src.game.genetic import Genetic  # Import the genetic class
+import src.other.variables as var  # Import the variables
+import os.path  # To get the path of the images
 import pygame  # Import pygame module
-import variables as var  # Import the variables
-from button import Button  # Import the button class
-from genetic import Genetic  # Import the genetic class
-from constants import HEIGHT_MULTIPLIER, WIDTH_MULTIPLIER  # Import the constants
-from display import display_text_ui, draw_detection_cone  # Import the display functions
 
+
+path_image = os.path.dirname(__file__) + '/../../images/'  # Path of the actual file
 
 rgb_values = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
 # The order is: dark_yellow, orange, red, green, purple, black
@@ -14,7 +17,7 @@ x1, x2, x3 = 90, 300, 510  # x coordinates of the dice
 y1, y2 = 170, 365           # y coordinates of the dice
 
 # Camera
-camera_frame = pygame.image.load('images/check.png')  # Frame of the camera at the last update
+camera_frame = pygame.image.load(path_image + '/nothing.png')  # Frame of the camera at the last update
 rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 # Display
@@ -23,7 +26,7 @@ text_slow = var.LARGE_FONT.render('Lent', True, (0, 0, 255), (128, 128, 128))  #
 text_medium = var.LARGE_FONT.render('Moyen', True, (0, 255, 0), (128, 128, 128))  # Text of the medium button
 text_fast = var.LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
 
-car_image = pygame.transform.rotate(pygame.image.load('images/car.bmp'), 90)  # Image of the car
+car_image = pygame.transform.rotate(pygame.image.load(path_image + '/car.bmp'), 90)  # Image of the car
 
 
 class DiceMenu:
@@ -53,10 +56,11 @@ class DiceMenu:
         Returns:
             Button: The dice button
         """
+
         return Button(self.rect[0] + x - 50, self.rect[1] + y + 140,
-                      pygame.image.load('images/writing_rectangle_1.png'),
-                      pygame.image.load('images/writing_rectangle_2.png'),
-                      pygame.image.load('images/writing_rectangle_3.png'), writing_rectangle=True, scale=0.9)
+                      pygame.image.load(path_image + '/writing_rectangle_1.png'),
+                      pygame.image.load(path_image + '/writing_rectangle_2.png'),
+                      pygame.image.load(path_image + '/writing_rectangle_3.png'), writing_rectangle=True, scale=0.9)
 
     def init(self, type_car, id_car=None, dict_scores=None, genetic=None):
         """
@@ -91,7 +95,7 @@ class DiceMenu:
         # To store the buttons to write the score of each dice
         self.writing_rectangles = [self.dice_button(x1, y1), self.dice_button(x2, y1), self.dice_button(x3, y1),
                                    self.dice_button(x1, y2), self.dice_button(x2, y2), self.dice_button(x3, y2)]
-        self.check_button = Button(self.rect[0] + 917, self.rect[1] + 460, pygame.image.load('images/check.png'), scale=0.12)
+        self.check_button = Button(self.rect[0] + 917, self.rect[1] + 460, pygame.image.load(path_image + '/check.png'), scale=0.12)
 
         self.str_scores = []  # To store the score of each dice (the number of dots on each dice in string format)
         self.text_scores = []  # To store the score of each dice (the number of dots on each dice in pygame text format)
@@ -259,3 +263,6 @@ def save_camera_frame(frame):
     rect_camera_frame = camera_frame.get_rect()
     rect_camera_frame.x = 0
     rect_camera_frame.y = 200
+
+
+DICE_MENU = DiceMenu()   # We create the dice menu

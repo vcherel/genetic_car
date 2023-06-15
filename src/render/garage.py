@@ -1,7 +1,7 @@
+from src.render.rect_garage import RectGarage  # Import the rectangle garage
+import src.other.variables as var  # Import the variable
+from src.game.car import Car  # Import the car
 import pygame  # To use pygame
-import variables as var  # Import the variables
-from rect_garage import RectGarage  # Import the rectangle garage
-from car import Car  # Import the car
 
 
 rect_display_garage = (500, 125, 500, 550)  # Display rectangle of the garage
@@ -95,8 +95,6 @@ class Garage:
         self.change_y = False  # True if the y position has to change in the next rectangle
 
 
-
-
 def erase_garage():
     """
     Erase the garage
@@ -116,3 +114,6 @@ def add_garage_cars(cars):
         else:
             cars.append(Car(var.GENETICS_FROM_GARAGE, view_only=True))  # Add the car from the garage to the list
     return cars
+
+
+GARAGE = Garage()  # We create the garage

@@ -1,8 +1,8 @@
+from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER   # Constants of the game
+from src.render.garage import add_garage_cars  # Add the cars from the garage
+import src.other.variables as var  # Variables of the game
 import random  # Used to generate random numbers
-import variables as var  # Variables of the game
-from constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER   # Constants of the game
-from garage import add_garage_cars  # Add the cars from the garage
-from car import Car  # Import the car
+from src.game.car import Car  # Import the car
 
 
 mutation_chance = 0.2  # Chance of mutation

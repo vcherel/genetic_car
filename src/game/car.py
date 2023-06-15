@@ -1,9 +1,9 @@
+from src.other.utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
+from src.game.constants import RADIUS_CHECKPOINT, WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
+from src.game.genetic import Genetic  # Genetic algorithm of the car
+import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
 import math  # Math library
-import variables as var  # Variables of the game
-from constants import RADIUS_CHECKPOINT, WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
-from utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
-from genetic import Genetic  # Genetic algorithm of the car
 
 
 # Constants

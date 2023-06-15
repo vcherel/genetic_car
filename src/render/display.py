@@ -1,8 +1,8 @@
-import cv2  # To use OpenCV
+from src.other.utils import text_rec, compute_detection_cone_points  # Import the utils functions
+from src.game.constants import RADIUS_CHECKPOINT  # Import the constants
+from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
-import variables as var  # Import the variables
-from constants import RADIUS_CHECKPOINT  # Import the constants
-from utils import text_rec, compute_detection_cone_points  # Import the utils functions
+import cv2  # To use OpenCV
 
 
 def edit_background():
@@ -16,7 +16,7 @@ def edit_background():
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (325, 120), (325, 0), 2)  # Line at the left
 
 
-def display_checkpoints():
+def show_checkpoints():
     for checkpoint in var.CHECKPOINTS:
         pygame.draw.circle(var.WINDOW, (255, 0, 0), checkpoint, RADIUS_CHECKPOINT, 1)
 

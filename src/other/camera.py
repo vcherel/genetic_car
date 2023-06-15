@@ -1,10 +1,10 @@
-import time  # To get the time
-import cv2  # To use OpenCV
+from src.render.dice_menu import save_camera_frame  # To save the camera frame
+from src.other.utils import overlapping_rectangles  # Utils functions
+from src.render.display import draw_circle  # To draw the circles
 import random  # To generate random numbers
 import numpy as np  # To use numpy
-from display import draw_circle  # To draw the circles
-from utils import overlapping_rectangles  # Utils functions
-from dice_menu import save_camera_frame  # To save the camera frame
+import time  # To get the time
+import cv2  # To use OpenCV
 
 
 # The parameters of the threshold to make a black and white image for each color

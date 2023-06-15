@@ -1,5 +1,6 @@
+import src.other.variables as var  # Import the variables
+import os.path  # To get the path of the file
 import pygame  # To use pygame
-import variables as var  # Import the variables
 
 
 class Button:
@@ -128,7 +129,7 @@ class Button:
             if nb_cars:  # If it's the number of cars we change the variable in the file parameters
                 if variable < 0:
                     variable = 0
-                with open("data/parameters", "w") as file_parameters_write:
+                with open(os.path.dirname(__file__) + "/../../data/parameters", "w") as file_parameters_write:
                     file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(variable))
 
             # We check if the value is correct for a dice
