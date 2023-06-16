@@ -143,7 +143,7 @@ class DiceMenu:
         var.WINDOW.blit(text_selected_dice, (self.rect[0] + 350, self.rect[1] + 20))
         var.WINDOW.blit(var.TEXT_SLOW, (self.rect[0] + x1 + 30, self.rect[1] + 100))
         var.WINDOW.blit(var.TEXT_MEDIUM, (self.rect[0] + x2 + 14, self.rect[1] + 100))
-        var.WINDOW.blit(var.TEXT_MEDIUM, (self.rect[0] + x3 + 14, self.rect[1] + 100))
+        var.WINDOW.blit(var.TEXT_FAST, (self.rect[0] + x3 + 14, self.rect[1] + 100))
 
         x, y = self.rect[0] + 685, self.rect[1] + 290
         var.WINDOW.blit(var.RED_CAR_CONE, (x, y))

@@ -9,8 +9,8 @@ SEE_CHECKPOINTS = False  # See the checkpoints
 USE_GENETIC = True  # True to use the genetic algorithm, False to just play
 
 # Cone
-WIDTH_MULTIPLIER = 16  # Width multiplier of the cone
-HEIGHT_MULTIPLIER = 19  # Height multiplier of the cone
+WIDTH_MULTIPLIER = 5  # Width multiplier of the cone
+HEIGHT_MULTIPLIER = 13  # Height multiplier of the cone
 
 # Game
 TIME_GENERATION = 30  # Time of a generation (s)

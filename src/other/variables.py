@@ -1,14 +1,15 @@
 from src.game.constants import WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION  # Import the constants
 from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
 from src.game.genetic import Genetic  # Import the Genetic class
+from src.render.display import edit_background  # Import the display functions
 import os.path  # To get the path of the file
 import pygame  # To use pygame
 import sys  # To quit the game
 import time  # To use time
 
 
-start_positions = [(600, 165)]  # Start position
-car_sizes = [0.15]
+start_positions = [(600, 165), (760, 180)]  # Start position
+car_sizes = [0.15, 0.09]  # Size of the car
 
 path_data = os.path.dirname(__file__) + '/../../data/'  # Path of the data folder
 path_image = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
@@ -26,7 +27,7 @@ CLOCK = pygame.time.Clock()  # Clock of the game
 # Map variables
 BACKGROUND = None  # Image of the background
 BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to detect collisions)
-NUM_MAP = 0  # Number of the map
+NUM_MAP = -1  # Number of the map
 START_POSITION = None  # Start position of the car
 RED_CAR_IMAGE = None  # Image of the original car
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
@@ -41,7 +42,7 @@ TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # T
 
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
-CHECKPOINTS = None  # List of checkpoints
+CHECKPOINTS = None  # List of checkpointsanal
 TEST_ALL_CARS = False  # True to test_0 all the cars, False to play the game normally
 
 # Game variables
@@ -55,7 +56,7 @@ PAUSE = False  # Pause the game (True or False)
 DURATION_PAUSES = 0  # Duration of all the pauses
 START_TIME_PAUSE = 0  # Time when the game has been paused
 
-# Genetic variables
+# Genetic variablesanal
 TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
 NUM_GENERATION = 1  # Number of the generation
@@ -64,8 +65,7 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 # Garage variables
 DISPLAY_GARAGE = False  # True to see the garage
 GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
-MEMORY_CARS = {'dice': [],
-               'genetic': []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
+MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
 # Format of MEMORY_CARS:   {"dice": [(id, Genetic), ...], "genetic": [(id, Genetic), ...]}
 
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
@@ -76,7 +76,7 @@ NB_CARS = 0  # Number of cars
 STR_NB_CARS = ''  # Text of the number of cars
 
 DISPLAY_DICE_MENU = False  # True if we are displaying the dice menu
-DISPLAY_CAR = False  # True if we are displaying the cone of a car
+DISPLAY_CAR_WINDOW = False  # True if we are displaying the cone of a car
 
 
 def exit_game():
@@ -87,21 +87,31 @@ def exit_game():
     sys.exit()  # Quit pygame
 
 
-def change_map(num):
+def change_map():
     """
     Change the map and all the variables associated
-
-    Args:
-        num (int): number of the new map
     """
     global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, CHECKPOINTS, START_POSITION
-    NUM_MAP = num  # New map number
-    BACKGROUND = pygame.transform.scale(pygame.image.load(path_image + '/background_' + str(NUM_MAP) + '.png'), WINDOW_SIZE)  # Image of the background
+
+    if NUM_MAP >= len(start_positions) - 1:
+        NUM_MAP = 0
+    else:
+        NUM_MAP += 1
+
+    """
+    WINDOW RECT :
+    0, 0, 1500, 700
+    RACE RECT :
+    0, 115, 1500, 585
+    """
+    BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
+    BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
+    image_circuit = pygame.transform.scale(pygame.image.load(path_image + '/background_' + str(NUM_MAP) + '.png'), (1500, 585))  # Image of the background
+    BACKGROUND.blit(image_circuit, (0, 115))  # Blit the image of the background on the background surface
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
     RED_CAR_IMAGE = scale_image(pygame.image.load(path_image + '/car.bmp'), car_sizes[NUM_MAP])  # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
     YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
-
     START_POSITION = start_positions[NUM_MAP]  # Start position of the car
 
     CHECKPOINTS = []  # List of checkpoints
@@ -116,6 +126,10 @@ def change_map(num):
         for checkpoint in checkpoints:
             a, b = checkpoint.split(' ')
             CHECKPOINTS.append((int(a), int(b)))
+
+    edit_background()  # Edit the background
+    rect = pygame.rect.Rect(0, 115, 1500, 585)  # Only blit the rect where there is the circuit
+    WINDOW.blit(BACKGROUND, rect, rect)  # Blit the background on the window
 
 
 def init_variables(nb_cars, replay=False):

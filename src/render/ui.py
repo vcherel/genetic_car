@@ -1,10 +1,10 @@
+from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
 from src.other.camera import capture_dice  # Import the function to capture the dice
 from src.render.garage import erase_garage, GARAGE  # Import functions from garage
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.game.genetic import Genetic  # Import the genetic class
 from src.game.constants import SEE_CURSOR  # Import constants
-from src.render.display import show_car  # Import the function to show the car
 import src.other.variables as var  # Import the variables
 from src.render.button import Button  # Import the button
 import os.path  # To get the path of images
@@ -23,11 +23,12 @@ start_button = Button()  # Button to start the game
 nb_cars_button = Button()  # Button to change the number of cars
 garage_button = Button()  # Button to open the garage
 dice_button = Button()  # Button to see the dice
+map_button = Button()  # Button to change the map
 text_nb_cars = None  # Text to display the number of cars
 
 
 def init():
-    global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, text_nb_cars
+    global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, text_nb_cars
 
     path_images = os.path.dirname(__file__) + '/../../images/'  # Path of the images
 
@@ -43,6 +44,7 @@ def init():
                             pygame.image.load(path_images + '/writing_rectangle_3.png'), writing_rectangle=True, scale=0.8)
     garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, check_box=True)
     dice_button = Button(600, 28, pygame.image.load(path_images + '/dice_button.png'), scale=0.4)
+    map_button = Button(850, 40, pygame.image.load(path_images + '/map_button.png'), scale=0.8)
 
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
@@ -125,13 +127,16 @@ def handle_clicks(cars):
         print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
         print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
+    if var.DISPLAY_CAR_WINDOW:
+        unpause()  # Unpause the game (erase the car window)
+
     if cars:
         found = False  # Boolean to know if we found a car
         for car in cars:
             if not found and car.rotated_rect.collidepoint(pygame.mouse.get_pos()):
                 found = True
                 pause()  # Pause the game
-                show_car(car)  # Display the car
+                show_car_window(car)  # Display the car
 
 
 def display():
@@ -237,6 +242,13 @@ def display():
             DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
 
 
+    # Map button
+    map_button.check_state()  # Draw the map button
+    if map_button.just_clicked:  # Map button is just clicked
+        var.change_map()  # We change the map
+
+
+
     # Draw the number of cars
     if change_nb_cars:
         display_text_ui(var.STR_NB_CARS, (1195, 62), var.FONT, background_color=(255, 255, 255))
@@ -282,6 +294,9 @@ def unpause(from_button=False):
 
     if var.DISPLAY_GARAGE:
         delete_garage()
+
+    if var.DISPLAY_CAR_WINDOW:
+        erase_car_window()
 
     var.DURATION_PAUSES += time.time() - var.START_TIME_PAUSE  # We add the duration of the pause to the total duration of the pause
 

@@ -33,7 +33,7 @@ def open_window():
             var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
             pygame.display.flip()  # Update the screen
             # We open the file to write the checkpoints
-            with open(os.path.dirname(__file__) + '/data/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
+            with open(os.path.dirname(__file__) + '/../data/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
                 while 1:
                     # We detect the mouse click to write the coordinates in the file
                     for event in pygame.event.get():
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     if SEED:
         random.seed(SEED)  # Initialize the random seed
     var.load_variables()  # Load the variables
-    var.change_map(var.NUM_MAP)  # Change the map to the first one
+    var.change_map()  # Change the map to the first one
     ui.init()  # Initialize the ui
     display.edit_background()  # Add elements not clickable to the background
 
