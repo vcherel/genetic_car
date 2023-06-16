@@ -1,6 +1,8 @@
 from src.render.rect_garage import RectGarage  # Import the rectangle garage
+from src.render.button import Button  # Import the button
 import src.other.variables as var  # Import the variable
 from src.game.car import Car  # Import the car
+import os.path  # To get the path of the file
 import pygame  # To use pygame
 
 
@@ -21,6 +23,7 @@ class Garage:
         self.actual_page = None  # Actual page of the garage
         self.reload_page = None  # True if we have to change the page of the garage (for example at the beginning)
         self.time_since_last_delete = None  # Time since the last delete of a car
+        self.trash_button = Button(930, 135, pygame.image.load(os.path.dirname(__file__) + '/../../images/trash.png'), scale=0.075)
 
     def init_garage(self):
         """
@@ -73,6 +76,11 @@ class Garage:
             if rect_garage.draw(self.time_since_last_delete):  # We draw the next rectangle in the garage
                 self.reload_page = True  # We have to change the page of the garage
                 self.time_since_last_delete = pygame.time.get_ticks()  # We reset the time since the last delete of a car
+
+        self.trash_button.check_state()  # We draw the trash button
+        if self.trash_button.activated:
+            var.MEMORY_CARS = {'dice': [], 'genetics': []}  # We reset the memory of the cars
+            self.reload_page = True  # We have to change the page of the garage
 
     def update_variables(self):
         """

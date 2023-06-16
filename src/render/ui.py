@@ -44,7 +44,7 @@ def init():
                             pygame.image.load(path_images + '/writing_rectangle_3.png'), writing_rectangle=True, scale=0.8)
     garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, check_box=True)
     dice_button = Button(600, 28, pygame.image.load(path_images + '/dice_button.png'), scale=0.4)
-    map_button = Button(850, 40, pygame.image.load(path_images + '/map_button.png'), scale=0.8)
+    map_button = Button(845, 37, pygame.image.load(path_images + '/map_button.png'), scale=0.8)
 
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars

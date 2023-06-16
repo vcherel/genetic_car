@@ -6,13 +6,53 @@ import numpy as np  # To use numpy
 import time  # To get the time
 import cv2  # To use OpenCV
 
-
 # The parameters of the threshold to make a black and white image for each color
 param_thresh = {"dark_yellow": 50, "orange": 120, "red": 100, "green": 100, "purple": 100, "black": 25}
 # The BGR values of each color (observation)
 bgr_values = {"dark_yellow": (51, 86, 134), "orange": (52, 107, 165), "red": (53, 87, 123), "green": (65, 128, 49), "purple": (53, 67, 68), "black": (38, 38, 38), "white": (150, 130, 126)}
 # The BGR values of each color (real)
 real_bgr_values = {"dark_yellow": (25, 170, 240), "orange": (0, 100, 255), "red": (0, 0, 204), "green": (0, 200, 0), "purple": (102, 0, 102), "black": (0, 0, 0), "white": (255, 255, 255)}
+
+counter = 0
+
+
+def optimize_parameters(image, value):
+    """
+    Optimize the parameters of the HoughCircles function by testing different values and printing the results
+    Args:
+        image (numpy.ndarray): Image on which to optimize the parameters
+        value (int): Number of circles to detect
+    """
+    dico_p1 = {}
+    dico_p2 = {}
+    dico_dp = {}
+
+    for p1 in range(150, 151):
+        print(p1)
+        for p2 in range(52, 53):
+            for dp in range(68, 69):
+                if p1 > p2:
+                    c = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=dp / 10, minDist=1, param1=p1, param2=p2, minRadius=1, maxRadius=15)
+                    if c is not None and len(c[0, :]) == value:
+                        if p1 not in dico_p1:
+                            dico_p1[p1] = 1
+                        else:
+                            dico_p1[p1] += 1
+                        if p2 not in dico_p2:
+                            dico_p2[p2] = 1
+                        else:
+                            dico_p2[p2] += 1
+                        if dp not in dico_dp:
+                            dico_dp[dp] = 1
+                        else:
+                            dico_dp[dp] += 1
+
+    # We sort the dictionaries
+    dico_p1 = {k: v for k, v in sorted(dico_p1.items(), key=lambda item: item[1], reverse=True)}
+    dico_p2 = {k: v for k, v in sorted(dico_p2.items(), key=lambda item: item[1], reverse=True)}
+    dico_dp = {k: v for k, v in sorted(dico_dp.items(), key=lambda item: item[1], reverse=True)}
+
+    print(dico_p1, dico_p2, dico_dp)
 
 
 def find_rectangles(image, rectangles):
@@ -102,8 +142,17 @@ def determine_score(image, color, scores):
     detected_edges = cv2.Canny(thresh, 9, 150, 3)  # Detect edges
 
     # Find the circles in the image (corresponding to the points of the dice)
-    circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=1.6, minDist=15,
-                               param1=63, param2=25, minRadius=5, maxRadius=10)
+    circles = cv2.HoughCircles(image=detected_edges, method=cv2.HOUGH_GRADIENT, dp=6.8, minDist=1,
+                               param1=150, param2=68, minRadius=1, maxRadius=5)
+
+    """
+    global counter
+    counter += 1
+    if counter > 60:
+        counter = 0
+        optimize_parameters(detected_edges, 5)
+    """
+
     if circles is not None:
         circles = circles[0, :]  # The array is in an array, we take the first element
 
