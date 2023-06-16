@@ -35,14 +35,14 @@ def init():
     # Buttons
     debug_button = Button(1435, 642, pygame.image.load(path_images + '/checkbox_1.png'),
                           pygame.image.load(path_images + '/checkbox_2.png'),
-                          pygame.image.load(path_images + '/checkbox_3.png'), check_box=True, scale=0.03)
+                          pygame.image.load(path_images + '/checkbox_3.png'), checkbox=True, scale=0.03)
     stop_button = Button(1420, 4, pygame.image.load(path_images + '/stop_button.png'), scale=0.1)
-    pause_button = Button(1417, 56, pygame.image.load(path_images + '/pause_button.png'), check_box=True, scale=0.11)
+    pause_button = Button(1417, 56, pygame.image.load(path_images + '/pause_button.png'), checkbox=True, scale=0.11)
     start_button = Button(1310, 15, pygame.image.load(path_images + '/start_button.png'), scale=0.18)
     nb_cars_button = Button(1049, 58, pygame.image.load(path_images + '/writing_rectangle_1.png'),
                             pygame.image.load(path_images + '/writing_rectangle_2.png'),
-                            pygame.image.load(path_images + '/writing_rectangle_3.png'), writing_rectangle=True, scale=0.8)
-    garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, check_box=True)
+                            pygame.image.load(path_images + '/writing_rectangle_3.png'), checkbox=True, scale=0.8)
+    garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, checkbox=True)
     dice_button = Button(600, 28, pygame.image.load(path_images + '/dice_button.png'), scale=0.4)
     map_button = Button(845, 37, pygame.image.load(path_images + '/map_button.png'), scale=0.8)
 
@@ -83,7 +83,8 @@ def handle_events(cars=None):
                         str_score = DICE_MENU.str_scores[index]  # Get the string before the change
                         text_score = DICE_MENU.text_scores[index]  # Get the text before the change
 
-                        score, str_score, dice_bool, text_score = writing_rectangle.update_writing_rectangle(event, score, str_score, text_score)
+                        score, str_score, dice_bool, text_score = \
+                            writing_rectangle.update_writing_rectangle(event, score, str_score, text_score, dice_value=True)
 
                         DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
                         DICE_MENU.str_scores[index] = str_score  # Change the string of the score
@@ -92,6 +93,14 @@ def handle_events(cars=None):
                         if not dice_bool:
                             DICE_MENU.bool_scores[index] = False
                             DICE_MENU.save_values()  # Save the values of the dice
+
+            if GARAGE.rectangles:
+                for rect_garage in GARAGE.rectangles:
+                    if rect_garage.change_text:
+                        _, rect_garage.name, rect_garage.change_text, rect_garage.text = \
+                            rect_garage.name_button.update_writing_rectangle(event, None, rect_garage.name, rect_garage.text, int_variable=False)
+                        GARAGE.reload_page = True  # Reload the page to display the new name of the car
+
 
 
 def handle_clicks(cars):

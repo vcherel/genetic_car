@@ -4,7 +4,7 @@ import pygame  # To use pygame
 
 
 class Button:
-    def __init__(self, x=None, y=None, image=None, image_hover=None, image_clicked=None, check_box=False, writing_rectangle=False, scale=None):
+    def __init__(self, x=None, y=None, image=None, image_hover=None, image_clicked=None, checkbox=False, scale=1):
         """
         Initialization of a button
 
@@ -15,7 +15,7 @@ class Button:
             scale (float): scale of the button
             image_hover (pygame.Surface): image of the button when the mouse is over it
             image_clicked (pygame.Surface): image of the button when it is clicked
-            check_box (bool): True if the button is a checkbox, False otherwise
+            checkbox (bool): True if the button is a checkbox, False otherwise
         """
         if x is not None:  # If it's a real object
             self.x = x  # x position of the button
@@ -23,8 +23,7 @@ class Button:
             self.image = pygame.transform.scale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))  # Image of the button
             self.rect = self.image.get_rect()  # Rectangle of the button
             self.rect.topleft = (x, y)  # Position of the button
-            self.check_box = check_box   # True if the button is a checkbox, False otherwise
-            self.writing_rectangle = writing_rectangle   # True if the button is a writing rectangle, False otherwise
+            self.checkbox = checkbox   # True if the button is a checkbox, False otherwise
             self.activated = False    # True if the checkbox is checked, False otherwise
             self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been activated ; -1 if the button has just been deactivated
             self.time_clicked = 0   # Time when the button is clicked
@@ -47,7 +46,7 @@ class Button:
         """
         return "Button : x = " + str(self.x) + " ; y = " + str(self.y) + " ; activated = " + str(self.activated) + \
             " ; just_clicked = " + str(self.just_clicked) + " ; time_clicked = " + str(self.time_clicked) +\
-            " ; check_box = " + str(self.check_box) + " ; writing_rectangle = " + str(self.writing_rectangle)
+            " ; check_box = " + str(self.checkbox)
 
     def check_state(self):
         """
@@ -60,7 +59,7 @@ class Button:
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
             if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 300:    # Mouse clicked for the first time
                 self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
-                if self.check_box or self.writing_rectangle:
+                if self.checkbox:
                     self.activated = not self.activated  # Change the state of the checkbox
                 else:
                     self.activated = True     # Activate the button
@@ -71,7 +70,7 @@ class Button:
 
             else:
                 self.just_clicked = 0   # The button has not just been clicked
-                if not self.check_box and not self.writing_rectangle:
+                if not self.checkbox:
                     self.activated = False  # Change the state if it's a simple button
 
             if self.image_hover:
@@ -87,7 +86,7 @@ class Button:
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 
-    def update_writing_rectangle(self, event, variable, str_variable, text, nb_cars=False):
+    def update_writing_rectangle(self, event, variable, str_variable, text, dice_value=False, nb_cars=False, int_variable=True):
         """
         Save the text in the writing rectangle
 
@@ -96,12 +95,20 @@ class Button:
             variable (int): value of the int in the text
             str_variable (str): text in the writing rectangle
             text (pygame.Surface): text to display
-            nb_cars (bool): True if the writing rectangle is not limited (for unlimited cars) false otherwise (dice values)
+            dice_value (bool): True if the writing rectangle is limited (for dice_values) false otherwise
+            nb_cars (bool): True if the writing rectangle is for nb_cars, false otherwise (to save the value in the file parameters)
+            int_variable (bool): True if the variable is an int, False otherwise
+
+        Returns:
+            int: value of the int in the text
+            str: text in the writing rectangle
+            bool: True if the writing rectangle is active, False otherwise
+            pygame.Surface: text to display
         """
         bool_active = True  # True if the writing rectangle is active, False otherwise
 
         if event.key == pygame.K_RETURN:
-            variable, str_variable, text = self.save_writing_rectangle(str_variable, text, nb_cars)
+            variable, str_variable, text = self.save_writing_rectangle(str_variable, text, dice_value=dice_value, nb_cars=nb_cars, int_variable=int_variable)
             bool_active = False  # Deactivate the writing rectangle
 
         elif event.key == pygame.K_BACKSPACE:
@@ -115,41 +122,46 @@ class Button:
         return variable, str_variable, bool_active, text
 
 
-    def save_writing_rectangle(self, str_variable, text, nb_cars=False):
+    def save_writing_rectangle(self, str_variable, text, dice_value=False, nb_cars=False, int_variable=True):
         """
         Save the text in the writing rectangle
 
         Args:
             str_variable (str): text in the writing rectangle
             text (pygame.Surface): text to display
-            nb_cars (bool): True if the writing rectangle is for the number of cars, False otherwise (it's for a dice)
+            dice_value (bool): True if the writing rectangle is limited (for dice_values) false otherwise
+            nb_cars (bool): True if the writing rectangle is for nb_cars, false otherwise (to save the value in the file parameters)
+            int_variable (bool): True if the variable is an integer, False otherwise
 
         Returns:
             int: variable corresponding to the text
             str: text in the writing rectangle
             pygame.Surface: text to display
         """
-        try:
-            variable = int(str_variable)  # Convert the text to an integer
+        if int_variable:
+            try:
+                variable = int(str_variable)  # Convert the text to an integer
 
-            if nb_cars:  # If it's the number of cars we change the variable in the file parameters
-                if variable < 0:
-                    variable = 0
-                with open(os.path.dirname(__file__) + "/../../data/parameters", "w") as file_parameters_write:
-                    file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(variable))
+                if dice_value:  # If it's a dice value we check if it's between 1 and 6
+                    variable = max(1, variable)
+                    variable = min(6, variable)
+                else:  # If it's the number of cars we change the variable in the file parameters
+                    if variable < 0:
+                        variable = 0
 
-            # We check if the value is correct for a dice
-            else:
-                variable = max(1, variable)
-                variable = min(6, variable)
+                if nb_cars:
+                    with open(os.path.dirname(__file__) + "/../../data/parameters", "w") as file_parameters_write:
+                        file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(variable))
 
-        except ValueError:
-            print("Erreur sur la valeur rentrée")
-            variable = 1
+            except ValueError:
+                print("Erreur sur la valeur rentrée")
+                variable = 1
 
-        str_variable = str(variable)  # Reset the text
+            str_variable = str(variable)  # Reset the text
+        else:
+            variable = None
+
         self.activated = False  # Uncheck the button
-        var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))
+        var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))  # Erase the text
         text = var.FONT.render(str_variable, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
-
         return variable, str_variable, text

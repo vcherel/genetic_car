@@ -8,11 +8,11 @@ import sys  # To quit the game
 import time  # To use time
 
 
-start_positions = [(600, 165), (760, 180)]  # Start position
-car_sizes = [0.15, 0.09]  # Size of the car
+start_positions = [(600, 165), (760, 180), (600, 197)]  # Start position
+car_sizes = [0.13, 0.09, 0.06]  # Size of the car
 
 path_data = os.path.dirname(__file__) + '/../../data/'  # Path of the data folder
-path_image = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
+PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
 
 # Pygame variables
 pygame.init()  # Pygame initialization
@@ -34,7 +34,7 @@ GREY_CAR_IMAGE = None  # Image of the car in view only mode
 YELLOW_CAR_IMAGE = None  # Image of the best car
 
 # Show detection cones
-RED_CAR_CONE = pygame.transform.rotate(pygame.image.load(path_image + '/car.bmp'), 90)
+RED_CAR_CONE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
 TEXT_SLOW = LARGE_FONT.render('Lent', True, (0, 0, 255), (128, 128, 128))  # Text of the slow button
 TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (0, 255, 0), (128, 128, 128))  # Text of the medium button
 TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
@@ -42,7 +42,7 @@ TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # T
 
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
-CHECKPOINTS = None  # List of checkpointsanal
+CHECKPOINTS = None  # List of checkpoints
 TEST_ALL_CARS = False  # True to test_0 all the cars, False to play the game normally
 
 # Game variables
@@ -56,7 +56,7 @@ PAUSE = False  # Pause the game (True or False)
 DURATION_PAUSES = 0  # Duration of all the pauses
 START_TIME_PAUSE = 0  # Time when the game has been paused
 
-# Genetic variablesanal
+# Genetic variables
 TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
 NUM_GENERATION = 1  # Number of the generation
@@ -87,16 +87,21 @@ def exit_game():
     sys.exit()  # Quit pygame
 
 
-def change_map():
+def change_map(first_time=False):
     """
     Change the map and all the variables associated
+
+    Args:
+        first_time (bool): True if it's the first time we change the map, False otherwise
     """
     global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, CHECKPOINTS, START_POSITION
 
-    if NUM_MAP >= len(start_positions) - 1:
-        NUM_MAP = 0
-    else:
-        NUM_MAP += 1
+    # If we change map for the first time, we don't change the map
+    if not first_time:
+        if NUM_MAP >= len(start_positions) - 1:
+            NUM_MAP = 0
+        else:
+            NUM_MAP += 1
 
     """
     WINDOW RECT :
@@ -106,10 +111,10 @@ def change_map():
     """
     BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    image_circuit = pygame.transform.scale(pygame.image.load(path_image + '/background_' + str(NUM_MAP) + '.png'), (1500, 585))  # Image of the background
+    image_circuit = pygame.transform.scale(pygame.image.load(PATH_IMAGE + '/background_' + str(NUM_MAP) + '.png'), (1500, 585))  # Image of the background
     BACKGROUND.blit(image_circuit, (0, 115))  # Blit the image of the background on the background surface
     BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
-    RED_CAR_IMAGE = scale_image(pygame.image.load(path_image + '/car.bmp'), car_sizes[NUM_MAP])  # Image of the car
+    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), car_sizes[NUM_MAP])  # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
     YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
     START_POSITION = start_positions[NUM_MAP]  # Start position of the car

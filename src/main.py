@@ -139,7 +139,7 @@ if __name__ == '__main__':
     if SEED:
         random.seed(SEED)  # Initialize the random seed
     var.load_variables()  # Load the variables
-    var.change_map()  # Change the map to the first one
+    var.change_map(first_time=True)  # Change the map to the first one
     ui.init()  # Initialize the ui
     display.edit_background()  # Add elements not clickable to the background
 

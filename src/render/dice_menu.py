@@ -3,11 +3,8 @@ from src.game.constants import HEIGHT_MULTIPLIER, WIDTH_MULTIPLIER  # Import the
 from src.render.button import Button  # Import the button class
 from src.game.genetic import Genetic  # Import the genetic class
 import src.other.variables as var  # Import the variables
-import os.path  # To get the path of the images
 import pygame  # Import pygame module
 
-
-path_image = os.path.dirname(__file__) + '/../../images/'  # Path of the actual file
 
 rgb_values = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
 # The order is: dark_yellow, orange, red, green, purple, black
@@ -17,7 +14,7 @@ x1, x2, x3 = 90, 300, 510  # x coordinates of the dice
 y1, y2 = 170, 365           # y coordinates of the dice
 
 # Camera
-camera_frame = pygame.image.load(path_image + '/nothing.png')  # Frame of the camera at the last update
+camera_frame = pygame.image.load(var.PATH_IMAGE + '/nothing.png')  # Frame of the camera at the last update
 rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 # Display
@@ -54,9 +51,9 @@ class DiceMenu:
         """
 
         return Button(self.rect[0] + x - 50, self.rect[1] + y + 140,
-                      pygame.image.load(path_image + '/writing_rectangle_1.png'),
-                      pygame.image.load(path_image + '/writing_rectangle_2.png'),
-                      pygame.image.load(path_image + '/writing_rectangle_3.png'), writing_rectangle=True, scale=0.9)
+                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
+                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
+                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), checkbox=True, scale=0.9)
 
     def init(self, type_car, id_car=None, dict_scores=None, genetic=None):
         """
@@ -91,7 +88,7 @@ class DiceMenu:
         # To store the buttons to write the score of each dice
         self.writing_rectangles = [self.dice_button(x1, y1), self.dice_button(x2, y1), self.dice_button(x3, y1),
                                    self.dice_button(x1, y2), self.dice_button(x2, y2), self.dice_button(x3, y2)]
-        self.check_button = Button(self.rect[0] + 917, self.rect[1] + 460, pygame.image.load(path_image + '/check.png'), scale=0.12)
+        self.check_button = Button(self.rect[0] + 917, self.rect[1] + 460, pygame.image.load(var.PATH_IMAGE + '/check.png'), scale=0.12)
 
         self.str_scores = []  # To store the score of each dice (the number of dots on each dice in string format)
         self.text_scores = []  # To store the score of each dice (the number of dots on each dice in pygame text format)

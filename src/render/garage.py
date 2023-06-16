@@ -7,7 +7,6 @@ import pygame  # To use pygame
 
 
 rect_display_garage = (500, 125, 500, 550)  # Display rectangle of the garage
-nb_rectangle_max = 10  # Maximum number of rectangle in the garage
 
 
 class Garage:
@@ -16,7 +15,7 @@ class Garage:
         Initialize the garage (in the structures.py file)
         """
         self.nb_rectangle = None  # Number of rectangle in the garage
-        self.tab_rectangle = None  # List of the rectangle in the garage
+        self.rectangles = None  # List of the rectangles in the garage
         self.actual_x = None  # Actual x position to write the rectangles
         self.actual_y = None  # Actual y position to write the rectangles
         self.change_y = None  # True if the y position has to change in the next rectangle (it means we are at the right of the garage)
@@ -30,7 +29,7 @@ class Garage:
         Initialize the garage during the game
         """
         self.nb_rectangle = 0  # Number of rectangle in the garage
-        self.tab_rectangle = []  # List of the rectangle in the garage
+        self.rectangles = []  # List of the rectangles in the garage
         self.actual_x = 0  # Actual x position to write the rectangles
         self.actual_y = 0  # Actual y position to write the rectangles
         self.change_y = False  # True if the y position has to change in the next rectangle (it means we are at the right of the garage)
@@ -53,7 +52,7 @@ class Garage:
         self.reset_variables()
 
         if self.reload_page:  # If we have to change the page of the garage
-            self.tab_rectangle = []  # We reset the list of the rectangle in the garage
+            self.rectangles = []  # We reset the list of the rectangle in the garage
 
             # Create the rectangles for the pages
             num = 0  # The number to identify the id of the rectangle
@@ -61,9 +60,9 @@ class Garage:
             for key in var.MEMORY_CARS.keys():
                 str_name = 'Dé ' if key == 'dice' else 'Génération '
                 for car in var.MEMORY_CARS.get(key):
-                    if nb_rectangle_max * self.actual_page <= self.nb_rectangle < nb_rectangle_max * (
-                            self.actual_page + 1):  # If the rectangle is in the good page
-                        self.tab_rectangle.append(RectGarage(num, car[0], (self.actual_x, self.actual_y), str_name + str(car[0]), car[1], key))
+                    # If the rectangle is in the good page
+                    if 10 * self.actual_page <= self.nb_rectangle < 10 * (self.actual_page + 1):
+                        self.rectangles.append(RectGarage(num, car[0], (self.actual_x, self.actual_y), str_name + str(car[0]), car[1], key))
                         num += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
@@ -72,8 +71,8 @@ class Garage:
 
         var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
 
-        for rect_garage in self.tab_rectangle:  # For each rectangle in the garage
-            if rect_garage.draw(self.time_since_last_delete):  # We draw the next rectangle in the garage
+        for rect_garage in self.rectangles:  # For each rectangle in the garage
+            if rect_garage.draw(self.time_since_last_delete):  # If the rectangle is deleted we reset the page of the garage
                 self.reload_page = True  # We have to change the page of the garage
                 self.time_since_last_delete = pygame.time.get_ticks()  # We reset the time since the last delete of a car
 
