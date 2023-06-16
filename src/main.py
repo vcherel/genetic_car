@@ -98,7 +98,7 @@ def play(cars=None):
                 if not car.dead:    # If the car is not dead
                     car.move()          # Move the car
                     rects.append(car.rotated_rect)    # Draw the car and add the rect to the list
-                car.draw()  # Draw the car
+                car.draw_car()  # Draw the car
 
             rect_blit_car = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), var.RECT_BLIT_CAR, 1)  # Draw the rect for the blit of the cars

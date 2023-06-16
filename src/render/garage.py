@@ -48,10 +48,22 @@ class Garage:
         pygame.draw.rect(var.WINDOW, (115, 205, 255), rect_display_garage, 2)
         var.WINDOW.blit(var.LARGE_FONT.render('Voitures sauvegardées', True, (0, 0, 0), (128, 128, 128)), (rect_display_garage[0] + 95, rect_display_garage[1] + 10))
 
-        # Reset the variables
-        self.reset_variables()
+        for rect_garage in self.rectangles:  # For each rectangle in the garage
+            if rect_garage.draw(self.time_since_last_delete):  # If the rectangle is deleted we reset the page of the garage
+                self.reload_page = True  # We have to change the page of the garage
+                self.time_since_last_delete = pygame.time.get_ticks()  # We reset the time since the last delete of a car (to avoid deleting all in one long click)
+
+        self.trash_button.check_state()  # We draw the trash button
+        if self.trash_button.activated:
+            var.MEMORY_CARS = {'dice': [], 'genetics': []}  # We reset the memory of the cars
+            self.reload_page = True  # We have to change the page of the garage
+
 
         if self.reload_page:  # If we have to change the page of the garage
+            print('reload page')
+            # Reset the variables
+            self.reset_variables()
+
             self.rectangles = []  # We reset the list of the rectangle in the garage
 
             # Create the rectangles for the pages
@@ -61,24 +73,14 @@ class Garage:
                 for car in var.MEMORY_CARS.get(key):
                     # If the rectangle is in the good page
                     if 10 * self.actual_page <= self.nb_rectangle < 10 * (self.actual_page + 1):
-                        self.rectangles.append(RectGarage(num, car[0], (self.actual_x, self.actual_y), car[1], car[2], key))
+                        self.rectangles.append(RectGarage(car[0], key, car[1], car[2], num, (self.actual_x, self.actual_y)))  # We create the rectangles
                         num += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
 
+            var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
+
             self.reload_page = False  # We don't have to change the page of the garage anymore
-
-        var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
-
-        for rect_garage in self.rectangles:  # For each rectangle in the garage
-            if rect_garage.draw(self.time_since_last_delete):  # If the rectangle is deleted we reset the page of the garage
-                self.reload_page = True  # We have to change the page of the garage
-                self.time_since_last_delete = pygame.time.get_ticks()  # We reset the time since the last delete of a car
-
-        self.trash_button.check_state()  # We draw the trash button
-        if self.trash_button.activated:
-            var.MEMORY_CARS = {'dice': [], 'genetics': []}  # We reset the memory of the cars
-            self.reload_page = True  # We have to change the page of the garage
 
     def update_variables(self):
         """

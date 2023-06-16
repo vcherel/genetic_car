@@ -192,7 +192,7 @@ class Car:
         self.dead = True  # The car is dead
         var.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
 
-    def draw(self):
+    def draw_car(self):
         """
         Draw the car
         """

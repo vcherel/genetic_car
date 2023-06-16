@@ -27,7 +27,7 @@ CLOCK = pygame.time.Clock()  # Clock of the game
 # Map variables
 BACKGROUND = None  # Image of the background
 BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to detect collisions)
-NUM_MAP = -1  # Number of the map
+NUM_MAP = None  # Number of the map
 START_POSITION = None  # Start position of the car
 RED_CAR_IMAGE = None  # Image of the original car
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
@@ -66,7 +66,7 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 DISPLAY_GARAGE = False  # True to see the garage
 GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
 MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
-# Format of MEMORY_CARS:   {"dice": [(id, name, Genetic), ...], "genetic": [(id, name, Genetic), ...]}
+# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic], ...], "genetic": [[id, name, Genetic], ...]}
 
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
 ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
@@ -192,7 +192,7 @@ def load_variables():
             genetic = Genetic(height_slow=int(line[3]), height_medium=int(line[4]), height_fast=int(line[5]),
                               width_slow=int(line[6]), width_medium=int(line[7]), width_fast=int(line[8]))
 
-            MEMORY_CARS.get(type_car).append((id_car, name, genetic))  # We add the car to the memory
+            MEMORY_CARS.get(type_car).append([id_car, name, genetic])  # We add the car to the memory
             if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                 ACTUAL_ID_MEMORY_DICE = id_car + 1
 
@@ -215,3 +215,18 @@ def save_variables():
                     car[2].width_slow // WIDTH_MULTIPLIER) + ' ' +
                                       str(car[2].width_medium // WIDTH_MULTIPLIER) + ' ' + str(
                     car[2].width_fast // WIDTH_MULTIPLIER) + '\n')
+
+
+def update_car_name(type_car, id_car, name):
+    """
+    Update the name of the car in the memory
+
+    Args:
+        type_car: type of the car (generation or dice)
+        id_car: id of the car
+        name: new name of the car
+    """
+    for car in MEMORY_CARS.get(type_car):
+        if car[0] == id_car:
+            car[1] = name
+            break

@@ -97,10 +97,20 @@ def handle_events(cars=None):
             if GARAGE.rectangles:
                 for rect_garage in GARAGE.rectangles:
                     if rect_garage.change_text:
-                        _, rect_garage.name, rect_garage.change_text, rect_garage.text = \
-                            rect_garage.name_button.update_writing_rectangle(event, None, rect_garage.name, rect_garage.text, int_variable=False)
-                        GARAGE.reload_page = True  # Reload the page to display the new name of the car
 
+                        _, rect_garage.name, rect_garage.change_text, _ = \
+                            rect_garage.name_button.update_writing_rectangle(event, None, rect_garage.name, rect_garage.text, int_variable=False)
+
+                        if not rect_garage.change_text:
+                            if rect_garage.name == '':
+                                rect_garage.name = 'car'
+
+                            # We change the value of the car in the memory
+                            var.update_car_name(rect_garage.type_car, rect_garage.id_car, rect_garage.name)
+
+                        rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (255, 255, 255))  # We change the text of the writing rectangle
+                        rect_garage.name_button.image = rect_garage.text  # We change the image of the writing rectangle
+                        rect_garage.draw()  # We display the rectangle with the new text
 
 
 def handle_clicks(cars):
@@ -131,6 +141,23 @@ def handle_clicks(cars):
 
                 DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
                 DICE_MENU.save_values()  # Save the values of the dice
+
+    if GARAGE.rectangles:
+        for rect_garage in GARAGE.rectangles:
+            if rect_garage.change_text:
+                print("1")
+                rect_garage.change_text = False
+
+                if rect_garage.name == '':
+                    rect_garage.name = 'car'
+
+                # We change the value of the car in the memory
+                var.update_car_name(rect_garage.type_car, rect_garage.id_car, rect_garage.name)
+
+                rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (255, 255, 255))  # We change the text of the writing rectangle
+                rect_garage.name_button.image = rect_garage.text  # We change the image of the writing rectangle
+                rect_garage.draw()  # We display the rectangle with the new text
+
 
     if SEE_CURSOR:
         print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
@@ -238,7 +265,7 @@ def display():
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic()))  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic()])  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
             DICE_MENU.init('dice', dict_scores=capture_dice())  # We initialize the variables of the dice
