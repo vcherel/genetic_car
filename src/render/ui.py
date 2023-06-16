@@ -238,7 +238,7 @@ def display():
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, Genetic()))  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic()))  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
             DICE_MENU.init('dice', dict_scores=capture_dice())  # We initialize the variables of the dice

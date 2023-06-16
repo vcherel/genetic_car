@@ -72,7 +72,7 @@ class RectGarage:
 
         if self.delete_button.check_state() and pygame.time.get_ticks() - time_since_last_delete > 200:  # We check the state of the button
             for item in var.MEMORY_CARS.get(self.type_car):
-                if item[1] == self.genetic:
+                if item[0] == self.id_car and item[1] == self.name and item[2] == self.genetic:
                     var.MEMORY_CARS.get(self.type_car).remove(item)
                     return True
 

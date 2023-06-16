@@ -12,7 +12,7 @@ rect_display_garage = (500, 125, 500, 550)  # Display rectangle of the garage
 class Garage:
     def __init__(self):
         """
-        Initialize the garage (in the structures.py file)
+        Initialize the garage
         """
         self.nb_rectangle = None  # Number of rectangle in the garage
         self.rectangles = None  # List of the rectangles in the garage
@@ -58,11 +58,10 @@ class Garage:
             num = 0  # The number to identify the id of the rectangle
 
             for key in var.MEMORY_CARS.keys():
-                str_name = 'Dé ' if key == 'dice' else 'Génération '
                 for car in var.MEMORY_CARS.get(key):
                     # If the rectangle is in the good page
                     if 10 * self.actual_page <= self.nb_rectangle < 10 * (self.actual_page + 1):
-                        self.rectangles.append(RectGarage(num, car[0], (self.actual_x, self.actual_y), str_name + str(car[0]), car[1], key))
+                        self.rectangles.append(RectGarage(num, car[0], (self.actual_x, self.actual_y), car[1], car[2], key))
                         num += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage

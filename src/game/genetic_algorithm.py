@@ -24,7 +24,7 @@ def apply_genetic(cars):
     if cars:  # If there is at least one car
         best_car = Car(cars[0].genetic, best_car=True)  # Get the best car
 
-        var.MEMORY_CARS.get('genetic').append((var.NUM_GENERATION, best_car.genetic))  # Add the best car to the memory
+        var.MEMORY_CARS.get('genetic').append((var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic))  # Add the best car to the memory
 
         cars = select_best_cars(cars)  # Select the best cars
         cars = mutate(cars)  # Mutate the cars

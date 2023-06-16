@@ -25,7 +25,7 @@ text_selected_dice = var.LARGE_FONT.render('Dés sélectionnés', True, (0, 0, 0
 class DiceMenu:
     def __init__(self):
         """
-        Initialize the dice menu (in the structures.py file)
+        Initialize the dice menu
         """
         self.type_car = None  # Type of the car ("dice" or "genetic")
         self.genetic = None  # Genetic corresponding to the dice
@@ -187,7 +187,7 @@ class DiceMenu:
 
         if self.by_camera:
             var.WINDOW.blit(var.BACKGROUND, rect_camera_frame, rect_camera_frame)  # We erase the dice menu
-            var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, self.genetic))  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append((var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), self.genetic))  # We add the dice to the memory
             var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
 
     def save_values(self):
@@ -199,7 +199,11 @@ class DiceMenu:
                 if car[0] == self.id_car:
                     var.MEMORY_CARS.get(self.type_car).remove(car)
                     break
-            var.MEMORY_CARS.get(self.type_car).append((self.id_car, self.genetic))
+            if self.type_car == 'Dice':
+                name = 'Dé_' + str(self.id_car)
+            else:
+                name = 'Génération_' + str(self.id_car)
+            var.MEMORY_CARS.get(self.type_car).append((self.id_car, name, self.genetic))
 
 
 def draw_dots(x, y, nb_dots, color=(255, 255, 255)):

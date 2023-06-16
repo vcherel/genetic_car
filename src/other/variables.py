@@ -66,7 +66,7 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 DISPLAY_GARAGE = False  # True to see the garage
 GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
 MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
-# Format of MEMORY_CARS:   {"dice": [(id, Genetic), ...], "genetic": [(id, Genetic), ...]}
+# Format of MEMORY_CARS:   {"dice": [(id, name, Genetic), ...], "genetic": [(id, name, Genetic), ...]}
 
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
 ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
@@ -177,29 +177,24 @@ def load_variables():
     with open(path_data + '/cars', 'r') as file_cars_read:
         """
         Format of the file cars:
-        name1   width_fast1   height_fast1   width_medium1   height_medium1   width_slow1   height_slow1
-        name2   width_fast2   height_fast2   width_medium2   height_medium2   width_slow2   height_slow2
+        id1 type_car1 name1   width_fast1   height_fast1   width_medium1   height_medium1   width_slow1   height_slow1
+        id2 type_car2 name2   width_fast2   height_fast2   width_medium2   height_medium2   width_slow2   height_slow2
         ...
-
-        Format of names for genetic cars:
-        genetic_x    (with x a unique int for each generation)
-        Format of names for dice cars:
-        dice_y          (with y a unique int for each dice car)
         """
         lines = file_cars_read.readlines()  # We read the file
         for line in lines:
             line = line.split(' ')
 
-            name = line[0].split('_')  # [generation/dice, id]
-            id_generation = int(name[1])  # Id of the car
-            type_car = name[0]  # Type of the car (generation or dice)
+            id_car = int(line[0])  # Id of the car
+            type_car = line[1]  # Type of the car (generation or dice)
+            name = line[2]  # Name of the car
 
-            genetic = Genetic(height_slow=int(line[1]), height_medium=int(line[2]), height_fast=int(line[3]),
-                              width_slow=int(line[4]), width_medium=int(line[5]), width_fast=int(line[6]))
+            genetic = Genetic(height_slow=int(line[3]), height_medium=int(line[4]), height_fast=int(line[5]),
+                              width_slow=int(line[6]), width_medium=int(line[7]), width_fast=int(line[8]))
 
-            MEMORY_CARS.get(type_car).append((id_generation, genetic))  # We add the car to the memory
-            if type_car == 'dice' and id_generation >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
-                ACTUAL_ID_MEMORY_DICE = id_generation + 1
+            MEMORY_CARS.get(type_car).append((id_car, name, genetic))  # We add the car to the memory
+            if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
+                ACTUAL_ID_MEMORY_DICE = id_car + 1
 
 
 def save_variables():
@@ -213,10 +208,10 @@ def save_variables():
     with open(path_data + '/cars', 'w') as file_cars_write:
         for key in MEMORY_CARS.keys():
             for car in MEMORY_CARS.get(key):
-                file_cars_write.write(key + '_' + str(car[0]) + ' ' +
-                                      str(car[1].height_slow // HEIGHT_MULTIPLIER) + ' ' + str(
-                    car[1].height_medium // HEIGHT_MULTIPLIER) + ' ' +
-                                      str(car[1].height_fast // HEIGHT_MULTIPLIER) + ' ' + str(
-                    car[1].width_slow // WIDTH_MULTIPLIER) + ' ' +
-                                      str(car[1].width_medium // WIDTH_MULTIPLIER) + ' ' + str(
-                    car[1].width_fast // WIDTH_MULTIPLIER) + '\n')
+                file_cars_write.write(str(car[0]) + ' ' + key + ' ' + car[1] + ' ' +
+                                      str(car[2].height_slow // HEIGHT_MULTIPLIER) + ' ' + str(
+                    car[2].height_medium // HEIGHT_MULTIPLIER) + ' ' +
+                                      str(car[2].height_fast // HEIGHT_MULTIPLIER) + ' ' + str(
+                    car[2].width_slow // WIDTH_MULTIPLIER) + ' ' +
+                                      str(car[2].width_medium // WIDTH_MULTIPLIER) + ' ' + str(
+                    car[2].width_fast // WIDTH_MULTIPLIER) + '\n')

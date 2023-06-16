@@ -117,7 +117,10 @@ class Button:
             var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))
         else:
             # Append the entered character to the text
-            str_variable += event.unicode
+            if event.unicode == ' ':
+                str_variable += '_'
+            else:
+                str_variable += event.unicode
 
         return variable, str_variable, bool_active, text
 
