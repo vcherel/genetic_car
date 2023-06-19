@@ -122,7 +122,7 @@ def play(cars=None):
         ui.display()  # Activate the buttons (This is here because we have to do this after erasing the screen and
         # we have ton continue to check the buttons even if the game is paused)
 
-        pygame.display.update()  # Update the screen
+        pygame.display.flip()  # Update the screen
 
         try:  # To avoid division by 0
             var.ACTUAL_FPS = int(1 / (time.time() - time_begin_turn))  # Actual FPS

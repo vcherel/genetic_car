@@ -1,9 +1,11 @@
 from src.render.dice_menu import save_camera_frame  # To save the camera frame
 from src.other.utils import overlapping_rectangles  # Utils functions
 from src.render.display import draw_circle  # To draw the circles
+import src.other.variables as var  # Variables
 import random  # To generate random numbers
 import numpy as np  # To use numpy
 import time  # To get the time
+import pygame  # To use Pygame
 import cv2  # To use OpenCV
 
 """
@@ -134,7 +136,6 @@ def determine_colors(image, rect, colors, bad_colors=None, mean_bgr=None):
 
     # We get the color with the minimum distance
     color = min(distances, key=distances.get)
-    print(distances)
 
     if color != "white":
         # We check if the color is already in the dictionary
@@ -243,6 +244,8 @@ def capture_dice():
     Returns:
         (dict) : The scores of the dice
     """
+    rect_window = (425, 175, 640, 480)
+
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
@@ -282,13 +285,23 @@ def capture_dice():
             cv2.putText(frame, f'score: {score}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
 
-        cv2.imshow('Camera', frame)  # Display the frame
+        # We display the frame on the window
+        image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
+        image_pygame = pygame.surfarray.make_surface(image_rgb)  # Convert the image to a pygame image
+        image_turned = pygame.transform.rotate(image_pygame, -90)  # Rotate the image
+        image = pygame.transform.flip(image_turned, True, False)  # Flip the image
+        var.WINDOW.blit(image, rect_window)  # We display the frame on the window
+        pygame.draw.rect(var.WINDOW, (115, 205, 255), rect_window, 2)  # We draw a rectangle on the window
+        pygame.display.flip()  # We update the window
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            # We quit the program if the user presses the 'q' key
-            break
+        # Detect a click on the window
+        click = False
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click = True
 
-        if time.time() - start_time > 15:  # After a while, we stop the program
+        if click or time.time() - start_time > 5:  # We stop the program after a click or after some time
+            var.WINDOW.blit(var.BACKGROUND, rect_window, rect_window)  # We erase the window
             break
 
     cap.release()  # Release the VideoCapture object
