@@ -1,5 +1,11 @@
 import matplotlib.pyplot as plt  # For plotting the histogram
 
+"""
+This file contains the functions to analyze the data from the test file (created in the file main.py)
+This data concerns the score of the cars, to determine where each car died
+It has been created by 
+"""
+
 
 def analyze_file(file_name_read, file_name_write):
     """

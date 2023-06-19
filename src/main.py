@@ -12,6 +12,9 @@ import src.render.ui as ui  # Import the ui
 import pygame  # To use pygame
 import time  # To get the time
 
+"""
+This file contains all the functions used to play the game
+"""
 
 rect_blit_car = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
 
@@ -101,12 +104,12 @@ def play(cars=None):
                 car.draw_car()  # Draw the car
 
             rect_blit_car = union_rect(rects)  # Union of the rects for the blit
-            # pygame.draw.rect(var.WINDOW, (120, 0, 0), var.RECT_BLIT_CAR, 1)  # Draw the rect for the blit of the cars
+            # pygame.draw.rect(var.WINDOW, (120, 0, 0), rect_blit_car, 1)  # Draw the rect for the blit of the cars
 
             if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING:    # If all cars are dead
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
 
-                if var.TEST_ALL_CARS:  # If we want to test_0 all cars
+                if var.TEST_ALL_CARS:  # If we want to test all cars
                     for car in cars:
                         file.write(f'{car.genetic} {car.score}\n')  # Write the score of the car
                     return  # We stop the game
@@ -143,6 +146,7 @@ if __name__ == '__main__':
     ui.init()  # Initialize the ui
     display.edit_background()  # Add elements not clickable to the background
 
+    # If we want to run all the cars
     if var.TEST_ALL_CARS:
         var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
         var.PLAY = True

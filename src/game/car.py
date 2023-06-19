@@ -5,6 +5,9 @@ import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
 import math  # Math library
 
+"""
+This file contains the class Car used to represent a car in the game
+"""
 
 # Constants
 max_speed = 8  # Maximum speed of the car
@@ -52,6 +55,7 @@ class Car:
 
         self.next_checkpoint = 0  # Next checkpoint to reach
         self.score = 0  # Score of the car
+        self.turn_played = 0  # Number of turn played by the car
 
         self.points_detection_cone = []  # Points of the detection cone if DEBUG is True
 
@@ -68,6 +72,7 @@ class Car:
         """
         Move the car and update its state
         """
+        self.turn_played += 1  # Increment the number of turn played by the car
         self.detect_checkpoint()  # Detect if the car has reached a checkpoint
         self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
         self.update_pos()  # Update the position and orientation of the car
@@ -232,3 +237,9 @@ class Car:
             pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+
+    def update_score(self):
+        """
+        Update the score of the car to take into account the time spent alive (we prefer the fastest cars)
+        """
+        self.score = self.score / self.turn_played

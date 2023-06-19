@@ -4,6 +4,10 @@ import src.other.variables as var  # Variables of the game
 import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
 
+"""
+This file contains all the functions used to apply the genetic algorithm to the cars (selection, mutation, crossover)
+"""
+
 
 def apply_genetic(cars):
     """
@@ -16,7 +20,13 @@ def apply_genetic(cars):
         list: list of cars with the genetic algorithm applied
     """
     cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
+
+    # Update the score of the cars to take into account the time
+    for car in cars:
+        car.update_score()  # Update the score of the cars
+
     cars = sorted(cars, key=lambda c: c.score, reverse=True)  # Sort the cars by score
+
     if cars:  # If there is at least one car
         best_car = Car(cars[0].genetic, best_car=True)  # Get the best car
 
@@ -45,6 +55,8 @@ def select_best_cars(cars):
     """
     # We keep the best cars
     best_cars = cars[:int(len(cars) * var.PERCENTAGE_BEST_CARS)]
+    if not best_cars:
+        best_cars = [Car()]  # If there is no cars we add a new one
 
     # We copy the best car randomly to have the same number of cars as before
     cars = []

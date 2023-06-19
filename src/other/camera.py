@@ -6,6 +6,10 @@ import numpy as np  # To use numpy
 import time  # To get the time
 import cv2  # To use OpenCV
 
+"""
+This file contains the functions used to get the score of the dice from the camera with OpenCV
+"""
+
 # The parameters of the threshold to make a black and white image for each color
 param_thresh = {"dark_yellow": 50, "orange": 120, "red": 100, "green": 100, "purple": 100, "black": 25}
 # The BGR values of each color (observation)
@@ -97,31 +101,58 @@ def find_rectangles(image, rectangles):
                     rectangles.append((x, y, w, h))
 
 
-def determine_color(image):
+def determine_colors(image, rect, colors, bad_colors=None, mean_bgr=None):
     """
-    Determine the color of the dice on the image
+    Determine the colors of the dice on the image
 
     Args:
         image (numpy.ndarray): Image of the dice
+        rect (tuple): Coordinates of the rectangle (x, y, w, h)
+        colors (dict) : Dictionary of the colors {color_1: ((B, G, R), rect), color_2: ((B, G, R), rect), ...}
+        bad_colors (list): List of the colors that are not on the dice
+        mean_bgr (tuple): Mean BGR values of the dice
 
     Returns:
         (str): Color of the dice
     """
-    # Convert the image to a numpy array
-    image_array = np.array(image)
+    if bad_colors is None:
+        bad_colors = []
 
-    # Calculate the mean BGR values
-    mean_bgr = np.mean(image_array, axis=(0, 1))
+    # If we don't have the mean BGR values of the dice, we calculate it
+    if mean_bgr is None:
+        # Convert the image to a numpy array
+        image_array = np.array(image)
+
+        # Calculate the mean BGR values
+        mean_bgr = np.mean(image_array, axis=(0, 1))
 
     # Calculate the distance between the mean BGR values and the BGR values of each color
     distances = {}
     for color, bgr in bgr_values.items():
-        distances[color] = np.linalg.norm(mean_bgr - bgr)
+        if color not in bad_colors:
+            distances[color] = np.linalg.norm(mean_bgr - bgr)
 
     # We get the color with the minimum distance
     color = min(distances, key=distances.get)
+    print(distances)
 
-    return color
+    if color != "white":
+        # We check if the color is already in the dictionary
+        if color not in colors:
+            colors[color] = (mean_bgr, rect)  # We add the color to the dictionary if it is not in it
+        else:
+            # We check what rect has the closest mean_bgr to the BGR value we want
+            if np.linalg.norm(colors[color][0] - bgr_values[color]) > np.linalg.norm(mean_bgr - bgr_values[color]):
+                # We memorize the rect that was misplaced to change it of place
+                value_to_change = colors[color]
+                bad_colors = [color]  # List of the colors that don't correspond to the rect
+
+                colors[color] = (mean_bgr, rect)  # We save the good rect in the dictionary
+
+                # We call the function again to find the color of the rect that was misplaced
+                colors = determine_colors(image, value_to_change[1], colors, bad_colors, value_to_change[0])
+
+    return colors
 
 
 def determine_score(image, color, scores):
@@ -217,7 +248,7 @@ def capture_dice():
 
     scores_all_colors = {"black": [], "orange": [], "green": [], "purple": [], "red": [], "dark_yellow": []}
 
-    # The scores we will return, initialized to random values
+    # The scores we will return, initialized to random values(65, 128, 49)
     final_score = {"black": random.randint(1, 6), "orange": random.randint(1, 6), "green": random.randint(1, 6),
                    "purple": random.randint(1, 6), "red": random.randint(1, 6), "dark_yellow": random.randint(1, 6)}
 
@@ -229,19 +260,27 @@ def capture_dice():
         rectangles = []  # List of the rectangles on the image
         find_rectangles(frame, rectangles)  # Find the rectangles on the image
 
+        # We take in memory for each color the bgr color and the rectangle to prevent 2 colors from being the same
+        colors = {}
+
         for rect in rectangles:
             x, y, w, h = rect
             img_rect = frame[y:y+h, x:x+w]  # We get the image of the rectangle
-            color = determine_color(img_rect)  # We determine the color of the rectangle
-            if color != 'white':
-                # We draw the rectangle on the image
-                cv2.rectangle(frame, (x, y), (x + w, y + h), real_bgr_values[color], 5)
+            colors = determine_colors(img_rect, rect, colors)  # We determine the color of the rectangle
 
-                score = determine_score(img_rect, color, scores_all_colors[color])  # We determine the score of the dice
-                final_score[color] = score  # We add the score to the final score
+        for color in colors:
+            x, y, w, h = colors[color][1]  # We get the coordinates of the rectangle
+            img_rect = frame[y:y+h, x:x+w]  # We get the image of the rectangle
 
-                # We write the value of the dice on the image
-                cv2.putText(frame, f'score: {score}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            # We draw the rectangle on the image
+            cv2.rectangle(frame, (x, y), (x + w, y + h), real_bgr_values[color], 5)
+
+            score = determine_score(img_rect, color, scores_all_colors[color])  # We determine the score of the dice
+            final_score[color] = score  # We add the score to the final score
+
+            # We write the value of the dice on the image
+            cv2.putText(frame, f'score: {score}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
 
         cv2.imshow('Camera', frame)  # Display the frame
 

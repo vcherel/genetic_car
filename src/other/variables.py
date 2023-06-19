@@ -1,12 +1,15 @@
 from src.game.constants import WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION  # Import the constants
 from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
-from src.game.genetic import Genetic  # Import the Genetic class
 from src.render.display import edit_background  # Import the display functions
+from src.game.genetic import Genetic  # Import the Genetic class
 import os.path  # To get the path of the file
 import pygame  # To use pygame
 import sys  # To quit the game
 import time  # To use time
 
+"""
+This file contains all the variables of the game used in multiple other files
+"""
 
 start_positions = [(600, 165), (760, 180), (600, 197)]  # Start position
 car_sizes = [0.13, 0.09, 0.06]  # Size of the car

@@ -1,6 +1,10 @@
 from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Constants of the game
 import random  # Used to generate random numbers
 
+"""
+This file contains the Genetic class used to store the genetic parameters of a car
+"""
+
 
 class Genetic:
     """

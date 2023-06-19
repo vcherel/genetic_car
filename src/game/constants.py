@@ -1,3 +1,7 @@
+"""
+This file contains all the constants of the game used in multiple other files
+"""
+
 # Display
 WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size (small to avoid lag)
 RADIUS_CHECKPOINT = 80  # Radius of the checkpoints
@@ -15,4 +19,4 @@ HEIGHT_MULTIPLIER = 20  # Height multiplier of the cone
 # Game
 TIME_GENERATION = 30  # Time of a generation (s)
 FPS = 60  # FPS of the game
-SEED = 0  # Seed of the game
+SEED = 10  # Seed of the game
