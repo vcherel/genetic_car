@@ -55,6 +55,20 @@ class Genetic:
         return f' {self.height_slow // HEIGHT_MULTIPLIER} {self.height_medium // HEIGHT_MULTIPLIER} {self.height_fast // HEIGHT_MULTIPLIER} ' \
                f'{self.width_slow // WIDTH_MULTIPLIER} {self.width_medium // WIDTH_MULTIPLIER} {self.width_fast // WIDTH_MULTIPLIER}'
 
+    def __eq__(self, other):
+        """
+        Check if two genetic algorithms are equals, two genetic algorithms are equals if they have the same parameters
+
+        Args:
+            other (Genetic): genetic algorithm to compare with
+
+        Returns:
+            bool: True if the two genetic algorithms are equals, False otherwise
+        """
+        return self.width_fast == other.width_fast and self.height_fast == other.height_fast and \
+            self.width_medium == other.width_medium and self.height_medium == other.height_medium and \
+            self.width_slow == other.width_slow and self.height_slow == other.height_slow
+
     def get_dice_value(self, index):
         """
         Get the value of the dice at the given index

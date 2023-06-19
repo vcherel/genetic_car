@@ -143,7 +143,7 @@ class DiceMenu:
         var.WINDOW.blit(var.TEXT_FAST, (self.rect[0] + x3 + 14, self.rect[1] + 100))
 
         x, y = self.rect[0] + 685, self.rect[1] + 290
-        var.WINDOW.blit(var.RED_CAR_CONE, (x, y))
+        var.WINDOW.blit(var.BIG_RED_CAR_IMAGE, (x, y))
         draw_detection_cone((x + 125, y + 25), self.genetic, 2.5)
 
 

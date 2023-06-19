@@ -6,6 +6,7 @@ from src.other.utils import union_rect  # Import the utils
 import src.render.display as display  # Import the display
 import src.other.variables as var  # Import the variables
 from src.game.car import Car  # Import the car
+from src.other.analyze_data import analyze_data  # Import the analyze_data function
 import os.path  # To get the path of the file
 import random  # To generate random numbers
 import src.render.ui as ui  # Import the ui
@@ -19,7 +20,7 @@ This file contains all the functions used to play the game
 rect_blit_car = pygame.rect.Rect(0, 0, 0, 0)  # Coordinates of the rect used to erase the cars of the screen
 
 if var.TEST_ALL_CARS:  # If we want to test_0 all the cars
-    file = open(os.path.dirname(__file__) + '/../data/test_1', 'a')  # File to write the scores of every possible car if necessary
+    file = open(os.path.dirname(__file__) + '/../data/test_0', 'a')  # File to write the scores of every possible car if necessary
 
 
 def open_window():
@@ -71,12 +72,23 @@ def play(cars=None):
     global rect_blit_car
 
     if cars is None:  # If it is the first time we play
-        cars = [Car() for _ in range(var.NB_CARS)]  # List of cars
-        cars = add_garage_cars(cars)  # Add the cars in the garage
-        var.init_variables(len(cars))
+        # We add the cars without repetition
+        cars = []  # List of cars
+        for i in range(var.NB_CARS):
+            added = False
+            while not added:
+                car = Car()  # Create a car
+                if car not in cars:
+                    added = True
+                    cars.append(car)
+
+        cars = add_garage_cars(cars)  # We add the car from the garage to the list of cars
+        var.init_variables(len(cars))  # Initialize the variables
 
     else:           # If we already played
+        cars = add_garage_cars(cars)  # We add the car from the garage to the list of cars
         var.init_variables(len(cars), replay=True)  # Initialize the variables
+
 
     while var.PLAY:  # While the game is not stopped
         time_begin_turn = time.time()
@@ -106,8 +118,21 @@ def play(cars=None):
             rect_blit_car = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), rect_blit_car, 1)  # Draw the rect for the blit of the cars
 
+            # If we want to restart the last_run
+            if var.PLAY_LAST_RUN:
+                var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
+                var.PLAY_LAST_RUN = False  # We stop the replay
+                var.NUM_GENERATION -= 1  # We go back to the previous generation
+                cars = []
+                # We reset the cars
+                for car in var.CARS_LAST_RUN:
+                    cars.append(Car(genetic=car.genetic))
+                play(cars)
+
             if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING:    # If all cars are dead
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
+
+                var.CARS_LAST_RUN = cars  # Save the last run
 
                 if var.TEST_ALL_CARS:  # If we want to test all cars
                     for car in cars:
@@ -145,6 +170,32 @@ if __name__ == '__main__':
     var.change_map(first_time=True)  # Change the map to the first one
     ui.init()  # Initialize the ui
     display.edit_background()  # Add elements not clickable to the background
+
+
+    if var.SHOW_ANALYSIS:
+        scores = analyze_data('/test_' + str(var.NUM_MAP), '/result_analysis')
+        scores = [score for score in scores if score < len(var.CHECKPOINTS)]
+
+        turns = [0] * len(var.CHECKPOINTS)
+        for score in scores:
+            turns[score] += 1
+        max_turns = max(turns)
+
+        # Draw the circles
+        for pos, score in zip(var.CHECKPOINTS, turns):
+
+            # Calculate the red value based on the score
+            red_value = int(score / max_turns * 255)  # Adjust the scaling if needed
+
+            # If it is not white
+            if red_value != 0:
+                # Create the color tuple with the adjusted red value
+                circle_color = (255, 255 - red_value, 255 - red_value)
+
+                # Draw the circle with the calculated color
+                pygame.draw.circle(var.BACKGROUND, circle_color, pos, 25)
+
+        # var.BACKGROUND.blit(var.BACKGROUND_MASK.to_surface(), (0, 0))  # Reset the screen
 
     # If we want to run all the cars
     if var.TEST_ALL_CARS:

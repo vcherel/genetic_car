@@ -1,5 +1,6 @@
 from src.other.utils import text_rec, compute_detection_cone_points  # Import the utils functions
 from src.game.constants import RADIUS_CHECKPOINT  # Import the constants
+from src.other.utils import convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
 import cv2  # To use OpenCV
@@ -83,7 +84,15 @@ def show_car_window(car):
     pygame.draw.rect(var.WINDOW, (115, 205, 255), rect, 2)  # Draw the rectangle (contour)
 
     x, y = rect[0] + 100, rect[1] + 280  # Position of the car
-    var.WINDOW.blit(var.RED_CAR_CONE, (x, y))  # Draw the red car
+
+    if car.view_only:
+        image = convert_to_grayscale(var.BIG_RED_CAR_IMAGE)
+    elif car.best_car:
+        image = convert_to_yellow_scale(var.BIG_RED_CAR_IMAGE)
+    else:
+        image = var.BIG_RED_CAR_IMAGE
+
+    var.WINDOW.blit(image, (x, y))  # Draw the red car
     draw_detection_cone((x + 125, y + 25), car.genetic, 2.5)  # Draw the detection cones
 
     var.WINDOW.blit(var.TEXT_SLOW, (x - 50, y + 50))  # Draw the slow text

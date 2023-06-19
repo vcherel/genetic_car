@@ -112,12 +112,12 @@ def add_garage_cars(cars):
     """
     Add the cars from the garage to the list of cars
     """
+    index = 0
+
     if var.GENETICS_FROM_GARAGE:  # If we have a car from the garage
-        if type(var.GENETICS_FROM_GARAGE) is list:  # If we have a car from the garage
-            for gen in var.GENETICS_FROM_GARAGE:
-                cars.append(Car(gen, view_only=True))  # Add cars from the garage to the list
-        else:
-            cars.append(Car(var.GENETICS_FROM_GARAGE, view_only=True))  # Add the car from the garage to the list
+        for gen in var.GENETICS_FROM_GARAGE:
+            cars.append(Car(gen, view_only=True))  # Add cars from the garage to the list
+            index += 1
     return cars
 
 

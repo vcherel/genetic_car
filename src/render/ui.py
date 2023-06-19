@@ -19,16 +19,17 @@ change_nb_cars = False  # Change the number of cars
 debug_button = Button()  # Button to activate the debug mode
 stop_button = Button()  # Button to stop the game
 pause_button = Button()  # Button to pause the game
-start_button = Button()  # Button to start the game
+play_button = Button()  # Button to start the game
 nb_cars_button = Button()  # Button to change the number of cars
 garage_button = Button()  # Button to open the garage
 dice_button = Button()  # Button to see the dice
 map_button = Button()  # Button to change the map
+restart_button = Button()  # Button to restart the game
 text_nb_cars = None  # Text to display the number of cars
 
 
 def init():
-    global debug_button, stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, text_nb_cars
+    global debug_button, stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, text_nb_cars
 
     path_images = os.path.dirname(__file__) + '/../../images/'  # Path of the images
 
@@ -38,13 +39,14 @@ def init():
                           pygame.image.load(path_images + '/checkbox_3.png'), checkbox=True, scale=0.03)
     stop_button = Button(1420, 4, pygame.image.load(path_images + '/stop_button.png'), scale=0.1)
     pause_button = Button(1417, 56, pygame.image.load(path_images + '/pause_button.png'), checkbox=True, scale=0.11)
-    start_button = Button(1310, 15, pygame.image.load(path_images + '/start_button.png'), scale=0.18)
+    play_button = Button(1320, 15, pygame.image.load(path_images + '/start_button.png'), scale=0.18)
     nb_cars_button = Button(1049, 58, pygame.image.load(path_images + '/writing_rectangle_1.png'),
                             pygame.image.load(path_images + '/writing_rectangle_2.png'),
                             pygame.image.load(path_images + '/writing_rectangle_3.png'), checkbox=True, scale=0.8)
     garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, checkbox=True)
     dice_button = Button(600, 28, pygame.image.load(path_images + '/dice_button.png'), scale=0.4)
     map_button = Button(845, 37, pygame.image.load(path_images + '/map_button.png'), scale=0.8)
+    restart_button = Button(1290, 2, pygame.image.load(path_images + '/restart_button.png'), scale=0.08)
 
     # Text
     text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
@@ -108,7 +110,7 @@ def handle_events(cars=None):
                             # We change the value of the car in the memory
                             var.update_car_name(rect_garage.type_car, rect_garage.id_car, rect_garage.name)
 
-                        rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (255, 255, 255))  # We change the text of the writing rectangle
+                        rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing rectangle
                         rect_garage.name_button.image = rect_garage.text  # We change the image of the writing rectangle
                         rect_garage.draw()  # We display the rectangle with the new text
 
@@ -229,8 +231,8 @@ def display():
 
 
     # Start button
-    var.START = start_button.check_state()  # Draw the start button
-    if start_button.just_clicked and (var.NB_CARS != 0 or var.GENETICS_FROM_GARAGE):
+    var.START = play_button.check_state()  # Draw the start button
+    if play_button.just_clicked and (var.NB_CARS != 0 or var.GENETICS_FROM_GARAGE):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
@@ -289,6 +291,10 @@ def display():
     if map_button.just_clicked:  # Map button is just clicked
         var.change_map()  # We change the map
 
+
+    # Restart button
+    if restart_button.check_state() and var.CARS_LAST_RUN:  # Draw the restart button
+        var.PLAY_LAST_RUN = True  # We play the last run
 
 
     # Draw the number of cars

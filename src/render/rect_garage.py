@@ -33,7 +33,7 @@ class RectGarage:
 
         self.change_text = False  # Boolean to know if we change the text of the writing rectangle
         self.name = name  # Name of the rectangle
-        self.text = var.FONT.render(self.name, True, (0, 0, 0), (255, 255, 255))
+        self.text = var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128))
 
 
         # Buttons
@@ -64,13 +64,14 @@ class RectGarage:
 
         if self.name_button.just_clicked and self.change_text:
             self.name = ''  # We reset the name at the beginning
-            self.text = var.FONT.render(self.name, True, (0, 0, 0),(255, 255, 255))  # We change the text of the writing rectangle
+            self.text = var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing rectangle
             self.name_button.image = self.text  # We change the image of the writing rectangle
 
         # Button to select a car
         if self.select_button.check_state():
             dict_checked[self.id_rect] = True  # We take in memory the state of the button
-            var.GENETICS_FROM_GARAGE.append(self.genetic)
+            if self.genetic not in var.GENETICS_FROM_GARAGE:
+                var.GENETICS_FROM_GARAGE.append(self.genetic)
         else:
             dict_checked[self.id_rect] = False  # We take in memory the state of the button
             if self.genetic in var.GENETICS_FROM_GARAGE:

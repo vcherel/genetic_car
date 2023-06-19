@@ -292,6 +292,7 @@ def capture_dice():
         image = pygame.transform.flip(image_turned, True, False)  # Flip the image
         var.WINDOW.blit(image, rect_window)  # We display the frame on the window
         pygame.draw.rect(var.WINDOW, (115, 205, 255), rect_window, 2)  # We draw a rectangle on the window
+        var.WINDOW.blit(var.LARGE_FONT.render("Cliquez n'importe où pour quitter cette fenêtre", True, (45, 230, 64)), (440, 600))  # Text of the selected dice
         pygame.display.flip()  # We update the window
 
         # Detect a click on the window

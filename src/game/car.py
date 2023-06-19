@@ -52,6 +52,7 @@ class Car:
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
 
         self.view_only = view_only  # True if the car is in view only mode, False otherwise
+        self.best_car = best_car  # True if the car is the best car, False otherwise
 
         self.next_checkpoint = 0  # Next checkpoint to reach
         self.score = 0  # Score of the car
@@ -66,7 +67,19 @@ class Car:
         Return:
             str: string representation of the car
         """
-        return "Car: " + str(self.genetic)
+        return f'Car: genetic : {self.genetic} ; view_only : {self.view_only} ; best_car : {self.best_car}'
+
+    def __eq__(self, other):
+        """
+        Test the equality between the car and the other car, two cars are equal if they have the same genetic
+
+        Args:
+            other (Car): other car to compare
+
+        Return:
+            bool: True if the car is equal to the other car, False otherwise
+        """
+        return self.genetic == other.genetic
 
     def move(self):
         """
@@ -211,6 +224,14 @@ class Car:
         """
         var.WINDOW.blit(var.BACKGROUND, self.rotated_rect, self.rotated_rect)  # Erase the car
 
+    def reset(self):
+        """
+        Reset the car
+        """
+        self.pos = var.START_POSITION  # Reset the position of the car
+        self.angle = 0  # Reset the angle of the car
+
+
     def draw_detection_cone(self):
         """
         Draw the 3 detection cones of the car
@@ -242,4 +263,4 @@ class Car:
         """
         Update the score of the car to take into account the time spent alive (we prefer the fastest cars)
         """
-        self.score = self.score / self.turn_played
+        self.score = pow(self.score, 3) / self.turn_played  # Update the score of the car

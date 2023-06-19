@@ -164,7 +164,15 @@ class Button:
         else:
             variable = None
 
+
+
         self.activated = False  # Uncheck the button
         var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))  # Erase the text
-        text = var.FONT.render(str_variable, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
+
+        # Normal case
+        if dice_value or nb_cars or int_variable:
+            text = var.FONT.render(str_variable, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
+        else:   # Special case for the name of garage
+            text = var.FONT.render(str_variable, True, (0, 0, 0), (128, 128, 128))  # Change the text one last time
+
         return variable, str_variable, text
