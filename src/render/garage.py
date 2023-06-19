@@ -6,14 +6,12 @@ import os.path  # To get the path of the file
 import pygame  # To use pygame
 
 
-rect_display_garage = (500, 125, 500, 550)  # Display rectangle of the garage
-
-
 class Garage:
     def __init__(self):
         """
         Initialize the garage
         """
+        self.rect = pygame.Rect(500, 125, 500, 550)
         self.nb_rectangle = None  # Number of rectangle in the garage
         self.rectangles = None  # List of the rectangles in the garage
         self.actual_x = None  # Actual x position to write the rectangles
@@ -44,9 +42,9 @@ class Garage:
         """
 
         # Create rectangles for the garage
-        pygame.draw.rect(var.WINDOW, (128, 128, 128), rect_display_garage, 0)
-        pygame.draw.rect(var.WINDOW, (115, 205, 255), rect_display_garage, 2)
-        var.WINDOW.blit(var.LARGE_FONT.render('Voitures sauvegardées', True, (0, 0, 0), (128, 128, 128)), (rect_display_garage[0] + 95, rect_display_garage[1] + 10))
+        pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)
+        pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)
+        var.WINDOW.blit(var.LARGE_FONT.render('Voitures sauvegardées', True, (0, 0, 0), (128, 128, 128)), (self.rect[0] + 95, self.rect[1] + 10))
 
         for rect_garage in self.rectangles:  # For each rectangle in the garage
             if rect_garage.draw(self.time_since_last_delete):  # If the rectangle is deleted we reset the page of the garage
@@ -55,12 +53,11 @@ class Garage:
 
         self.trash_button.check_state()  # We draw the trash button
         if self.trash_button.activated:
-            var.MEMORY_CARS = {'dice': [], 'genetics': []}  # We reset the memory of the cars
+            var.MEMORY_CARS = {'dice': [], 'genetic': []}  # We reset the memory of the cars
             self.reload_page = True  # We have to change the page of the garage
 
 
         if self.reload_page:  # If we have to change the page of the garage
-            print('reload page')
             # Reset the variables
             self.reset_variables()
 
@@ -98,17 +95,17 @@ class Garage:
         Reset the variables
         """
         self.nb_rectangle = 0  # Number of rectangle in the garage
-        self.actual_y = rect_display_garage[1] + 60  # Actual y position to write the rectangles
-        self.actual_x = rect_display_garage[0] + 15  # Actual x position to write the rectangles
+        self.actual_y = self.rect[1] + 60  # Actual y position to write the rectangles
+        self.actual_x = self.rect[0] + 15  # Actual x position to write the rectangles
         self.change_y = False  # True if the y position has to change in the next rectangle
 
 
-def erase_garage():
-    """
-    Erase the garage
-    """
-    rect = pygame.Rect(rect_display_garage)  # We create a rectangle with the position of the garage
-    var.WINDOW.blit(var.BACKGROUND, rect, rect)  # We erase the garage
+    def erase_garage(self):
+        """
+        Erase the garage
+        """
+        rect = pygame.Rect(self.rect)  # We create a rectangle with the position of the garage
+        var.WINDOW.blit(var.BACKGROUND, rect, rect)  # We erase the garage
 
 
 def add_garage_cars(cars):

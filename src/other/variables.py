@@ -61,6 +61,9 @@ TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
 NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
+MUTATION_CHANCE = 0.2  # Chance of mutation
+CROSSOVER_CHANCE = 0.2  # Chance of crossover
+PERCENTAGE_BEST_CARS = 0.2  # Percentage of the best cars to keep
 
 # Garage variables
 DISPLAY_GARAGE = False  # True to see the garage

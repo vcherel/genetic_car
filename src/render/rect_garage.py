@@ -61,8 +61,6 @@ class RectGarage:
 
         change_text = self.change_text
         self.change_text = self.name_button.check_state()
-        if change_text != self.change_text:
-            print(f'Avant : {change_text}, Après : {self.change_text}')
 
         if self.name_button.just_clicked and self.change_text:
             self.name = ''  # We reset the name at the beginning

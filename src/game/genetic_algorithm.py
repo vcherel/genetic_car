@@ -5,10 +5,6 @@ import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
 
 
-mutation_chance = 0.2  # Chance of mutation
-crossover_chance = 0.2  # Chance of crossover
-
-
 def apply_genetic(cars):
     """
     Apply the genetic algorithm to the cars
@@ -47,7 +43,15 @@ def select_best_cars(cars):
     Returns:
         list: list of the best cars
     """
-    return [Car(cars[0].genetic) for _ in range(var.NB_CARS - 1)]  # List of cars (-1 because we will add the best car)
+    # We keep the best cars
+    best_cars = cars[:int(len(cars) * var.PERCENTAGE_BEST_CARS)]
+
+    # We copy the best car randomly to have the same number of cars as before
+    cars = []
+    while len(cars) < var.NB_CARS - 1:  # Not <= because we will add the best car at the end
+        cars.append(Car(random.choice(best_cars).genetic))
+
+    return cars  # List of cars
 
 
 def mutate(cars):
@@ -64,7 +68,7 @@ def mutate(cars):
         has_muted = False
         while not has_muted:
             for attribute_name, attribute_value in vars(car.genetic).items():
-                if random.random() < mutation_chance:
+                if random.random() < var.MUTATION_CHANCE:
                     has_muted = True
                     # See if it is a width or a height
                     if attribute_name.startswith('width'):
@@ -88,7 +92,7 @@ def crossover(cars):
     """
     for i in range(len(cars)):
         for j in range(i + 1, len(cars)):  # We search for all pairs of cars
-            if random.random() < crossover_chance:  # If we do a crossover
+            if random.random() < var.CROSSOVER_CHANCE:  # If we do a crossover
                 car1, car2 = (cars[i], cars[j])
                 id_changed_attribute = random.randint(0, 5)  # We choose a random attribute to exchange
                 for k, (attribute_name, attribute_value) in enumerate(vars(car1.genetic).items()):
