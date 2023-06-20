@@ -6,6 +6,11 @@ import src.other.variables as var  # Import the variables
 import pygame  # Import pygame module
 
 
+"""
+This file contains the DiceMenu class used to display the dice menu and change the value of dice
+"""
+
+
 rgb_values = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
 # The order is: dark_yellow, orange, red, green, purple, black
 
@@ -214,7 +219,7 @@ def draw_dots(x, y, nb_dots, color=(255, 255, 255)):
         x (int): x coordinate of the dice
         y (int): y coordinate of the dice
         nb_dots (int): Number of dots on the dice
-        color (tuple): Color of the dots. Defaults to (255, 255, 255).
+        color (tuple): Color of the dots. Defaults to white.
     """
     dot_radius = 10
     dot_padding = 32

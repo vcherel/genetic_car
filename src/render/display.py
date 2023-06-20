@@ -1,17 +1,22 @@
 from src.other.utils import text_rec, compute_detection_cone_points  # Import the utils functions
-from src.game.constants import RADIUS_CHECKPOINT  # Import the constants
+from src.game.constants import RADIUS_CHECKPOINT, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the constants
 from src.other.utils import convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
 import cv2  # To use OpenCV
 
 
+"""
+This function contains all the functions to display elements on the screen
+"""
+
+
 def edit_background():
     """
     Add elements to the background for the rest of the game
     """
-    # Add a text for the debug mode
-    var.BACKGROUND.blit(var.FONT.render('Activer debug :', True, (255, 255, 255), (0, 0, 0)), (1290, 640))  # Add the debug text
+    # Add a text for the debug_0 mode
+    var.BACKGROUND.blit(var.FONT.render('Activer debug :', True, (255, 255, 255), (0, 0, 0)), (1290, 640))  # Add the debug_0 text
     var.BACKGROUND.blit(var.FONT.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), (1060, 25))  # Add the yes text
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (1280, 120), (1280, 0), 2)  # Line at the right
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (325, 120), (325, 0), 2)  # Line at the left
@@ -98,6 +103,14 @@ def show_car_window(car):
     var.WINDOW.blit(var.TEXT_SLOW, (x - 50, y + 50))  # Draw the slow text
     var.WINDOW.blit(var.TEXT_MEDIUM, (x - 50, y))  # Draw the medium text
     var.WINDOW.blit(var.TEXT_FAST, (x - 50, y - 50))  # Draw the fast text
+
+    str_height = f'{car.genetic.height_slow // HEIGHT_MULTIPLIER} {car.genetic.height_medium // HEIGHT_MULTIPLIER} {car.genetic.height_fast // HEIGHT_MULTIPLIER}'
+    text_height = var.FONT.render(str_height, True, (0, 0, 0), (128, 128, 128))  # Create the text for the height of cones
+    str_width = f'{car.genetic.width_slow // WIDTH_MULTIPLIER} {car.genetic.width_medium // WIDTH_MULTIPLIER} {car.genetic.width_fast // WIDTH_MULTIPLIER}'
+    text_width = var.FONT.render(str_width, True, (0, 0, 0), (128, 128, 128))  # Create the text for the width of cones
+
+    var.WINDOW.blit(text_height, (x - 75, y - 250))  # Draw the height text
+    var.WINDOW.blit(text_width, (x - 75, y - 225))  # Draw the width text
 
 
 def erase_car_window():

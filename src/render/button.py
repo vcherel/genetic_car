@@ -2,6 +2,10 @@ import src.other.variables as var  # Import the variables
 import os.path  # To get the path of the file
 import pygame  # To use pygame
 
+"""
+This file contains the Button class and all the functions related to it
+"""
+
 
 class Button:
     def __init__(self, x=None, y=None, image=None, image_hover=None, image_clicked=None, checkbox=False, scale=1):

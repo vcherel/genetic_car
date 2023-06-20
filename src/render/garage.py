@@ -1,4 +1,4 @@
-from src.render.rect_garage import RectGarage  # Import the rectangle garage
+from src.render.rect_garage import RectGarage, reset_dict_check  # Import the rectangle garage
 from src.render.button import Button  # Import the button
 import src.other.variables as var  # Import the variable
 from src.game.car import Car  # Import the car
@@ -6,12 +6,17 @@ import os.path  # To get the path of the file
 import pygame  # To use pygame
 
 
+"""
+This function contains the Garage class and all the functions related to it. The garage is the place where the cars are stored.
+"""
+
+
 class Garage:
     def __init__(self):
         """
         Initialize the garage
         """
-        self.rect = pygame.Rect(500, 125, 500, 550)
+        self.rect = pygame.Rect(500, 125, 500, 550)  # Rectangle of the garage
         self.nb_rectangle = None  # Number of rectangle in the garage
         self.rectangles = None  # List of the rectangles in the garage
         self.actual_x = None  # Actual x position to write the rectangles
@@ -29,7 +34,10 @@ class Garage:
         Returns:
             str: string of the garage
         """
-        return f'Garage: {self.nb_rectangle} rectangles : {self.rectangles}'
+        string = f'Garage : {self.nb_rectangle} rectangles :'
+        for rect in self.rectangles:
+            string += f'\n{rect}'
+        return string
 
     def init_garage(self):
         """
@@ -49,7 +57,6 @@ class Garage:
         """
         Display the garage
         """
-
         # Create rectangles for the garage
         pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)
         pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)
@@ -64,6 +71,7 @@ class Garage:
         if self.trash_button.activated:
             var.MEMORY_CARS = {'dice': [], 'genetic': []}  # We reset the memory of the cars
             self.reload_page = True  # We have to change the page of the garage
+            reset_dict_check()  # We reset the state of the check buttons
 
 
         if self.reload_page:  # If we have to change the page of the garage
@@ -80,8 +88,6 @@ class Garage:
                         id_rect += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
-
-            var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
 
             self.reload_page = False  # We don't have to change the page of the garage anymore
 
@@ -100,6 +106,7 @@ class Garage:
         """
         Reset the variables
         """
+        var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
         self.rectangles = []  # We reset the list of the rectangle in the garage
         self.nb_rectangle = 0  # Number of rectangle in the garage
         self.actual_y = self.rect[1] + 60  # Actual y position to write the rectangles

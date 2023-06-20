@@ -1,8 +1,8 @@
 from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
 from src.other.camera import capture_dice  # Import the function to capture the dice
-from src.render.garage import GARAGE  # Import functions from garage
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
+from src.render.garage import GARAGE  # Import functions from garage
 from src.game.genetic import Genetic  # Import the genetic class
 from src.game.constants import SEE_CURSOR  # Import constants
 import src.other.variables as var  # Import the variables
@@ -12,11 +12,16 @@ import pygame  # To use pygame
 import time  # To get the time
 
 
+"""
+This file contains all the functions to display the UI and check the events
+"""
+
+
 use_camera = True  # If we don't use the camera
 time_remaining_pause = 0  # Time remaining when the game has been paused
 change_nb_cars = False  # Change the number of cars
 
-debug_button = Button()  # Button to activate the debug mode
+debug_button = Button()  # Button to activate the debug_0 mode
 stop_button = Button()  # Button to stop the game
 pause_button = Button()  # Button to pause the game
 play_button = Button()  # Button to start the game
@@ -104,15 +109,11 @@ def handle_events(cars=None):
                             rect_garage.name_button.update_writing_rectangle(event, None, rect_garage.name, rect_garage.text, int_variable=False)
 
                         if not rect_garage.change_text:
-                            if rect_garage.name == '':
-                                rect_garage.name = 'car'
-
-                            # We change the value of the car in the memory
-                            var.update_car_name(rect_garage.type_car, rect_garage.id_car, rect_garage.name)
-
-                        rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing rectangle
-                        rect_garage.name_button.image = rect_garage.text  # We change the image of the writing rectangle
-                        rect_garage.draw()  # We display the rectangle with the new text
+                            rect_garage.save()
+                        else:
+                            rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing rectangle
+                            rect_garage.name_button.image = rect_garage.text  # We change the image of the writing rectangle
+                            rect_garage.draw_rect_garage()  # We display the rectangle with the new text
 
 
 def handle_clicks(cars):
@@ -147,24 +148,16 @@ def handle_clicks(cars):
         if not DICE_MENU.rect.collidepoint(pygame.mouse.get_pos()):
             DICE_MENU.erase_dice_menu()  # Erase the dice menu if we click outside of it
 
-    if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not garage_button.rect.collidepoint(pygame.mouse.get_pos()):
-        delete_garage()  # Delete the garage if we click outside of it
-
     if GARAGE.rectangles:
         for rect_garage in GARAGE.rectangles:
             if rect_garage.change_text:
                 rect_garage.change_text = False
+                rect_garage.save()  # Save the name of the car
 
-                if rect_garage.name == '':
-                    rect_garage.name = 'car'
+    if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not garage_button.rect.collidepoint(pygame.mouse.get_pos()):
+        delete_garage()  # Delete the garage if we click outside of it
 
-                    # We change the value of the car in the memory
-                    var.update_car_name(rect_garage.type_car, rect_garage.id_car, rect_garage.name)
 
-                rect_garage.name_button.activated = False  # We stop changing the name of the car
-                rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (255, 255, 255))  # We change the text of the writing rectangle
-                rect_garage.name_button.image = rect_garage.text  # We change the image of the writing rectangle
-                rect_garage.draw()  # We display the rectangle with the new text
 
 
     if SEE_CURSOR:
@@ -207,7 +200,7 @@ def display():
 
 
     # Debug button
-    var.DEBUG = debug_button.check_state()  # Draw the debug button
+    var.DEBUG = debug_button.check_state()  # Draw the debug_0 button
     if debug_button.just_clicked and not var.DEBUG:
         var.WINDOW.blit(var.BACKGROUND, (0, 0))  # We redraw the background
 

@@ -6,7 +6,7 @@ import pygame  # Pygame library
 import math  # Math library
 
 """
-This file contains the class Car used to represent a car in the game
+This file contains the class Car used to represent a car in the game. The car is controlled by genetic parameters of the detection cone.
 """
 
 # Constants
@@ -135,10 +135,29 @@ class Car:
             self.acceleration = acceleration
         
         # If there is a wall on the left or on the right of the car, we turn it
-        if wall_at_left:
+        if wall_at_left and wall_at_right:
+            if wall_at_left < wall_at_right:
+                self.angle -= turn_angle
+            else:
+                self.angle += turn_angle
+        elif wall_at_left:
             self.angle -= turn_angle
-        if wall_at_right:
+        elif wall_at_right:
             self.angle += turn_angle
+
+    def debug(self):
+        # We select the right cone depending on the speed of the car
+        width, height = self.determine_size_cone()
+
+        front_of_car = self.determine_front_of_car()  # Point of the front of the car
+        left, top, right = compute_detection_cone_points(self.angle, front_of_car, width, height)  # Points of the detection cone
+
+        wall_at_top = detect_wall(front_of_car, top)  # Detect if the car is near a wall (top)
+        wall_at_left = detect_wall(front_of_car, left)  # Detect if the car is near a wall (left)
+        wall_at_right = detect_wall(front_of_car, right)  # Detect if the car is near a wall (right)
+
+        print(wall_at_top, wall_at_left, wall_at_right)
+
 
     def update_pos(self):
         """
@@ -172,6 +191,19 @@ class Car:
 
         car_mask = pygame.mask.from_surface(self.rotated_image)
         if var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
+
+            # We move the car backward because we don't want the car to bo on top of the wall
+            speed = 5
+            radians = math.radians(-self.angle)  # Convert the angle to radians
+            dx = math.cos(radians) * speed  # The movement of the car on the x-axis
+            dy = math.sin(radians) * speed  # The movement of the car on the y-axis
+            # While it touches the wall
+            while var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
+                self.pos = self.pos[0] - dx, self.pos[1] - dy  # Update the position of the car
+                self.rotated_image = pygame.transform.rotate(self.image, self.angle)  # Rotate the image of the car
+                self.rotated_rect = self.rotated_image.get_rect(center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
+                car_mask = pygame.mask.from_surface(self.rotated_image)
+
             self.kill()  # Collision with the walls of the circuit
 
     def determine_size_cone(self):
@@ -240,10 +272,12 @@ class Car:
 
         # Slow detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.height_slow)
+
         if self.speed < min_medium_speed:
             pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
+
 
         # Medium detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.height_medium)
@@ -258,9 +292,3 @@ class Car:
             pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
-
-    def update_score(self):
-        """
-        Update the score of the car to take into account the time spent alive (we prefer the fastest cars)
-        """
-        self.score = pow(self.score, 3) / self.turn_played  # Update the score of the car

@@ -20,20 +20,20 @@ def apply_genetic(cars):
     """
     cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
 
-    # Update the score of the cars to take into account the time
-    for car in cars:
-        car.update_score()  # Update the score of the cars
-
     cars = sorted(cars, key=lambda c: c.score, reverse=True)  # Sort the cars by score
 
-    if cars:  # If there is at least one car
-        best_car = Car(cars[0].genetic, best_car=True)  # Get the best car
+    if cars:
+        best_genetic = cars[0].genetic  # We get the best car
+    else:
+        best_genetic = None
 
-        var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic])  # Add the best car to the memory
+    cars = select_best_cars(cars)  # Select the best cars
+    cars = crossover(cars)  # Crossover the cars
+    cars = mutate(cars)  # Mutate the cars
 
-        cars = select_best_cars(cars)  # Select the best cars
-        cars = crossover(cars)  # Crossover the cars
-        cars = mutate(cars)  # Mutate the cars
+    if best_genetic:
+        var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_genetic])  # Add the best car to the memory
+        cars.append(Car(best_genetic, best_car=True))  # We add the best car (at the end in order to see it)
 
     return cars
 
@@ -49,15 +49,17 @@ def select_best_cars(cars):
     Returns:
         list: list of the best cars
     """
-    best_cars = [Car(cars[0].genetic)]
-
+    best_cars = []
     # Select the best cars using PERCENTAGE_BEST_CARS
-    for i in range(int(var.PERCENTAGE_BEST_CARS * var.NB_CARS) - 1):
-        best_cars.append(Car(cars[i + 1].genetic))
+    for i in range(int(var.PERCENTAGE_BEST_CARS * len(cars) - 1)):
+        best_cars.append(Car(cars[i+1].genetic))
+
+    if not best_cars:
+        best_cars.append(Car())  # If there is no best car, we add a random car
 
     # We copy the best car randomly to have the same number of cars as before
-    cars = [Car(cars[0].genetic, best_car=True)]  # We add the best car
-    while len(cars) < var.NB_CARS:
+    cars = []
+    while len(cars) < var.NB_CARS - 1:
         cars.append(Car(random.choice(best_cars).genetic))
 
     return cars  # List of cars

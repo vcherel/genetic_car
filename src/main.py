@@ -98,7 +98,7 @@ def play(cars=None):
         if not var.PAUSE:  # If the game is not paused
             # Erase the screen
             if var.DEBUG:
-                var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization only in debug mode (for the cones)
+                var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization only in debug_0 mode (for the cones)
             else:
                 var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # We delete only the cars
             for rect in var.RECTS_BLIT_UI:
@@ -111,7 +111,7 @@ def play(cars=None):
             rects = []          # List of rects for the blit
             for car in cars:    # For each car
                 if not car.dead:    # If the car is not dead
-                    car.move()          # Move the car
+                    car.move()         # Move the car
                     rects.append(car.rotated_rect)    # Draw the car and add the rect to the list
                 car.draw_car()  # Draw the car
 
