@@ -12,7 +12,7 @@ This file contains all the variables of the game used in multiple other files
 """
 
 start_positions = [(600, 165), (760, 180), (600, 197)]  # Start position
-car_sizes = [0.13, 0.09, 0.06]  # Size of the car
+car_sizes = [0.13, 0.1, 0.06]  # Size of the car
 
 PATH_DATA = os.path.dirname(__file__) + '/../../data'  # Path of the data folder
 PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
@@ -69,13 +69,13 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 
 MUTATION_CHANCE = 0.2  # Chance of mutation
 CROSSOVER_CHANCE = 0.2  # Chance of crossover
-PERCENTAGE_BEST_CARS = 0.2  # Percentage used to know how many cars we keep for the next generation
-DECREASE_PERCENTAGE = 0.9  # Percentage used to decrease the mutation and crossover chance
+PERCENTAGE_BEST_CARS = 0.1  # Percentage used to know how many cars we keep for the next generation
+DECREASE_PERCENTAGE = 0.75  # Percentage used to decrease the mutation and crossover chance
 
 # Garage variables
 DISPLAY_GARAGE = False  # True to see the garage
 GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
-MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, generation are cars from the genetic algorithm
+MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, genetic are cars from the genetic algorithm
 # Format of MEMORY_CARS:   {"dice": [[id, name, Genetic], ...], "genetic": [[id, name, Genetic], ...]}
 
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
@@ -251,8 +251,7 @@ def update_genetic_variables():
     Update the genetic variables of the cars in the memory, it decreases at each round of the game to find the best car
     at the end
     """
-    global MUTATION_CHANCE, CROSSOVER_CHANCE, PERCENTAGE_BEST_CARS
+    global MUTATION_CHANCE, CROSSOVER_CHANCE
 
     MUTATION_CHANCE *= DECREASE_PERCENTAGE
     CROSSOVER_CHANCE *= DECREASE_PERCENTAGE
-    PERCENTAGE_BEST_CARS *= DECREASE_PERCENTAGE

@@ -50,14 +50,10 @@ def select_best_cars(cars):
         list: list of the best cars
     """
     best_cars = [Car(cars[0].genetic)]
-    score_best_car = cars[0].score
 
-    # Select the best cars (the ones that have a score close to the best car depending on the percentage)
-    for car in cars[1:]:
-        if car.score > score_best_car * (1 - var.PERCENTAGE_BEST_CARS):
-            best_cars.append(Car(car.genetic))
-        else:
-            break
+    # Select the best cars using PERCENTAGE_BEST_CARS
+    for i in range(int(var.PERCENTAGE_BEST_CARS * var.NB_CARS) - 1):
+        best_cars.append(Car(cars[i + 1].genetic))
 
     # We copy the best car randomly to have the same number of cars as before
     cars = [Car(cars[0].genetic, best_car=True)]  # We add the best car

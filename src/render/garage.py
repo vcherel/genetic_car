@@ -22,6 +22,15 @@ class Garage:
         self.time_since_last_delete = None  # Time since the last delete of a car
         self.trash_button = Button(930, 135, pygame.image.load(os.path.dirname(__file__) + '/../../images/trash.png'), scale=0.075)
 
+    def __str__(self):
+        """
+        Return the string to display with the print function
+
+        Returns:
+            str: string of the garage
+        """
+        return f'Garage: {self.nb_rectangle} rectangles : {self.rectangles}'
+
     def init_garage(self):
         """
         Initialize the garage during the game
@@ -47,7 +56,7 @@ class Garage:
         var.WINDOW.blit(var.LARGE_FONT.render('Voitures sauvegardées', True, (0, 0, 0), (128, 128, 128)), (self.rect[0] + 95, self.rect[1] + 10))
 
         for rect_garage in self.rectangles:  # For each rectangle in the garage
-            if rect_garage.draw(self.time_since_last_delete):  # If the rectangle is deleted we reset the page of the garage
+            if rect_garage.draw_rect_garage(self.time_since_last_delete):  # If the rectangle is deleted we reset the page of the garage
                 self.reload_page = True  # We have to change the page of the garage
                 self.time_since_last_delete = pygame.time.get_ticks()  # We reset the time since the last delete of a car (to avoid deleting all in one long click)
 
@@ -61,17 +70,14 @@ class Garage:
             # Reset the variables
             self.reset_variables()
 
-            self.rectangles = []  # We reset the list of the rectangle in the garage
-
-            # Create the rectangles for the pages
-            num = 0  # The number to identify the id of the rectangle
-
+            id_rect = 0  # The number to identify the id of the rectangle
             for key in var.MEMORY_CARS.keys():
                 for car in var.MEMORY_CARS.get(key):
                     # If the rectangle is in the good page
                     if 10 * self.actual_page <= self.nb_rectangle < 10 * (self.actual_page + 1):
-                        self.rectangles.append(RectGarage(car[0], key, car[1], car[2], num, (self.actual_x, self.actual_y)))  # We create the rectangles
-                        num += 1  # We add one to the number to identify the id of the rectangle
+                        self.rectangles.append(RectGarage(id_car=car[0], name=car[1], type_car=key, genetic=car[2],
+                                                          id_rect=id_rect, pos=(self.actual_x, self.actual_y)))  # We create the rectangles
+                        id_rect += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
 
@@ -94,6 +100,7 @@ class Garage:
         """
         Reset the variables
         """
+        self.rectangles = []  # We reset the list of the rectangle in the garage
         self.nb_rectangle = 0  # Number of rectangle in the garage
         self.actual_y = self.rect[1] + 60  # Actual y position to write the rectangles
         self.actual_x = self.rect[0] + 15  # Actual x position to write the rectangles

@@ -8,8 +8,6 @@ image_check_box_1 = pygame.image.load(var.PATH_IMAGE + '/checkbox_1.png')  # Ima
 image_check_box_2 = pygame.image.load(var.PATH_IMAGE + '/checkbox_2.png')  # Image of the checkbox when it is not checked
 image_check_box_3 = pygame.image.load(var.PATH_IMAGE + '/checkbox_3.png')  # Image of the checkbox when the mouse is over it
 
-dict_checked = [False] * 10  # List of the checked rect
-
 
 class RectGarage:
     def __init__(self, id_car, type_car, name, genetic, id_rect, pos):
@@ -43,10 +41,16 @@ class RectGarage:
         self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 4, image=pygame.image.load(var.PATH_IMAGE + '/trash.png'), scale=0.059)  # Button to delete the car
         self.name_button = Button(x=pos[0] + 10, y=pos[1] + 10, image=self.text, checkbox=True)  # Button to edit the name of the car
 
-        if dict_checked[self.id_rect]:  # If the car is checked
-            self.select_button.activated = True  # Activate the button
+    def __str__(self):
+        """
+        Return the string of the rectangle
 
-    def draw(self, time_since_last_delete=0):
+        Returns:
+            str: string of the rectangle
+        """
+        return f'Rectangle {self.id_rect} : Checked = {self.select_button.activated}, Name = {self.name}'
+
+    def draw_rect_garage(self, time_since_last_delete=0):
         """
         Draw the rectangle in the garage menu
 
@@ -69,11 +73,9 @@ class RectGarage:
 
         # Button to select a car
         if self.select_button.check_state():
-            dict_checked[self.id_rect] = True  # We take in memory the state of the button
             if self.genetic not in var.GENETICS_FROM_GARAGE:
                 var.GENETICS_FROM_GARAGE.append(self.genetic)
         else:
-            dict_checked[self.id_rect] = False  # We take in memory the state of the button
             if self.genetic in var.GENETICS_FROM_GARAGE:
                 var.GENETICS_FROM_GARAGE.remove(self.genetic)
 
