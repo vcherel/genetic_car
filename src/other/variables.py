@@ -55,6 +55,7 @@ START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
 ACTUAL_FPS = 0  # Actual FPS
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
+RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
 
 # Pause variables
 PAUSE = False  # Pause the game (True or False)
@@ -126,7 +127,8 @@ def change_map(first_time=False):
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
     image_circuit = pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585))  # Image of the background
     BACKGROUND.blit(image_circuit, (0, 115))  # Blit the image of the background on the background surface
-    BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
+    MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
+    BACKGROUND_MASK = MASK.copy()  # Mask of the black pixels of the background (used to detect collisions)
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), car_sizes[NUM_MAP])  # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
     YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)

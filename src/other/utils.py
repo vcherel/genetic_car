@@ -46,43 +46,6 @@ def compute_detection_cone_points(angle, front_of_car, width, height):
     return [left, top, right]
 
 
-def detect_wall(front_of_car, point):
-    """
-    Detect if there is a wall between the front of the car and the point
-
-    Args:
-        front_of_car (tuple(int, int)): the coordinates of the front of the car
-        point (tuple(int, int)): the coordinates of the point
-
-    Returns:
-        bool : True if there is a wall, False otherwise
-    """
-    x1, y1 = front_of_car  # Coordinates of the front of the car
-    x2, y2 = point  # Coordinates of the point
-
-    surface_display = pygame.display.get_surface()  # We get the surface of the window
-
-    if x1 == x2:  # If the car is parallel to the wall
-        # We check if there is a wall between the front of the car and the point
-        for y in range(int(min(y1, y2)), int(max(y1, y2))):
-            x1 = int(x1)
-            # We check if the pixel is black (wall)
-            if point_out_of_window((x1, y)) or surface_display.get_at((x1, y)) == (0, 0, 0, 255):
-                return True  # There is a wall
-
-    # We determine the equation of the line between the front of the car and the point (y = ax + b)
-    a = (y2 - y1) / (x2 - x1)
-    b = y1 - a * x1
-
-    # We check if there is a wall between the front of the car and the point
-    for x in range(int(min(x1, x2)), int(max(x1, x2))):
-        y = int(a * x + b)
-        # We check if the pixel is black (wall)
-        if point_out_of_window((x, y)) or surface_display.get_at((x, y)) == (0, 0, 0, 255):
-            return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
-    return False  # There is no wall
-
-
 def point_out_of_window(point):
     """
     Check if a point is out of the window
@@ -237,3 +200,36 @@ def convert_to_yellow_scale(image):
                 yellow_scale_image.set_at((x, y), yellow_color)
 
     return yellow_scale_image
+
+
+def create_rect_from_points(points):
+    """
+    Create a rectangle from three points (used to get the rect associated to the detection cones)
+
+    Args:
+        points (list(tuple(int, int))): the list of points
+
+    Returns:
+        rect (pygame.Rect): the pygame Rect
+    """
+    # Check if the points list is empty
+    if not points:
+        return None
+
+    # Initialize the min and max coordinates with the first point
+    min_x = max_x = points[0][0]
+    min_y = max_y = points[0][1]
+
+    # Find the minimum and maximum coordinates
+    for point in points:
+        x, y = point
+        min_x = min(min_x, x)
+        max_x = max(max_x, x)
+        min_y = min(min_y, y)
+        max_y = max(max_y, y)
+
+    # Create and return the pygame Rect
+    rect_width = max_x - min_x
+    rect_height = max_y - min_y
+
+    return pygame.Rect(min_x, min_y, rect_width, rect_height)

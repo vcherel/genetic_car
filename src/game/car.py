@@ -1,4 +1,4 @@
-from src.other.utils import compute_detection_cone_points, detect_wall  # To compute the coordinates of the point of the detection cone
+from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points  # To compute the coordinates of the point of the detection cone
 from src.game.constants import RADIUS_CHECKPOINT, WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
@@ -190,10 +190,10 @@ class Car:
             self.kill()  # Collision with the wall of the window
 
         car_mask = pygame.mask.from_surface(self.rotated_image)
-        if var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
 
+        if var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
             # We move the car backward because we don't want the car to bo on top of the wall
-            speed = 5
+            speed = 1  # Speed of the car
             radians = math.radians(-self.angle)  # Convert the angle to radians
             dx = math.cos(radians) * speed  # The movement of the car on the x-axis
             dy = math.sin(radians) * speed  # The movement of the car on the y-axis
@@ -272,23 +272,71 @@ class Car:
 
         # Slow detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.height_slow)
+        points = [front_of_car, left, top, right]  # Points of the detection cone for the rect
 
         if self.speed < min_medium_speed:
-            pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
 
 
         # Medium detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.height_medium)
+        points.append(left)
+        points.append(top)
+        points.append(right)
+
         if min_medium_speed < self.speed < min_high_speed:
-            pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
 
+
         # Fast detection cone
         left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.height_fast)
+        points.append(left)
+        points.append(top)
+        points.append(right)
         if self.speed > min_high_speed:
-            pygame.draw.polygon(var.WINDOW, (10, 10, 10), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+
+        # We add the rect to the rects to blit
+        var.RECTS_BLIT_CAR.append(create_rect_from_points(points))
+
+
+def detect_wall(front_of_car, point):
+    """
+    Detect if there is a wall between the front of the car and the point
+
+    Args:
+        front_of_car (tuple(int, int)): the coordinates of the front of the car
+        point (tuple(int, int)): the coordinates of the point
+
+    Returns:
+        bool : True if there is a wall, False otherwise
+    """
+    x1, y1 = front_of_car  # Coordinates of the front of the car
+    x2, y2 = point  # Coordinates of the point
+
+    if x1 == x2:  # If the car is parallel to the wall
+        # We check if there is a wall between the front of the car and the point
+        for y in range(int(min(y1, y2)), int(max(y1, y2))):
+            x1 = int(x1)
+            # We check if the pixel is black (wall)
+            if point_out_of_window((x1, y)) or var.BACKGROUND_MASK.get_at((x1, y)):
+                return True  # There is a wall
+
+    # We determine the equation of the line between the front of the car and the point (y = ax + b)
+    a = (y2 - y1) / (x2 - x1)
+    b = y1 - a * x1
+
+    # We check if there is a wall between the front of the car and the point
+    for x in range(int(min(x1, x2)), int(max(x1, x2))):
+        y = int(a * x + b)
+        # We check if the pixel is black (wall)
+        if point_out_of_window((x, y)) or var.BACKGROUND_MASK.get_at((x, y)):
+            return math.sqrt(
+                (x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
+    return False  # There is no wall

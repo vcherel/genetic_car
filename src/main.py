@@ -96,26 +96,25 @@ def play(cars=None):
         ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
 
         if not var.PAUSE:  # If the game is not paused
-            # Erase the screen
-            if var.DEBUG:
-                var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization only in debug_0 mode (for the cones)
-            else:
-                var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # We delete only the cars
-            for rect in var.RECTS_BLIT_UI:
-                var.WINDOW.blit(var.BACKGROUND, rect, rect)  # We delete the ui
-            var.RECTS_BLIT_UI = []  # We reset the list of rects to blit the ui
+            # Erase the ui
+            rect_blit_ui = union_rect(var.RECTS_BLIT_UI)  # Union of the rects for the blit
+            var.WINDOW.blit(var.BACKGROUND, rect_blit_ui, rect_blit_ui)  # Erase the ui
+            var.RECTS_BLIT_UI = []  # We reset the list of rects to blit
+
+            # Erase the cars
+            rect_blit_car = union_rect(var.RECTS_BLIT_CAR)  # Union of the rects for the blit
+            var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
+            var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
 
             if SEE_CHECKPOINTS:
                 display.show_checkpoints()   # Display the checkpoints
 
-            rects = []          # List of rects for the blit
             for car in cars:    # For each car
                 if not car.dead:    # If the car is not dead
                     car.move()         # Move the car
-                    rects.append(car.rotated_rect)    # Draw the car and add the rect to the list
+                    var.RECTS_BLIT_CAR.append(car.rotated_rect)    # Draw the car and add the rect to the list
                 car.draw_car()  # Draw the car
 
-            rect_blit_car = union_rect(rects)  # Union of the rects for the blit
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), rect_blit_car, 1)  # Draw the rect for the blit of the cars
 
             # If we want to restart the last_run
@@ -123,11 +122,10 @@ def play(cars=None):
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
                 var.PLAY_LAST_RUN = False  # We stop the replay
                 var.NUM_GENERATION -= 1  # We go back to the previous generation
-                cars = []
+
                 # We reset the cars
-                for car in var.CARS_LAST_RUN:
-                    cars.append(Car(genetic=car.genetic))
-                play(cars)
+                cars = [car.reset() for car in var.CARS_LAST_RUN if not car.view_only and not car.best_car]
+                play(cars)  # We restart the game with the last run
 
             if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING:    # If all cars are dead
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
