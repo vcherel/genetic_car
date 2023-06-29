@@ -58,7 +58,7 @@ class DiceMenu:
         return Button(self.rect[0] + x - 50, self.rect[1] + y + 140,
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
-                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), checkbox=True, scale=0.9)
+                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, scale=0.9)
 
     def init(self, type_car, id_car=None, dict_scores=None, genetic=None):
         """

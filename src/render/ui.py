@@ -2,6 +2,7 @@ from src.render.display import show_car_window, erase_car_window  # Import the f
 from src.other.camera import capture_dice  # Import the function to capture the dice
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
+from src.render.settings_menu import SETTINGS  # Import the settings window
 from src.render.garage import GARAGE  # Import functions from garage
 from src.game.genetic import Genetic  # Import the genetic class
 from src.game.constants import SEE_CURSOR  # Import constants
@@ -19,7 +20,6 @@ This file contains all the functions to display the UI and check the events
 
 use_camera = True  # If we don't use the camera
 time_remaining_pause = 0  # Time remaining when the game has been paused
-change_nb_cars = False  # Change the number of cars
 
 debug_button = Button()  # Button to activate the debug_0 mode
 stop_button = Button()  # Button to stop the game
@@ -30,11 +30,13 @@ garage_button = Button()  # Button to open the garage
 dice_button = Button()  # Button to see the dice
 map_button = Button()  # Button to change the map
 restart_button = Button()  # Button to restart the game
-text_nb_cars = None  # Text to display the number of cars
+settings_button = Button()  # Button to open the settings
+
+BUTTONS = [debug_button, stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button]  # List of all the buttons
 
 
 def init():
-    global debug_button, stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, text_nb_cars
+    global debug_button, stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button
 
     path_images = os.path.dirname(__file__) + '/../../images/'  # Path of the images
 
@@ -47,14 +49,13 @@ def init():
     play_button = Button(1320, 15, pygame.image.load(path_images + '/start_button.png'), scale=0.18)
     nb_cars_button = Button(1049, 58, pygame.image.load(path_images + '/writing_rectangle_1.png'),
                             pygame.image.load(path_images + '/writing_rectangle_2.png'),
-                            pygame.image.load(path_images + '/writing_rectangle_3.png'), checkbox=True, scale=0.8)
+                            pygame.image.load(path_images + '/writing_rectangle_3.png'), writing_button=True,
+                            text=str(var.NB_CARS), variable=var.NB_CARS, name='nb_cars', scale=0.8)
     garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, checkbox=True)
     dice_button = Button(600, 28, pygame.image.load(path_images + '/dice_button.png'), scale=0.4)
     map_button = Button(845, 37, pygame.image.load(path_images + '/map_button.png'), scale=0.8)
     restart_button = Button(1290, 2, pygame.image.load(path_images + '/restart_button.png'), scale=0.08)
-
-    # Text
-    text_nb_cars = var.FONT.render(var.STR_NB_CARS, True, (0, 0, 0), (255, 255, 255))  # Add the text for the number of cars
+    settings_button = Button(285, 5, pygame.image.load(path_images + '/settings_button.png'), scale=0.065, checkbox=True)
 
 
 def handle_events(cars=None):
@@ -64,8 +65,6 @@ def handle_events(cars=None):
     Args:
         cars (list): List of cars in case we want to display a car by clicking on it
     """
-    global change_nb_cars, text_nb_cars
-
     # Pygame events
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -75,23 +74,23 @@ def handle_events(cars=None):
         elif event.type == pygame.MOUSEBUTTONDOWN:
             handle_clicks(cars)
 
-        # If we press return (enter) or backspace (delete) we change the value of the writing rectangle if needed
+        # If we press return (enter) or backspace (delete) we change the value of the writing button if needed
         if event.type == pygame.KEYDOWN:
-            if change_nb_cars:
-                var.NB_CARS, var.STR_NB_CARS, change_nb_cars, text_nb_cars = \
-                    nb_cars_button.update_writing_rectangle(event, var.NB_CARS, var.STR_NB_CARS, text_nb_cars, nb_cars=True)
+            if nb_cars_button.activated:
+                if nb_cars_button.update(event):  # If the value has been saved
+                    var.NB_CARS = nb_cars_button.variable  # We change the value of the variable
 
             if var.DISPLAY_DICE_MENU:  # We check if the dice menu has been opened
                 for index, dice_bool in enumerate(DICE_MENU.bool_scores):
                     if dice_bool:
-                        # We change the value of the dice using the writing rectangle
-                        writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
+                        # We change the value of the dice using the writing button
+                        writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing button
                         score = DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
                         str_score = DICE_MENU.str_scores[index]  # Get the string before the change
                         text_score = DICE_MENU.text_scores[index]  # Get the text before the change
 
                         score, str_score, dice_bool, text_score = \
-                            writing_rectangle.update_writing_rectangle(event, score, str_score, text_score, dice_value=True)
+                            writing_rectangle.update_writing_button(event, score, str_score, text_score, dice_value=True)
 
                         DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
                         DICE_MENU.str_scores[index] = str_score  # Change the string of the score
@@ -106,13 +105,13 @@ def handle_events(cars=None):
                     if rect_garage.change_text:
 
                         _, rect_garage.name, rect_garage.change_text, _ = \
-                            rect_garage.name_button.update_writing_rectangle(event, None, rect_garage.name, rect_garage.text, int_variable=False)
+                            rect_garage.name_button.update_writing_button(event, None, rect_garage.name, rect_garage.text, int_variable=False)
 
                         if not rect_garage.change_text:
                             rect_garage.save()
                         else:
-                            rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing rectangle
-                            rect_garage.name_button.image = rect_garage.text  # We change the image of the writing rectangle
+                            rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing button
+                            rect_garage.name_button.image = rect_garage.text  # We change the image of the writing button
                             rect_garage.draw_rect_garage()  # We display the rectangle with the new text
 
 
@@ -123,20 +122,18 @@ def handle_clicks(cars):
     Args:
         cars (list): List of cars in case we want to display a car by clicking on it
     """
-    global change_nb_cars, text_nb_cars
-
-    if change_nb_cars:  # If we click outside the writing rectangle, we stop changing the number of cars
-        var.NB_CARS, var.STR_NB_CARS, text_nb_cars = nb_cars_button.save_writing_rectangle(var.STR_NB_CARS, text_nb_cars, nb_cars=True)
-        change_nb_cars = False
+    if nb_cars_button.activated:  # If we click outside the writing button, we stop changing the number of cars
+        nb_cars_button.deactivate()
+        var.NB_CARS = nb_cars_button.variable
 
     if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
         for index, dice_bool in enumerate(DICE_MENU.bool_scores):
             if dice_bool:
-                writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing rectangle
+                writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing button
                 str_score = DICE_MENU.str_scores[index]  # Get the value of the dice before the change
                 text_score = DICE_MENU.text_scores[index]  # Get the text before the change
 
-                score, str_score, text_score = writing_rectangle.save_writing_rectangle(str_score, text_score, dice_value=True)
+                score, str_score, text_score = writing_rectangle.save_writing_button(str_score, text_score, dice_value=True)
 
                 DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
                 DICE_MENU.str_scores[index] = str_score  # Change the string of the score
@@ -157,7 +154,9 @@ def handle_clicks(cars):
     if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not garage_button.rect.collidepoint(pygame.mouse.get_pos()):
         delete_garage()  # Delete the garage if we click outside of it
 
-
+    if var.DISPLAY_SETTINGS and not SETTINGS.rect.collidepoint(pygame.mouse.get_pos()):
+        settings_button.deactivate()  # Deactivate the settings button
+        SETTINGS.erase()  # Erase the settings
 
 
     if SEE_CURSOR:
@@ -180,9 +179,6 @@ def display():
     """
     Draw the buttons and change the state of the variables
     """
-    global text_nb_cars, change_nb_cars
-
-
     # Time remaining
     if not var.PLAY:
         time_remaining = var.TIME_REMAINING
@@ -237,9 +233,7 @@ def display():
 
 
     # Nb cars button
-    change_nb_cars = nb_cars_button.check_state()  # Draw the nb cars button
-    if nb_cars_button.just_clicked:
-        var.STR_NB_CARS = ''  # We empty the string for the number of cars
+    nb_cars_button.check_state()  # Draw the nb cars button
 
 
     # Garage
@@ -274,7 +268,7 @@ def display():
 
 
     # Dice menu
-    if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
+    if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions (DISPLAY_DICE_MENU is changed in the file rect_garage.py)
         if DICE_MENU.display_dice_menu():
             DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
 
@@ -290,11 +284,16 @@ def display():
         var.PLAY_LAST_RUN = True  # We play the last run
 
 
-    # Draw the number of cars
-    if change_nb_cars:
-        display_text_ui(var.STR_NB_CARS, (1195, 62), var.FONT, background_color=(255, 255, 255))
-    else:
-        var.WINDOW.blit(text_nb_cars, (1195, 62))
+    # Settings button
+    var.DISPLAY_SETTINGS = settings_button.check_state()  # Draw the garage button
+    if settings_button.just_clicked:  # Garage button is just clicked
+        if var.DISPLAY_SETTINGS:
+            pause()
+        else:
+            unpause()
+            SETTINGS.erase()
+    if var.DISPLAY_SETTINGS:  # If the garage is displayed we draw it and do the actions
+        SETTINGS.show()
 
 
     # FPS
@@ -346,3 +345,4 @@ def delete_garage():
     var.DISPLAY_GARAGE = False
     garage_button.activated = False
     GARAGE.erase_garage()
+    unpause()

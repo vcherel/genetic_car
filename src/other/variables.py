@@ -84,13 +84,16 @@ ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
 # Car variables
 NB_CARS = 0  # Number of cars
-STR_NB_CARS = ''  # Text of the number of cars
-
 PLAY_LAST_RUN = False  # True if we want to play the last run again, False otherwise
 CARS_LAST_RUN = []  # Cars of the last run
 
+# Windows variables
 DISPLAY_DICE_MENU = False  # True if we are displaying the dice menu
 DISPLAY_CAR_WINDOW = False  # True if we are displaying the cone of a car
+DISPLAY_SETTINGS = False  # True if we are displaying the settings
+
+# Buttons variables
+BUTTONS = []  # List of the buttons
 
 
 def exit_game():
@@ -176,7 +179,7 @@ def load_variables():
     """
     Load the variables of the game (number of the map, number of cars, cars, ...)
     """
-    global NUM_MAP, NB_CARS, STR_NB_CARS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE
+    global NUM_MAP, NB_CARS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE
 
     # We open the file parameters to read the number of the map and the number of cars
     with open(PATH_DATA + '/parameters', 'r') as file_parameters_read:
@@ -188,7 +191,6 @@ def load_variables():
         num_map, nb_cars = file_parameters_read.readlines()
         NUM_MAP = int(num_map)  # Map number
         NB_CARS = int(nb_cars)  # Number of cars
-        STR_NB_CARS = nb_cars  # Text of the number of cars
 
     with open(PATH_DATA + '/cars', 'r') as file_cars_read:
         """

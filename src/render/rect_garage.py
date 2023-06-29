@@ -36,16 +36,16 @@ class RectGarage:
         self.genetic = genetic  # Genetic of the car
         self.type_car = type_car  # Type of the car
 
-        self.change_text = False  # Boolean to know if we change the text of the writing rectangle
+        self.change_text = False  # Boolean to know if we change the text of the writing button
         self.name = name  # Name of the rectangle
         self.text = var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128))
 
         # Buttons
         self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image=pygame.image.load(var.PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
         self.select_button = Button(x=pos[0] + 190, y=pos[1] + 8, image=image_check_box_1, image_hover=image_check_box_2,
-                                    image_clicked=image_check_box_3, checkbox=True, scale=0.035)  # Button of the writing rectangle
+                                    image_clicked=image_check_box_3, checkbox=True, scale=0.035)  # Button of the writing button
         self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 4, image=pygame.image.load(var.PATH_IMAGE + '/trash.png'), scale=0.059)  # Button to delete the car
-        self.name_button = Button(x=pos[0] + 10, y=pos[1] + 10, image=self.text, checkbox=True)  # Button to edit the name of the car
+        self.name_button = Button(x=pos[0] + 10, y=pos[1] + 10, image=self.text, writing_button=True)  # Button to edit the name of the car
 
         if dict_check[self.id_rect]:
             self.select_button.activated = True
@@ -77,8 +77,8 @@ class RectGarage:
 
         if self.name_button.just_clicked and self.change_text:
             self.name = ''  # We reset the name at the beginning
-            self.text = var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing rectangle
-            self.name_button.image = self.text  # We change the image of the writing rectangle
+            self.text = var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing button
+            self.name_button.image = self.text  # We change the image of the writing button
 
         # Button to select a car
         if self.select_button.check_state():
@@ -121,8 +121,8 @@ class RectGarage:
         var.update_car_name(self.type_car, self.id_car, self.name)
 
         self.name_button.activated = False  # We stop changing the name of the car
-        self.text = var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing rectangle
-        self.name_button.image = self.text  # We change the image of the writing rectangle
+        self.text = var.FONT.render(self.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing button
+        self.name_button.image = self.text  # We change the image of the writing button
         self.draw_rect_garage()  # We display the rectangle with the new text
 
 
