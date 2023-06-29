@@ -253,3 +253,5 @@ class Button:
             except ValueError:
                 print("Erreur sur la valeur rentrée")
                 self.variable = 1
+
+            self.text = str(self.variable)  # Reset the text

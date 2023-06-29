@@ -56,22 +56,22 @@ def draw_circle(circle, image):
     cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
 
 
-def draw_detection_cone(pos, genetic, factor=1):
+def draw_detection_cone(pos, dice_values, factor=50):
     """
     Draw the detection cones for a car
 
     Args:
         pos (int, int): position of the car
-        genetic (Genetic): genetic of the car
+        dice_values (list): list of the dice values for the detection cones [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
         factor (float): factor to multiply the width and height of the detection cone
     """
-    left, top, right = compute_detection_cone_points(90, pos, genetic.width_slow * factor, genetic.height_slow * factor)
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[3] * factor, dice_values[0] * factor)
     pygame.draw.polygon(var.WINDOW, (0, 0, 255), (pos, left, top, right), 5)
 
-    left, top, right = compute_detection_cone_points(90, pos, genetic.width_medium * factor, genetic.height_medium * factor)
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[4] * factor, dice_values[1] * factor)
     pygame.draw.polygon(var.WINDOW, (0, 255, 0), (pos, left, top, right), 5)
 
-    left, top, right = compute_detection_cone_points(90, pos, genetic.width_fast * factor, genetic.height_fast * factor)
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[5] * factor, dice_values[2] * factor)
     pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), 5)
 
 
@@ -98,7 +98,7 @@ def show_car_window(car):
         image = var.BIG_RED_CAR_IMAGE
 
     var.WINDOW.blit(image, (x, y))  # Draw the red car
-    draw_detection_cone((x + 125, y + 25), car.genetic, 2.5)  # Draw the detection cones
+    draw_detection_cone((x + 125, y + 25), car.genetic)  # Draw the detection cones
 
     var.WINDOW.blit(var.TEXT_SLOW, (x - 50, y + 50))  # Draw the slow text
     var.WINDOW.blit(var.TEXT_MEDIUM, (x - 50, y))  # Draw the medium text

@@ -206,8 +206,7 @@ if __name__ == '__main__':
                     for width_slow in range(1, 7):
                         for width_medium in range(1, 7):
                             for width_fast in range(1, 7):
-                                genetic = Genetic(width_slow=width_slow, width_medium=width_medium, width_fast=width_fast,
-                                                  height_slow=height_slow, height_medium=height_medium, height_fast=height_fast)
+                                genetic = Genetic([height_slow, height_medium, height_fast, width_slow, width_medium, width_fast])
                                 tab_cars.append(Car(genetic))
                                 if len(tab_cars) == 15:
                                     play(tab_cars)

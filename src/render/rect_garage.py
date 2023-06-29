@@ -92,7 +92,7 @@ class RectGarage:
 
         # Button to edit a car
         if self.edit_button is not None and self.edit_button.check_state():  # We check the state of the button
-            DICE_MENU.init(self.type_car, self.id_car, genetic=self.genetic)  # We initialize the dice variables
+            DICE_MENU.init(self.type_car, self.genetic.get_list(), self.id_car)  # We initialize the dice variables
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
         # Button to delete a car

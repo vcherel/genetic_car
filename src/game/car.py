@@ -31,7 +31,7 @@ class Car:
         if genetic is None:
             self.genetic = Genetic()  # Genetic of the car
         else:
-            self.genetic = Genetic(genetic)
+            self.genetic = genetic.copy()  # Genetic of the car
 
         self.dead = False  # True if the car is dead, False otherwise
 

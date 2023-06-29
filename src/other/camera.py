@@ -311,4 +311,5 @@ def capture_dice():
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
     save_camera_frame(frame)  # Save the image into the variables (CAMERA_FRAME and RECT_CAMERA_FRAME)
 
-    return final_score
+    return [final_score.get('dark_yellow'), final_score.get('orange'), final_score.get('red'),
+            final_score.get('green'), final_score.get('purple'), final_score.get('black')]

@@ -10,40 +10,30 @@ class Genetic:
     """
     The class is used to represent a genetic algorithm and store the genetic parameters of a car
     """
-    def __init__(self, genetic=None, width_slow=None, width_medium=None, width_fast=None, height_slow=None, height_medium=None, height_fast=None):
+    def __init__(self, list_parameters=None):
         """
         Initialization of the genetic algorithm
 
         Args:
-            genetic (Genetic): genetic algorithm to copy
+            list_parameters (list(int)): list of the parameters of the genetic algorithm (height_slow, height_medium, height_fast, width_slow, width_medium, width_fast)
         """
-        if width_fast is not None:        # If we have the parameters of the genetic algorithm
-            self.width_fast = WIDTH_MULTIPLIER * width_fast
-            self.height_fast = HEIGHT_MULTIPLIER * height_fast
+        if list_parameters is not None:                              # If we have the parameters of the genetic algorithm
+            self.height_slow = list_parameters[0] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going slow
+            self.height_medium = list_parameters[1] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going at medium speed
+            self.height_fast = list_parameters[2] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going fast
 
-            self.width_medium = WIDTH_MULTIPLIER * width_medium
-            self.height_medium = HEIGHT_MULTIPLIER * height_medium
+            self.width_slow = list_parameters[3] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going slow
+            self.width_medium = list_parameters[4] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going at medium speed
+            self.width_fast = list_parameters[5] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going fast
 
-            self.width_slow = WIDTH_MULTIPLIER * width_slow
-            self.height_slow = HEIGHT_MULTIPLIER * height_slow
-        elif genetic is not None:  # If we have a genetic algorithm to copy
-            self.width_fast = genetic.width_fast
-            self.height_fast = genetic.height_fast
-
-            self.width_medium = genetic.width_medium
-            self.height_medium = genetic.height_medium
-
-            self.width_slow = genetic.width_slow
-            self.height_slow = genetic.height_slow
-        else:  # If we don't have a genetic algorithm to copy
-            self.width_fast = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going fast
+        else:                                                   # If we don't have a genetic algorithm to copy
+            self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
+            self.height_medium = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going at medium speed
             self.height_fast = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going fast
 
-            self.width_medium = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going at medium speed
-            self.height_medium = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going at medium speed
-
             self.width_slow = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going slow
-            self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
+            self.width_medium = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going at medium speed
+            self.width_fast = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going fast
 
     def __str__(self):
         """
@@ -69,49 +59,21 @@ class Genetic:
             self.width_medium == other.width_medium and self.height_medium == other.height_medium and \
             self.width_slow == other.width_slow and self.height_slow == other.height_slow
 
-    def get_dice_value(self, index):
+    def copy(self):
         """
-        Get the value of the dice at the given index
-        Order of the index : [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
-
-        Args:
-            index (int): index of the dice value to get
+        Copy the genetic algorithm
 
         Returns:
-            (int): value of the dice at the given index
+            Genetic: copy of the genetic algorithm
         """
-        if index == 0:
-            return self.height_slow // HEIGHT_MULTIPLIER
-        elif index == 1:
-            return self.height_medium // HEIGHT_MULTIPLIER
-        elif index == 2:
-            return self.height_fast // HEIGHT_MULTIPLIER
-        elif index == 3:
-            return self.width_slow // WIDTH_MULTIPLIER
-        elif index == 4:
-            return self.width_medium // WIDTH_MULTIPLIER
-        elif index == 5:
-            return self.width_fast // WIDTH_MULTIPLIER
+        return Genetic(self.get_list())
 
-
-    def set_dice_value(self, index, value):
+    def get_list(self):
         """
-        Modify the value of the dice at the given index
-        Order of the index : [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
+        Get the list of the genetic parameters
 
-        Args:
-            index (int): index of the dice value to modify
-            value (int): new value of the dice
+        Returns:
+            list: list of the genetic parameters
         """
-        if index == 0:
-            self.height_slow = value * HEIGHT_MULTIPLIER
-        elif index == 1:
-            self.height_medium = value * HEIGHT_MULTIPLIER
-        elif index == 2:
-            self.height_fast = value * HEIGHT_MULTIPLIER
-        elif index == 3:
-            self.width_slow = value * WIDTH_MULTIPLIER
-        elif index == 4:
-            self.width_medium = value * WIDTH_MULTIPLIER
-        elif index == 5:
-            self.width_fast = value * WIDTH_MULTIPLIER
+        return [self.height_slow // HEIGHT_MULTIPLIER, self.height_medium // HEIGHT_MULTIPLIER, self.height_fast // HEIGHT_MULTIPLIER,
+                self.width_slow // WIDTH_MULTIPLIER, self.width_medium // WIDTH_MULTIPLIER, self.width_fast // WIDTH_MULTIPLIER]

@@ -81,7 +81,7 @@ def mutate(cars):
         added = False
         while not added:
             car = mutate_one_car(car)  # Mutate the car
-            if car not in new_cars:  # If the car is not already in the list
+            if car not in new_cars:  # If the car is not already in the list or if we have tried too many times
                 added = True
                 new_cars.append(car)  # We add the car to the list
 

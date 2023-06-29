@@ -76,29 +76,18 @@ def handle_events(cars=None):
 
         # If we press return (enter) or backspace (delete) we change the value of the writing button if needed
         if event.type == pygame.KEYDOWN:
+
+            # We change value of nb cars if necessary
             if nb_cars_button.activated:
                 if nb_cars_button.update(event):  # If the value has been saved
                     var.NB_CARS = nb_cars_button.variable  # We change the value of the variable
 
-            if var.DISPLAY_DICE_MENU:  # We check if the dice menu has been opened
-                for index, dice_bool in enumerate(DICE_MENU.bool_scores):
-                    if dice_bool:
-                        # We change the value of the dice using the writing button
-                        writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing button
-                        score = DICE_MENU.genetic.get_dice_value(index)  # Get the score of the dice
-                        str_score = DICE_MENU.str_scores[index]  # Get the string before the change
-                        text_score = DICE_MENU.text_scores[index]  # Get the text before the change
-
-                        score, str_score, dice_bool, text_score = \
-                            writing_rectangle.update_writing_button(event, score, str_score, text_score, dice_value=True)
-
-                        DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
-                        DICE_MENU.str_scores[index] = str_score  # Change the string of the score
-                        DICE_MENU.text_scores[index] = text_score  # Change the text of the score
-
-                        if not dice_bool:
-                            DICE_MENU.bool_scores[index] = False
-                            DICE_MENU.save_values()  # Save the values of the dice
+            # We change value of dice if necessary
+            if var.DISPLAY_DICE_MENU:
+                for index, writing_button in enumerate(DICE_MENU.writing_buttons):
+                    if writing_button.activated:
+                        if writing_button.update(event):  # If the value has been saved
+                            DICE_MENU.save_values(index, writing_button)  # Save the values of the dice
 
             if GARAGE.rectangles:
                 for rect_garage in GARAGE.rectangles:
@@ -126,21 +115,22 @@ def handle_clicks(cars):
         nb_cars_button.deactivate()
         var.NB_CARS = nb_cars_button.variable
 
+
+        """
+                    # We change value of dice if necessary
+            if var.DISPLAY_DICE_MENU:
+                for index, writing_button in enumerate(DICE_MENU.write_buttons):
+                    if writing_button.activated:
+                        if writing_button.update(event):  # If the value has been saved
+                            DICE_MENU.genetic.set_dice_value(index, writing_button.variable)  # Change the value of the dice
+                            DICE_MENU.save_values()  # Save the values of the dice
+                            """
+
     if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
-        for index, dice_bool in enumerate(DICE_MENU.bool_scores):
-            if dice_bool:
-                writing_rectangle = DICE_MENU.writing_rectangles[index]  # Get the writing button
-                str_score = DICE_MENU.str_scores[index]  # Get the value of the dice before the change
-                text_score = DICE_MENU.text_scores[index]  # Get the text before the change
-
-                score, str_score, text_score = writing_rectangle.save_writing_button(str_score, text_score, dice_value=True)
-
-                DICE_MENU.genetic.set_dice_value(index, score)  # Change the value of the dice
-                DICE_MENU.str_scores[index] = str_score  # Change the string of the score
-                DICE_MENU.text_scores[index] = text_score  # Change the text of the score
-
-                DICE_MENU.bool_scores[index] = False  # Stop changing the value of the dice
-                DICE_MENU.save_values()  # Save the values of the dice
+        for index, writing_button in enumerate(DICE_MENU.writing_buttons):
+            if writing_button.activated:
+                writing_button.deactivate()  # Stop changing the value of the dice
+                DICE_MENU.save_values(index, writing_button)  # Save the values of the dice
 
         if not DICE_MENU.rect.collidepoint(pygame.mouse.get_pos()):
             DICE_MENU.erase_dice_menu()  # Erase the dice menu if we click outside of it
@@ -234,6 +224,8 @@ def display():
 
     # Nb cars button
     nb_cars_button.check_state()  # Draw the nb cars button
+    if nb_cars_button.just_clicked:  # Nb cars button is just clicked
+        nb_cars_button.text = ''
 
 
     # Garage
@@ -263,7 +255,7 @@ def display():
             var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic()])  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
-            DICE_MENU.init('dice', dict_scores=capture_dice())  # We initialize the variables of the dice
+            DICE_MENU.init('dice', scores=capture_dice(), by_camera=True)  # We initialize the variables of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
 

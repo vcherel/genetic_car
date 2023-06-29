@@ -68,8 +68,8 @@ START_TIME = 0  # Start time of the genetic algorithm
 NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
 
-MUTATION_CHANCE = 0.2  # Chance of mutation
-CROSSOVER_CHANCE = 0.2  # Chance of crossover
+MUTATION_CHANCE = 0.5  # Chance of mutation
+CROSSOVER_CHANCE = 0.5  # Chance of crossover
 PERCENTAGE_BEST_CARS = 0.1  # Percentage used to know how many cars we keep for the next generation
 DECREASE_PERCENTAGE = 0.75  # Percentage used to decrease the mutation and crossover chance
 
@@ -207,8 +207,7 @@ def load_variables():
             type_car = line[1]  # Type of the car (generation or dice)
             name = line[2]  # Name of the car
 
-            genetic = Genetic(height_slow=int(line[3]), height_medium=int(line[4]), height_fast=int(line[5]),
-                              width_slow=int(line[6]), width_medium=int(line[7]), width_fast=int(line[8]))
+            genetic = Genetic([int(line[i]) for i in range(3, 9)])  # Genetic of the car
 
             MEMORY_CARS.get(type_car).append([id_car, name, genetic])  # We add the car to the memory
             if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
