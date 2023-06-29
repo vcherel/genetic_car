@@ -136,96 +136,6 @@ class Button:
 
         return False
 
-
-    def update_writing_button(self, event, variable, str_variable, text, dice_value=False, nb_cars=False, int_variable=True):
-        """
-        Save the text in the writing button
-
-        Args:
-            event (pygame.event.Event): event detected (keyboard)
-            variable (int): value of the int in the text
-            str_variable (str): text in the writing button
-            text (pygame.Surface): text to display
-            dice_value (bool): True if the writing button is limited (for dice_values) false otherwise
-            nb_cars (bool): True if the writing button is for nb_cars, false otherwise (to save the value in the file parameters)
-            int_variable (bool): True if the variable is an int, False otherwise
-
-        Returns:
-            int: value of the int in the text
-            str: text in the writing button
-            bool: True if the writing button is active, False otherwise
-            pygame.Surface: text to display
-        """
-        bool_active = True  # True if the writing button is active, False otherwise
-
-        if event.key == pygame.K_RETURN:
-            variable, str_variable, text = self.save_writing_button(str_variable, text, dice_value=dice_value, nb_cars=nb_cars, int_variable=int_variable)
-            bool_active = False  # Deactivate the writing button
-
-        elif event.key == pygame.K_BACKSPACE:
-            # Remove the last character
-            str_variable = str_variable[:-1]
-            var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))
-        else:
-            # Append the entered character to the text
-            if event.unicode == ' ':
-                str_variable += '_'
-            else:
-                str_variable += event.unicode
-
-        return variable, str_variable, bool_active, text
-
-
-    def save_writing_button(self, str_variable, text, dice_value=False, nb_cars=False, int_variable=True):
-        """
-        Save the text in the writing button
-
-        Args:
-            str_variable (str): text in the writing button
-            text (pygame.Surface): text to display
-            dice_value (bool): True if the writing button is limited (for dice_values) false otherwise
-            nb_cars (bool): True if the writing button is for nb_cars, false otherwise (to save the value in the file parameters)
-            int_variable (bool): True if the variable is an integer, False otherwise
-
-        Returns:
-            int: variable corresponding to the text
-            str: text in the writing button
-            pygame.Surface: text to display
-        """
-        if int_variable:
-            try:
-                variable = int(str_variable)  # Convert the text to an integer
-
-                if dice_value:  # If it's a dice value we check if it's between 1 and 6
-                    variable = max(1, variable)
-                    variable = min(6, variable)
-                else:  # If it's the number of cars we change the variable in the file parameters
-                    if variable < 0:
-                        variable = 0
-
-                if nb_cars:
-                    with open(os.path.dirname(__file__) + "/../../data/parameters", "w") as file_parameters_write:
-                        file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(variable))
-
-            except ValueError:
-                print("Erreur sur la valeur rentrée")
-                variable = 1
-
-            str_variable = str(variable)  # Reset the text
-        else:
-            variable = None
-
-        self.activated = False  # Uncheck the button
-        var.WINDOW.blit(var.BACKGROUND, (text.get_rect().x, text.get_rect().y))  # Erase the text
-
-        # Normal case
-        if dice_value or nb_cars or int_variable:
-            text = var.FONT.render(str_variable, True, (0, 0, 0), (255, 255, 255))  # Change the text one last time
-        else:   # Special case for the name of garage
-            text = var.FONT.render(str_variable, True, (0, 0, 0), (128, 128, 128))  # Change the text one last time
-
-        return variable, str_variable, text
-
     def deactivate(self):
         self.activated = False
         self.just_clicked = -1
@@ -251,7 +161,6 @@ class Button:
                         file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(self.variable))
 
             except ValueError:
-                print("Erreur sur la valeur rentrée")
                 self.variable = 1
 
             self.text = str(self.variable)  # Reset the text

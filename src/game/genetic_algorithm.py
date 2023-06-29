@@ -79,11 +79,14 @@ def mutate(cars):
 
     for car in cars:
         added = False
+        count = 0  # Number of times we tried to add the car
         while not added:
             car = mutate_one_car(car)  # Mutate the car
-            if car not in new_cars:  # If the car is not already in the list or if we have tried too many times
+            count += 1
+            if car not in new_cars or count > 150:  # If the car is not already in the list or if we have tried too many times
                 added = True
                 new_cars.append(car)  # We add the car to the list
+        print(count)
 
     return new_cars
 

@@ -18,5 +18,5 @@ HEIGHT_MULTIPLIER = 20  # Height multiplier of the cone
 
 # Game
 TIME_GENERATION = 25  # Time of a generation (s)
-FPS = 60  # FPS of the game
+FPS = 500  # FPS of the game
 SEED = 22  # Seed of the game

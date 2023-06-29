@@ -91,17 +91,9 @@ def handle_events(cars=None):
 
             if GARAGE.rectangles:
                 for rect_garage in GARAGE.rectangles:
-                    if rect_garage.change_text:
-
-                        _, rect_garage.name, rect_garage.change_text, _ = \
-                            rect_garage.name_button.update_writing_button(event, None, rect_garage.name, rect_garage.text, int_variable=False)
-
-                        if not rect_garage.change_text:
+                    if rect_garage.name_button.activated:
+                        if rect_garage.name_button.update(event):  # If the value has been saved
                             rect_garage.save()
-                        else:
-                            rect_garage.text = var.FONT.render(rect_garage.name, True, (0, 0, 0), (128, 128, 128))  # We change the text of the writing button
-                            rect_garage.name_button.image = rect_garage.text  # We change the image of the writing button
-                            rect_garage.draw_rect_garage()  # We display the rectangle with the new text
 
 
 def handle_clicks(cars):
@@ -137,8 +129,8 @@ def handle_clicks(cars):
 
     if GARAGE.rectangles:
         for rect_garage in GARAGE.rectangles:
-            if rect_garage.change_text:
-                rect_garage.change_text = False
+            if rect_garage.name_button.activated:
+                rect_garage.name_button.activated = False
                 rect_garage.save()  # Save the name of the car
 
     if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not garage_button.rect.collidepoint(pygame.mouse.get_pos()):
