@@ -36,7 +36,6 @@ class RectGarage:
         self.genetic = genetic  # Genetic of the car
         self.type_car = type_car  # Type of the car
 
-
         # Buttons
         self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image=pygame.image.load(var.PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
         self.select_button = Button(x=pos[0] + 190, y=pos[1] + 8, image=image_check_box_1, image_hover=image_check_box_2,

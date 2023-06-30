@@ -19,3 +19,6 @@ HEIGHT_MULTIPLIER = 20  # Height multiplier of the cone
 # Game
 TIME_GENERATION = 25  # Time of a generation (s)
 SEED = 22  # Seed of the game
+
+RGB_VALUES = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
+# The order is: dark_yellow, orange, red, green, purple, black

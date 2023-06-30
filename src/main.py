@@ -1,4 +1,5 @@
 from src.game.constants import CHANGE_CHECKPOINTS, SEE_CHECKPOINTS, USE_GENETIC, SEED  # Import the constants
+from src.other.analyze_data import analyze_data, show_analysis  # To analyze the data of all the cars
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.render.garage import add_garage_cars  # Import the garage
 from src.render.settings_menu import SETTINGS  # Import the settings
@@ -7,7 +8,6 @@ from src.other.utils import union_rect  # Import the utils
 import src.render.display as display  # Import the display
 import src.other.variables as var  # Import the variables
 from src.game.car import Car  # Import the car
-from src.other.analyze_data import analyze_data  # Import the analyze_data function
 import os.path  # To get the path of the file
 import random  # To generate random numbers
 import src.render.ui as ui  # Import the ui
@@ -128,7 +128,10 @@ def play(cars=None):
                 cars = [car.reset() for car in var.CARS_LAST_RUN if not car.view_only and not car.best_car]
                 play(cars)  # We restart the game with the last run
 
-            if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING:    # If all cars are dead
+            # We stop the game if all the cars are dead or if the time is over or if we want to change the generation
+            if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING or var.CHANGE_GENERATION:
+                pygame.time.wait(1000)  # We wait 1 second
+                var.CHANGE_GENERATION = False  # We stop the change of generation
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
 
                 var.CARS_LAST_RUN = cars  # Save the last run
@@ -174,28 +177,7 @@ if __name__ == '__main__':
 
     if var.SHOW_ANALYSIS:
         scores = analyze_data('/test_' + str(var.NUM_MAP), '/result_analysis')
-        scores = [score for score in scores if score < len(var.CHECKPOINTS)]
-
-        turns = [0] * len(var.CHECKPOINTS)
-        for score in scores:
-            turns[score] += 1
-        max_turns = max(turns)
-
-        # Draw the circles
-        for pos, score in zip(var.CHECKPOINTS, turns):
-
-            # Calculate the red value based on the score
-            red_value = int(score / max_turns * 255)  # Adjust the scaling if needed
-
-            # If it is not white
-            if red_value != 0:
-                # Create the color tuple with the adjusted red value
-                circle_color = (255, 255 - red_value, 255 - red_value)
-
-                # Draw the circle with the calculated color
-                pygame.draw.circle(var.BACKGROUND, circle_color, pos, 25)
-
-        # var.BACKGROUND.blit(var.BACKGROUND_MASK.to_surface(), (0, 0))  # Reset the screen
+        show_analysis(scores)
 
     # If we want to run all the cars
     if var.TEST_ALL_CARS:

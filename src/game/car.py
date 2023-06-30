@@ -277,7 +277,7 @@ class Car:
         if self.speed < min_medium_speed:
             pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
         else:
-            pygame.draw.polygon(var.WINDOW, (0, 0, 255), (front_of_car, left, top, right), 1)
+            pygame.draw.polygon(var.WINDOW, (255, 255, 0), (front_of_car, left, top, right), 1)
 
 
         # Medium detection cone
@@ -289,7 +289,7 @@ class Car:
         if min_medium_speed < self.speed < min_high_speed:
             pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
         else:
-            pygame.draw.polygon(var.WINDOW, (0, 255, 0), (front_of_car, left, top, right), 1)
+            pygame.draw.polygon(var.WINDOW, (255, 128, 0), (front_of_car, left, top, right), 1)
 
 
         # Fast detection cone

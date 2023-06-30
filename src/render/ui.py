@@ -29,12 +29,13 @@ dice_button = Button()  # Button to see the dice
 map_button = Button()  # Button to change the map
 restart_button = Button()  # Button to restart the game
 settings_button = Button()  # Button to open the settings
+next_button = Button()  # Button to go to the next generation
 
-BUTTONS = [stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button]  # List of all the buttons
+BUTTONS = [stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, next_button]  # List of all the buttons
 
 
 def init():
-    global stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button
+    global stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, next_button
 
     # Buttons
     stop_button = Button(1420, 4, pygame.image.load(var.PATH_IMAGE + '/stop_button.png'), scale=0.1)
@@ -49,6 +50,7 @@ def init():
     map_button = Button(845, 37, pygame.image.load(var.PATH_IMAGE + '/map_button.png'), scale=0.8)
     restart_button = Button(1290, 2, pygame.image.load(var.PATH_IMAGE + '/restart_button.png'), scale=0.08)
     settings_button = Button(285, 5, pygame.image.load(var.PATH_IMAGE + '/settings_button.png'), scale=0.065, checkbox=True)
+    next_button = Button(1290, 80, pygame.image.load(var.PATH_IMAGE + '/next_button.png'), scale=0.05)
 
 
 def handle_events(cars=None):
@@ -239,7 +241,7 @@ def display():
 
 
     # Dice menu
-    if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions (DISPLAY_DICE_MENU is changed in the file rect_garage.py)
+    if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
         if DICE_MENU.display_dice_menu():
             DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
 
@@ -273,6 +275,12 @@ def display():
     else:
         fps = str(int(var.CLOCK.get_fps()))
     display_text_ui('FPS : ' + fps, (1, 1), var.SMALL_FONT)
+
+
+    # Next generation button
+    next_button.check_state()  # Draw the next generation button
+    if next_button.just_clicked:  # Next generation button is just clicked
+        var.CHANGE_GENERATION = True  # We change the generation
 
 
 def pause(from_button=False):

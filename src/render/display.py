@@ -1,6 +1,6 @@
 from src.other.utils import text_rec, compute_detection_cone_points  # Import the utils functions
-from src.game.constants import RADIUS_CHECKPOINT, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Import the constants
-from src.other.utils import convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
+from src.game.constants import RADIUS_CHECKPOINT, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, RGB_VALUES  # Import the constants
+from src.other.utils import convert_to_grayscale, convert_to_yellow_scale, scale_positions  # Import the utils functions
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
 import cv2  # To use OpenCV
@@ -65,10 +65,10 @@ def draw_detection_cone(pos, dice_values, factor=50):
         factor (float): factor to multiply the width and height of the detection cone
     """
     left, top, right = compute_detection_cone_points(90, pos, dice_values[3] * factor, dice_values[0] * factor)
-    pygame.draw.polygon(var.WINDOW, (0, 0, 255), (pos, left, top, right), 5)
+    pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), 5)
 
     left, top, right = compute_detection_cone_points(90, pos, dice_values[4] * factor, dice_values[1] * factor)
-    pygame.draw.polygon(var.WINDOW, (0, 255, 0), (pos, left, top, right), 5)
+    pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), 5)
 
     left, top, right = compute_detection_cone_points(90, pos, dice_values[5] * factor, dice_values[2] * factor)
     pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), 5)
@@ -83,11 +83,11 @@ def show_car_window(car):
     """
     var.DISPLAY_CAR_WINDOW = True  # Display the car
 
-    rect = pygame.Rect(500, 125, 400, 550)  # Create the rectangle for the window
+    rect = pygame.Rect(350, 125, 700, 550)  # Create the rectangle for the window
     pygame.draw.rect(var.WINDOW, (128, 128, 128), rect, 0)  # Draw the rectangle (inside)
     pygame.draw.rect(var.WINDOW, (115, 205, 255), rect, 2)  # Draw the rectangle (contour)
 
-    x, y = rect[0] + 100, rect[1] + 280  # Position of the car
+    x, y = rect[0] + 425, rect[1] + 300  # Position of the car
 
     if car.view_only:
         image = convert_to_grayscale(var.BIG_RED_CAR_IMAGE)
@@ -99,17 +99,18 @@ def show_car_window(car):
     var.WINDOW.blit(image, (x, y))  # Draw the red car
     draw_detection_cone((x + 125, y + 25), car.genetic.get_list())  # Draw the detection cones
 
-    var.WINDOW.blit(var.TEXT_SLOW, (x - 50, y + 50))  # Draw the slow text
-    var.WINDOW.blit(var.TEXT_MEDIUM, (x - 50, y))  # Draw the medium text
-    var.WINDOW.blit(var.TEXT_FAST, (x - 50, y - 50))  # Draw the fast text
+    var.WINDOW.blit(var.TEXT_SLOW, (rect[0] + 90, rect[1] + 150))  # Draw the slow text
+    var.WINDOW.blit(var.TEXT_MEDIUM, (rect[0] + 200, rect[1] + 150))  # Draw the medium text
+    var.WINDOW.blit(var.TEXT_FAST, (rect[0] + 325, rect[1] + 150))  # Draw the fast text
 
-    str_height = f'{car.genetic.height_slow // HEIGHT_MULTIPLIER} {car.genetic.height_medium // HEIGHT_MULTIPLIER} {car.genetic.height_fast // HEIGHT_MULTIPLIER}'
-    text_height = var.FONT.render(str_height, True, (0, 0, 0), (128, 128, 128))  # Create the text for the height of cones
-    str_width = f'{car.genetic.width_slow // WIDTH_MULTIPLIER} {car.genetic.width_medium // WIDTH_MULTIPLIER} {car.genetic.width_fast // WIDTH_MULTIPLIER}'
-    text_width = var.FONT.render(str_width, True, (0, 0, 0), (128, 128, 128))  # Create the text for the width of cones
-
-    var.WINDOW.blit(text_height, (x - 75, y - 250))  # Draw the height text
-    var.WINDOW.blit(text_width, (x - 75, y - 225))  # Draw the width text
+    x1, x2, x3 = 75, 200, 325
+    y1, y2 = 225, 350
+    draw_dice(x=rect[0] + x1, y=rect[1] + y1, color=RGB_VALUES[0], value=car.genetic.height_slow // HEIGHT_MULTIPLIER, factor=0.75, black_dots=True)
+    draw_dice(x=rect[0] + x2, y=rect[1] + y1, color=RGB_VALUES[1], value=car.genetic.height_medium // HEIGHT_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect[0] + x3, y=rect[1] + y1, color=RGB_VALUES[2], value=car.genetic.height_fast // HEIGHT_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect[0] + x1, y=rect[1] + y2, color=RGB_VALUES[3], value=car.genetic.width_slow // WIDTH_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect[0] + x2, y=rect[1] + y2, color=RGB_VALUES[4], value=car.genetic.width_medium // WIDTH_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect[0] + x3, y=rect[1] + y2, color=RGB_VALUES[5], value=car.genetic.width_fast // WIDTH_MULTIPLIER, factor=0.75)
 
 
 def erase_car_window():
@@ -118,5 +119,64 @@ def erase_car_window():
     """
     var.DISPLAY_CAR_WINDOW = False  # Don't display the car
 
-    rect = pygame.Rect(500, 125, 400, 550)  # Create the rectangle for the window
+    rect = pygame.Rect(350, 125, 700, 550)  # Create the rectangle for the window
     var.WINDOW.blit(var.BACKGROUND, rect, rect)  # Blit the background on the rectangle
+
+
+def draw_dice(x, y, color, value, factor=1, black_dots=False):
+    """
+    To draw a dice
+
+    Args:
+        x (int): x coordinate of the dice
+        y (int): y coordinate of the dice
+        color (tuple): color of the dice
+        value (int): value of the dice
+        factor (float): factor to multiply the size of the dice
+        black_dots (bool): if the dots are black
+    """
+
+    pygame.draw.rect(var.WINDOW, color, (x, y, int(120 * factor), int(120 * factor)), 0)
+    pygame.draw.rect(var.WINDOW, (100, 100, 100), (x, y, int(120 * factor), int(120 * factor)), 3)
+
+    if black_dots:  # If the dice is dark_yellow the dots are black
+        draw_dots(x, y, value, factor, (0, 0, 0))
+    else:
+        draw_dots(x, y, value, factor)
+
+
+def draw_dots(x, y, nb_dots, factor, color=(255, 255, 255)):
+    """
+    To draw the dots on the dice
+
+    Args:
+        x (int): x coordinate of the dice
+        y (int): y coordinate of the dice
+        nb_dots (int): Number of dots on the dice
+        factor (float): factor to multiply the size of the dots
+        color (tuple): Color of the dots. Defaults to white.
+    """
+    dot_radius = 10
+    dot_padding = 32
+    position_dot = []
+
+    # Calculate the positions of the dots based on the number of dots
+    if nb_dots == 1:
+        position_dot = scale_positions(x, y, [(60, 60)], factor)
+    elif nb_dots == 2:
+        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (120 - dot_padding, 120 - dot_padding)], factor)
+    elif nb_dots == 3:
+        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (60, 60), (120 - dot_padding, 120 - dot_padding)], factor)
+    elif nb_dots == 4:
+        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (dot_padding, 120 - dot_padding), (120 - dot_padding, dot_padding),
+                                              (120 - dot_padding, 120 - dot_padding)], factor)
+    elif nb_dots == 5:
+        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (dot_padding, 120 - dot_padding), (120 - dot_padding, dot_padding),
+                                       (120 - dot_padding, 120 - dot_padding), (60, 60)], factor)
+    elif nb_dots == 6:
+        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (dot_padding, 120 - dot_padding), (120 - dot_padding, dot_padding),
+                                              (120 - dot_padding, 120 - dot_padding), (dot_padding, 60), (120 - dot_padding, 60)], factor)
+
+    # Draw the dots on the dice
+    for dot_pos in position_dot:
+        pygame.draw.circle(var.WINDOW, color, dot_pos, int(dot_radius * factor))

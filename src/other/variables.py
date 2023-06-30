@@ -38,9 +38,11 @@ YELLOW_CAR_IMAGE = None  # Image of the best car
 
 # Show detection cones
 BIG_RED_CAR_IMAGE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
-TEXT_SLOW = LARGE_FONT.render('Lent', True, (0, 0, 255), (128, 128, 128))  # Text of the slow button
-TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (0, 255, 0), (128, 128, 128))  # Text of the medium button
+TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
+TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  # Text of the medium button
 TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
+TEXT_HEIGHT = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # Text of the height button
+TEXT_WIDTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
 
 
 # Debug variables
@@ -57,6 +59,7 @@ FPS = None  # FPS of the game
 ACTUAL_FPS = 0  # Actual FPS
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
+CHANGE_GENERATION = False  # True if we want to change the generation, False otherwise
 
 # Pause variables
 PAUSE = False  # Pause the game (True or False)

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt  # For plotting the histogram
 import src.other.variables as var  # For the path of the data
+import pygame  # To use pygame
 
 """
 This file contains the functions to analyze the data from the test file (created in the file main.py)
@@ -50,3 +51,29 @@ def analyze_data(file_name_read, file_name_write):
     plt.show()
 
     return scores
+
+
+def show_analysis(scores):
+    """
+    Show the analysis of the scores obtained by the function analyze_data
+    """
+    scores = [score for score in scores if score < len(var.CHECKPOINTS)]
+
+    turns = [0] * len(var.CHECKPOINTS)
+    for score in scores:
+        turns[score] += 1
+    max_turns = max(turns)
+
+    # Draw the circles
+    for pos, score in zip(var.CHECKPOINTS, turns):
+
+        # Calculate the red value based on the score
+        red_value = int(score / max_turns * 255)  # Adjust the scaling if needed
+
+        # If it is not white
+        if red_value != 0:
+            # Create the color tuple with the adjusted red value
+            circle_color = (255, 255 - red_value, 255 - red_value)
+
+            # Draw the circle with the calculated color
+            pygame.draw.circle(var.BACKGROUND, circle_color, pos, 25)

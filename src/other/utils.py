@@ -233,3 +233,24 @@ def create_rect_from_points(points):
     rect_height = max_y - min_y
 
     return pygame.Rect(min_x, min_y, rect_width, rect_height)
+
+
+def scale_positions(x, y, positions, factor):
+    """
+    Scale the positions of a list of points
+
+    Args:
+        x (int): the x coordinate of the window
+        y (int): the y coordinate of the window
+        positions (list(tuple(int, int))): the list of points
+        factor (float): the scaling factor
+
+    Returns:
+        new_positions (list(tuple(int, int))): the scaled positions
+    """
+    new_positions = []
+
+    for i, position in enumerate(positions):
+        new_positions.append((x + int(position[0] * factor), y + int(position[1] * factor)))
+
+    return new_positions
