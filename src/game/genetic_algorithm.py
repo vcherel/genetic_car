@@ -86,7 +86,6 @@ def mutate(cars):
             if car not in new_cars or count > 150:  # If the car is not already in the list or if we have tried too many times
                 added = True
                 new_cars.append(car)  # We add the car to the list
-        print(count)
 
     return new_cars
 

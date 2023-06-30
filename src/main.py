@@ -1,6 +1,7 @@
-from src.game.constants import CHANGE_CHECKPOINTS, SEE_CHECKPOINTS, FPS, USE_GENETIC, SEED  # Import the constants
+from src.game.constants import CHANGE_CHECKPOINTS, SEE_CHECKPOINTS, USE_GENETIC, SEED  # Import the constants
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.render.garage import add_garage_cars  # Import the garage
+from src.render.settings_menu import SETTINGS  # Import the settings
 from src.game.genetic import Genetic  # Import the genetic class
 from src.other.utils import union_rect  # Import the utils
 import src.render.display as display  # Import the display
@@ -59,7 +60,7 @@ def open_window():
         if var.START:   # When the game starts
             play()  # Play the game
 
-        var.CLOCK.tick(FPS)  # Limit FPS
+        var.CLOCK.tick(var.FPS)  # Limit FPS
 
 
 def play(cars=None):
@@ -152,8 +153,8 @@ def play(cars=None):
         except ZeroDivisionError:
             var.ACTUAL_FPS = 0
 
-        while time.time() - time_begin_turn < 1 / FPS:  # Wait to have the right FPS
-            var.ACTUAL_FPS = FPS
+        while time.time() - time_begin_turn < 1 / var.FPS:  # Wait to have the right FPS
+            var.ACTUAL_FPS = var.FPS
 
     open_window()  # Restart the game
 
@@ -167,6 +168,7 @@ if __name__ == '__main__':
     var.load_variables()  # Load the variables
     var.change_map(first_time=True)  # Change the map to the first one
     ui.init()  # Initialize the ui
+    SETTINGS.init()  # Initialize the settings
     display.edit_background()  # Add elements not clickable to the background
 
 

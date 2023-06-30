@@ -53,6 +53,7 @@ SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoint
 # Game variables
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
+FPS = None  # FPS of the game
 ACTUAL_FPS = 0  # Actual FPS
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
@@ -68,8 +69,8 @@ START_TIME = 0  # Start time of the genetic algorithm
 NUM_GENERATION = 1  # Number of the generation
 NB_CARS_ALIVE = 0  # Number of cars alive
 
-MUTATION_CHANCE = 0.5  # Chance of mutation
-CROSSOVER_CHANCE = 0.5  # Chance of crossover
+MUTATION_CHANCE = 0.2  # Chance of mutation
+CROSSOVER_CHANCE = 0.2  # Chance of crossover
 PERCENTAGE_BEST_CARS = 0.1  # Percentage used to know how many cars we keep for the next generation
 DECREASE_PERCENTAGE = 0.75  # Percentage used to decrease the mutation and crossover chance
 
@@ -106,7 +107,8 @@ def exit_game():
 
 def change_map(first_time=False):
     """
-    Change the map and all the variables associated
+    Change the map and all the variables associated. It is used at the beginning of the game and when we press the button to change the map
+    When it's the first time we keep the actual map but when we press the button we change the map to the next one
 
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
@@ -179,7 +181,7 @@ def load_variables():
     """
     Load the variables of the game (number of the map, number of cars, cars, ...)
     """
-    global NUM_MAP, NB_CARS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE
+    global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE
 
     # We open the file parameters to read the number of the map and the number of cars
     with open(PATH_DATA + '/parameters', 'r') as file_parameters_read:
@@ -187,10 +189,13 @@ def load_variables():
         Format of the file parameters:
         num_map
         nb_cars
+        FPS
         """
-        num_map, nb_cars = file_parameters_read.readlines()
+        num_map, nb_cars, fps = file_parameters_read.readlines()
         NUM_MAP = int(num_map)  # Map number
         NB_CARS = int(nb_cars)  # Number of cars
+        FPS = int(fps)  # FPS
+
 
     with open(PATH_DATA + '/cars', 'r') as file_cars_read:
         """
@@ -220,18 +225,12 @@ def save_variables():
     """
     # We change the variable in the file parameters
     with open(PATH_DATA + '/parameters', 'w') as file_parameters_write:
-        file_parameters_write.write(str(NUM_MAP) + "\n" + str(NB_CARS))
+        file_parameters_write.write(f'{NUM_MAP}\n{NB_CARS}\n{FPS}')
 
     with open(PATH_DATA + '/cars', 'w') as file_cars_write:
         for key in MEMORY_CARS.keys():
             for car in MEMORY_CARS.get(key):
-                file_cars_write.write(str(car[0]) + ' ' + key + ' ' + car[1] + ' ' +
-                                      str(car[2].height_slow // HEIGHT_MULTIPLIER) + ' ' + str(
-                    car[2].height_medium // HEIGHT_MULTIPLIER) + ' ' +
-                                      str(car[2].height_fast // HEIGHT_MULTIPLIER) + ' ' + str(
-                    car[2].width_slow // WIDTH_MULTIPLIER) + ' ' +
-                                      str(car[2].width_medium // WIDTH_MULTIPLIER) + ' ' + str(
-                    car[2].width_fast // WIDTH_MULTIPLIER) + '\n')
+                file_cars_write.write(f'{car[0]} {key} {car[1]} {car[2].height_slow // HEIGHT_MULTIPLIER} {car[2].height_medium // HEIGHT_MULTIPLIER} {car[2].height_fast // HEIGHT_MULTIPLIER} {car[2].width_slow // WIDTH_MULTIPLIER} {car[2].width_medium // WIDTH_MULTIPLIER} {car[2].width_fast // WIDTH_MULTIPLIER}\n')
 
 
 def update_car_name(type_car, id_car, name):

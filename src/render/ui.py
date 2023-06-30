@@ -8,7 +8,6 @@ from src.game.genetic import Genetic  # Import the genetic class
 from src.game.constants import SEE_CURSOR  # Import constants
 import src.other.variables as var  # Import the variables
 from src.render.button import Button  # Import the button
-import os.path  # To get the path of images
 import pygame  # To use pygame
 import time  # To get the time
 
@@ -21,7 +20,6 @@ This file contains all the functions to display the UI and check the events
 use_camera = True  # If we don't use the camera
 time_remaining_pause = 0  # Time remaining when the game has been paused
 
-debug_button = Button()  # Button to activate the debug_0 mode
 stop_button = Button()  # Button to stop the game
 pause_button = Button()  # Button to pause the game
 play_button = Button()  # Button to start the game
@@ -32,30 +30,25 @@ map_button = Button()  # Button to change the map
 restart_button = Button()  # Button to restart the game
 settings_button = Button()  # Button to open the settings
 
-BUTTONS = [debug_button, stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button]  # List of all the buttons
+BUTTONS = [stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button]  # List of all the buttons
 
 
 def init():
-    global debug_button, stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button
-
-    path_images = os.path.dirname(__file__) + '/../../images/'  # Path of the images
+    global stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button
 
     # Buttons
-    debug_button = Button(1435, 642, pygame.image.load(path_images + '/checkbox_1.png'),
-                          pygame.image.load(path_images + '/checkbox_2.png'),
-                          pygame.image.load(path_images + '/checkbox_3.png'), checkbox=True, scale=0.03)
-    stop_button = Button(1420, 4, pygame.image.load(path_images + '/stop_button.png'), scale=0.1)
-    pause_button = Button(1417, 56, pygame.image.load(path_images + '/pause_button.png'), checkbox=True, scale=0.11)
-    play_button = Button(1320, 15, pygame.image.load(path_images + '/start_button.png'), scale=0.18)
-    nb_cars_button = Button(1049, 58, pygame.image.load(path_images + '/writing_rectangle_1.png'),
-                            pygame.image.load(path_images + '/writing_rectangle_2.png'),
-                            pygame.image.load(path_images + '/writing_rectangle_3.png'), writing_button=True,
+    stop_button = Button(1420, 4, pygame.image.load(var.PATH_IMAGE + '/stop_button.png'), scale=0.1)
+    pause_button = Button(1417, 56, pygame.image.load(var.PATH_IMAGE + '/pause_button.png'), checkbox=True, scale=0.11)
+    play_button = Button(1320, 15, pygame.image.load(var.PATH_IMAGE + '/start_button.png'), scale=0.18)
+    nb_cars_button = Button(1049, 58, pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
+                            pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
+                            pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
                             text=str(var.NB_CARS), variable=var.NB_CARS, name='nb_cars', scale=0.8)
-    garage_button = Button(400, 30, pygame.image.load(path_images + '/garage_button.png'), scale=0.2, checkbox=True)
-    dice_button = Button(600, 28, pygame.image.load(path_images + '/dice_button.png'), scale=0.4)
-    map_button = Button(845, 37, pygame.image.load(path_images + '/map_button.png'), scale=0.8)
-    restart_button = Button(1290, 2, pygame.image.load(path_images + '/restart_button.png'), scale=0.08)
-    settings_button = Button(285, 5, pygame.image.load(path_images + '/settings_button.png'), scale=0.065, checkbox=True)
+    garage_button = Button(400, 30, pygame.image.load(var.PATH_IMAGE + '/garage_button.png'), scale=0.2, checkbox=True)
+    dice_button = Button(600, 28, pygame.image.load(var.PATH_IMAGE + '/dice_button.png'), scale=0.4)
+    map_button = Button(845, 37, pygame.image.load(var.PATH_IMAGE + '/map_button.png'), scale=0.8)
+    restart_button = Button(1290, 2, pygame.image.load(var.PATH_IMAGE + '/restart_button.png'), scale=0.08)
+    settings_button = Button(285, 5, pygame.image.load(var.PATH_IMAGE + '/settings_button.png'), scale=0.065, checkbox=True)
 
 
 def handle_events(cars=None):
@@ -95,6 +88,11 @@ def handle_events(cars=None):
                         if rect_garage.name_button.update(event):  # If the value has been saved
                             rect_garage.save()
 
+            if var.DISPLAY_SETTINGS:
+                if SETTINGS.fps_button.activated:
+                    if SETTINGS.fps_button.update(event):
+                        var.FPS = SETTINGS.fps_button.variable
+
 
 def handle_clicks(cars):
     """
@@ -106,17 +104,6 @@ def handle_clicks(cars):
     if nb_cars_button.activated:  # If we click outside the writing button, we stop changing the number of cars
         nb_cars_button.deactivate()
         var.NB_CARS = nb_cars_button.variable
-
-
-        """
-                    # We change value of dice if necessary
-            if var.DISPLAY_DICE_MENU:
-                for index, writing_button in enumerate(DICE_MENU.write_buttons):
-                    if writing_button.activated:
-                        if writing_button.update(event):  # If the value has been saved
-                            DICE_MENU.genetic.set_dice_value(index, writing_button.variable)  # Change the value of the dice
-                            DICE_MENU.save_values()  # Save the values of the dice
-                            """
 
     if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
         for index, writing_button in enumerate(DICE_MENU.writing_buttons):
@@ -136,9 +123,16 @@ def handle_clicks(cars):
     if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not garage_button.rect.collidepoint(pygame.mouse.get_pos()):
         delete_garage()  # Delete the garage if we click outside of it
 
-    if var.DISPLAY_SETTINGS and not SETTINGS.rect.collidepoint(pygame.mouse.get_pos()):
-        settings_button.deactivate()  # Deactivate the settings button
-        SETTINGS.erase()  # Erase the settings
+    if var.DISPLAY_SETTINGS:
+        if SETTINGS.fps_button.activated:
+            SETTINGS.fps_button.deactivate()  # Stop changing the value of the fps
+            var.FPS = SETTINGS.fps_button.variable  # Change the value of the fps
+
+        # If we click outside the settings, we close it
+        if not SETTINGS.rect.collidepoint(pygame.mouse.get_pos()):
+            settings_button.deactivate()  # Deactivate the settings button
+            SETTINGS.erase()  # Erase the settings
+            unpause()  # Unpause the game
 
 
     if SEE_CURSOR:
@@ -175,13 +169,6 @@ def display():
     # Text
     display_text_ui('Nombre de voitures restantes : ' + str(var.NB_CARS_ALIVE), (1, 50), var.FONT)
     display_text_ui('Génération : ' + str(var.NUM_GENERATION), (1, 80), var.FONT)
-
-
-    # Debug button
-    var.DEBUG = debug_button.check_state()  # Draw the debug_0 button
-    if debug_button.just_clicked and not var.DEBUG:
-        var.WINDOW.blit(var.BACKGROUND, (0, 0))  # We redraw the background
-
 
     # Stop button
     stop_button.check_state()  # Draw the stop button
@@ -280,7 +267,7 @@ def display():
         SETTINGS.show()
 
 
-    # FPS
+    # FPS display
     if var.PLAY:
         fps = str(var.ACTUAL_FPS)
     else:
@@ -315,9 +302,6 @@ def unpause(from_button=False):
     if not from_button:  # If the unpause is not from the pause button we have to uncheck the button
         var.PAUSE = False  # We unpause the simulation
         pause_button.activated = False  # We uncheck the pause button
-
-    if var.DISPLAY_GARAGE:
-        delete_garage()
 
     if var.DISPLAY_CAR_WINDOW:
         erase_car_window()

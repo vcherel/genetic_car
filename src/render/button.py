@@ -107,7 +107,7 @@ class Button:
 
         # Draw text on button if it's a writing button
         if self.writing_button:
-            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 20, self.rect.y + 5))
+            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 5))
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 
@@ -161,6 +161,9 @@ class Button:
                         file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(self.variable))
 
             except ValueError:
-                self.variable = 1
+                if self.name == 'dice':
+                    self.variable = 1
+                else:
+                    self.variable = 50
 
             self.text = str(self.variable)  # Reset the text

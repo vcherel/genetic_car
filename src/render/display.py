@@ -16,7 +16,6 @@ def edit_background():
     Add elements to the background for the rest of the game
     """
     # Add a text for the debug_0 mode
-    var.BACKGROUND.blit(var.FONT.render('Activer debug :', True, (255, 255, 255), (0, 0, 0)), (1290, 640))  # Add the debug_0 text
     var.BACKGROUND.blit(var.FONT.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), (1060, 25))  # Add the yes text
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (1280, 120), (1280, 0), 2)  # Line at the right
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (325, 120), (325, 0), 2)  # Line at the left
@@ -98,7 +97,7 @@ def show_car_window(car):
         image = var.BIG_RED_CAR_IMAGE
 
     var.WINDOW.blit(image, (x, y))  # Draw the red car
-    draw_detection_cone((x + 125, y + 25), car.genetic)  # Draw the detection cones
+    draw_detection_cone((x + 125, y + 25), car.genetic.get_list())  # Draw the detection cones
 
     var.WINDOW.blit(var.TEXT_SLOW, (x - 50, y + 50))  # Draw the slow text
     var.WINDOW.blit(var.TEXT_MEDIUM, (x - 50, y))  # Draw the medium text
