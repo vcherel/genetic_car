@@ -1,4 +1,4 @@
-from src.game.constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Import the constants
+import src.other.variables as var  # To use the variables
 import pygame  # To use pygame
 import math  # To use math
 
@@ -56,7 +56,7 @@ def point_out_of_window(point):
     Returns:
         True if the point is out of the window, False otherwise
     """
-    return point[0] < 0 or point[0] >= WIDTH_SCREEN or point[1] < 0 or point[1] >= HEIGHT_SCREEN
+    return point[0] < 0 or point[0] >= 1500 or point[1] < 0 or point[1] >= 700
 
 
 def union_rect(rects):
@@ -254,3 +254,29 @@ def scale_positions(x, y, positions, factor):
         new_positions.append((x + int(position[0] * factor), y + int(position[1] * factor)))
 
     return new_positions
+
+
+def convert_coordinates(position):
+    """
+    Convert the coordinates of a point from a 1500x700 window to the current window
+
+    Args:
+        position (tuple(int, int)): the position to convert
+
+    Returns:
+        tuple(int, int): the converted position
+    """
+    return position[0] * var.WIDTH_SCREEN / 1500, position[1] * var.HEIGHT_SCREEN / 700
+
+
+def resize(size):
+    """
+    Resize a value from a 1500x700 window to the current window
+
+    Args:
+        size (int): the size to resize
+
+    Returns:
+        int: the resized size
+    """
+    return int(0.000001 * var.WIDTH_SCREEN * var.HEIGHT_SCREEN * size)

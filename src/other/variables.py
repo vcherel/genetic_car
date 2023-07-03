@@ -1,5 +1,5 @@
-from src.game.constants import WINDOW_SIZE, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION, USE_GENETIC  # Import the constants
-from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
+from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION, USE_GENETIC, START_POSITIONS, CAR_SIZES  # Import the constants
+from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale, convert_coordinates, resize  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
 from src.game.genetic import Genetic  # Import the Genetic class
 import os.path  # To get the path of the file
@@ -11,33 +11,58 @@ import time  # To use time
 This file contains all the variables of the game used in multiple other files
 """
 
-START_POSITIONS = [(600, 165), (760, 180), (600, 197), (725, 165), (734, 241), (820, 395)]  # Start position
-CAR_SIZES = [0.13, 0.1, 0.06, 0.09, 0.15, 0.11]  # Size of the car
 
+# OTHER
 PATH_DATA = os.path.dirname(__file__) + '/../../data'  # Path of the data folder
 PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
+FPS = 60  # FPS of the game
+ACTUAL_FPS = 0  # Actual FPS
 
-# Pygame variables
+
+# PYGAME
 pygame.init()  # Pygame initialization
 pygame.display.set_caption('Algorithme génétique')  # Window title
-
-WINDOW = pygame.display.set_mode(WINDOW_SIZE)  # Initialization of the window
 FONT = pygame.font.SysFont('Arial', 20)  # Font of the text
 SMALL_FONT = pygame.font.SysFont('Arial', 10)  # Font of the text
 LARGE_FONT = pygame.font.SysFont('Arial', 30)  # Font of the text
-CLOCK = pygame.time.Clock()  # Clock of the game
 
-# Map variables
-BACKGROUND = None  # Image of the background
+
+# DISPLAY
+WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size
+WINDOW = pygame.display.set_mode(WINDOW_SIZE, pygame.RESIZABLE)  # Initialization of the window
+BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
 BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to detect collisions)
-NUM_MAP = None  # Number of the map
-START_POSITION = None  # Start position of the car
+RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
+RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
+RESIZE = False  # True if we are resizing the window, False otherwise
+TIME_RESIZE = 0  # Time when we started to resize the window
+RESIZE_DIMENSIONS = None  # Dimensions of the window after resizing
+
+
+# IMAGES
 RED_CAR_IMAGE = None  # Image of the original car
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
 YELLOW_CAR_IMAGE = None  # Image of the best car
-
-# Show detection cones
 BIG_RED_CAR_IMAGE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
+
+
+# GAME
+NUM_MAP = 0  # Number of the map
+START = False  # Start the game (True or False)
+PLAY = False  # Stop the game (True or False)
+CHANGE_GENERATION = False  # True if we want to change the generation, False otherwise
+PLAY_LAST_RUN = False  # True if we want to play the last run again, False otherwise
+
+
+# CARS
+START_POSITION = None  # Start position of the car
+NB_CARS_ALIVE = 0  # Number of cars alive
+NB_CARS = 150  # Number of cars
+CARS_LAST_RUN = []  # Cars of the last run
+
+
+# BUTTONS
+BUTTONS = []  # List of the buttons
 TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
 TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  # Text of the medium button
 TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
@@ -45,60 +70,45 @@ TEXT_HEIGHT = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  #
 TEXT_WIDTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
 
 
-# Debug variables
+# DEBUG
 DEBUG = False  # True for debug mode, False for normal mode
 CHECKPOINTS = None  # List of checkpoints
 RADIUS_CHECKPOINT = None  # Radius of the checkpoints
-
 TEST_ALL_CARS = False  # True to test_0 all the cars, False to play the game normally
 SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoints, False otherwise
 
-# Game variables
-START = False  # Start the game (True or False)
-PLAY = False  # Stop the game (True or False)
-FPS = None  # FPS of the game
-ACTUAL_FPS = 0  # Actual FPS
-RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
-RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
-CHANGE_GENERATION = False  # True if we want to change the generation, False otherwise
 
-# Pause variables
+# TIME
+CLOCK = pygame.time.Clock()  # Clock of the game
 PAUSE = False  # Pause the game (True or False)
 DURATION_PAUSES = 0  # Duration of all the pauses
 START_TIME_PAUSE = 0  # Time when the game has been paused
-
-# Genetic variables
 TIME_REMAINING = 0  # Time remaining for the genetic algorithm
 START_TIME = 0  # Start time of the genetic algorithm
-NUM_GENERATION = 1  # Number of the generation
-NB_CARS_ALIVE = 0  # Number of cars alive
 
+
+# GENETIC
+NUM_GENERATION = 1  # Number of the generation
 MUTATION_CHANCE = 0.2  # Chance of mutation
 CROSSOVER_CHANCE = 0.2  # Chance of crossover
 PERCENTAGE_BEST_CARS = 0.1  # Percentage used to know how many cars we keep for the next generation
 DECREASE_PERCENTAGE = 0.75  # Percentage used to decrease the mutation and crossover chance
 
-# Garage variables
+
+# MENU
 DISPLAY_GARAGE = False  # True to see the garage
-GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
-MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, genetic are cars from the genetic algorithm
-# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic], ...], "genetic": [[id, name, Genetic], ...]}
-
-ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
-ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
-
-# Car variables
-NB_CARS = 0  # Number of cars
-PLAY_LAST_RUN = False  # True if we want to play the last run again, False otherwise
-CARS_LAST_RUN = []  # Cars of the last run
-
-# Windows variables
 DISPLAY_DICE_MENU = False  # True if we are displaying the dice menu
 DISPLAY_CAR_WINDOW = False  # True if we are displaying the cone of a car
 DISPLAY_SETTINGS = False  # True if we are displaying the settings
 
-# Buttons variables
-BUTTONS = []  # List of the buttons
+
+# MEMORY
+GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
+MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, genetic are cars from the genetic algorithm
+# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic], ...], "genetic": [[id, name, Genetic], ...]}
+ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
+ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
+
 
 
 def exit_game():
@@ -109,6 +119,21 @@ def exit_game():
     sys.exit()  # Quit pygame
 
 
+def resize_window(dimensions):
+    """
+    Resize the window
+
+    Args:
+        dimensions (tuple): Dimensions of the window
+    """
+    global WINDOW, WIDTH_SCREEN, HEIGHT_SCREEN, BACKGROUND
+
+    WIDTH_SCREEN, HEIGHT_SCREEN = dimensions  # Update the dimensions
+    WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Resize the window
+    update_visual_variables()  # Update the visual variables
+    pygame.display.flip()  # Update the display
+
+
 def change_map(first_time=False):
     """
     Change the map and all the variables associated. It is used at the beginning of the game and when we press the button to change the map
@@ -117,7 +142,7 @@ def change_map(first_time=False):
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
     """
-    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, CHECKPOINTS, START_POSITION, RADIUS_CHECKPOINT
+    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE
 
     # If we change map for the first time, we don't change the map
     if not first_time:
@@ -126,6 +151,7 @@ def change_map(first_time=False):
         else:
             NUM_MAP += 1
 
+    # Dimensions of the window
     """
     WINDOW RECT :
     0, 0, 1500, 700
@@ -134,15 +160,10 @@ def change_map(first_time=False):
     """
     BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    image_circuit = pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585))  # Image of the background
-    BACKGROUND.blit(image_circuit, (0, 115))  # Blit the image of the background on the background surface
-    MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
-    BACKGROUND_MASK = MASK.copy()  # Mask of the black pixels of the background (used to detect collisions)
-    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
-    GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
-    YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
-    START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
-    RADIUS_CHECKPOINT = 600 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
+    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
+    BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
+
+    update_visual_variables()  # Update the variables used to display things
 
     CHECKPOINTS = []  # List of checkpoints
     with open(PATH_DATA + '/checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:
@@ -156,10 +177,6 @@ def change_map(first_time=False):
         for checkpoint in checkpoints:
             a, b = checkpoint.split(' ')
             CHECKPOINTS.append((int(a), int(b)))
-
-    edit_background()  # Edit the background
-    rect = pygame.rect.Rect(0, 115, 1500, 585)  # Only blit the rect where there is the circuit
-    WINDOW.blit(BACKGROUND, rect, rect)  # Blit the background on the window
 
 
 def init_variables(nb_cars, replay=False):
@@ -180,6 +197,24 @@ def init_variables(nb_cars, replay=False):
     else:  # If we start a new run
         NUM_GENERATION = 1  # Number of the generation
         ACTUAL_ID_MEMORY_GENETIC += 1  # We increment the id of the memory
+
+
+def update_visual_variables():
+    global BACKGROUND, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, START_POSITION, RADIUS_CHECKPOINT
+
+    BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
+    BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
+    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
+
+    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
+    GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
+    YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
+
+    START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
+    RADIUS_CHECKPOINT = 600 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
+
+    edit_background()  # Edit the background
+    WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
 
 
 def load_variables():

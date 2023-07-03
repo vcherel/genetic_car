@@ -1,5 +1,4 @@
 from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points  # To compute the coordinates of the point of the detection cone
-from src.game.constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
@@ -67,7 +66,7 @@ class Car:
         Return:
             str: string representation of the car
         """
-        return f'Car: genetic : {self.genetic} ; view_only : {self.view_only} ; best_car : {self.best_car}'
+        return f'Car: genetic : {self.genetic} ; view_only : {self.view_only} ; best_car : {self.best_car} ; position : {self.pos} ; angle : {self.angle} ; speed : {self.speed} ; acceleration : {self.acceleration} ; score : {self.score}'
 
     def __eq__(self, other):
         """
@@ -148,20 +147,6 @@ class Car:
         elif wall_at_right:
             self.angle += turn_angle
 
-    def debug(self):
-        # We select the right cone depending on the speed of the car
-        width, height = self.determine_size_cone()
-
-        front_of_car = self.determine_front_of_car()  # Point of the front of the car
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, width, height)  # Points of the detection cone
-
-        wall_at_top = detect_wall(front_of_car, top)  # Detect if the car is near a wall (top)
-        wall_at_left = detect_wall(front_of_car, left)  # Detect if the car is near a wall (left)
-        wall_at_right = detect_wall(front_of_car, right)  # Detect if the car is near a wall (right)
-
-        print(wall_at_top, wall_at_left, wall_at_right)
-
-
     def update_pos(self):
         """
         Update the position and the angle of the car
@@ -189,7 +174,7 @@ class Car:
         """
         Detect collision of the car with the walls
         """
-        if self.pos[0] < 0 or self.pos[0] > WIDTH_SCREEN or self.pos[1] < 0 or self.pos[1] > HEIGHT_SCREEN:
+        if self.pos[0] < 0 or self.pos[0] > var.WIDTH_SCREEN or self.pos[1] < 0 or self.pos[1] > var.HEIGHT_SCREEN:
             self.kill()  # Collision with the wall of the window
 
         car_mask = pygame.mask.from_surface(self.rotated_image)

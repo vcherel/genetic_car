@@ -66,40 +66,32 @@ def handle_events(cars=None):
     Args:
         cars (list): List of cars in case we want to display a car by clicking on it
     """
+    # If we were resizing, and we stop pressing the mouse we resize the window
+    if var.RESIZE and not pygame.mouse.get_pressed()[0] and time.time() - var.TIME_RESIZE > 0.05:
+        var.RESIZE = False  # We indicate that we are not resizing the window anymore
+        print(var.RESIZE_DIMENSIONS)
+        var.resize_window(var.RESIZE_DIMENSIONS)  # Resize the window
+
+
     # Pygame events
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             var.exit_game()  # Exit the game if the user click on the cross or press escape
+
+        # If we resize the window
+        elif event.type == pygame.VIDEORESIZE:
+            var.RESIZE = True  # We indicate that we are resizing the window
+            var.RESIZE_DIMENSIONS = (event.w, event.h)  # Save the new dimensions
+            var.TIME_RESIZE = time.time()  # Save the time when we started resizing
 
         # Detection of clicks
         elif event.type == pygame.MOUSEBUTTONDOWN:
             handle_clicks(cars)
 
         # If we press return (enter) or backspace (delete) we change the value of the writing button if needed
-        if event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
+            handle_key_press(event)
 
-            # We change value of nb cars if necessary
-            if nb_cars_button.activated:
-                if nb_cars_button.update(event):  # If the value has been saved
-                    var.NB_CARS = nb_cars_button.variable  # We change the value of the variable
-
-            # We change value of dice if necessary
-            if var.DISPLAY_DICE_MENU:
-                for index, writing_button in enumerate(DICE_MENU.writing_buttons):
-                    if writing_button.activated:
-                        if writing_button.update(event):  # If the value has been saved
-                            DICE_MENU.save_values(index, writing_button)  # Save the values of the dice
-
-            if GARAGE.rectangles:
-                for rect_garage in GARAGE.rectangles:
-                    if rect_garage.name_button.activated:
-                        if rect_garage.name_button.update(event):  # If the value has been saved
-                            rect_garage.save()
-
-            if var.DISPLAY_SETTINGS:
-                if SETTINGS.fps_button.activated:
-                    if SETTINGS.fps_button.update(event):
-                        var.FPS = SETTINGS.fps_button.variable
 
 
 def handle_clicks(cars):
@@ -157,6 +149,37 @@ def handle_clicks(cars):
                 found = True
                 pause()  # Pause the game
                 show_car_window(car)  # Display the car
+
+
+def handle_key_press(event):
+    """
+    Detect key press and do the corresponding action
+
+    Args:
+        event (pygame.event.Event): Event detected by pygame
+    """
+    # We change value of nb cars if necessary
+    if nb_cars_button.activated:
+        if nb_cars_button.update(event):  # If the value has been saved
+            var.NB_CARS = nb_cars_button.variable  # We change the value of the variable
+
+    # We change value of dice if necessary
+    if var.DISPLAY_DICE_MENU:
+        for index, writing_button in enumerate(DICE_MENU.writing_buttons):
+            if writing_button.activated:
+                if writing_button.update(event):  # If the value has been saved
+                    DICE_MENU.save_values(index, writing_button)  # Save the values of the dice
+
+    if GARAGE.rectangles:
+        for rect_garage in GARAGE.rectangles:
+            if rect_garage.name_button.activated:
+                if rect_garage.name_button.update(event):  # If the value has been saved
+                    rect_garage.save()
+
+    if var.DISPLAY_SETTINGS:
+        if SETTINGS.fps_button.activated:
+            if SETTINGS.fps_button.update(event):
+                var.FPS = SETTINGS.fps_button.variable
 
 
 def display():

@@ -1,12 +1,13 @@
 from src.game.constants import CHANGE_CHECKPOINTS, SEE_CHECKPOINTS, USE_GENETIC, SEED  # Import the constants
 from src.other.analyze_data import analyze_data, show_analysis  # To analyze the data of all the cars
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from src.render.garage import add_garage_cars  # Import the garage
 from src.render.settings_menu import SETTINGS  # Import the settings
+from src.render.garage import add_garage_cars  # Import the garage
 from src.game.genetic import Genetic  # Import the genetic class
 from src.other.utils import union_rect  # Import the utils
 import src.render.display as display  # Import the display
 import src.other.variables as var  # Import the variables
+import traceback  # To get the traceback of errors
 from src.game.car import Car  # Import the car
 import os.path  # To get the path of the file
 import random  # To generate random numbers
@@ -113,7 +114,7 @@ def play(cars=None):
                 if not car.dead:    # If the car is not dead
                     car.move()         # Move the car
                     var.RECTS_BLIT_CAR.append(car.rotated_rect)    # Draw the car and add the rect to the list
-                car.draw_car()  # Draw the car
+                car.draw_car()  # Draw the cars
 
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), rect_blit_car, 1)  # Draw the rect for the blit of the cars
 
@@ -165,34 +166,40 @@ if __name__ == '__main__':
     """
     Main program
     """
-    if SEED:
-        random.seed(SEED)  # Initialize the random seed
-    var.load_variables()  # Load the variables
-    var.change_map(first_time=True)  # Change the map to the first one
-    ui.init()  # Initialize the ui
-    SETTINGS.init()  # Initialize the settings
-    display.edit_background()  # Add elements not clickable to the background
+    try:
+        if SEED:
+            random.seed(SEED)  # Initialize the random seed
+        var.load_variables()  # Load the variables
+        var.change_map(first_time=True)  # Change the map to the first one
+        ui.init()  # Initialize the ui
+        SETTINGS.init()  # Initialize the settings
+        display.edit_background()  # Add elements not clickable to the background
 
 
-    if var.SHOW_ANALYSIS:
-        scores = analyze_data('/test_' + str(var.NUM_MAP), '/result_analysis')
-        show_analysis(scores)
+        if var.SHOW_ANALYSIS:
+            scores = analyze_data('/test_' + str(var.NUM_MAP), '/result_analysis')
+            show_analysis(scores)
 
-    # If we want to run all the cars
-    if var.TEST_ALL_CARS:
-        var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
-        var.PLAY = True
-        tab_cars = []
-        for height_slow in range(1, 7):
-            for height_medium in range(1, 7):
-                for height_fast in range(1, 7):
-                    for width_slow in range(1, 7):
-                        for width_medium in range(1, 7):
-                            for width_fast in range(1, 7):
-                                genetic = Genetic([height_slow, height_medium, height_fast, width_slow, width_medium, width_fast])
-                                tab_cars.append(Car(genetic))
-                                if len(tab_cars) == 15:
-                                    play(tab_cars)
-                                    tab_cars = []
-    else:
-        open_window()  # Start the game
+        # If we want to run all the cars
+        if var.TEST_ALL_CARS:
+            var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
+            var.PLAY = True
+            tab_cars = []
+            for height_slow in range(1, 7):
+                for height_medium in range(1, 7):
+                    for height_fast in range(1, 7):
+                        for width_slow in range(1, 7):
+                            for width_medium in range(1, 7):
+                                for width_fast in range(1, 7):
+                                    genetic = Genetic([height_slow, height_medium, height_fast, width_slow, width_medium, width_fast])
+                                    tab_cars.append(Car(genetic))
+                                    if len(tab_cars) == 15:
+                                        play(tab_cars)
+                                        tab_cars = []
+        else:
+            open_window()  # Start the game
+
+    except Exception as e:
+        traceback.print_exc()  # Print the error
+        var.exit_game()  # Exit the game
+        raise e
