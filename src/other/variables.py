@@ -11,8 +11,8 @@ import time  # To use time
 This file contains all the variables of the game used in multiple other files
 """
 
-start_positions = [(600, 165), (760, 180), (600, 197)]  # Start position
-car_sizes = [0.13, 0.1, 0.06]  # Size of the car
+START_POSITIONS = [(600, 165), (760, 180), (600, 197), (725, 165), (734, 241), (820, 395)]  # Start position
+CAR_SIZES = [0.13, 0.1, 0.06, 0.09, 0.15, 0.11]  # Size of the car
 
 PATH_DATA = os.path.dirname(__file__) + '/../../data'  # Path of the data folder
 PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
@@ -48,6 +48,7 @@ TEXT_WIDTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # T
 # Debug variables
 DEBUG = False  # True for debug mode, False for normal mode
 CHECKPOINTS = None  # List of checkpoints
+RADIUS_CHECKPOINT = None  # Radius of the checkpoints
 
 TEST_ALL_CARS = False  # True to test_0 all the cars, False to play the game normally
 SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoints, False otherwise
@@ -116,11 +117,11 @@ def change_map(first_time=False):
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
     """
-    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, CHECKPOINTS, START_POSITION
+    global NUM_MAP, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, CHECKPOINTS, START_POSITION, RADIUS_CHECKPOINT
 
     # If we change map for the first time, we don't change the map
     if not first_time:
-        if NUM_MAP >= len(start_positions) - 1:
+        if NUM_MAP >= len(START_POSITIONS) - 1:
             NUM_MAP = 0
         else:
             NUM_MAP += 1
@@ -137,10 +138,11 @@ def change_map(first_time=False):
     BACKGROUND.blit(image_circuit, (0, 115))  # Blit the image of the background on the background surface
     MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
     BACKGROUND_MASK = MASK.copy()  # Mask of the black pixels of the background (used to detect collisions)
-    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), car_sizes[NUM_MAP])  # Image of the car
+    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
     GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
     YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
-    START_POSITION = start_positions[NUM_MAP]  # Start position of the car
+    START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
+    RADIUS_CHECKPOINT = 600 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
 
     CHECKPOINTS = []  # List of checkpoints
     with open(PATH_DATA + '/checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:

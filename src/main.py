@@ -45,9 +45,8 @@ def open_window():
                         if event.type == pygame.QUIT:
                             var.exit_game()
                         if event.type == pygame.MOUSEBUTTONDOWN:
-                            if event.button == 1:
-                                x, y = event.pos
-                                file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
+                            x, y = event.pos
+                            file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
 
         ui.handle_events()  # Detect events in the ui and do the corresponding action=
         ui.display()  # Activate the buttons

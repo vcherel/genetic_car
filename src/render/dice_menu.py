@@ -51,7 +51,7 @@ class DiceMenu:
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, variable=value,
-                      text=str(value), name='dice', scale_y=0.9, scale_x=0.15)
+                      text=str(value), name='dice', scale_y=1, scale_x=0.25)
 
     def init(self, type_car, scores, id_car=None, by_camera=False):
         """

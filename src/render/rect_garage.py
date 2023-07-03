@@ -8,11 +8,6 @@ import pygame  # To play the game
 This file contains the RectGarage class and all the functions related to it. A rectangle garage is a rectangle that contains the cars saved in the garage menu.
 """
 
-
-image_check_box_1 = pygame.image.load(var.PATH_IMAGE + '/checkbox_1.png')  # Image of the checkbox when it is checked
-image_check_box_2 = pygame.image.load(var.PATH_IMAGE + '/checkbox_2.png')  # Image of the checkbox when it is not checked
-image_check_box_3 = pygame.image.load(var.PATH_IMAGE + '/checkbox_3.png')  # Image of the checkbox when the mouse is over it
-
 dict_check = [False] * 10  # List of the state of the checkbox
 
 
@@ -37,11 +32,15 @@ class RectGarage:
         self.type_car = type_car  # Type of the car
 
         # Buttons
-        self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image=pygame.image.load(var.PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
-        self.select_button = Button(x=pos[0] + 190, y=pos[1] + 8, image=image_check_box_1, image_hover=image_check_box_2,
-                                    image_clicked=image_check_box_3, checkbox=True, scale=0.035)  # Button of the writing button
-        self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 4, image=pygame.image.load(var.PATH_IMAGE + '/trash.png'), scale=0.059)  # Button to delete the car
-        self.name_button = Button(x=pos[0] + 10, y=pos[1] + 10, image=pygame.image.load(var.PATH_IMAGE + '/grey.png'), writing_button=True, text=name, scale=6)  # Button to edit the name of the car
+        self.edit_button = Button(pos[0] + 188, pos[1] + 40, pygame.image.load(var.PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
+        self.select_button = Button(pos[0] + 188, pos[1] + 8, pygame.image.load(var.PATH_IMAGE + '/checkbox_1.png'),
+                                    pygame.image.load(var.PATH_IMAGE + '/checkbox_2.png'),
+                                    pygame.image.load(var.PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.07)  # Button of the writing button
+        self.delete_button = Button(pos[0] + 153, pos[1] + 5, pygame.image.load(var.PATH_IMAGE + '/trash_button_1.png'),
+                                    pygame.image.load(var.PATH_IMAGE + '/trash_button_2.png'),
+                                    pygame.image.load(var.PATH_IMAGE + '/trash_button_3.png'),
+                                    scale=0.14)  # Button to delete the car
+        self.name_button = Button(pos[0] + 10, pos[1] + 10, pygame.image.load(var.PATH_IMAGE + '/grey.png'), writing_button=True, text=name, scale=6)  # Button to edit the name of the car
 
         if dict_check[self.id_rect]:
             self.select_button.activated = True
@@ -70,7 +69,6 @@ class RectGarage:
         pygame.draw.rect(var.WINDOW, (0, 0, 0), (self.pos[0], self.pos[1], 225, 75), 2)
 
         self.name_button.check_state()
-
         if self.name_button.just_clicked:
             self.name_button.text = ''  # We reset the name at the beginning
 

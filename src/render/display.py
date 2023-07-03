@@ -1,5 +1,5 @@
 from src.other.utils import text_rec, compute_detection_cone_points  # Import the utils functions
-from src.game.constants import RADIUS_CHECKPOINT, WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, RGB_VALUES  # Import the constants
+from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, RGB_VALUES  # Import the constants
 from src.other.utils import convert_to_grayscale, convert_to_yellow_scale, scale_positions  # Import the utils functions
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
@@ -15,15 +15,15 @@ def edit_background():
     """
     Add elements to the background for the rest of the game
     """
-    # Add a text for the debug_0 mode
-    var.BACKGROUND.blit(var.FONT.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), (1060, 25))  # Add the yes text
+    font = pygame.font.SysFont('Arial', 22, bold=True)  # Create the font
+    var.BACKGROUND.blit(font.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), (1060, 25))  # Add the yes text
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (1280, 120), (1280, 0), 2)  # Line at the right
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), (325, 120), (325, 0), 2)  # Line at the left
 
 
 def show_checkpoints():
     for checkpoint in var.CHECKPOINTS:
-        pygame.draw.circle(var.WINDOW, (255, 0, 0), checkpoint, RADIUS_CHECKPOINT, 1)
+        pygame.draw.circle(var.WINDOW, (255, 0, 0), checkpoint, var.RADIUS_CHECKPOINT, 1)
 
 
 def display_text_ui(caption, pos, font, background_color=(128, 128, 128)):

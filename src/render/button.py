@@ -32,7 +32,9 @@ class Button:
 
             # If the scale is the same for x and y we can use scale instead of scale_x and scale_y
             if scale_x is None:
-                scale_x = scale_y = scale
+                scale_x = scale
+            if scale_y is None:
+                scale_y = scale
 
             self.x = x  # x position of the button
             self.y = y  # y position of the button
@@ -98,6 +100,8 @@ class Button:
                 image = self.image_hover   # Change the image if it's possible
         else:
             self.just_clicked = 0   # The button has not just been clicked
+            if not self.checkbox and not self.writing_button:
+                self.activated = False  # Change the state if it's a simple button
 
         if self.activated and self.image_clicked:
             image = self.image_clicked  # Change the image if it's possible
@@ -107,7 +111,7 @@ class Button:
 
         # Draw text on button if it's a writing button
         if self.writing_button:
-            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 5))
+            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 3))
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 

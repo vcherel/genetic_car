@@ -25,9 +25,9 @@ class Settings:
 
         self.fps_button = Button(self.rect.x + 100, self.rect.y + 20, pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
                                  pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
-                                 pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, variable=var.FPS, text=str(var.FPS), scale_x=0.2, scale_y=1)  # Create the button to change the FPS
-        self.debug_button = Button(self.rect.x + 120, self.rect.y + 77, pygame.image.load(var.PATH_IMAGE + '/checkbox_1.png'), pygame.image.load(var.PATH_IMAGE + '/checkbox_2.png'),
-                                   pygame.image.load(var.PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.03)
+                                 pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, variable=var.FPS, text=str(var.FPS), scale_x=0.5, scale_y=1)  # Create the button to change the FPS
+        self.debug_button = Button(self.rect.x + 120, self.rect.y + 72, pygame.image.load(var.PATH_IMAGE + '/checkbox_1.png'), pygame.image.load(var.PATH_IMAGE + '/checkbox_2.png'),
+                                   pygame.image.load(var.PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.1)
 
     def show(self):
         """

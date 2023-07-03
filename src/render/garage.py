@@ -2,7 +2,6 @@ from src.render.rect_garage import RectGarage, reset_dict_check  # Import the re
 from src.render.button import Button  # Import the button
 import src.other.variables as var  # Import the variable
 from src.game.car import Car  # Import the car
-import os.path  # To get the path of the file
 import pygame  # To use pygame
 
 
@@ -25,7 +24,11 @@ class Garage:
         self.actual_page = None  # Actual page of the garage
         self.reload_page = None  # True if we have to change the page of the garage (for example at the beginning)
         self.time_since_last_delete = None  # Time since the last delete of a car
-        self.trash_button = Button(930, 135, pygame.image.load(os.path.dirname(__file__) + '/../../images/trash.png'), scale=0.075)
+        self.trash_button = Button(930, 135, pygame.image.load(var.PATH_IMAGE + '/trash_button_1.png'),
+                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_2.png'),
+                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_3.png'), scale=0.2)
+        self.next_button = Button(940, 620, pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), scale=0.1)
+        self.previous_button = Button(520, 620, pygame.transform.flip(pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), True, False), scale=0.1)
 
     def __str__(self):
         """
@@ -90,6 +93,20 @@ class Garage:
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
 
             self.reload_page = False  # We don't have to change the page of the garage anymore
+
+
+        # Change of pages
+        if (self.actual_page + 1) * 10 < self.nb_rectangle:  # If we are not at the last page
+            self.next_button.check_state()  # We draw the next button
+            if self.next_button.just_clicked:
+                self.actual_page += 1
+                self.reload_page = True  # We have to change the page of the garage
+
+        if self.actual_page > 0:  # If we are not at the first page
+            self.previous_button.check_state()  # We draw the previous button
+            if self.previous_button.just_clicked:
+                self.actual_page -= 1
+                self.reload_page = True  # We have to change the page of the garage
 
     def update_variables(self):
         """

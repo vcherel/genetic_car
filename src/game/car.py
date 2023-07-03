@@ -1,5 +1,5 @@
 from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points  # To compute the coordinates of the point of the detection cone
-from src.game.constants import RADIUS_CHECKPOINT, WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
+from src.game.constants import WIDTH_SCREEN, HEIGHT_SCREEN  # Constants of the game
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
@@ -86,7 +86,10 @@ class Car:
         Move the car and update its state
         """
         self.turn_played += 1  # Increment the number of turn played by the car
-        self.detect_checkpoint()  # Detect if the car has reached a checkpoint
+        if var.NUM_MAP == 5:
+            self.score += self.speed  # Increment the score of the car
+        else:
+            self.detect_checkpoint()  # Detect if the car has reached a checkpoint
         self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead
@@ -100,8 +103,8 @@ class Car:
         """
         checkpoint_passed = False  # True if the car has passed a checkpoint, False otherwise
         actual_checkpoint = var.CHECKPOINTS[self.next_checkpoint]  # Actual checkpoint to reach
-        if actual_checkpoint[0] - RADIUS_CHECKPOINT < self.pos[0] < actual_checkpoint[0] + RADIUS_CHECKPOINT and\
-                actual_checkpoint[1] - RADIUS_CHECKPOINT < self.pos[1] < actual_checkpoint[1] + RADIUS_CHECKPOINT:
+        if actual_checkpoint[0] - var.RADIUS_CHECKPOINT < self.pos[0] < actual_checkpoint[0] + var.RADIUS_CHECKPOINT and\
+                actual_checkpoint[1] - var.RADIUS_CHECKPOINT < self.pos[1] < actual_checkpoint[1] + var.RADIUS_CHECKPOINT:
             self.score += 1
             self.next_checkpoint += 1
             checkpoint_passed = True
@@ -275,7 +278,7 @@ class Car:
         points = [front_of_car, left, top, right]  # Points of the detection cone for the rect
 
         if self.speed < min_medium_speed:
-            pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (255, 255, 0), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 255, 0), (front_of_car, left, top, right), 1)
 
@@ -287,7 +290,7 @@ class Car:
         points.append(right)
 
         if min_medium_speed < self.speed < min_high_speed:
-            pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (255, 128, 0), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 128, 0), (front_of_car, left, top, right), 1)
 
@@ -298,7 +301,7 @@ class Car:
         points.append(top)
         points.append(right)
         if self.speed > min_high_speed:
-            pygame.draw.polygon(var.WINDOW, (50, 50, 50), (front_of_car, left, top, right), 3)
+            pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 3)
         else:
             pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
 
