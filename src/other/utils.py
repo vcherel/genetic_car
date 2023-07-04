@@ -251,22 +251,25 @@ def scale_positions(x, y, positions, factor):
     new_positions = []
 
     for i, position in enumerate(positions):
-        new_positions.append((x + int(position[0] * factor), y + int(position[1] * factor)))
+        new_positions.append(convert_to_new_window((x + int(position[0] * factor), y + int(position[1] * factor))))
 
     return new_positions
 
 
-def convert_to_new_window(position):
+def convert_to_new_window(x):
     """
     Convert the coordinates of a point from a 1500x700 window to the current window
 
     Args:
-        position (tuple(int, int)) or float: the position or the factor to convert
+        x (tuple(int, int)) or tuple(int, int, int, int) or float: the position or the rect or the factor to convert
 
     Returns:
         tuple(int, int) or float: the converted position or the converted factor
     """
-    if type(position) == float:
-        return position * var.WIDTH_SCREEN * var.HEIGHT_SCREEN / (1500 * 700)
-    else:
-        return int(position[0] * var.WIDTH_SCREEN / 1500), int(position[1] * var.HEIGHT_SCREEN / 700)
+    if type(x) == float:   # If x is a factor
+        return x * var.WIDTH_SCREEN * var.HEIGHT_SCREEN / (1500 * 700)
+    elif len(x) == 2:    # If x is a position
+        return int(x[0] * var.WIDTH_SCREEN / 1500), int(x[1] * var.HEIGHT_SCREEN / 700)
+    else:   # If x is a rect
+        return int(x[0] * var.WIDTH_SCREEN / 1500), int(x[1] * var.HEIGHT_SCREEN / 700), \
+               int(x[2] * var.SCALE_RESIZE_X), int(x[3] * var.SCALE_RESIZE_Y)

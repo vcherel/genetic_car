@@ -16,7 +16,7 @@ class Garage:
         """
         Initialize the garage
         """
-        self.rect = None # Rectangle of the garage
+        self.rect = None  # Rectangle of the garage
         self.nb_rectangle = None  # Number of rectangle in the garage
         self.rectangles = None  # List of the rectangles in the garage
         self.actual_x = None  # Actual x position to write the rectangles
@@ -67,7 +67,7 @@ class Garage:
         """
         # Create rectangles for the garage
         pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)
-        pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), self.rect, 2)
         var.WINDOW.blit(var.LARGE_FONT.render('Voitures sauvegardées', True, (0, 0, 0), (128, 128, 128)), convert_to_new_window((595, 135)))
 
         for rect_garage in self.rectangles:  # For each rectangle in the garage

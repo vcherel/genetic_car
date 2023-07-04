@@ -44,11 +44,8 @@ SCALE_RESIZE_Y = 1  # Scale of the window after resizing on the y-axis
 
 # IMAGES
 RED_CAR_IMAGE = None  # Image of the original car
-RED_CAR_IMAGE_SHOWN = None  # Image of the car shown on the screen (with a changed size)
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
-GREY_CAR_IMAGE_SHOWN = None  # Image of the car in view only mode shown on the screen (with a changed size)
 YELLOW_CAR_IMAGE = None  # Image of the best car
-YELLOW_CAR_IMAGE_SHOWN = None  # Image of the best car shown on the screen (with a changed size)
 BIG_RED_CAR_IMAGE = None
 
 
@@ -72,8 +69,8 @@ BUTTONS = []  # List of the buttons
 TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
 TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  # Text of the medium button
 TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
-TEXT_HEIGHT = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # Text of the height button
-TEXT_WIDTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
+TEXT_HEIGHT = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the height button
+TEXT_WIDTH = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
 
 
 # DEBUG

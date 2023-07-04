@@ -1,5 +1,5 @@
+from src.other.utils import overlapping_rectangles, convert_to_new_window  # Utils functions
 from src.render.dice_menu import save_camera_frame  # To save the camera frame
-from src.other.utils import overlapping_rectangles  # Utils functions
 from src.render.display import draw_circle  # To draw the circles
 import src.other.variables as var  # Variables
 import random  # To generate random numbers
@@ -244,7 +244,7 @@ def capture_dice():
     Returns:
         (dict) : The scores of the dice
     """
-    rect_window = (425, 175, 640, 480)
+    rect_window = pygame.rect.Rect(convert_to_new_window((425, 175, 640, 480)))
 
     # Create a VideoCapture object
     cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
@@ -290,9 +290,10 @@ def capture_dice():
         image_pygame = pygame.surfarray.make_surface(image_rgb)  # Convert the image to a pygame image
         image_turned = pygame.transform.rotate(image_pygame, -90)  # Rotate the image
         image = pygame.transform.flip(image_turned, True, False)  # Flip the image
+        image = pygame.transform.scale(image, (rect_window.width, rect_window.height))  # Resize the image
         var.WINDOW.blit(image, rect_window)  # We display the frame on the window
-        pygame.draw.rect(var.WINDOW, (115, 205, 255), rect_window, 2)  # We draw a rectangle on the window
-        var.WINDOW.blit(var.LARGE_FONT.render("Cliquez n'importe où pour quitter cette fenêtre", True, (45, 230, 64)), (440, 600))  # Text of the selected dice
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_window, 2)  # We draw a rectangle on the window
+        var.WINDOW.blit(var.LARGE_FONT.render("Cliquez n'importe où pour quitter cette fenêtre", True, (255, 0, 255)), convert_to_new_window((440, 600)))  # Text of the selected dice
         pygame.display.flip()  # We update the window
 
         # Detect a click on the window

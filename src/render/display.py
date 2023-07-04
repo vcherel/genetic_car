@@ -85,7 +85,7 @@ def show_car_window(car):
 
     rect = pygame.Rect(350, 125, 700, 550)  # Create the rectangle for the window
     pygame.draw.rect(var.WINDOW, (128, 128, 128), rect, 0)  # Draw the rectangle (inside)
-    pygame.draw.rect(var.WINDOW, (115, 205, 255), rect, 2)  # Draw the rectangle (contour)
+    pygame.draw.rect(var.WINDOW, (1, 1, 1), rect, 2)  # Draw the rectangle (contour)
 
     x, y = rect[0] + 425, rect[1] + 300  # Position of the car
 
@@ -136,8 +136,8 @@ def draw_dice(x, y, color, value, factor=1, black_dots=False):
         black_dots (bool): if the dots are black
     """
 
-    pygame.draw.rect(var.WINDOW, color, (x, y, int(120 * factor), int(120 * factor)), 0)
-    pygame.draw.rect(var.WINDOW, (100, 100, 100), (x, y, int(120 * factor), int(120 * factor)), 3)
+    pygame.draw.rect(var.WINDOW, color, (convert_to_new_window((x, y, int(120 * factor), int(120 * factor)))), 0)
+    pygame.draw.rect(var.WINDOW, (100, 100, 100), (convert_to_new_window((x, y, int(120 * factor), int(120 * factor)))), 3)
 
     if black_dots:  # If the dice is dark_yellow the dots are black
         draw_dots(x, y, value, factor, (0, 0, 0))
@@ -158,7 +158,7 @@ def draw_dots(x, y, nb_dots, factor, color=(255, 255, 255)):
     """
     dot_radius = 10
     dot_padding = 32
-    position_dot = []
+    position_dot = []  # They will correspond to the positions of the dots in the new window
 
     # Calculate the positions of the dots based on the number of dots
     if nb_dots == 1:
@@ -179,4 +179,4 @@ def draw_dots(x, y, nb_dots, factor, color=(255, 255, 255)):
 
     # Draw the dots on the dice
     for dot_pos in position_dot:
-        pygame.draw.circle(var.WINDOW, color, dot_pos, int(dot_radius * factor))
+        pygame.draw.circle(var.WINDOW, color, dot_pos, int(dot_radius * factor * var.SCALE_RESIZE_X))

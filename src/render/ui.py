@@ -68,12 +68,12 @@ def handle_events(cars=None):
     """
     # If we were resizing, and we stop pressing the mouse we resize the window
     if var.RESIZE and not pygame.mouse.get_pressed()[0] and time.time() - var.TIME_RESIZE > 0.05:
+        delete_all_windows()  # Delete all the windows
         var.RESIZE = False  # We indicate that we are not resizing the window anymore
         var.resize_window(var.RESIZE_DIMENSIONS)  # Resize the window
         init()   # Reinitialize the buttons
         SETTINGS.init()  # Reinitialize the settings window
         GARAGE.init()  # Reinitialize the garage window
-
 
     # Pygame events
     for event in pygame.event.get():
@@ -356,8 +356,35 @@ def unpause(from_button=False):
     var.DURATION_PAUSES += time.time() - var.START_TIME_PAUSE  # We add the duration of the pause to the total duration of the pause
 
 
+def delete_all_windows():
+    """
+    To delete all the windows
+    """
+    if var.DISPLAY_CAR_WINDOW:
+        erase_car_window()
+    if var.DISPLAY_GARAGE:
+        delete_garage()
+    if var.DISPLAY_DICE_MENU:
+        DICE_MENU.erase_dice_menu()
+    if var.DISPLAY_SETTINGS:
+        delete_settings()
+
+
 def delete_garage():
+    """
+    To stop showing the garage
+    """
     var.DISPLAY_GARAGE = False
-    garage_button.activated = False
+    garage_button.deactivate()
     GARAGE.erase_garage()
     unpause()
+
+
+def delete_settings():
+    """
+    To stop showing the settings
+    """
+    var.DISPLAY_SETTINGS = False
+    settings_button.deactivate()  # Deactivate the settings button
+    SETTINGS.erase()  # Erase the settings
+    unpause()  # Unpause the game

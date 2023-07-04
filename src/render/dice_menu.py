@@ -1,7 +1,8 @@
+from src.other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
 from src.render.display import draw_detection_cone, draw_dice  # Import the display functions
-from src.render.button import Button  # Import the button class
-from src.game.genetic import Genetic  # Import the genetic class
 from src.game.constants import RGB_VALUES  # Import the constants
+from src.game.genetic import Genetic  # Import the genetic class
+from src.render.button import Button  # Import the button class
 import src.other.variables as var  # Import the variables
 import pygame  # Import pygame module
 
@@ -31,6 +32,8 @@ class DiceMenu:
         self.id_car = None  # Id of the dice
         self.by_camera = None  # True if the dice menu is called by the camera, False if we are modifying the dice
         self.rect = None  # Rectangle of the dice menu
+        self.rect_x = None  # The x coordinate of the rectangle
+        self.rect_y = None  # The y coordinate of the rectangle
         self.writing_buttons = None  # List of the rectangles to write the text
         self.check_button = None  # List of the check buttons
 
@@ -47,7 +50,7 @@ class DiceMenu:
             Button: The dice button
         """
 
-        return Button(self.rect[0] + x + 45, self.rect[1] + y + 140,
+        return Button(self.rect_x + x + 45, self.rect_y + y + 140,
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
                       pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, variable=value,
@@ -69,15 +72,19 @@ class DiceMenu:
 
         self.by_camera = by_camera
         if self.by_camera:
-            self.rect = pygame.rect.Rect(480, 125, 1000, 550)  # From camera
+            self.rect = pygame.rect.Rect(convert_to_new_window((480, 125, 1000, 550)))  # From camera
+            self.rect_x = 480  # The x coordinate of the rectangle before the conversion
+            self.rect_y = 125  # The y coordinate of the rectangle before the conversion
         else:
-            self.rect = pygame.rect.Rect(300, 125, 1000, 550)  # From garage
+            self.rect = pygame.rect.Rect(convert_to_new_window((300, 125, 1000, 550)))  # From garage
+            self.rect_x = 300
+            self.rect_y = 125
 
         self.writing_buttons = [self.dice_button(x1, y1, self.dice_values[0]), self.dice_button(x2, y1, self.dice_values[1]),
                                 self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
                                 self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
 
-        self.check_button = Button(self.rect[0] + 900, self.rect[1] + 460, pygame.image.load(var.PATH_IMAGE + '/check.png'), scale=0.12)
+        self.check_button = Button(self.rect_x + 900, self.rect_y + 460, pygame.image.load(var.PATH_IMAGE + '/check.png'), scale=0.12)
 
     def display_dice_menu(self):
         """
@@ -88,25 +95,25 @@ class DiceMenu:
         """
         # We display the window
         pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)  # Display the background
-        pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)  # Display the border
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), self.rect, 2)  # Display the border
 
-        var.WINDOW.blit(var.TEXT_SLOW, (self.rect[0] + x1 + 30, self.rect[1] + 50))
-        var.WINDOW.blit(var.TEXT_MEDIUM, (self.rect[0] + x2 + 14, self.rect[1] + 50))
-        var.WINDOW.blit(var.TEXT_FAST, (self.rect[0] + x3 + 14, self.rect[1] + 50))
-        var.WINDOW.blit(var.TEXT_HEIGHT, (self.rect[0] + 20, self.rect[1] + 350))
-        var.WINDOW.blit(var.TEXT_WIDTH, (self.rect[0] + 30, self.rect[1] + 160))
+        var.WINDOW.blit(var.TEXT_SLOW, (convert_to_new_window((self.rect_x + x1 + 30, self.rect_y + 50))))
+        var.WINDOW.blit(var.TEXT_MEDIUM, (convert_to_new_window((self.rect_x + x2 + 14, self.rect_y + 50))))
+        var.WINDOW.blit(var.TEXT_FAST, (convert_to_new_window((self.rect_x + x3 + 14, self.rect_y + 50))))
+        var.WINDOW.blit(var.TEXT_HEIGHT, (convert_to_new_window((self.rect_x + 20, self.rect_y + 350))))
+        var.WINDOW.blit(var.TEXT_WIDTH, (convert_to_new_window((self.rect_x + 30, self.rect_y + 160))))
 
-        x, y = self.rect[0] + 675, self.rect[1] + 290
-        var.WINDOW.blit(var.BIG_RED_CAR_IMAGE, (x, y))
-        draw_detection_cone((x + 125, y + 25), self.dice_values)
+        x, y = self.rect_x + 675, self.rect_y + 290
+        var.WINDOW.blit(scale_image(var.BIG_RED_CAR_IMAGE, var.SCALE_RESIZE_X), (convert_to_new_window((x, y))))
+        draw_detection_cone((convert_to_new_window((x + 125, y + 25))), self.dice_values)
 
         # Display the dice
-        draw_dice(x=self.rect[0] + x1, y=self.rect[1] + y1, color=RGB_VALUES[0], value=self.dice_values[0], black_dots=True)
-        draw_dice(x=self.rect[0] + x2, y=self.rect[1] + y1, color=RGB_VALUES[1], value=self.dice_values[1])
-        draw_dice(x=self.rect[0] + x3, y=self.rect[1] + y1, color=RGB_VALUES[2], value=self.dice_values[2])
-        draw_dice(x=self.rect[0] + x1, y=self.rect[1] + y2, color=RGB_VALUES[3], value=self.dice_values[3])
-        draw_dice(x=self.rect[0] + x2, y=self.rect[1] + y2, color=RGB_VALUES[4], value=self.dice_values[4])
-        draw_dice(x=self.rect[0] + x3, y=self.rect[1] + y2, color=RGB_VALUES[5], value=self.dice_values[5])
+        draw_dice(x=self.rect_x + x1, y=self.rect_y + y1, color=RGB_VALUES[0], value=self.dice_values[0], black_dots=True)
+        draw_dice(x=self.rect_x + x2, y=self.rect_y + y1, color=RGB_VALUES[1], value=self.dice_values[1])
+        draw_dice(x=self.rect_x + x3, y=self.rect_y + y1, color=RGB_VALUES[2], value=self.dice_values[2])
+        draw_dice(x=self.rect_x + x1, y=self.rect_y + y2, color=RGB_VALUES[3], value=self.dice_values[3])
+        draw_dice(x=self.rect_x + x2, y=self.rect_y + y2, color=RGB_VALUES[4], value=self.dice_values[4])
+        draw_dice(x=self.rect_x + x3, y=self.rect_y + y2, color=RGB_VALUES[5], value=self.dice_values[5])
 
         # Display the buttons
         for index, writing_button in enumerate(self.writing_buttons):
@@ -117,7 +124,7 @@ class DiceMenu:
         # Display the image of the last frame of the camera
         if self.by_camera:  # If we are modifying dice from the camera
             var.WINDOW.blit(camera_frame, (rect_camera_frame.x, rect_camera_frame.y))
-            pygame.draw.rect(var.WINDOW, (115, 205, 255), rect_camera_frame, 2)
+            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_camera_frame, 2)
 
         # Display the button to validate the value of the dice
         self.check_button.check_state()
@@ -168,6 +175,10 @@ def save_camera_frame(frame):
     rect_camera_frame = camera_frame.get_rect()
     rect_camera_frame.x = 0
     rect_camera_frame.y = 200
+
+    # Resize the camera frame to fit the window
+    rect_camera_frame = pygame.rect.Rect(convert_to_new_window(rect_camera_frame))  # Convert the rectangle to the new window
+    camera_frame = pygame.transform.scale(camera_frame, (rect_camera_frame.width, rect_camera_frame.height))  # Resize the camera frame
 
 
 DICE_MENU = DiceMenu()   # We create the dice menu

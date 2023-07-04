@@ -20,8 +20,7 @@ class Settings:
         """
         Initialize the settings window
         """
-        pos_rect = convert_to_new_window((500, 125))  # Position of the window (converted to the new window
-        self.rect = pygame.Rect(pos_rect[0], pos_rect[1], 500 * var.SCALE_RESIZE_X, 550 * var.SCALE_RESIZE_Y)  # Create the rectangle for the window
+        self.rect = pygame.Rect(convert_to_new_window((500, 125, 500, 550)))  # Create the rectangle for the window
         self.fps_text = var.FONT.render('FPS :', True, (0, 0, 0), (128, 128, 128))  # Text of the fps button
         self.debug_text = var.FONT.render('Debug :', True, (0, 0, 0), (128, 128, 128))  # Text of the debug button
 
@@ -36,7 +35,7 @@ class Settings:
         Display the settings window
         """
         pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)  # Draw the rectangle (inside)
-        pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)  # Draw the rectangle (contour)
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), self.rect, 2)  # Draw the rectangle (contour)
 
 
         var.WINDOW.blit(self.fps_text, convert_to_new_window((540, 152)))
