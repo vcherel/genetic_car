@@ -124,7 +124,10 @@ def play(cars=None):
                 var.NUM_GENERATION -= 1  # We go back to the previous generation
 
                 # We reset the cars
-                cars = [car.reset() for car in var.CARS_LAST_RUN if not car.view_only and not car.best_car]
+                cars = []
+                for car in var.CARS_LAST_RUN:
+                    car.reset()
+                    cars.append(car)
                 play(cars)  # We restart the game with the last run
 
             # We stop the game if all the cars are dead or if the time is over or if we want to change the generation

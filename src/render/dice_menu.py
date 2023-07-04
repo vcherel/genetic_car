@@ -117,7 +117,7 @@ class DiceMenu:
 
         # Display the buttons
         for index, writing_button in enumerate(self.writing_buttons):
-            writing_button.check_state()
+            writing_button.draw()
             if writing_button.just_clicked:  # We erase the value of the dice if the user has clicked on the button
                 self.writing_buttons[index].text = ''
 
@@ -127,7 +127,7 @@ class DiceMenu:
             pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_camera_frame, 2)
 
         # Display the button to validate the value of the dice
-        self.check_button.check_state()
+        self.check_button.draw()
 
         return self.check_button.just_clicked
 

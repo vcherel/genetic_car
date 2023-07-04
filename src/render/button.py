@@ -72,7 +72,7 @@ class Button:
         """
         return f'Button : x = {self.x} ; y = {self.y} ; activated = {self.activated} ; just_clicked = {self.just_clicked} ; time_clicked = {self.time_clicked} ; check_box = {self.checkbox} ; writing_button = {self.writing_button} ; text = {self.text} ; variable = {self.variable} ; name = {self.name}'
 
-    def check_state(self):
+    def draw(self):
         """
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
 

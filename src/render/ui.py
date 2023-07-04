@@ -1,4 +1,5 @@
 from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
+from src.other.utils import convert_to_new_window  # Import the function to convert the coordinates
 from src.other.camera import capture_dice  # Import the function to capture the dice
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
@@ -25,7 +26,7 @@ pause_button = Button()  # Button to pause the game
 play_button = Button()  # Button to start the game
 nb_cars_button = Button()  # Button to change the number of cars
 garage_button = Button()  # Button to open the garage
-dice_button = Button()  # Button to see the dice
+dice_button = Button()  # Button to see the dice with the camera
 map_button = Button()  # Button to change the map
 restart_button = Button()  # Button to restart the game
 settings_button = Button()  # Button to open the settings
@@ -93,7 +94,6 @@ def handle_events(cars=None):
         # If we press return (enter) or backspace (delete) we change the value of the writing button if needed
         elif event.type == pygame.KEYDOWN:
             handle_key_press(event)
-
 
 
 def handle_clicks(cars):
@@ -186,28 +186,39 @@ def handle_key_press(event):
 
 def display(cars=None):
     """
+    Display the ui (buttons, text, menus...)
+
+    Args:
+        cars (list): List of cars in case we want to change the map and init the positions of the cars
+    """
+    display_text()  # Display the different texts
+    display_buttons(cars)  # Display the buttons
+
+
+def display_buttons(cars):
+    """
     Draw the buttons and change the state of the variables
 
     Args:
         cars (list): List of cars in case we want to change the map and init the positions of the cars
     """
-    # Time remaining
-    if not var.PLAY:
-        time_remaining = var.TIME_REMAINING
-    elif var.PAUSE:
-        time_remaining = time_remaining_pause
-    else:
-        time_remaining = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
-    if time_remaining < 0:
-        time_remaining = 0
-    display_text_ui('Temps restant : ' + str(time_remaining) + 's', (1, 20), var.FONT)
+    display_stop_button()  # Display the stop button
+    display_pause_button()  # Display the pause button
+    display_start_button()  # Display the start button
+    display_nb_cars_button()  # Display the nb cars button
+    display_garage_button()  # Display the garage button
+    display_dice_button()  # Display the dice button
+    display_map_button(cars)  # Display the map button
+    display_restart_button()  # Display the restart button
+    display_settings_button()  # Display the settings button
+    display_next_generation_button()  # Display the next generation button
 
-    # Text
-    display_text_ui('Nombre de voitures restantes : ' + str(var.NB_CARS_ALIVE), (1, 50), var.FONT)
-    display_text_ui('Génération : ' + str(var.NUM_GENERATION), (1, 80), var.FONT)
 
-    # Stop button
-    stop_button.check_state()  # Draw the stop button
+def display_stop_button():
+    """
+    Display the stop button used to stop the simulation
+    """
+    stop_button.draw()  # Draw the stop button
     if stop_button.just_clicked:
         if var.PLAY:
             var.PLAY = False  # We stop the simulation
@@ -215,8 +226,11 @@ def display(cars=None):
             delete_garage()
 
 
-    # Pause button
-    var.PAUSE = pause_button.check_state()  # Draw the pause button
+def display_pause_button():
+    """
+    Display the pause button used to pause the simulation
+    """
+    var.PAUSE = pause_button.draw()  # Draw the pause button
     if pause_button.just_clicked:  # Pause button is just clicked
         if var.PAUSE:
             pause(from_button=True)  # We pause the simulation
@@ -224,27 +238,35 @@ def display(cars=None):
             unpause(from_button=True)  # We unpause the simulation
 
 
-    # Start button
-    var.START = play_button.check_state()  # Draw the start button
+def display_start_button():
+    """
+    Display the start button used to start the simulation
+    """
+    var.START = play_button.draw()  # Draw the start button
     if play_button.just_clicked and (var.NB_CARS != 0 or var.GENETICS_FROM_GARAGE):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
         if var.DISPLAY_DICE_MENU:
             DICE_MENU.erase_dice_menu()  # We erase the dice menu
-
     if var.START and var.PAUSE:    # We also resume the simulation if the start button is pressed
         unpause()  # We unpause the simulation
 
 
-    # Nb cars button
-    nb_cars_button.check_state()  # Draw the nb cars button
+def display_nb_cars_button():
+    """
+    Display the nb cars button used to change the number of cars
+    """
+    nb_cars_button.draw()  # Draw the nb cars button
     if nb_cars_button.just_clicked:  # Nb cars button is just clicked
         nb_cars_button.text = ''
 
 
-    # Garage
-    var.DISPLAY_GARAGE = garage_button.check_state()  # Draw the garage button
+def display_garage_button():
+    """
+    Display the garage button used to see what cars are stored in the garage
+    """
+    var.DISPLAY_GARAGE = garage_button.draw()  # Draw the garage button
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
@@ -256,8 +278,11 @@ def display(cars=None):
         GARAGE.display_garage()
 
 
-    # Dice
-    dice_button.check_state()  # Draw the dice button
+def display_dice_button():
+    """
+    Display the dice button used to create a car by filming dice
+    """
+    dice_button.draw()  # Draw the dice button
     if dice_button.just_clicked:   # Dice button is just clicked
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage when the dice button is pressed
@@ -273,15 +298,16 @@ def display(cars=None):
             DICE_MENU.init('dice', scores=capture_dice(), by_camera=True)  # We initialize the variables of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
-
-    # Dice menu
     if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
         if DICE_MENU.display_dice_menu():
             DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
 
 
-    # Map button
-    map_button.check_state()  # Draw the map button
+def display_map_button(cars):
+    """
+    Display the map button used to change the map
+    """
+    map_button.draw()  # Draw the map button
     if map_button.just_clicked:  # Map button is just clicked
         pause()
         var.change_map()  # We change the map
@@ -291,13 +317,19 @@ def display(cars=None):
         unpause()
 
 
-    # Restart button
-    if restart_button.check_state() and var.CARS_LAST_RUN:  # Draw the restart button
+def display_restart_button():
+    """
+    Display the restart button used to restart the last run
+    """
+    if restart_button.draw() and var.CARS_LAST_RUN:  # Draw the restart button
         var.PLAY_LAST_RUN = True  # We play the last run
 
 
-    # Settings button
-    var.DISPLAY_SETTINGS = settings_button.check_state()  # Draw the garage button
+def display_settings_button():
+    """
+    Display the settings button used to change the different settings
+    """
+    var.DISPLAY_SETTINGS = settings_button.draw()  # Draw the garage button
     if settings_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_SETTINGS:
             pause()
@@ -308,18 +340,39 @@ def display(cars=None):
         SETTINGS.show()
 
 
+def display_next_generation_button():
+    """
+    Display the next generation button used to skip to the next generation
+    """
+    next_button.draw()  # Draw the next generation button
+    if next_button.just_clicked:  # Next generation button is just clicked
+        var.CHANGE_GENERATION = True  # We change the generation
+
+
+def display_text():
+    """
+    Display the text of the UI (time remaining, nb cars, generation, FPS)
+    """
+    # Time remaining
+    if not var.PLAY:
+        time_remaining = var.TIME_REMAINING
+    elif var.PAUSE:
+        time_remaining = time_remaining_pause
+    else:
+        time_remaining = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
+    if time_remaining < 0:
+        time_remaining = 0
+    display_text_ui('Temps restant : ' + str(time_remaining) + 's', convert_to_new_window((1, 20)), var.FONT)
+
+    display_text_ui('Nombre de voitures restantes : ' + str(var.NB_CARS_ALIVE), convert_to_new_window((1, 50)), var.FONT)
+    display_text_ui('Génération : ' + str(var.NUM_GENERATION), convert_to_new_window((1, 80)), var.FONT)
+
     # FPS display
     if var.PLAY:
         fps = str(var.ACTUAL_FPS)
     else:
         fps = str(int(var.CLOCK.get_fps()))
-    display_text_ui('FPS : ' + fps, (1, 1), var.SMALL_FONT)
-
-
-    # Next generation button
-    next_button.check_state()  # Draw the next generation button
-    if next_button.just_clicked:  # Next generation button is just clicked
-        var.CHANGE_GENERATION = True  # We change the generation
+    display_text_ui('FPS : ' + fps, convert_to_new_window((1, 1)), var.SMALL_FONT)
 
 
 def pause(from_button=False):

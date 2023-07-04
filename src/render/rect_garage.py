@@ -70,12 +70,12 @@ class RectGarage:
         new_pos = convert_to_new_window(self.pos)
         pygame.draw.rect(var.WINDOW, (0, 0, 0), (new_pos[0], new_pos[1], var.SCALE_RESIZE_X * 225,  var.SCALE_RESIZE_Y * 75), 2)
 
-        self.name_button.check_state()
+        self.name_button.draw()
         if self.name_button.just_clicked:
             self.name_button.text = ''  # We reset the name at the beginning
 
         # Button to select a car
-        if self.select_button.check_state():
+        if self.select_button.draw():
             if not dict_check[self.id_rect]:
                 dict_check[self.id_rect] = True
                 var.GENETICS_FROM_GARAGE.append(self.genetic)
@@ -85,12 +85,12 @@ class RectGarage:
                 var.GENETICS_FROM_GARAGE.remove(self.genetic)
 
         # Button to edit a car
-        if self.edit_button is not None and self.edit_button.check_state():  # We check the state of the button
+        if self.edit_button is not None and self.edit_button.draw():  # We check the state of the button
             DICE_MENU.init(self.type_car, self.genetic.get_list(), self.id_car)  # We initialize the dice variables
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
         # Button to delete a car
-        if self.delete_button.check_state() and pygame.time.get_ticks() - time_since_last_delete > 200:  # We check the state of the button
+        if self.delete_button.draw() and pygame.time.get_ticks() - time_since_last_delete > 200:  # We check the state of the button
 
             # We change the state of the checkbox
             if self.id_rect == 9:

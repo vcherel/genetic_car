@@ -1,3 +1,11 @@
-1 dice Dé_1 5 5 5 5 5 5
-2 dice Dé_2 3 6 3 6 5 4
-1 genetic Génération_1 6 5 4 3 2 1
+6 dice Dé_6 3 4 1 1 1 5
+1 genetic Génération_1 1 1 2 4 1 2
+1 genetic Génération_1 1 1 2 4 1 2
+1 genetic Génération_1 2 3 3 6 6 2
+1 genetic Génération_1 2 3 3 6 6 2
+1 genetic Génération_1 2 2 1 5 4 2
+2 genetic Génération_2 2 2 1 5 4 2
+1 genetic Génération_1 2 2 1 5 4 2
+1 genetic Génération_1 2 2 1 5 4 2
+1 genetic Génération_1 2 2 1 5 4 2
+1 genetic Génération_1 4 4 5 6 2 4

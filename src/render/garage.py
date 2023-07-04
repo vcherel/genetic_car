@@ -75,7 +75,7 @@ class Garage:
                 self.reload_page = True  # We have to change the page of the garage
                 self.time_since_last_delete = pygame.time.get_ticks()  # We reset the time since the last delete of a car (to avoid deleting all in one long click)
 
-        self.trash_button.check_state()  # We draw the trash button
+        self.trash_button.draw()  # We draw the trash button
         if self.trash_button.activated:
             var.MEMORY_CARS = {'dice': [], 'genetic': []}  # We reset the memory of the cars
             self.reload_page = True  # We have to change the page of the garage
@@ -102,13 +102,13 @@ class Garage:
 
         # Change of pages
         if (self.actual_page + 1) * 10 < self.nb_rectangle:  # If we are not at the last page
-            self.next_button.check_state()  # We draw the next button
+            self.next_button.draw()  # We draw the next button
             if self.next_button.just_clicked:
                 self.actual_page += 1
                 self.reload_page = True  # We have to change the page of the garage
 
         if self.actual_page > 0:  # If we are not at the first page
-            self.previous_button.check_state()  # We draw the previous button
+            self.previous_button.draw()  # We draw the previous button
             if self.previous_button.just_clicked:
                 self.actual_page -= 1
                 self.reload_page = True  # We have to change the page of the garage

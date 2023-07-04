@@ -41,11 +41,11 @@ class Settings:
         var.WINDOW.blit(self.fps_text, convert_to_new_window((540, 152)))
         var.WINDOW.blit(self.debug_text, convert_to_new_window((540, 202)))
 
-        self.fps_button.check_state()  # Check the state of the button
+        self.fps_button.draw()  # Check the state of the button
         if self.fps_button.just_clicked:
             self.fps_button.text = ''  # We delete the text of the button
 
-        var.DEBUG = self.debug_button.check_state()  # Check the state of the button
+        var.DEBUG = self.debug_button.draw()  # Check the state of the button
 
     def erase(self):
         """
