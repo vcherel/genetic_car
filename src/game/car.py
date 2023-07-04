@@ -1,4 +1,4 @@
-from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window  # To compute the coordinates of the point of the detection cone
+from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, convert_to_light_grayscale  # To compute the coordinates of the point of the detection cone
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
@@ -56,7 +56,10 @@ class Car:
 
         self.next_checkpoint = 0  # Next checkpoint to reach
         self.score = 0  # Score of the car
+
         self.turn_played = 0  # Number of turn played by the car
+        self.turn_without_checkpoint = 0  # Number of turn played by the car without reaching a checkpoint
+        self.reverse = False  # True if the car is going in the wrong way, False otherwise
 
         self.points_detection_cone = []  # Points of the detection cone if DEBUG is True
 
@@ -94,6 +97,11 @@ class Car:
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead
 
+        # We kill the car if it has not reached a checkpoint for too long (if it's not the waiting room)
+        if var.NUM_MAP != 5 and self.turn_without_checkpoint > 400 and not self.reverse:
+            self.image = convert_to_light_grayscale(self.image)
+            self.reverse = True
+
     def detect_checkpoint(self):
         """
         Detect if the car has reached a checkpoint (or multiple checkpoints)
@@ -107,12 +115,15 @@ class Car:
                 actual_checkpoint[1] - var.RADIUS_CHECKPOINT < self.pos[1] < actual_checkpoint[1] + var.RADIUS_CHECKPOINT:
             self.score += 1
             self.next_checkpoint += 1
+            self.turn_without_checkpoint = -1
             checkpoint_passed = True
             if self.next_checkpoint == len(var.CHECKPOINTS):
                 self.next_checkpoint = 0
 
         if checkpoint_passed:   # If the car has passed a checkpoint, we check if it has passed multiple checkpoints
             self.detect_checkpoint()
+        else:
+            self.turn_without_checkpoint += 1
 
     def change_speed_angle(self):
         """

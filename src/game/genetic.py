@@ -15,9 +15,9 @@ class Genetic:
         Initialization of the genetic algorithm
 
         Args:
-            list_parameters (list(int)): list of the parameters of the genetic algorithm (height_slow, height_medium, height_fast, width_slow, width_medium, width_fast)
+            list_parameters (list(int)): list of the parameters of the genetic algorithm in this order : (height_slow, height_medium, height_fast, width_slow, width_medium, width_fast)
         """
-        if list_parameters is not None:                              # If we have the parameters of the genetic algorithm
+        if list_parameters is not None:        # If we have the parameters of the genetic algorithm
             self.height_slow = list_parameters[0] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going slow
             self.height_medium = list_parameters[1] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going at medium speed
             self.height_fast = list_parameters[2] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going fast
@@ -26,7 +26,7 @@ class Genetic:
             self.width_medium = list_parameters[4] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going at medium speed
             self.width_fast = list_parameters[5] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going fast
 
-        else:                                                   # If we don't have a genetic algorithm to copy
+        else:                                  # If we don't have the parameters we randomize them
             self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
             self.height_medium = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going at medium speed
             self.height_fast = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going fast

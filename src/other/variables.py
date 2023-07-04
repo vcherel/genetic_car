@@ -5,7 +5,6 @@ from src.game.genetic import Genetic  # Import the Genetic class
 import os.path  # To get the path of the file
 import pygame  # To use pygame
 import sys  # To quit the game
-import time  # To use time
 
 """
 This file contains all the variables of the game used in multiple other files
@@ -16,7 +15,7 @@ This file contains all the variables of the game used in multiple other files
 PATH_DATA = os.path.dirname(__file__) + '/../../data'  # Path of the data folder
 PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
 FPS = 60  # FPS of the game
-ACTUAL_FPS = 0  # Actual FPS
+ACTUAL_FPS = 60  # Actual FPS
 
 
 # PYGAME
@@ -84,10 +83,7 @@ SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoint
 # TIME
 CLOCK = pygame.time.Clock()  # Clock of the game
 PAUSE = False  # Pause the game (True or False)
-DURATION_PAUSES = 0  # Duration of all the pauses
-START_TIME_PAUSE = 0  # Time when the game has been paused
-TIME_REMAINING = 0  # Time remaining for the genetic algorithm
-START_TIME = 0  # Start time of the genetic algorithm
+TICKS_REMAINING = 0  # Iterations remaining for the genetic algorithm
 
 
 # GENETIC
@@ -208,13 +204,11 @@ def init_variables(nb_cars, replay=False):
     """
     Initialize the variables of the game (number of car alive, time remaining, start time, ...)
     """
-    global NB_CARS_ALIVE, TIME_REMAINING, START_TIME, DURATION_PAUSES, DISPLAY_GARAGE, NUM_GENERATION, \
-        ACTUAL_ID_MEMORY_GENETIC
+    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, \
+        ACTUAL_ID_MEMORY_GENETIC, TICKS_REMAINING
 
     NB_CARS_ALIVE = nb_cars  # Number of cars alive
-    TIME_REMAINING = TIME_GENERATION  # Time remaining for the generation
-    START_TIME = time.time()  # Start time of the generation
-    DURATION_PAUSES = 0  # We initialize the duration of the pause to 0
+    TICKS_REMAINING = TIME_GENERATION * 60  # Number of iterations remaining for the generation
     DISPLAY_GARAGE = False  # We don't display the garage
     if replay and USE_GENETIC:  # If we replay from the last cars
         NUM_GENERATION += 1

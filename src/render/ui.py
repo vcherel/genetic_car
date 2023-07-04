@@ -1,5 +1,5 @@
+from src.other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
 from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
-from src.other.utils import convert_to_new_window  # Import the function to convert the coordinates
 from src.other.camera import capture_dice  # Import the function to capture the dice
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
@@ -19,7 +19,6 @@ This file contains all the functions to display the UI and check the events
 
 
 use_camera = True  # If we don't use the camera
-time_remaining_pause = 0  # Time remaining when the game has been paused
 
 stop_button = Button()  # Button to stop the game
 pause_button = Button()  # Button to pause the game
@@ -267,6 +266,7 @@ def display_garage_button():
     Display the garage button used to see what cars are stored in the garage
     """
     var.DISPLAY_GARAGE = garage_button.draw()  # Draw the garage button
+    var.RECTS_BLIT_UI.append(garage_button.rect)  # We add the rect of the garage button to the list of rects to blit
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
@@ -283,6 +283,7 @@ def display_dice_button():
     Display the dice button used to create a car by filming dice
     """
     dice_button.draw()  # Draw the dice button
+    var.RECTS_BLIT_UI.append(dice_button.rect)  # We add the rect of the dice button to the list of rects to blit
     if dice_button.just_clicked:   # Dice button is just clicked
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage when the dice button is pressed
@@ -308,6 +309,7 @@ def display_map_button(cars):
     Display the map button used to change the map
     """
     map_button.draw()  # Draw the map button
+    var.RECTS_BLIT_UI.append(map_button.rect)  # We add the rect of the map button to the list of rects to blit
     if map_button.just_clicked:  # Map button is just clicked
         pause()
         var.change_map()  # We change the map
@@ -354,18 +356,9 @@ def display_text():
     Display the text of the UI (time remaining, nb cars, generation, FPS)
     """
     # Time remaining
-    if not var.PLAY:
-        time_remaining = var.TIME_REMAINING
-    elif var.PAUSE:
-        time_remaining = time_remaining_pause
-    else:
-        time_remaining = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We add 1 to the time remaining to avoid the 0
-    if time_remaining < 0:
-        time_remaining = 0
-    display_text_ui('Temps restant : ' + str(time_remaining) + 's', convert_to_new_window((1, 20)), var.FONT)
-
-    display_text_ui('Nombre de voitures restantes : ' + str(var.NB_CARS_ALIVE), convert_to_new_window((1, 50)), var.FONT)
-    display_text_ui('Génération : ' + str(var.NUM_GENERATION), convert_to_new_window((1, 80)), var.FONT)
+    display_text_ui(f'Tours restants : {var.TICKS_REMAINING} ({int(var.TICKS_REMAINING / var.FPS)}s)', convert_to_new_window((1, 20)), var.FONT)
+    display_text_ui(f'Nombre de voitures restantes : {var.NB_CARS_ALIVE}', convert_to_new_window((1, 50)), var.FONT)
+    display_text_ui(f'Génération : {var.NUM_GENERATION}', convert_to_new_window((1, 80)), var.FONT)
 
     # FPS display
     if var.PLAY:
@@ -382,14 +375,9 @@ def pause(from_button=False):
     Args:
         from_button (bool): If the pause is from the pause button
     """
-    global time_remaining_pause
-
     if not from_button:  # If the pause is not from the pause button we have to check the button
         var.PAUSE = True  # We pause the simulation
         pause_button.activated = True  # We check the pause button
-
-    var.START_TIME_PAUSE = time.time()  # We get the time when the pause started
-    time_remaining_pause = int(var.TIME_REMAINING + var.DURATION_PAUSES - (time.time() - var.START_TIME)) + 1  # We save the time remaining before the pause
 
 
 def unpause(from_button=False):
@@ -405,8 +393,6 @@ def unpause(from_button=False):
 
     if var.DISPLAY_CAR_WINDOW:
         erase_car_window()
-
-    var.DURATION_PAUSES += time.time() - var.START_TIME_PAUSE  # We add the duration of the pause to the total duration of the pause
 
 
 def delete_all_windows():
@@ -441,3 +427,12 @@ def delete_settings():
     settings_button.deactivate()  # Deactivate the settings button
     SETTINGS.erase()  # Erase the settings
     unpause()  # Unpause the game
+
+
+def erase():
+    """
+    To erase the UI by erasing the rect saved in var.RECTS_BLIT_UI
+    """
+    rect_blit_ui = union_rect(var.RECTS_BLIT_UI)  # Union of the rects for the blit
+    var.WINDOW.blit(var.BACKGROUND, rect_blit_ui, rect_blit_ui)  # Erase the ui
+    var.RECTS_BLIT_UI = []  # We reset the list of rects to blit

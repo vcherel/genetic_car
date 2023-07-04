@@ -49,7 +49,8 @@ def open_window():
                             x, y = event.pos
                             file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
 
-        ui.handle_events()  # Detect events in the ui and do the corresponding action=
+        ui.handle_events()  # Detect events in the ui and do the corresponding actions
+        ui.erase()  # Erase the buttons
         ui.display()  # Activate the buttons
 
         if SEE_CHECKPOINTS:
@@ -97,12 +98,8 @@ def play(cars=None):
         ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
 
         if not var.PAUSE:  # If the game is not paused
-            # Erase the ui
-            rect_blit_ui = union_rect(var.RECTS_BLIT_UI)  # Union of the rects for the blit
-            var.WINDOW.blit(var.BACKGROUND, rect_blit_ui, rect_blit_ui)  # Erase the ui
-            var.RECTS_BLIT_UI = []  # We reset the list of rects to blit
-
-            # Erase the cars
+            # Erase things
+            ui.erase()
             rect_blit_car = union_rect(var.RECTS_BLIT_CAR)  # Union of the rects for the blit
             var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
             var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
@@ -114,6 +111,8 @@ def play(cars=None):
                 if not car.dead:    # If the car is not dead
                     car.move()         # Move the car
                 car.draw_car()  # Draw the cars
+
+            var.TICKS_REMAINING -= 1  # We decrease the number of iterations remaining
 
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), rect_blit_car, 1)  # Draw the rect for the blit of the cars
 
@@ -131,7 +130,7 @@ def play(cars=None):
                 play(cars)  # We restart the game with the last run
 
             # We stop the game if all the cars are dead or if the time is over or if we want to change the generation
-            if var.NB_CARS_ALIVE == 0 or time.time() - var.START_TIME - var.DURATION_PAUSES > var.TIME_REMAINING or var.CHANGE_GENERATION:
+            if var.NB_CARS_ALIVE == 0 or var.TICKS_REMAINING == 0 or var.CHANGE_GENERATION:
                 pygame.time.wait(1000)  # We wait 1 second
                 var.CHANGE_GENERATION = False  # We stop the change of generation
                 var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
