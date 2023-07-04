@@ -1,5 +1,6 @@
-from src.render.button import Button  # Import the button class
+from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
 from src.render.dice_menu import DICE_MENU  # Import the dice menu
+from src.render.button import Button  # Import the button class
 import src.other.variables as var  # Import the variables
 import pygame  # To play the game
 
@@ -66,7 +67,8 @@ class RectGarage:
             bool: True if the car is deleted, False otherwise
         """
         # We draw the rectangle
-        pygame.draw.rect(var.WINDOW, (0, 0, 0), (self.pos[0], self.pos[1], 225, 75), 2)
+        new_pos = convert_to_new_window(self.pos)
+        pygame.draw.rect(var.WINDOW, (0, 0, 0), (new_pos[0], new_pos[1], var.SCALE_RESIZE_X * 225,  var.SCALE_RESIZE_Y * 75), 2)
 
         self.name_button.check_state()
         if self.name_button.just_clicked:

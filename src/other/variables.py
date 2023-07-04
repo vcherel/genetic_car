@@ -192,8 +192,6 @@ def update_visual_variables():
     """
     global BACKGROUND, START_POSITION, RADIUS_CHECKPOINT, BIG_RED_CAR_IMAGE, SCALE_RESIZE_X, SCALE_RESIZE_Y
 
-    print('resize')
-
     # This background will be shown but will not be used to detect collisions
     BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey

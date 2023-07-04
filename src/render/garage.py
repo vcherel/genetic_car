@@ -1,3 +1,4 @@
+from src.other.utils import convert_to_new_window  # To convert the position if we resize the window
 from src.render.rect_garage import RectGarage, reset_dict_check  # Import the rectangle garage
 from src.render.button import Button  # Import the button
 import src.other.variables as var  # Import the variable
@@ -15,7 +16,7 @@ class Garage:
         """
         Initialize the garage
         """
-        self.rect = pygame.Rect(500, 125, 500, 550)  # Rectangle of the garage
+        self.rect = None # Rectangle of the garage
         self.nb_rectangle = None  # Number of rectangle in the garage
         self.rectangles = None  # List of the rectangles in the garage
         self.actual_x = None  # Actual x position to write the rectangles
@@ -24,11 +25,9 @@ class Garage:
         self.actual_page = None  # Actual page of the garage
         self.reload_page = None  # True if we have to change the page of the garage (for example at the beginning)
         self.time_since_last_delete = None  # Time since the last delete of a car
-        self.trash_button = Button(930, 135, pygame.image.load(var.PATH_IMAGE + '/trash_button_1.png'),
-                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_2.png'),
-                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_3.png'), scale=0.2)
-        self.next_button = Button(940, 620, pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), scale=0.1)
-        self.previous_button = Button(520, 620, pygame.transform.flip(pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), True, False), scale=0.1)
+        self.trash_button = None  # Button to delete all cars
+        self.next_button = None  # Button to go to the next page
+        self.previous_button = None  # Button to go to the previous page
 
     def __str__(self):
         """
@@ -42,10 +41,12 @@ class Garage:
             string += f'\n{rect}'
         return string
 
-    def init_garage(self):
+    def init(self):
         """
         Initialize the garage during the game
         """
+        pos_rect = convert_to_new_window((500, 125))  # Position of the rectangle of the garage
+        self.rect = pygame.Rect(pos_rect[0], pos_rect[1], var.SCALE_RESIZE_X * 500, var.SCALE_RESIZE_Y * 550)  # Rectangle of the garage
         self.nb_rectangle = 0  # Number of rectangle in the garage
         self.rectangles = []  # List of the rectangles in the garage
         self.actual_x = 0  # Actual x position to write the rectangles
@@ -54,7 +55,11 @@ class Garage:
         self.actual_page = 0  # Actual page of the garage
         self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning)
         self.time_since_last_delete = 0  # Time since the last delete of a car
-        self.display_garage()
+        self.trash_button = Button(930, 135, pygame.image.load(var.PATH_IMAGE + '/trash_button_1.png'),
+                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_2.png'),
+                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_3.png'), scale=0.2)
+        self.next_button = Button(940, 620, pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), scale=0.1)
+        self.previous_button = Button(520, 620, pygame.transform.flip(pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), True, False), scale=0.1)
 
     def display_garage(self):
         """
@@ -63,7 +68,7 @@ class Garage:
         # Create rectangles for the garage
         pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)
         pygame.draw.rect(var.WINDOW, (115, 205, 255), self.rect, 2)
-        var.WINDOW.blit(var.LARGE_FONT.render('Voitures sauvegardées', True, (0, 0, 0), (128, 128, 128)), (self.rect[0] + 95, self.rect[1] + 10))
+        var.WINDOW.blit(var.LARGE_FONT.render('Voitures sauvegardées', True, (0, 0, 0), (128, 128, 128)), convert_to_new_window((595, 135)))
 
         for rect_garage in self.rectangles:  # For each rectangle in the garage
             if rect_garage.draw_rect_garage(self.time_since_last_delete):  # If the rectangle is deleted we reset the page of the garage
@@ -126,8 +131,8 @@ class Garage:
         var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
         self.rectangles = []  # We reset the list of the rectangle in the garage
         self.nb_rectangle = 0  # Number of rectangle in the garage
-        self.actual_y = self.rect[1] + 60  # Actual y position to write the rectangles
-        self.actual_x = self.rect[0] + 15  # Actual x position to write the rectangles
+        self.actual_x = 515  # Actual x position to write the rectangles
+        self.actual_y = 185  # Actual y position to write the rectangles
         self.change_y = False  # True if the y position has to change in the next rectangle
 
 

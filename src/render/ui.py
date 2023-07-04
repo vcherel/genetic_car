@@ -71,6 +71,8 @@ def handle_events(cars=None):
         var.RESIZE = False  # We indicate that we are not resizing the window anymore
         var.resize_window(var.RESIZE_DIMENSIONS)  # Resize the window
         init()   # Reinitialize the buttons
+        SETTINGS.init()  # Reinitialize the settings window
+        GARAGE.init()  # Reinitialize the garage window
 
 
     # Pygame events
@@ -246,7 +248,7 @@ def display(cars=None):
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
-            GARAGE.init_garage()
+            GARAGE.init()
         else:
             unpause()
             GARAGE.erase_garage()
