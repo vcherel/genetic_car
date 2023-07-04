@@ -113,7 +113,6 @@ def play(cars=None):
             for car in cars:    # For each car
                 if not car.dead:    # If the car is not dead
                     car.move()         # Move the car
-                    var.RECTS_BLIT_CAR.append(car.rotated_rect)    # Draw the car and add the rect to the list
                 car.draw_car()  # Draw the cars
 
             # pygame.draw.rect(var.WINDOW, (120, 0, 0), rect_blit_car, 1)  # Draw the rect for the blit of the cars
@@ -146,7 +145,7 @@ def play(cars=None):
                 else:
                     play()  # Restart the game
 
-        ui.display()  # Activate the buttons (This is here because we have to do this after erasing the screen and
+        ui.display(cars)  # Activate the buttons (This is here because we have to do this after erasing the screen and
         # we have ton continue to check the buttons even if the game is paused)
 
         pygame.display.flip()  # Update the screen

@@ -256,27 +256,17 @@ def scale_positions(x, y, positions, factor):
     return new_positions
 
 
-def convert_coordinates(position):
+def convert_to_new_window(position):
     """
     Convert the coordinates of a point from a 1500x700 window to the current window
 
     Args:
-        position (tuple(int, int)): the position to convert
+        position (tuple(int, int)) or float: the position or the factor to convert
 
     Returns:
-        tuple(int, int): the converted position
+        tuple(int, int) or float: the converted position or the converted factor
     """
-    return position[0] * var.WIDTH_SCREEN / 1500, position[1] * var.HEIGHT_SCREEN / 700
-
-
-def resize(size):
-    """
-    Resize a value from a 1500x700 window to the current window
-
-    Args:
-        size (int): the size to resize
-
-    Returns:
-        int: the resized size
-    """
-    return int(0.000001 * var.WIDTH_SCREEN * var.HEIGHT_SCREEN * size)
+    if type(position) == float:
+        return position * var.WIDTH_SCREEN * var.HEIGHT_SCREEN / (1500 * 700)
+    else:
+        return int(position[0] * var.WIDTH_SCREEN / 1500), int(position[1] * var.HEIGHT_SCREEN / 700)

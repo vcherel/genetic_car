@@ -1,3 +1,4 @@
+from src.other.utils import convert_to_new_window  # To convert the position of the button
 import src.other.variables as var  # Import the variables
 import os.path  # To get the path of the file
 import pygame  # To use pygame
@@ -35,9 +36,9 @@ class Button:
                 scale_x = scale
             if scale_y is None:
                 scale_y = scale
+            scale_x, scale_y = scale_x * var.SCALE_RESIZE_X, scale_y * var.SCALE_RESIZE_Y  # Scale of the button (converted to the new window)
 
-            self.x = x  # x position of the button
-            self.y = y  # y position of the button
+            self.x, self.y = convert_to_new_window((x, y))  # Position of the button (converted to the new window)
 
             self.image = pygame.transform.scale(image, (int(image.get_width() * scale_x), int(image.get_height() * scale_y)))  # Image of the button
             if image_hover is not None:
@@ -50,7 +51,7 @@ class Button:
                 self.image_clicked = None  # Image of the button when it is clicked
 
             self.rect = self.image.get_rect()  # Rectangle of the button
-            self.rect.topleft = (x, y)  # Position of the button
+            self.rect.topleft = (self.x, self.y)  # Position of the button
             self.checkbox = checkbox   # True if the button is a checkbox, False otherwise
             self.activated = False    # True if the checkbox is checked, False otherwise
             self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been activated ; -1 if the button has just been deactivated
@@ -111,7 +112,7 @@ class Button:
 
         # Draw text on button if it's a writing button
         if self.writing_button:
-            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 3))
+            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 7))
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 

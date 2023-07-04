@@ -1,4 +1,4 @@
-from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points  # To compute the coordinates of the point of the detection cone
+from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window  # To compute the coordinates of the point of the detection cone
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
@@ -49,6 +49,7 @@ class Car:
 
         self.rotated_image = self.image  # Rotated image of the car
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
+        self.rotated_rect_shown = self.image.get_rect()  # Rotated rectangle of the car shown on the screen
 
         self.view_only = view_only  # True if the car is in view only mode, False otherwise
         self.best_car = best_car  # True if the car is the best car, False otherwise
@@ -174,7 +175,7 @@ class Car:
         """
         Detect collision of the car with the walls
         """
-        if self.pos[0] < 0 or self.pos[0] > var.WIDTH_SCREEN or self.pos[1] < 0 or self.pos[1] > var.HEIGHT_SCREEN:
+        if self.pos[0] < 0 or self.pos[0] > 1500 or self.pos[1] < 0 or self.pos[1] > 700:
             self.kill()  # Collision with the wall of the window
 
         car_mask = pygame.mask.from_surface(self.rotated_image)
@@ -234,22 +235,20 @@ class Car:
         """
         Draw the car
         """
-        var.WINDOW.blit(self.rotated_image, self.rotated_rect)  # We display the car
+        image_shown = scale_image(self.rotated_image, var.SCALE_RESIZE_X)  # Scale the image of the car
+        self.rotated_rect_shown = image_shown.get_rect(center=convert_to_new_window(self.pos))  # Rotate the rectangle of the car
+        var.WINDOW.blit(image_shown, self.rotated_rect_shown)  # We display the car
+        var.RECTS_BLIT_CAR.append(self.rotated_rect_shown)    # Draw the car and add the rect to the list
+
         if var.DEBUG and not self.dead:
             self.draw_detection_cone()  # Draw the detection cone of the car
 
-    def erase(self):
-        """
-        Erase the car
-        """
-        var.WINDOW.blit(var.BACKGROUND, self.rotated_rect, self.rotated_rect)  # Erase the car
 
     def reset(self):
         """
         Reset the car
         """
-        self.pos = var.START_POSITION  # Reset the position of the car
-        self.angle = 0  # Reset the angle of the car
+        self.__init__(self.genetic, self.view_only, self.best_car)
 
 
     def draw_detection_cone(self):

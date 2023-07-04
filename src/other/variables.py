@@ -1,5 +1,5 @@
 from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION, USE_GENETIC, START_POSITIONS, CAR_SIZES  # Import the constants
-from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale, convert_coordinates, resize  # Import the utils functions
+from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
 from src.game.genetic import Genetic  # Import the Genetic class
 import os.path  # To get the path of the file
@@ -28,22 +28,28 @@ LARGE_FONT = pygame.font.SysFont('Arial', 30)  # Font of the text
 
 
 # DISPLAY
-WINDOW_SIZE = WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size
-WINDOW = pygame.display.set_mode(WINDOW_SIZE, pygame.RESIZABLE)  # Initialization of the window
-BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
+WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size
+WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Initialization of the window
+BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
 BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to detect collisions)
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
 RESIZE = False  # True if we are resizing the window, False otherwise
 TIME_RESIZE = 0  # Time when we started to resize the window
 RESIZE_DIMENSIONS = None  # Dimensions of the window after resizing
+SCALE_RESIZE_X = 1  # Scale of the window after resizing on the x-axis
+SCALE_RESIZE_Y = 1  # Scale of the window after resizing on the y-axis
+
 
 
 # IMAGES
 RED_CAR_IMAGE = None  # Image of the original car
+RED_CAR_IMAGE_SHOWN = None  # Image of the car shown on the screen (with a changed size)
 GREY_CAR_IMAGE = None  # Image of the car in view only mode
+GREY_CAR_IMAGE_SHOWN = None  # Image of the car in view only mode shown on the screen (with a changed size)
 YELLOW_CAR_IMAGE = None  # Image of the best car
-BIG_RED_CAR_IMAGE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
+YELLOW_CAR_IMAGE_SHOWN = None  # Image of the best car shown on the screen (with a changed size)
+BIG_RED_CAR_IMAGE = None
 
 
 # GAME
@@ -142,7 +148,7 @@ def change_map(first_time=False):
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
     """
-    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE
+    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, BIG_RED_CAR_IMAGE
 
     # If we change map for the first time, we don't change the map
     if not first_time:
@@ -151,17 +157,17 @@ def change_map(first_time=False):
         else:
             NUM_MAP += 1
 
-    # Dimensions of the window
-    """
-    WINDOW RECT :
-    0, 0, 1500, 700
-    RACE RECT :
-    0, 115, 1500, 585
-    """
-    BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
-    BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
-    BACKGROUND_MASK = pygame.mask.from_threshold(BACKGROUND, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
+    START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the cars
+    RADIUS_CHECKPOINT = 600 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
+
+    # We create a background to create the mask of collision, this background has a size of 1500*700
+    background = pygame.Surface((1500, 700))  # Image of the background
+    background.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
+    BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
+
+    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
+    GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
+    YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
 
     update_visual_variables()  # Update the variables used to display things
 
@@ -177,6 +183,30 @@ def change_map(first_time=False):
         for checkpoint in checkpoints:
             a, b = checkpoint.split(' ')
             CHECKPOINTS.append((int(a), int(b)))
+
+
+
+def update_visual_variables():
+    """
+    Update the variables used to display things according to the size of the new window
+    """
+    global BACKGROUND, START_POSITION, RADIUS_CHECKPOINT, BIG_RED_CAR_IMAGE, SCALE_RESIZE_X, SCALE_RESIZE_Y
+
+    print('resize')
+
+    # This background will be shown but will not be used to detect collisions
+    BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
+    BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
+    edit_background()  # Edit the background
+    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))  # Blit the circuit on the background surface
+
+    SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
+    SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
+    BIG_RED_CAR_IMAGE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
+
+    edit_background()  # Edit the background
+    WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
+    pygame.display.flip()  # Update the display
 
 
 def init_variables(nb_cars, replay=False):
@@ -197,24 +227,6 @@ def init_variables(nb_cars, replay=False):
     else:  # If we start a new run
         NUM_GENERATION = 1  # Number of the generation
         ACTUAL_ID_MEMORY_GENETIC += 1  # We increment the id of the memory
-
-
-def update_visual_variables():
-    global BACKGROUND, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, START_POSITION, RADIUS_CHECKPOINT
-
-    BACKGROUND = pygame.Surface(WINDOW_SIZE)  # Image of the background
-    BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
-
-    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
-    GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
-    YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
-
-    START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the car
-    RADIUS_CHECKPOINT = 600 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
-
-    edit_background()  # Edit the background
-    WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
 
 
 def load_variables():

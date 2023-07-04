@@ -69,8 +69,8 @@ def handle_events(cars=None):
     # If we were resizing, and we stop pressing the mouse we resize the window
     if var.RESIZE and not pygame.mouse.get_pressed()[0] and time.time() - var.TIME_RESIZE > 0.05:
         var.RESIZE = False  # We indicate that we are not resizing the window anymore
-        print(var.RESIZE_DIMENSIONS)
         var.resize_window(var.RESIZE_DIMENSIONS)  # Resize the window
+        init()   # Reinitialize the buttons
 
 
     # Pygame events
@@ -182,9 +182,12 @@ def handle_key_press(event):
                 var.FPS = SETTINGS.fps_button.variable
 
 
-def display():
+def display(cars=None):
     """
     Draw the buttons and change the state of the variables
+
+    Args:
+        cars (list): List of cars in case we want to change the map and init the positions of the cars
     """
     # Time remaining
     if not var.PLAY:
@@ -278,7 +281,12 @@ def display():
     # Map button
     map_button.check_state()  # Draw the map button
     if map_button.just_clicked:  # Map button is just clicked
+        pause()
         var.change_map()  # We change the map
+        if cars:
+            for car in cars:
+                car.reset()  # We reset the cars
+        unpause()
 
 
     # Restart button
