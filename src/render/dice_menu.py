@@ -69,13 +69,13 @@ class DiceMenu:
         self.type_car = type_car
         self.dice_values = scores
         self.id_car = id_car
-
         self.by_camera = by_camera
-        if self.by_camera:
+
+        if self.by_camera:  # By camera
             self.rect = pygame.rect.Rect(convert_to_new_window((480, 125, 1000, 550)))  # From camera
             self.rect_x = 480  # The x coordinate of the rectangle before the conversion
             self.rect_y = 125  # The y coordinate of the rectangle before the conversion
-        else:
+        else:    # By garage
             self.rect = pygame.rect.Rect(convert_to_new_window((300, 125, 1000, 550)))  # From garage
             self.rect_x = 300
             self.rect_y = 125
@@ -105,7 +105,7 @@ class DiceMenu:
 
         x, y = self.rect_x + 675, self.rect_y + 290
         var.WINDOW.blit(scale_image(var.BIG_RED_CAR_IMAGE, var.SCALE_RESIZE_X), (convert_to_new_window((x, y))))
-        draw_detection_cone((convert_to_new_window((x + 125, y + 25))), self.dice_values)
+        draw_detection_cone((x + 125, y + 25), self.dice_values)
 
         # Display the dice
         draw_dice(x=self.rect_x + x1, y=self.rect_y + y1, color=RGB_VALUES[0], value=self.dice_values[0], black_dots=True)

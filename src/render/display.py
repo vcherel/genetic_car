@@ -1,6 +1,5 @@
-from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window  # Import the utils functions
+from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
 from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, RGB_VALUES  # Import the constants
-from src.other.utils import convert_to_grayscale, convert_to_yellow_scale, scale_positions  # Import the utils functions
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
 import cv2  # To use OpenCV
@@ -64,6 +63,8 @@ def draw_detection_cone(pos, dice_values, factor=50):
         dice_values (list): list of the dice values for the detection cones [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
         factor (float): factor to multiply the width and height of the detection cone
     """
+    pos = convert_to_new_window(pos)  # Convert the position to the new window
+
     left, top, right = compute_detection_cone_points(90, pos, dice_values[3] * factor, dice_values[0] * factor)
     pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), 5)
 
@@ -83,11 +84,13 @@ def show_car_window(car):
     """
     var.DISPLAY_CAR_WINDOW = True  # Display the car
 
-    rect = pygame.Rect(350, 125, 700, 550)  # Create the rectangle for the window
+    rect = pygame.Rect(convert_to_new_window((350, 125, 700, 550)))  # Create the rectangle for the window
+    rect_x = 350
+    rect_y = 125
     pygame.draw.rect(var.WINDOW, (128, 128, 128), rect, 0)  # Draw the rectangle (inside)
     pygame.draw.rect(var.WINDOW, (1, 1, 1), rect, 2)  # Draw the rectangle (contour)
 
-    x, y = rect[0] + 425, rect[1] + 300  # Position of the car
+    x, y = rect_x + 425, rect_y + 300  # Position of the car
 
     if car.view_only:
         image = convert_to_grayscale(var.BIG_RED_CAR_IMAGE)
@@ -96,21 +99,22 @@ def show_car_window(car):
     else:
         image = var.BIG_RED_CAR_IMAGE
 
-    var.WINDOW.blit(image, (x, y))  # Draw the red car
+    image = scale_image(image, var.SCALE_RESIZE_X)  # Scale the image
+    var.WINDOW.blit(image, convert_to_new_window((x, y)))  # Draw the red car
     draw_detection_cone((x + 125, y + 25), car.genetic.get_list())  # Draw the detection cones
 
-    var.WINDOW.blit(var.TEXT_SLOW, (rect[0] + 90, rect[1] + 150))  # Draw the slow text
-    var.WINDOW.blit(var.TEXT_MEDIUM, (rect[0] + 200, rect[1] + 150))  # Draw the medium text
-    var.WINDOW.blit(var.TEXT_FAST, (rect[0] + 325, rect[1] + 150))  # Draw the fast text
+    var.WINDOW.blit(var.TEXT_SLOW, convert_to_new_window((rect_x + 90, rect_y + 150)))  # Draw the slow text
+    var.WINDOW.blit(var.TEXT_MEDIUM, convert_to_new_window((rect_x + 200, rect_y + 150)))  # Draw the medium text
+    var.WINDOW.blit(var.TEXT_FAST, convert_to_new_window((rect_x + 325, rect_y + 150)))  # Draw the fast text
 
     x1, x2, x3 = 75, 200, 325
     y1, y2 = 225, 350
-    draw_dice(x=rect[0] + x1, y=rect[1] + y1, color=RGB_VALUES[0], value=car.genetic.height_slow // HEIGHT_MULTIPLIER, factor=0.75, black_dots=True)
-    draw_dice(x=rect[0] + x2, y=rect[1] + y1, color=RGB_VALUES[1], value=car.genetic.height_medium // HEIGHT_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect[0] + x3, y=rect[1] + y1, color=RGB_VALUES[2], value=car.genetic.height_fast // HEIGHT_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect[0] + x1, y=rect[1] + y2, color=RGB_VALUES[3], value=car.genetic.width_slow // WIDTH_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect[0] + x2, y=rect[1] + y2, color=RGB_VALUES[4], value=car.genetic.width_medium // WIDTH_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect[0] + x3, y=rect[1] + y2, color=RGB_VALUES[5], value=car.genetic.width_fast // WIDTH_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y1, color=RGB_VALUES[0], value=car.genetic.height_slow // HEIGHT_MULTIPLIER, factor=0.75, black_dots=True)
+    draw_dice(x=rect_x + x2, y=rect_y + y1, color=RGB_VALUES[1], value=car.genetic.height_medium // HEIGHT_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y1, color=RGB_VALUES[2], value=car.genetic.height_fast // HEIGHT_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y2, color=RGB_VALUES[3], value=car.genetic.width_slow // WIDTH_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect_x + x2, y=rect_y + y2, color=RGB_VALUES[4], value=car.genetic.width_medium // WIDTH_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y2, color=RGB_VALUES[5], value=car.genetic.width_fast // WIDTH_MULTIPLIER, factor=0.75)
 
 
 def erase_car_window():
@@ -119,7 +123,7 @@ def erase_car_window():
     """
     var.DISPLAY_CAR_WINDOW = False  # Don't display the car
 
-    rect = pygame.Rect(350, 125, 700, 550)  # Create the rectangle for the window
+    rect = pygame.Rect(convert_to_new_window((350, 125, 700, 550)))  # Create the rectangle for the window
     var.WINDOW.blit(var.BACKGROUND, rect, rect)  # Blit the background on the rectangle
 
 

@@ -147,7 +147,7 @@ def handle_clicks(cars):
     if cars and not var.DISPLAY_SETTINGS and not var.DISPLAY_GARAGE and not var.DISPLAY_DICE_MENU:  # If we click on a car, we display it, we don't want to display a car if we are in a menu
         found = False  # Boolean to know if we found a car
         for car in cars:
-            if not found and car.rotated_rect.collidepoint(pygame.mouse.get_pos()):
+            if not found and car.rotated_rect_shown.collidepoint(pygame.mouse.get_pos()):
                 found = True
                 pause()  # Pause the game
                 show_car_window(car)  # Display the car
