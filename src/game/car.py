@@ -9,13 +9,9 @@ This file contains the class Car used to represent a car in the game. The car is
 """
 
 # Constants
-max_speed = 8  # Maximum speed of the car
 min_speed = 1  # Minimum speed of the car
-min_medium_speed = max_speed / 3
-min_high_speed = max_speed / 3 * 2
-turn_angle = 5  # Angle of rotation of the car
-acceleration = 0.2  # Acceleration of the car
-deceleration = -1  # Deceleration of the car
+min_medium_speed = var.MAX_SPEED / 3
+min_high_speed = var.MAX_SPEED / 3 * 2
 
 
 class Car:
@@ -145,20 +141,20 @@ class Car:
 
         # If there is a wall in front of the car, we decelerate it
         if wall_at_top:
-            self.acceleration = deceleration
+            self.acceleration = var.DECELERATION
         else:
-            self.acceleration = acceleration
+            self.acceleration = var.ACCELERATION
         
         # If there is a wall on the left or on the right of the car, we turn it
         if wall_at_left and wall_at_right:
             if wall_at_left < wall_at_right:
-                self.angle -= turn_angle
+                self.angle -= var.TURN_ANGLE
             else:
-                self.angle += turn_angle
+                self.angle += var.TURN_ANGLE
         elif wall_at_left:
-            self.angle -= turn_angle
+            self.angle -= var.TURN_ANGLE
         elif wall_at_right:
-            self.angle += turn_angle
+            self.angle += var.TURN_ANGLE
 
     def update_pos(self):
         """
@@ -168,8 +164,8 @@ class Car:
         self.speed += self.acceleration  # Update the speed of the car
 
         # Limit the speed of the car (between MIN_SPEED and MAX_SPEED)
-        if self.speed > max_speed:  # If the speed is too high
-            self.speed = max_speed  # Set the speed to the maximum speed
+        if self.speed > var.MAX_SPEED:  # If the speed is too high
+            self.speed = var.MAX_SPEED  # Set the speed to the maximum speed
         elif self.speed < min_speed:  # If the speed is negative
             self.speed = min_speed  # Set the speed to 0
 

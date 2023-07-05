@@ -1,4 +1,3 @@
-from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER   # Constants of the game
 import src.other.variables as var  # Variables of the game
 import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
@@ -50,7 +49,7 @@ def select_best_cars(cars):
         list: list of the best cars
     """
     # Select the best cars using PERCENTAGE_BEST_CARS
-    num_best_cars = int(var.PERCENTAGE_BEST_CARS * len(cars))
+    num_best_cars = int(var.PROPORTION_CARS_KEPT * len(cars))
 
     if num_best_cars == 0:
         sorted_cars = [Car()]  # If there is no best car, we add a random car
@@ -109,9 +108,9 @@ def mutate_one_car(car):
         if random.random() < var.ACTUAL_CROSSOVER_CHANCE:
             # See if it is a width or a height
             if attribute_name.startswith('width'):
-                multiplier = WIDTH_MULTIPLIER
+                multiplier = var.WIDTH_CONE
             else:
-                multiplier = HEIGHT_MULTIPLIER
+                multiplier = var.HEIGHT_CONE
             actual_value = int(getattr(car.genetic, attribute_name) / multiplier)  # Get the actual value of the attribute
             setattr(car.genetic, attribute_name, multiplier * random_attribution(actual_value))
 

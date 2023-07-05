@@ -1,4 +1,4 @@
-from src.game.constants import CHANGE_CHECKPOINTS, SEE_CHECKPOINTS, USE_GENETIC, SEED  # Import the constants
+from src.other.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
 from src.other.analyze_data import analyze_data, show_analysis  # To analyze the data of all the cars
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.render.settings_menu import SETTINGS  # Import the settings
@@ -17,8 +17,9 @@ import time  # To get the time
 """
 This file contains all the functions used to play the game
 """
-if var.TEST_ALL_CARS:  # If we want to test_0 all the cars
-    file = open(var.PATH_DATA + '/test_0', 'a')  # File to write the scores of every possible car if necessary
+
+if var.TEST_ALL_CARS:  # If we want to test all the cars
+    file = open(PATH_DATA + '/test_0', 'a')  # File to write the scores of every possible car if necessary
 
 
 def open_window():
@@ -36,7 +37,7 @@ def open_window():
         ui.erase()  # Erase the buttons
         ui.display()  # Activate the buttons
 
-        if SEE_CHECKPOINTS:
+        if var.SEE_CHECKPOINTS:
             display.show_checkpoints()   # Display the checkpoints
 
         pygame.display.flip()  # Update the screen
@@ -127,7 +128,7 @@ def play_turn(cars):
     var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
     var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
 
-    if SEE_CHECKPOINTS:
+    if var.SEE_CHECKPOINTS:
         display.show_checkpoints()  # Display the checkpoints
 
     for car in cars:  # For each car
@@ -179,11 +180,9 @@ def stop_play(cars):
         for car in cars:
             file.write(f'{car.genetic} {car.score}\n')  # Write the score of the car
         return  # We stop the game
-    elif USE_GENETIC:
+    else:
         cars = apply_genetic(cars)  # Genetic algorithm
         play(cars)  # Restart the game with the new cars
-    else:
-        play()  # Restart the game
 
 
 def update_fps():
@@ -207,11 +206,11 @@ def change_checkpoints():
     Change the checkpoints of the actual map
     """
     # We display the image that explain that we are in the checkpoint mode
-    image_checkpoint = pygame.image.load(var.PATH_IMAGE + '/checkpoint.png')  # Image of the checkpoint
+    image_checkpoint = pygame.image.load(PATH_IMAGE + '/checkpoint.png')  # Image of the checkpoint
     var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
     pygame.display.flip()  # Update the screen
     # We open the file to write the checkpoints
-    with open(var.PATH_DATA + '/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
+    with open(PATH_DATA + '/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
         while 1:
             # We detect the mouse click to write the coordinates in the file
             for event in pygame.event.get():
@@ -248,8 +247,7 @@ if __name__ == '__main__':
     Main program
     """
     try:
-        if SEED:
-            random.seed(SEED)  # Initialize the random seed
+        random.seed(var.SEED)  # Initialize the random seed
         var.load_variables()  # Load the variables
         var.change_map(first_time=True)  # Change the map to the first one
         ui.init()  # Initialize the ui

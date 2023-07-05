@@ -1,22 +1,13 @@
-from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION, USE_GENETIC, START_POSITIONS, CAR_SIZES  # Import the constants
 from src.other.utils import scale_image, change_color, convert_to_new_window  # Import the utils functions
+from src.other.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
 from src.render.display import edit_background  # Import the display functions
 from src.game.genetic import Genetic  # Import the Genetic class
-import os.path  # To get the path of the file
 import pygame  # To use pygame
 import sys  # To quit the game
 
 """
 This file contains all the variables of the game used in multiple other files
 """
-
-
-# OTHER
-PATH_DATA = os.path.dirname(__file__) + '/../../data'  # Path of the data folder
-PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
-FPS = 60  # FPS of the game
-ACTUAL_FPS = 60  # Actual FPS
-
 
 # PYGAME
 pygame.init()  # Pygame initialization
@@ -49,6 +40,7 @@ BIG_RED_CAR_IMAGE = None
 
 
 # GAME
+SEED = 22  # Seed of the game
 NUM_MAP = 0  # Number of the map
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
@@ -63,6 +55,15 @@ NB_CARS = 50  # Number of cars
 CARS_LAST_RUN = []  # Cars of the last run
 
 
+# CHARACTERISTICS CARS
+WIDTH_CONE = 16  # Width multiplier of the cone
+HEIGHT_CONE = 11  # Height multiplier of the cone
+MAX_SPEED = 8  # Maximum speed of the car
+TURN_ANGLE = 5  # Angle of rotation of the car
+ACCELERATION = 0.2  # Acceleration of the car
+DECELERATION = -1  # Deceleration of the car
+
+
 # BUTTONS
 BUTTONS = []  # List of the buttons
 TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
@@ -74,10 +75,14 @@ TEXT_WIDTH = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # 
 
 # DEBUG
 DEBUG = False  # True for debug mode, False for normal mode
+TEST_ALL_CARS = False  # True to test all the cars, False to play the game normally
+SEE_CURSOR = False  # True to see the cursor position and color when clicking
+
+
+# CHECKPOINTS
 CHECKPOINTS = None  # List of checkpoints
 RADIUS_CHECKPOINT = None  # Radius of the checkpoints
-TEST_ALL_CARS = False  # True to test_0 all the cars, False to play the game normally
-SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoints, False otherwise
+SEE_CHECKPOINTS = False  # See the checkpoints
 
 
 # TIME
@@ -89,13 +94,13 @@ FPS_TOO_HIGH = False  # True if the FPS is too high, False otherwise
 
 
 # GENETIC
+TIME_GENERATION = 60  # Time of a generation
 NUM_GENERATION = 1  # Number of the generation
 MUTATION_CHANCE = 0.3  # Chance of mutation
 ACTUAL_MUTATION_CHANCE = None  # Actual chance of mutation
 CROSSOVER_CHANCE = 0.3  # Chance of crossover
 ACTUAL_CROSSOVER_CHANCE = None  # Actual chance of crossover
-PERCENTAGE_BEST_CARS = 0.1  # Percentage used to know how many cars we keep for the next generation
-DECREASE_PERCENTAGE = 0.9  # Percentage used to decrease the mutation and crossover chance
+PROPORTION_CARS_KEPT = 0.1  # Percentage used to know how many cars we keep for the next generation
 
 
 # MENU
@@ -111,6 +116,12 @@ MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars f
 # Format of MEMORY_CARS:   {"dice": [[id, name, Genetic], ...], "genetic": [[id, name, Genetic], ...]}
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
 ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
+
+
+# OTHER
+FPS = 60  # FPS of the game
+ACTUAL_FPS = 60  # Actual FPS
+SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoints, False otherwise
 
 
 
@@ -215,9 +226,8 @@ def init_variables(nb_cars, replay=False):
     DISPLAY_GARAGE = False  # We don't display the garage
     ACTUAL_CROSSOVER_CHANCE = CROSSOVER_CHANCE
     ACTUAL_MUTATION_CHANCE = MUTATION_CHANCE
-    if replay and USE_GENETIC:  # If we replay from the last cars
+    if replay:  # If we replay from the last cars
         NUM_GENERATION += 1
-        update_genetic_variables()  # Update the genetic variables
     else:  # If we start a new run
         NUM_GENERATION = 1  # Number of the generation
         ACTUAL_ID_MEMORY_GENETIC += 1  # We increment the id of the memory
@@ -227,27 +237,33 @@ def load_variables():
     """
     Load the variables of the game (number of the map, number of cars, cars, ...)
     """
-    global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE
+    global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE, TIME_GENERATION, MAX_SPEED, TURN_ANGLE,\
+        ACCELERATION, DECELERATION, MUTATION_CHANCE, CROSSOVER_CHANCE, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, HEIGHT_CONE
 
     # We open the file parameters to read the number of the map and the number of cars
     with open(PATH_DATA + '/parameters', 'r') as file_parameters_read:
-        """
-        Format of the file parameters:
-        num_map
-        nb_cars
-        FPS
-        """
         try:
-            num_map, nb_cars, fps = file_parameters_read.readlines()
+            num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance,\
+                crossover_chance, proportion_car_kept, seed, width_cone, height_cone = file_parameters_read.readlines()
         except ValueError:
             # Sometimes the file parameters is not complete, so we complete it
-            num_map = 0
-            nb_cars = 50
-            fps = 60
+            num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance, \
+                crossover_chance, proportion_car_kept, seed, width_cone, height_cone = 0, 50, 60, 60, 8, 5, 0.2, -1, 0.3, 0.3, 0.1, 22, 16, 11
 
         NUM_MAP = int(num_map)  # Map number
         NB_CARS = int(nb_cars)  # Number of cars
         FPS = int(fps)  # FPS
+        TIME_GENERATION = int(time_generation)  # Time of a generation
+        MAX_SPEED = int(max_speed)  # Max speed of the car
+        TURN_ANGLE = int(turn_angle)  # Angle of the turn of the car
+        ACCELERATION = float(acceleration)  # Acceleration of the car
+        DECELERATION = float(deceleration)  # Deceleration of the car
+        MUTATION_CHANCE = float(mutation_chance)  # Chance of mutation
+        CROSSOVER_CHANCE = float(crossover_chance)  # Chance of crossover
+        PROPORTION_CARS_KEPT = float(proportion_car_kept)  # Proportion of car kept
+        SEED = int(seed)  # Seed of the random
+        WIDTH_CONE = int(width_cone)  # Width of the cone of vision
+        HEIGHT_CONE = int(height_cone)  # Height of the cone of vision
 
 
     with open(PATH_DATA + '/cars', 'r') as file_cars_read:
@@ -278,12 +294,14 @@ def save_variables():
     """
     # We change the variable in the file parameters
     with open(PATH_DATA + '/parameters', 'w') as file_parameters_write:
-        file_parameters_write.write(f'{NUM_MAP}\n{NB_CARS}\n{FPS}')
+        file_parameters_write.write(f'{NUM_MAP}\n{NB_CARS}\n{FPS}\n{TIME_GENERATION}\n{MAX_SPEED}\n{TURN_ANGLE}\n'
+                                    f'{ACCELERATION}\n{DECELERATION}\n{MUTATION_CHANCE}\n{CROSSOVER_CHANCE}\n'
+                                    f'{PROPORTION_CARS_KEPT}\n{SEED}\n{WIDTH_CONE}\n{HEIGHT_CONE}')
 
     with open(PATH_DATA + '/cars', 'w') as file_cars_write:
         for key in MEMORY_CARS.keys():
             for car in MEMORY_CARS.get(key):
-                file_cars_write.write(f'{car[0]} {key} {car[1]} {car[2].height_slow // HEIGHT_MULTIPLIER} {car[2].height_medium // HEIGHT_MULTIPLIER} {car[2].height_fast // HEIGHT_MULTIPLIER} {car[2].width_slow // WIDTH_MULTIPLIER} {car[2].width_medium // WIDTH_MULTIPLIER} {car[2].width_fast // WIDTH_MULTIPLIER}\n')
+                file_cars_write.write(f'{car[0]} {key} {car[1]} {car[2].height_slow // HEIGHT_CONE} {car[2].height_medium // HEIGHT_CONE} {car[2].height_fast // HEIGHT_CONE} {car[2].width_slow // WIDTH_CONE} {car[2].width_medium // WIDTH_CONE} {car[2].width_fast // WIDTH_CONE}\n')
 
 
 def update_car_name(type_car, id_car, name):
@@ -299,14 +317,3 @@ def update_car_name(type_car, id_car, name):
         if car[0] == id_car:
             car[1] = name
             break
-
-
-def update_genetic_variables():
-    """
-    Update the genetic variables of the cars in the memory, it decreases at each round of the game to find the best car
-    at the end
-    """
-    global ACTUAL_MUTATION_CHANCE, ACTUAL_CROSSOVER_CHANCE
-
-    ACTUAL_MUTATION_CHANCE *= DECREASE_PERCENTAGE
-    ACTUAL_CROSSOVER_CHANCE *= DECREASE_PERCENTAGE

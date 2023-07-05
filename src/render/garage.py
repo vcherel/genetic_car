@@ -1,5 +1,6 @@
 from src.other.utils import convert_to_new_window  # To convert the position if we resize the window
 from src.render.rect_garage import RectGarage, reset_dict_check  # Import the rectangle garage
+from src.other.constants import PATH_IMAGE  # To get the path of the image
 from src.render.button import Button  # Import the button
 import src.other.variables as var  # Import the variable
 from src.game.car import Car  # Import the car
@@ -55,11 +56,11 @@ class Garage:
         self.actual_page = 0  # Actual page of the garage
         self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning)
         self.time_since_last_delete = 0  # Time since the last delete of a car
-        self.trash_button = Button(930, 135, pygame.image.load(var.PATH_IMAGE + '/trash_button_1.png'),
-                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_2.png'),
-                                   pygame.image.load(var.PATH_IMAGE + '/trash_button_3.png'), scale=0.2)
-        self.next_button = Button(940, 620, pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), scale=0.1)
-        self.previous_button = Button(520, 620, pygame.transform.flip(pygame.image.load(var.PATH_IMAGE + '/next_page_button.png'), True, False), scale=0.1)
+        self.trash_button = Button(930, 135, pygame.image.load(PATH_IMAGE + '/trash_button_1.png'),
+                                   pygame.image.load(PATH_IMAGE + '/trash_button_2.png'),
+                                   pygame.image.load(PATH_IMAGE + '/trash_button_3.png'), scale=0.2)
+        self.next_button = Button(940, 620, pygame.image.load(PATH_IMAGE + '/next_page_button.png'), scale=0.1)
+        self.previous_button = Button(520, 620, pygame.transform.flip(pygame.image.load(PATH_IMAGE + '/next_page_button.png'), True, False), scale=0.1)
 
     def display_garage(self):
         """

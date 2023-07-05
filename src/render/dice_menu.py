@@ -1,6 +1,6 @@
 from src.other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
 from src.render.display import draw_detection_cone, draw_dice  # Import the display functions
-from src.game.constants import RGB_VALUES  # Import the constants
+from src.other.constants import RGB_VALUES, PATH_IMAGE  # Import the constants
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button class
 import src.other.variables as var  # Import the variables
@@ -17,7 +17,7 @@ x1, x2, x3 = 175, 355, 535  # x coordinates of the dice
 y1, y2 = 120, 315           # y coordinates of the dice
 
 # Camera
-camera_frame = pygame.image.load(var.PATH_IMAGE + '/nothing.png')  # Frame of the camera at the last update
+camera_frame = pygame.image.load(PATH_IMAGE + '/nothing.png')  # Frame of the camera at the last update
 rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 
@@ -51,9 +51,9 @@ class DiceMenu:
         """
 
         return Button(self.rect_x + x + 45, self.rect_y + y + 140,
-                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
-                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
-                      pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, variable=value,
+                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
+                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
+                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, variable=value,
                       text=str(value), name='dice', scale_y=1, scale_x=0.25)
 
     def init(self, type_car, scores, id_car=None, by_camera=False):
@@ -84,7 +84,7 @@ class DiceMenu:
                                 self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
                                 self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
 
-        self.check_button = Button(self.rect_x + 900, self.rect_y + 460, pygame.image.load(var.PATH_IMAGE + '/check.png'), scale=0.12)
+        self.check_button = Button(self.rect_x + 900, self.rect_y + 460, pygame.image.load(PATH_IMAGE + '/check.png'), scale=0.12)
 
     def display_dice_menu(self):
         """

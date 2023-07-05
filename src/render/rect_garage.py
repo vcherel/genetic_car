@@ -1,5 +1,6 @@
 from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
 from src.render.dice_menu import DICE_MENU  # Import the dice menu
+from src.other.constants import PATH_IMAGE  # Import the constants
 from src.render.button import Button  # Import the button class
 import src.other.variables as var  # Import the variables
 import pygame  # To play the game
@@ -33,15 +34,15 @@ class RectGarage:
         self.type_car = type_car  # Type of the car
 
         # Buttons
-        self.edit_button = Button(pos[0] + 188, pos[1] + 40, pygame.image.load(var.PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
-        self.select_button = Button(pos[0] + 188, pos[1] + 8, pygame.image.load(var.PATH_IMAGE + '/checkbox_1.png'),
-                                    pygame.image.load(var.PATH_IMAGE + '/checkbox_2.png'),
-                                    pygame.image.load(var.PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.07)  # Button of the writing button
-        self.delete_button = Button(pos[0] + 153, pos[1] + 5, pygame.image.load(var.PATH_IMAGE + '/trash_button_1.png'),
-                                    pygame.image.load(var.PATH_IMAGE + '/trash_button_2.png'),
-                                    pygame.image.load(var.PATH_IMAGE + '/trash_button_3.png'),
+        self.edit_button = Button(pos[0] + 188, pos[1] + 40, pygame.image.load(PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
+        self.select_button = Button(pos[0] + 188, pos[1] + 8, pygame.image.load(PATH_IMAGE + '/checkbox_1.png'),
+                                    pygame.image.load(PATH_IMAGE + '/checkbox_2.png'),
+                                    pygame.image.load(PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.07)  # Button of the writing button
+        self.delete_button = Button(pos[0] + 153, pos[1] + 5, pygame.image.load(PATH_IMAGE + '/trash_button_1.png'),
+                                    pygame.image.load(PATH_IMAGE + '/trash_button_2.png'),
+                                    pygame.image.load(PATH_IMAGE + '/trash_button_3.png'),
                                     scale=0.14)  # Button to delete the car
-        self.name_button = Button(pos[0] + 10, pos[1] + 10, pygame.image.load(var.PATH_IMAGE + '/grey.png'), writing_button=True, text=name, scale=6)  # Button to edit the name of the car
+        self.name_button = Button(pos[0] + 10, pos[1] + 10, pygame.image.load(PATH_IMAGE + '/grey.png'), writing_button=True, text=name, scale=6)  # Button to edit the name of the car
 
         if dict_check[self.id_rect]:
             self.select_button.activated = True

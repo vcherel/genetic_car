@@ -4,9 +4,9 @@ from src.other.camera import capture_dice  # Import the function to capture the 
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.render.settings_menu import SETTINGS  # Import the settings window
+from src.other.constants import PATH_IMAGE  # Import constants
 from src.render.garage import GARAGE  # Import functions from garage
 from src.game.genetic import Genetic  # Import the genetic class
-from src.game.constants import SEE_CURSOR  # Import constants
 import src.other.variables as var  # Import the variables
 from src.render.button import Button  # Import the button
 import pygame  # To use pygame
@@ -38,25 +38,25 @@ def init():
     global stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button
 
     # Buttons
-    stop_button = Button(1420, 4, pygame.image.load(var.PATH_IMAGE + '/stop_button.png'), scale=0.1)
-    pause_button = Button(1417, 56, pygame.image.load(var.PATH_IMAGE + '/pause_button.png'), checkbox=True, scale=0.11)
-    play_button = Button(1320, 15, pygame.image.load(var.PATH_IMAGE + '/start_button.png'), scale=0.18)
-    nb_cars_button = Button(1095, 58, pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_1.png'),
-                            pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_2.png'),
-                            pygame.image.load(var.PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
+    stop_button = Button(1420, 4, pygame.image.load(PATH_IMAGE + '/stop_button.png'), scale=0.1)
+    pause_button = Button(1417, 56, pygame.image.load(PATH_IMAGE + '/pause_button.png'), checkbox=True, scale=0.11)
+    play_button = Button(1320, 15, pygame.image.load(PATH_IMAGE + '/start_button.png'), scale=0.18)
+    nb_cars_button = Button(1095, 58, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
+                            pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
+                            pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
                             text=str(var.NB_CARS), variable=var.NB_CARS, name='nb_cars')
-    garage_button = Button(350, 30, pygame.image.load(var.PATH_IMAGE + '/garage_button_1.png'),
-                           pygame.image.load(var.PATH_IMAGE + '/garage_button_2.png'),
-                           pygame.image.load(var.PATH_IMAGE + '/garage_button_3.png'), checkbox=True)
-    dice_button = Button(500, 30, pygame.image.load(var.PATH_IMAGE + '/dice_button_1.png'),
-                         pygame.image.load(var.PATH_IMAGE + '/dice_button_2.png'),
-                         pygame.image.load(var.PATH_IMAGE + '/dice_button_3.png'))
-    map_button = Button(780, 30, pygame.image.load(var.PATH_IMAGE + '/map_button_1.png'),
-                        pygame.image.load(var.PATH_IMAGE + '/map_button_2.png'),
-                        pygame.image.load(var.PATH_IMAGE + '/map_button_3.png'))
-    restart_button = Button(1290, 2, pygame.image.load(var.PATH_IMAGE + '/restart_button.png'), scale=0.08)
-    settings_button = Button(285, 5, pygame.image.load(var.PATH_IMAGE + '/settings_button.png'), scale=0.065, checkbox=True)
-    skip_button = Button(1290, 80, pygame.image.load(var.PATH_IMAGE + '/skip_button.png'), scale=0.05)
+    garage_button = Button(350, 30, pygame.image.load(PATH_IMAGE + '/garage_button_1.png'),
+                           pygame.image.load(PATH_IMAGE + '/garage_button_2.png'),
+                           pygame.image.load(PATH_IMAGE + '/garage_button_3.png'), checkbox=True)
+    dice_button = Button(500, 30, pygame.image.load(PATH_IMAGE + '/dice_button_1.png'),
+                         pygame.image.load(PATH_IMAGE + '/dice_button_2.png'),
+                         pygame.image.load(PATH_IMAGE + '/dice_button_3.png'))
+    map_button = Button(780, 30, pygame.image.load(PATH_IMAGE + '/map_button_1.png'),
+                        pygame.image.load(PATH_IMAGE + '/map_button_2.png'),
+                        pygame.image.load(PATH_IMAGE + '/map_button_3.png'))
+    restart_button = Button(1290, 2, pygame.image.load(PATH_IMAGE + '/restart_button.png'), scale=0.08)
+    settings_button = Button(285, 5, pygame.image.load(PATH_IMAGE + '/settings_button.png'), scale=0.065, checkbox=True)
+    skip_button = Button(1290, 80, pygame.image.load(PATH_IMAGE + '/skip_button.png'), scale=0.05)
 
 
 def handle_events(cars=None):
@@ -129,14 +129,57 @@ def handle_clicks(cars):
             SETTINGS.fps_button.deactivate()  # Stop changing the value of the fps
             var.FPS = SETTINGS.fps_button.variable  # Change the value of the fps
 
+        if SETTINGS.timer_button.activated:
+            SETTINGS.timer_button.deactivate()  # Stop changing the value of the timer
+            var.TIME_GENERATION = SETTINGS.timer_button.variable  # Change the value of the timer
+
+        if SETTINGS.max_speed_button.activated:
+            SETTINGS.max_speed_button.deactivate()  # Stop changing the value of the max speed
+            var.MAX_SPEED = SETTINGS.max_speed_button.variable  # Change the value of the max speed
+
+        if SETTINGS.turn_angle_button.activated:
+            SETTINGS.turn_angle_button.deactivate()  # Stop changing the value of the turn angle
+            var.TURN_ANGLE = SETTINGS.turn_angle_button.variable  # Change the value of the turn angle
+
+        if SETTINGS.acceleration_button.activated:
+            SETTINGS.acceleration_button.deactivate()  # Stop changing the value of the acceleration
+            var.ACCELERATION = SETTINGS.acceleration_button.variable  # Change the value of the acceleration
+
+        if SETTINGS.deceleration_button.activated:
+            SETTINGS.deceleration_button.deactivate()  # Stop changing the value of the deceleration
+            var.DECELERATION = SETTINGS.deceleration_button.variable  # Change the value of the deceleration
+
+        if SETTINGS.mutation_button.activated:
+            SETTINGS.mutation_button.deactivate()  # Stop changing the value of the mutation
+            var.CHANCE_MUTATION = SETTINGS.mutation_button.variable  # Change the value of the mutation
+
+        if SETTINGS.crossover_button.activated:
+            SETTINGS.crossover_button.deactivate()  # Stop changing the value of the crossover
+            var.CHANCE_CROSSOVER = SETTINGS.crossover_button.variable  # Change the value of the crossover
+
+        if SETTINGS.proportion_button.activated:
+            SETTINGS.proportion_button.deactivate()  # Stop changing the value of the proportion
+            var.PROPORTION = SETTINGS.proportion_button.variable  # Change the value of the proportion
+
+        if SETTINGS.seed_button.activated:
+            SETTINGS.seed_button.deactivate()  # Stop changing the value of the seed
+            var.SEED = SETTINGS.seed_button.variable  # Change the value of the seed
+
+        if SETTINGS.width_cone_button.activated:
+            SETTINGS.width_cone_button.deactivate()  # Stop changing the value of the width of the cone
+            var.WIDTH_CONE = SETTINGS.width_cone_button.variable  # Change the value of the width of the cone
+
+        if SETTINGS.height_cone_button.activated:
+            SETTINGS.height_cone_button.deactivate()  # Stop changing the value of the height of the cone
+            var.HEIGHT_CONE = SETTINGS.height_cone_button.variable  # Change the value of the height of the cone
+
         # If we click outside the settings, we close it
         if not SETTINGS.rect.collidepoint(pygame.mouse.get_pos()):
             settings_button.deactivate()  # Deactivate the settings button
             SETTINGS.erase()  # Erase the settings
             unpause()  # Unpause the game
 
-
-    if SEE_CURSOR:
+    if var.SEE_CURSOR:
         print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
         print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
@@ -181,6 +224,50 @@ def handle_key_press(event):
         if SETTINGS.fps_button.activated:
             if SETTINGS.fps_button.update(event):
                 var.FPS = SETTINGS.fps_button.variable
+
+        if SETTINGS.timer_button.activated:
+            if SETTINGS.timer_button.update(event):
+                var.TIME_GENERATION = SETTINGS.timer_button.variable
+
+        if SETTINGS.max_speed_button.activated:
+            if SETTINGS.max_speed_button.update(event):
+                var.MAX_SPEED = SETTINGS.max_speed_button.variable
+
+        if SETTINGS.turn_angle_button.activated:
+            if SETTINGS.turn_angle_button.update(event):
+                var.TURN_ANGLE = SETTINGS.turn_angle_button.variable
+
+        if SETTINGS.acceleration_button.activated:
+            if SETTINGS.acceleration_button.update(event):
+                var.ACCELERATION = SETTINGS.acceleration_button.variable
+
+        if SETTINGS.deceleration_button.activated:
+            if SETTINGS.deceleration_button.update(event):
+                var.DECELERATION = SETTINGS.deceleration_button.variable
+
+        if SETTINGS.mutation_button.activated:
+            if SETTINGS.mutation_button.update(event):
+                var.CHANCE_MUTATION = SETTINGS.mutation_button.variable
+
+        if SETTINGS.crossover_button.activated:
+            if SETTINGS.crossover_button.update(event):
+                var.CHANCE_CROSSOVER = SETTINGS.crossover_button.variable
+
+        if SETTINGS.proportion_button.activated:
+            if SETTINGS.proportion_button.update(event):
+                var.PROPORTION_CARS_KEPT = SETTINGS.proportion_button.variable
+
+        if SETTINGS.seed_button.activated:
+            if SETTINGS.seed_button.update(event):
+                var.SEED = SETTINGS.seed_button.variable
+
+        if SETTINGS.width_cone_button.activated:
+            if SETTINGS.width_cone_button.update(event):
+                var.WIDTH_CONE = SETTINGS.width_cone_button.variable
+
+        if SETTINGS.height_cone_button.activated:
+            if SETTINGS.height_cone_button.update(event):
+                var.HEIGHT_CONE = SETTINGS.height_cone_button.variable
 
 
 def display(cars=None):

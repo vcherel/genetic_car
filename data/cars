@@ -1,11 +1,2 @@
-1 genetic Génération_1 2 5 4 6 3 6
-3 genetic Génération_3 4 4 5 6 5 4
-4 genetic Génération_4 4 5 6 6 6 4
-1 genetic Génération_1 2 2 1 5 4 2
-2 genetic Génération_2 5 5 4 5 3 4
-3 genetic Génération_3 6 4 3 4 2 6
-4 genetic Génération_4 3 4 2 1 1 2
-1 genetic Génération_1 2 2 6 5 3 6
-2 genetic Génération_2 2 2 6 5 3 6
-1 genetic Génération_1 3 5 3 5 4 4
-1 genetic Génération_1 2 2 1 5 4 2
+1 dice Dé_1 2 2 6 1 5 2
+1 genetic Génération_1 5 6 6 4 6 1

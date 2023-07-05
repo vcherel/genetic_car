@@ -1,4 +1,4 @@
-from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER  # Constants of the game
+import src.other.variables as var  # Import the variables
 import random  # Used to generate random numbers
 
 """
@@ -18,22 +18,22 @@ class Genetic:
             list_parameters (list(int)): list of the parameters of the genetic algorithm in this order : (height_slow, height_medium, height_fast, width_slow, width_medium, width_fast)
         """
         if list_parameters is not None:        # If we have the parameters of the genetic algorithm
-            self.height_slow = list_parameters[0] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going slow
-            self.height_medium = list_parameters[1] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going at medium speed
-            self.height_fast = list_parameters[2] * HEIGHT_MULTIPLIER  # Height of the detection cone when the car is going fast
+            self.height_slow = list_parameters[0] * var.HEIGHT_CONE  # Height of the detection cone when the car is going slow
+            self.height_medium = list_parameters[1] * var.HEIGHT_CONE  # Height of the detection cone when the car is going at medium speed
+            self.height_fast = list_parameters[2] * var.HEIGHT_CONE  # Height of the detection cone when the car is going fast
 
-            self.width_slow = list_parameters[3] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going slow
-            self.width_medium = list_parameters[4] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going at medium speed
-            self.width_fast = list_parameters[5] * WIDTH_MULTIPLIER  # Width of the detection cone when the car is going fast
+            self.width_slow = list_parameters[3] * var.WIDTH_CONE  # Width of the detection cone when the car is going slow
+            self.width_medium = list_parameters[4] * var.WIDTH_CONE  # Width of the detection cone when the car is going at medium speed
+            self.width_fast = list_parameters[5] * var.WIDTH_CONE  # Width of the detection cone when the car is going fast
 
         else:                                  # If we don't have the parameters we randomize them
-            self.height_slow = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going slow
-            self.height_medium = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going at medium speed
-            self.height_fast = HEIGHT_MULTIPLIER * random.randint(1, 6)  # Height of the detection cone when the car is going fast
+            self.height_slow = var.HEIGHT_CONE * random.randint(1, 6)  # Height of the detection cone when the car is going slow
+            self.height_medium = var.HEIGHT_CONE * random.randint(1, 6)  # Height of the detection cone when the car is going at medium speed
+            self.height_fast = var.HEIGHT_CONE * random.randint(1, 6)  # Height of the detection cone when the car is going fast
 
-            self.width_slow = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going slow
-            self.width_medium = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going at medium speed
-            self.width_fast = WIDTH_MULTIPLIER * random.randint(1, 6)  # Width of the detection cone when the car is going fast
+            self.width_slow = var.WIDTH_CONE * random.randint(1, 6)  # Width of the detection cone when the car is going slow
+            self.width_medium = var.WIDTH_CONE * random.randint(1, 6)  # Width of the detection cone when the car is going at medium speed
+            self.width_fast = var.WIDTH_CONE * random.randint(1, 6)  # Width of the detection cone when the car is going fast
 
     def __str__(self):
         """
@@ -42,8 +42,8 @@ class Genetic:
         Returns:
             str: string representation of the genetic algorithm
         """
-        return f' {self.height_slow // HEIGHT_MULTIPLIER} {self.height_medium // HEIGHT_MULTIPLIER} {self.height_fast // HEIGHT_MULTIPLIER} ' \
-               f'{self.width_slow // WIDTH_MULTIPLIER} {self.width_medium // WIDTH_MULTIPLIER} {self.width_fast // WIDTH_MULTIPLIER}'
+        return f' {self.height_slow // var.HEIGHT_CONE} {self.height_medium // var.HEIGHT_CONE} {self.height_fast // var.HEIGHT_CONE} ' \
+               f'{self.width_slow // var.WIDTH_CONE} {self.width_medium // var.WIDTH_CONE} {self.width_fast // var.WIDTH_CONE}'
 
     def __eq__(self, other):
         """
@@ -75,5 +75,5 @@ class Genetic:
         Returns:
             list: list of the genetic parameters
         """
-        return [self.height_slow // HEIGHT_MULTIPLIER, self.height_medium // HEIGHT_MULTIPLIER, self.height_fast // HEIGHT_MULTIPLIER,
-                self.width_slow // WIDTH_MULTIPLIER, self.width_medium // WIDTH_MULTIPLIER, self.width_fast // WIDTH_MULTIPLIER]
+        return [self.height_slow // var.HEIGHT_CONE, self.height_medium // var.HEIGHT_CONE, self.height_fast // var.HEIGHT_CONE,
+                self.width_slow // var.WIDTH_CONE, self.width_medium // var.WIDTH_CONE, self.width_fast // var.WIDTH_CONE]

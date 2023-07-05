@@ -112,7 +112,7 @@ class Button:
 
         # Draw text on button if it's a writing button
         if self.writing_button:
-            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 7))
+            var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 4))
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 
@@ -151,7 +151,11 @@ class Button:
     def save(self):
         if self.variable is not None:
             try:
-                self.variable = int(self.text)  # Convert the text to an integer
+                # We detect if there is a decimal point
+                if '.' in self.text:
+                    self.variable = float(self.text)
+                else:
+                    self.variable = int(self.text)  # Convert the text to an integer
 
                 if self.name == 'dice':  # If it's a dice value we check if it's between 1 and 6
                     self.variable = max(1, self.variable)

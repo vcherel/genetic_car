@@ -1,3 +1,4 @@
+from src.other.constants import PATH_DATA  # Import the path of the data
 import matplotlib.pyplot as plt  # For plotting the histogram
 import src.other.variables as var  # For the path of the data
 import pygame  # To use pygame
@@ -23,8 +24,8 @@ def analyze_data(file_name_read, file_name_write):
     scores = []  # List of the scores
     best_cars = []  # List of the best cars (cars that completed a lap)
 
-    with open(var.PATH_DATA + file_name_read, 'r') as file_read:
-        with open(var.PATH_DATA + file_name_write, 'w') as file_write:
+    with open(PATH_DATA + file_name_read, 'r') as file_read:
+        with open(PATH_DATA + file_name_write, 'w') as file_write:
             for line in file_read:
                 data = line.split(' ')
                 score = int(data[7][:-1])  # We remove the \n

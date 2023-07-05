@@ -1,5 +1,5 @@
 from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, change_color  # Import the utils functions
-from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, RGB_VALUES  # Import the constants
+from src.other.constants import RGB_VALUES  # Import the constants
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
 import cv2  # To use OpenCV
@@ -111,12 +111,12 @@ def show_car_window(car):
 
     x1, x2, x3 = 75, 200, 325
     y1, y2 = 225, 350
-    draw_dice(x=rect_x + x1, y=rect_y + y1, color=RGB_VALUES[0], value=car.genetic.height_slow // HEIGHT_MULTIPLIER, factor=0.75, black_dots=True)
-    draw_dice(x=rect_x + x2, y=rect_y + y1, color=RGB_VALUES[1], value=car.genetic.height_medium // HEIGHT_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect_x + x3, y=rect_y + y1, color=RGB_VALUES[2], value=car.genetic.height_fast // HEIGHT_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect_x + x1, y=rect_y + y2, color=RGB_VALUES[3], value=car.genetic.width_slow // WIDTH_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect_x + x2, y=rect_y + y2, color=RGB_VALUES[4], value=car.genetic.width_medium // WIDTH_MULTIPLIER, factor=0.75)
-    draw_dice(x=rect_x + x3, y=rect_y + y2, color=RGB_VALUES[5], value=car.genetic.width_fast // WIDTH_MULTIPLIER, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y1, color=RGB_VALUES[0], value=car.genetic.height_slow // var.HEIGHT_CONE, factor=0.75, black_dots=True)
+    draw_dice(x=rect_x + x2, y=rect_y + y1, color=RGB_VALUES[1], value=car.genetic.height_medium // var.HEIGHT_CONE, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y1, color=RGB_VALUES[2], value=car.genetic.height_fast // var.HEIGHT_CONE, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y2, color=RGB_VALUES[3], value=car.genetic.width_slow // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x2, y=rect_y + y2, color=RGB_VALUES[4], value=car.genetic.width_medium // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y2, color=RGB_VALUES[5], value=car.genetic.width_fast // var.WIDTH_CONE, factor=0.75)
 
 
 def erase_car_window():
