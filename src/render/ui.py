@@ -29,13 +29,13 @@ dice_button = Button()  # Button to see the dice with the camera
 map_button = Button()  # Button to change the map
 restart_button = Button()  # Button to restart the game
 settings_button = Button()  # Button to open the settings
-next_button = Button()  # Button to go to the next generation
+skip_button = Button()  # Button to go to the next generation
 
-BUTTONS = [stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, next_button]  # List of all the buttons
+BUTTONS = [stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button]  # List of all the buttons
 
 
 def init():
-    global stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, next_button
+    global stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button
 
     # Buttons
     stop_button = Button(1420, 4, pygame.image.load(var.PATH_IMAGE + '/stop_button.png'), scale=0.1)
@@ -56,7 +56,7 @@ def init():
                         pygame.image.load(var.PATH_IMAGE + '/map_button_3.png'))
     restart_button = Button(1290, 2, pygame.image.load(var.PATH_IMAGE + '/restart_button.png'), scale=0.08)
     settings_button = Button(285, 5, pygame.image.load(var.PATH_IMAGE + '/settings_button.png'), scale=0.065, checkbox=True)
-    next_button = Button(1290, 80, pygame.image.load(var.PATH_IMAGE + '/next_button.png'), scale=0.05)
+    skip_button = Button(1290, 80, pygame.image.load(var.PATH_IMAGE + '/skip_button.png'), scale=0.05)
 
 
 def handle_events(cars=None):
@@ -210,7 +210,7 @@ def display_buttons(cars):
     display_map_button(cars)  # Display the map button
     display_restart_button()  # Display the restart button
     display_settings_button()  # Display the settings button
-    display_next_generation_button()  # Display the next generation button
+    display_skip_button()  # Display the next generation button
 
 
 def display_stop_button():
@@ -342,12 +342,12 @@ def display_settings_button():
         SETTINGS.show()
 
 
-def display_next_generation_button():
+def display_skip_button():
     """
     Display the next generation button used to skip to the next generation
     """
-    next_button.draw()  # Draw the next generation button
-    if next_button.just_clicked:  # Next generation button is just clicked
+    skip_button.draw()  # Draw the next generation button
+    if skip_button.just_clicked:  # Next generation button is just clicked
         var.CHANGE_GENERATION = True  # We change the generation
 
 

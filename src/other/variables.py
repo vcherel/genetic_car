@@ -88,10 +88,12 @@ TICKS_REMAINING = 0  # Iterations remaining for the genetic algorithm
 
 # GENETIC
 NUM_GENERATION = 1  # Number of the generation
-MUTATION_CHANCE = 0.2  # Chance of mutation
-CROSSOVER_CHANCE = 0.2  # Chance of crossover
+MUTATION_CHANCE = 0.3  # Chance of mutation
+ACTUAL_MUTATION_CHANCE = None  # Actual chance of mutation
+CROSSOVER_CHANCE = 0.3  # Chance of crossover
+ACTUAL_CROSSOVER_CHANCE = None  # Actual chance of crossover
 PERCENTAGE_BEST_CARS = 0.1  # Percentage used to know how many cars we keep for the next generation
-DECREASE_PERCENTAGE = 0.75  # Percentage used to decrease the mutation and crossover chance
+DECREASE_PERCENTAGE = 0.9  # Percentage used to decrease the mutation and crossover chance
 
 
 # MENU
@@ -204,12 +206,13 @@ def init_variables(nb_cars, replay=False):
     """
     Initialize the variables of the game (number of car alive, time remaining, start time, ...)
     """
-    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, \
-        ACTUAL_ID_MEMORY_GENETIC, TICKS_REMAINING
+    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, ACTUAL_ID_MEMORY_GENETIC, TICKS_REMAINING, ACTUAL_CROSSOVER_CHANCE, ACTUAL_MUTATION_CHANCE
 
     NB_CARS_ALIVE = nb_cars  # Number of cars alive
     TICKS_REMAINING = TIME_GENERATION * 60  # Number of iterations remaining for the generation
     DISPLAY_GARAGE = False  # We don't display the garage
+    ACTUAL_CROSSOVER_CHANCE = CROSSOVER_CHANCE
+    ACTUAL_MUTATION_CHANCE = MUTATION_CHANCE
     if replay and USE_GENETIC:  # If we replay from the last cars
         NUM_GENERATION += 1
         update_genetic_variables()  # Update the genetic variables
@@ -294,7 +297,7 @@ def update_genetic_variables():
     Update the genetic variables of the cars in the memory, it decreases at each round of the game to find the best car
     at the end
     """
-    global MUTATION_CHANCE, CROSSOVER_CHANCE
+    global ACTUAL_MUTATION_CHANCE, ACTUAL_CROSSOVER_CHANCE
 
-    MUTATION_CHANCE *= DECREASE_PERCENTAGE
-    CROSSOVER_CHANCE *= DECREASE_PERCENTAGE
+    ACTUAL_MUTATION_CHANCE *= DECREASE_PERCENTAGE
+    ACTUAL_CROSSOVER_CHANCE *= DECREASE_PERCENTAGE

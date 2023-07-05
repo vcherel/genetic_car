@@ -55,7 +55,7 @@ def analyze_data(file_name_read, file_name_write):
 
 def show_analysis(scores):
     """
-    Show the analysis of the scores obtained by the function analyze_data
+    Show the analysis of the scores obtained by the function analyze_data, by drawing circles on the background
     """
     scores = [score for score in scores if score < len(var.CHECKPOINTS)]
 

@@ -99,7 +99,8 @@ class Car:
 
         # We kill the car if it has not reached a checkpoint for too long (if it's not the waiting room)
         if var.NUM_MAP != 5 and self.turn_without_checkpoint > 400 and not self.reverse:
-            self.image = convert_to_light_grayscale(self.image)
+            if not self.view_only and not self.best_car:
+                self.image = convert_to_light_grayscale(self.image)  # We convert the image of the car to light grayscale if it's a red car
             self.reverse = True
 
     def detect_checkpoint(self):
