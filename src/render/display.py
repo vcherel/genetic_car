@@ -22,7 +22,7 @@ def edit_background():
 
 def show_checkpoints():
     for checkpoint in var.CHECKPOINTS:
-        pygame.draw.circle(var.WINDOW, (255, 0, 0), checkpoint, var.RADIUS_CHECKPOINT, 1)
+        pygame.draw.circle(var.WINDOW, (255, 0, 0), convert_to_new_window(checkpoint), var.RADIUS_CHECKPOINT * var.SCALE_RESIZE_X, 1)
 
 
 def display_text_ui(caption, pos, font, background_color=(128, 128, 128)):
@@ -54,24 +54,23 @@ def draw_circle(circle, image):
     cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
 
 
-def draw_detection_cone(pos, dice_values, factor=50):
+def draw_detection_cone(pos, dice_values):
     """
     Draw the detection cones for a car
 
     Args:
         pos (int, int): position of the car
         dice_values (list): list of the dice values for the detection cones [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
-        factor (float): factor to multiply the width and height of the detection cone
     """
     pos = convert_to_new_window(pos)  # Convert the position to the new window
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[3] * factor, dice_values[0] * factor)
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[3], dice_values[0])
     pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), 5)
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[4] * factor, dice_values[1] * factor)
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[4], dice_values[1])
     pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), 5)
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[5] * factor, dice_values[2] * factor)
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[5], dice_values[2])
     pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), 5)
 
 

@@ -1,10 +1,10 @@
 from src.other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
 from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
 from src.other.camera import capture_dice  # Import the function to capture the dice
+from src.other.constants import PATH_IMAGE, START_POSITIONS  # Import constants
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.render.settings_menu import SETTINGS  # Import the settings window
-from src.other.constants import PATH_IMAGE  # Import constants
 from src.render.garage import GARAGE  # Import functions from garage
 from src.game.genetic import Genetic  # Import the genetic class
 import src.other.variables as var  # Import the variables
@@ -329,7 +329,7 @@ def display_start_button():
     Display the start button used to start the simulation
     """
     var.START = play_button.draw()  # Draw the start button
-    if play_button.just_clicked and (var.NB_CARS != 0 or var.GENETICS_FROM_GARAGE):
+    if play_button.just_clicked and (var.NB_CARS != 0 or var.CARS_FROM_GARAGE):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
@@ -380,7 +380,7 @@ def display_dice_button():
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic()])  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic(), [0] * len(START_POSITIONS)])  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
             DICE_MENU.init('dice', scores=capture_dice(), by_camera=True)  # We initialize the variables of the dice
@@ -453,7 +453,7 @@ def display_text():
         fps = str(var.ACTUAL_FPS)
     else:
         fps = str(int(var.CLOCK.get_fps()))
-    display_text_ui('FPS : ' + fps, convert_to_new_window((1, 1)), var.SMALL_FONT)
+    display_text_ui('FPS : ' + fps, convert_to_new_window((1, 1)), var.VERY_SMALL_FONT)
 
 
 def pause(from_button=False):

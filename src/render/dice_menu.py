@@ -1,6 +1,6 @@
+from src.other.constants import RGB_VALUES, PATH_IMAGE, START_POSITIONS  # Import the constants
 from src.other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
 from src.render.display import draw_detection_cone, draw_dice  # Import the display functions
-from src.other.constants import RGB_VALUES, PATH_IMAGE  # Import the constants
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button class
 import src.other.variables as var  # Import the variables
@@ -140,7 +140,7 @@ class DiceMenu:
 
         if self.by_camera:
             var.WINDOW.blit(var.BACKGROUND, rect_camera_frame, rect_camera_frame)  # We erase the dice menu
-            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic(self.dice_values)])  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic(self.dice_values), [0] * len(START_POSITIONS)])  # We add the dice to the memory
             var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
 
     def save_values(self, index, writing_button):

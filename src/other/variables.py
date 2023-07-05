@@ -12,8 +12,9 @@ This file contains all the variables of the game used in multiple other files
 # PYGAME
 pygame.init()  # Pygame initialization
 pygame.display.set_caption('Algorithme génétique')  # Window title
+VERY_SMALL_FONT = pygame.font.SysFont('Arial', 10)  # Font of the text
+SMALL_FONT = pygame.font.SysFont('Arial', 17)  # Font of the text
 FONT = pygame.font.SysFont('Arial', 20)  # Font of the text
-SMALL_FONT = pygame.font.SysFont('Arial', 10)  # Font of the text
 LARGE_FONT = pygame.font.SysFont('Arial', 30)  # Font of the text
 
 
@@ -111,9 +112,9 @@ DISPLAY_SETTINGS = False  # True if we are displaying the settings
 
 
 # MEMORY
-GENETICS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
+CARS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
 MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, genetic are cars from the genetic algorithm
-# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic], ...], "genetic": [[id, name, Genetic], ...]}
+# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic, score], ...], "genetic": [[id, name, Genetic, score], ...]}
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
 ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
@@ -282,8 +283,9 @@ def load_variables():
             name = line[2]  # Name of the car
 
             genetic = Genetic([int(line[i]) for i in range(3, 9)])  # Genetic of the car
+            score = [int(line[i]) for i in range(9, 9 + len(START_POSITIONS))]  # Score of the car
 
-            MEMORY_CARS.get(type_car).append([id_car, name, genetic])  # We add the car to the memory
+            MEMORY_CARS.get(type_car).append([id_car, name, genetic, score])  # We add the car to the memory
             if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                 ACTUAL_ID_MEMORY_DICE = id_car + 1
 
@@ -301,7 +303,15 @@ def save_variables():
     with open(PATH_DATA + '/cars', 'w') as file_cars_write:
         for key in MEMORY_CARS.keys():
             for car in MEMORY_CARS.get(key):
-                file_cars_write.write(f'{car[0]} {key} {car[1]} {car[2].height_slow // HEIGHT_CONE} {car[2].height_medium // HEIGHT_CONE} {car[2].height_fast // HEIGHT_CONE} {car[2].width_slow // WIDTH_CONE} {car[2].width_medium // WIDTH_CONE} {car[2].width_fast // WIDTH_CONE}\n')
+                str_to_write = f'{car[0]} {key} {car[1]} {car[2].height_slow // HEIGHT_CONE}' \
+                               f' {car[2].height_medium // HEIGHT_CONE} {car[2].height_fast // HEIGHT_CONE}' \
+                               f' {car[2].width_slow // WIDTH_CONE} {car[2].width_medium // WIDTH_CONE}' \
+                               f' {car[2].width_fast // WIDTH_CONE}'
+
+                for score in car[3]:
+                    str_to_write += f' {int(score)}'
+                str_to_write += '\n'
+                file_cars_write.write(str_to_write)
 
 
 def update_car_name(type_car, id_car, name):

@@ -43,9 +43,7 @@ def open_window():
         pygame.display.flip()  # Update the screen
 
         if var.START:   # When the game starts
-            play()  # Play the game
-
-        var.CLOCK.tick(var.FPS)  # Limit FPS
+            play()  # Play the game to begin
 
 
 def play(cars=None):
@@ -66,7 +64,7 @@ def play(cars=None):
 
             # If we want to restart the last_run
             if var.PLAY_LAST_RUN:
-                replay()  # Replay the last run
+                replay_last_run()  # Replay the last run
 
             # We stop the game if all the cars are dead or if the time is over or if we want to change the generation
             if var.NB_CARS_ALIVE == 0 or var.TICKS_REMAINING == 0 or var.CHANGE_GENERATION:
@@ -93,7 +91,7 @@ def init_play(cars):
     Returns:
         list: list of cars
     """
-    if cars is None:  # If it is the first time we play
+    if not cars:  # If it is the first time we play (or if we were watching to cars from the garage only)
         # We add the cars without repetition
         cars = []  # List of cars
         for i in range(var.NB_CARS):
@@ -141,7 +139,7 @@ def play_turn(cars):
     # pygame.draw.rect(var.WINDOW, (120, 0, 0), rect_blit_car, 1)  # Draw the rect for the blit of the cars
 
 
-def replay():
+def replay_last_run():
     """
     If we want to replay the last run
     """
@@ -165,6 +163,7 @@ def stop_play(cars):
     Args:
         cars (list): list of cars
     """
+
     time_before = time.time()  # We get the time before the genetic algorithm
     while time.time() - time_before < 1:  # We wait 1 second
         ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
@@ -237,7 +236,7 @@ def run_all_cars():
                             genetic = Genetic([height_slow, height_medium, height_fast, width_slow, width_medium, width_fast])
                             tab_cars.append(Car(genetic))
                             if len(tab_cars) == 15:
-                                play(tab_cars)
+                                play(tab_cars)  # We play the game to test the cars
                                 tab_cars = []
 
 

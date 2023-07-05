@@ -22,17 +22,17 @@ def apply_genetic(cars):
     cars = sorted(cars, key=lambda c: c.score, reverse=True)  # Sort the cars by score
 
     if cars:
-        best_genetic = cars[0].genetic  # We get the best car
+        best_car = cars[0]  # We get the best car
     else:
-        best_genetic = None
+        best_car = None
 
     cars = select_best_cars(cars)  # Select the best cars
     cars = mutate(cars)  # Mutate the cars
     cars = crossover(cars)  # Crossover the cars
 
-    if best_genetic:
-        var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_genetic])  # Add the best car to the memory
-        cars.append(Car(best_genetic, best_car=True))  # We add the best car (at the end in order to see it)
+    if best_car:
+        var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic, best_car.best_scores])  # Add the best car to the memory
+        cars.append(Car(best_car.genetic, best_car=True))  # We add the best car (at the end in order to see it)
 
     return cars
 

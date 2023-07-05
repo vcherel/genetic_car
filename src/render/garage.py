@@ -3,7 +3,6 @@ from src.render.rect_garage import RectGarage, reset_dict_check  # Import the re
 from src.other.constants import PATH_IMAGE  # To get the path of the image
 from src.render.button import Button  # Import the button
 import src.other.variables as var  # Import the variable
-from src.game.car import Car  # Import the car
 import pygame  # To use pygame
 
 
@@ -89,11 +88,11 @@ class Garage:
 
             id_rect = 0  # The number to identify the id of the rectangle
             for key in var.MEMORY_CARS.keys():
-                for car in var.MEMORY_CARS.get(key):
+                for memory_car in var.MEMORY_CARS.get(key):
                     # If the rectangle is in the good page
                     if 10 * self.actual_page <= self.nb_rectangle < 10 * (self.actual_page + 1):
-                        self.rectangles.append(RectGarage(id_car=car[0], name=car[1], type_car=key, genetic=car[2],
-                                                          id_rect=id_rect, pos=(self.actual_x, self.actual_y)))  # We create the rectangles
+                        self.rectangles.append(RectGarage(id_car=memory_car[0], name=memory_car[1], type_car=key, genetic=memory_car[2],
+                                                          id_rect=id_rect, pos=(self.actual_x, self.actual_y), scores=memory_car[3]))  # We create the rectangles
                         id_rect += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
@@ -129,7 +128,7 @@ class Garage:
         """
         Reset the variables
         """
-        var.GENETICS_FROM_GARAGE = []  # We reset the list of the cars from the garage
+        var.CARS_FROM_GARAGE = []  # We reset the list of the cars from the garage
         self.rectangles = []  # We reset the list of the rectangle in the garage
         self.nb_rectangle = 0  # Number of rectangle in the garage
         self.actual_x = 515  # Actual x position to write the rectangles
@@ -151,9 +150,10 @@ def add_garage_cars(cars):
     """
     index = 0
 
-    if var.GENETICS_FROM_GARAGE:  # If we have a car from the garage
-        for gen in var.GENETICS_FROM_GARAGE:
-            cars.append(Car(gen, view_only=True))  # Add cars from the garage to the list
+    if var.CARS_FROM_GARAGE:  # If we have a car from the garage
+        for car in var.CARS_FROM_GARAGE:
+            car.reset()
+            cars.append(car)  # Add cars from the garage to the list
             index += 1
     return cars
 

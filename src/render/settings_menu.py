@@ -198,11 +198,11 @@ class Settings:
                                              scale=0.1)
 
         # Cone section
-        self.width_cone_button = Button(x2 + 150, y2[9] - 3, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
+        self.width_cone_button = Button(x2 + 160, y2[9] - 3, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
                                         pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
                                         pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
                                         variable=var.WIDTH_CONE, text=str(var.WIDTH_CONE), scale_x=0.5, scale_y=1)
-        self.height_cone_button = Button(x2 + 150, y2[10] - 3, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
+        self.height_cone_button = Button(x2 + 160, y2[10] - 3, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
                                          variable=var.HEIGHT_CONE, text=str(var.HEIGHT_CONE), scale_x=0.5, scale_y=1)
@@ -237,7 +237,7 @@ class Settings:
         pygame.draw.rect(var.WINDOW, (1, 1, 1), pygame.rect.Rect(convert_to_new_window((450, 388, 274, 278))), 2)  # Car section
         pygame.draw.rect(var.WINDOW, (1, 1, 1), pygame.rect.Rect(convert_to_new_window((740, 140, 316, 186))), 2)  # Genetic section
         pygame.draw.rect(var.WINDOW, (1, 1, 1), pygame.rect.Rect(convert_to_new_window((740, 337, 316, 185))), 2)  # Other section
-        pygame.draw.rect(var.WINDOW, (1, 1, 1), pygame.rect.Rect(convert_to_new_window((758, 532, 248, 135))), 2)  # Cone section
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), pygame.rect.Rect(convert_to_new_window((758, 530, 280, 140))), 2)  # Cone section
 
     def erase(self):
         """
@@ -268,7 +268,7 @@ def show_texts():
     var.WINDOW.blit(see_cursor_text, convert_to_new_window((x2 + 10, y2[6])))
     var.WINDOW.blit(see_checkpoints_text, convert_to_new_window((x2 + 10, y2[7])))
 
-    var.WINDOW.blit(cone_text, convert_to_new_window((x2 + 80, y2[8])))
+    var.WINDOW.blit(cone_text, convert_to_new_window((x2 + 85, y2[8])))
     var.WINDOW.blit(width_cone_text, convert_to_new_window((x2 + 50, y2[9])))
     var.WINDOW.blit(height_cone_text, convert_to_new_window((x2 + 50, y2[10])))
 

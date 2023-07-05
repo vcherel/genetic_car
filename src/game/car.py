@@ -1,4 +1,5 @@
 from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color  # To compute the coordinates of the point of the detection cone
+from src.other.constants import START_POSITIONS  # Start positions of the cars
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
@@ -15,7 +16,7 @@ min_high_speed = var.MAX_SPEED / 3 * 2
 
 
 class Car:
-    def __init__(self, genetic=None, view_only=False, best_car=False):
+    def __init__(self, genetic=None, best_scores=None, view_only=False, best_car=False):
         """
         Initialization of the car
 
@@ -52,6 +53,11 @@ class Car:
 
         self.next_checkpoint = 0  # Next checkpoint to reach
         self.score = 0  # Score of the car
+
+        if best_scores:
+            self.best_scores = best_scores
+        else:
+            self.best_scores = [0] * len(START_POSITIONS)  # Best scores of the car
 
         self.turn_played = 0  # Number of turn played by the car
         self.turn_without_checkpoint = 0  # Number of turn played by the car without reaching a checkpoint
@@ -98,6 +104,10 @@ class Car:
             if not self.view_only and not self.best_car:
                 self.image = change_color(self.image, 'light_gray')  # We convert the image of the car to light grayscale if it's a red car
             self.reverse = True
+
+        # We update the best scores of the car
+        if self.score > self.best_scores[var.NUM_MAP]:
+            self.best_scores[var.NUM_MAP] = self.score
 
     def detect_checkpoint(self):
         """
@@ -256,7 +266,7 @@ class Car:
         """
         Reset the car
         """
-        self.__init__(self.genetic, self.view_only, self.best_car)
+        self.__init__(self.genetic, self.best_scores, self.view_only, self.best_car)
 
 
     def draw_detection_cone(self):
