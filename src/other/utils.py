@@ -136,19 +136,17 @@ def overlapping_rectangles(rect1, rect2, area_threshold=0.5):
     return intersection_area > area_threshold * min(area1, area2)
 
 
-def convert_to_grayscale(image):
+def change_color(image, str_color):
     """
-    Convert an image to grayscale
+    Change the color of an image
 
     Args:
-        image (pygame.surface.Surface): the image to convert
-
-    Returns:
-        grayscale_image (pygame.surface.Surface): the grayscale image
+        image (pygame.surface.Surface): the image to change
+        str_color (str): the color to apply (gray, light_gray, yellow)
     """
     # Create a new surface with the same dimensions and transparency settings as the original image
-    grayscale_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
-    grayscale_image.convert_alpha()
+    new_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
+    new_image.convert_alpha()
 
     # Iterate over each pixel in the original image
     for x in range(image.get_width()):
@@ -158,79 +156,21 @@ def convert_to_grayscale(image):
 
             # Check if the pixel is transparent
             if color.a != 0:
-                # Calculate the grayscale value using the average of the RGB components
-                gray_value = sum(color[:3]) // 3
+                average_value = sum(color[:3]) // 3
+                r, g, b = 0, 0, 0
+                if str_color == 'gray':
+                    r, g, b = average_value, average_value, average_value
+                elif str_color == 'light_gray':
+                    light_gray_value = min(average_value + 75, 255)
+                    r, g, b = light_gray_value, light_gray_value, light_gray_value
+                elif str_color == 'yellow':
+                    yellow_value = min(average_value + 50, 255)
+                    r, g, b = yellow_value, yellow_value, 0
 
-                # Set the pixel in the gray275scale image to the gray value
-                grayscale_image.set_at((x, y), (gray_value, gray_value, gray_value, color.a))
+                # Set the pixel in the new image to the correct value
+                new_image.set_at((x, y), (r, g, b, color.a))
 
-    return grayscale_image
-
-
-def convert_to_light_grayscale(image):
-    """
-    Convert an image to light gray scale
-
-    Args:
-        image (pygame.surface.Surface): the image to convert
-
-    Returns:
-        light_gray_scale_image (pygame.surface.Surface): the light gray scale image
-    """
-    # Create a new surface with the same dimensions and transparency settings as the original image
-    light_grayscale_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
-    light_grayscale_image.convert_alpha()
-
-    # Iterate over each pixel in the original image
-    for x in range(image.get_width()):
-        for y in range(image.get_height()):
-            # Get the color of the pixel at (x, y)
-            color = image.get_at((x, y))
-
-            # Check if the pixel is transparent
-            if color.a != 0:
-                # Calculate the grayscale value using the average of the RGB components
-                light_gray_value = min(255, (sum(color[:3]) // 3) + 75)
-
-                # Set the pixel in the gray275scale image to the gray value
-                light_grayscale_image.set_at((x, y), (light_gray_value, light_gray_value, light_gray_value, color.a))
-
-    return light_grayscale_image
-
-
-def convert_to_yellow_scale(image):
-    """
-    Convert an image to yellow scale
-
-    Args:
-        image (pygame.surface.Surface): the image to convert
-
-    Returns:
-        yellow_scale_image (pygame.surface.Surface): the yellow scale image
-    """
-    # Create a new surface with the same dimensions as the original image
-    yellow_scale_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
-    yellow_scale_image.convert_alpha()                      # We convert the image to alpha for the transparency
-
-    # Iterate over each pixel in the image
-    for x in range(image.get_width()):
-        for y in range(image.get_height()):
-            # Get the color of the current pixel
-            color = image.get_at((x, y))
-
-            if color.a != 0:
-                # Calculate the average value of the red, green, and blue channels
-                average_value = (color.r + color.g + color.b) // 3
-
-                light_value = min(average_value + 50, 255)  # To make the yellow lighter
-
-                # Create a new color with the average value for all channels
-                yellow_color = pygame.Color(light_value, light_value, 0)
-
-                # Set the color of the corresponding pixel in the new surface
-                yellow_scale_image.set_at((x, y), yellow_color)
-
-    return yellow_scale_image
+    return new_image
 
 
 def create_rect_from_points(points):

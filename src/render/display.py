@@ -1,4 +1,4 @@
-from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, convert_to_grayscale, convert_to_yellow_scale  # Import the utils functions
+from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, change_color  # Import the utils functions
 from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, RGB_VALUES  # Import the constants
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
@@ -93,9 +93,11 @@ def show_car_window(car):
     x, y = rect_x + 425, rect_y + 300  # Position of the car
 
     if car.view_only:
-        image = convert_to_grayscale(var.BIG_RED_CAR_IMAGE)
+        image = change_color(var.BIG_RED_CAR_IMAGE, 'gray')
     elif car.best_car:
-        image = convert_to_yellow_scale(var.BIG_RED_CAR_IMAGE)
+        image = change_color(var.BIG_RED_CAR_IMAGE, 'yellow')
+    elif car.reverse:
+        image = change_color(var.BIG_RED_CAR_IMAGE, 'light_gray')
     else:
         image = var.BIG_RED_CAR_IMAGE
 

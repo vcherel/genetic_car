@@ -316,6 +316,7 @@ def display_map_button(cars):
         if cars:
             for car in cars:
                 car.reset()  # We reset the cars
+            var.NB_CARS_ALIVE = len(cars)
         unpause()
 
 

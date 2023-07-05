@@ -29,7 +29,7 @@ def apply_genetic(cars):
 
     cars = select_best_cars(cars)  # Select the best cars
     cars = mutate(cars)  # Mutate the cars
-    # cars = crossover(cars)  # Crossover the cars
+    cars = crossover(cars)  # Crossover the cars
 
     if best_genetic:
         var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_genetic])  # Add the best car to the memory
@@ -64,7 +64,7 @@ def select_best_cars(cars):
         total_weight = sum(weights)
         probabilities = [weight / total_weight for weight in weights]
 
-    selected_cars = random.choices(sorted_cars, probabilities, k=var.NB_CARS)  # We choose the cars based on their probabilities
+    selected_cars = random.choices(sorted_cars, probabilities, k=var.NB_CARS - 1)  # We choose the cars based on their probabilities
     cars = [Car(car.genetic) for car in selected_cars]
 
     return cars

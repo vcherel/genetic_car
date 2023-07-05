@@ -1,5 +1,5 @@
 from src.game.constants import WIDTH_MULTIPLIER, HEIGHT_MULTIPLIER, TIME_GENERATION, USE_GENETIC, START_POSITIONS, CAR_SIZES  # Import the constants
-from src.other.utils import scale_image, convert_to_grayscale, convert_to_yellow_scale, convert_to_new_window  # Import the utils functions
+from src.other.utils import scale_image, change_color, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
 from src.game.genetic import Genetic  # Import the Genetic class
 import os.path  # To get the path of the file
@@ -59,7 +59,7 @@ PLAY_LAST_RUN = False  # True if we want to play the last run again, False other
 # CARS
 START_POSITION = None  # Start position of the car
 NB_CARS_ALIVE = 0  # Number of cars alive
-NB_CARS = 150  # Number of cars
+NB_CARS = 50  # Number of cars
 CARS_LAST_RUN = []  # Cars of the last run
 
 
@@ -84,6 +84,8 @@ SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoint
 CLOCK = pygame.time.Clock()  # Clock of the game
 PAUSE = False  # Pause the game (True or False)
 TICKS_REMAINING = 0  # Iterations remaining for the genetic algorithm
+TIME_LAST_TURN = 0  # Time of the last turn
+FPS_TOO_HIGH = False  # True if the FPS is too high, False otherwise
 
 
 # GENETIC
@@ -161,8 +163,8 @@ def change_map(first_time=False):
     BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
 
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
-    GREY_CAR_IMAGE = convert_to_grayscale(RED_CAR_IMAGE)  # Image of the car in view only mode (grayscale)
-    YELLOW_CAR_IMAGE = convert_to_yellow_scale(RED_CAR_IMAGE)  # Image of the best car (yellow scale)
+    GREY_CAR_IMAGE = change_color(RED_CAR_IMAGE, 'gray')  # Image of the car in view only mode (grayscale)
+    YELLOW_CAR_IMAGE = change_color(RED_CAR_IMAGE, 'yellow')  # Image of the best car (yellow scale)
 
     update_visual_variables()  # Update the variables used to display things
 
@@ -235,7 +237,14 @@ def load_variables():
         nb_cars
         FPS
         """
-        num_map, nb_cars, fps = file_parameters_read.readlines()
+        try:
+            num_map, nb_cars, fps = file_parameters_read.readlines()
+        except ValueError:
+            # Sometimes the file parameters is not complete, so we complete it
+            num_map = 0
+            nb_cars = 50
+            fps = 60
+
         NUM_MAP = int(num_map)  # Map number
         NB_CARS = int(nb_cars)  # Number of cars
         FPS = int(fps)  # FPS

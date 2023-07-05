@@ -1,4 +1,4 @@
-from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, convert_to_light_grayscale  # To compute the coordinates of the point of the detection cone
+from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color  # To compute the coordinates of the point of the detection cone
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
 import pygame  # Pygame library
@@ -100,7 +100,7 @@ class Car:
         # We kill the car if it has not reached a checkpoint for too long (if it's not the waiting room)
         if var.NUM_MAP != 5 and self.turn_without_checkpoint > 400 and not self.reverse:
             if not self.view_only and not self.best_car:
-                self.image = convert_to_light_grayscale(self.image)  # We convert the image of the car to light grayscale if it's a red car
+                self.image = change_color(self.image, 'light_gray')  # We convert the image of the car to light grayscale if it's a red car
             self.reverse = True
 
     def detect_checkpoint(self):

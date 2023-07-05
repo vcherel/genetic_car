@@ -9,7 +9,6 @@ import src.render.display as display  # Import the display
 import src.other.variables as var  # Import the variables
 import traceback  # To get the traceback of errors
 from src.game.car import Car  # Import the car
-import os.path  # To get the path of the file
 import random  # To generate random numbers
 import src.render.ui as ui  # Import the ui
 import pygame  # To use pygame
@@ -18,11 +17,8 @@ import time  # To get the time
 """
 This file contains all the functions used to play the game
 """
-
-time_begin_turn = 0  # Time at the beginning of the turn
-
 if var.TEST_ALL_CARS:  # If we want to test_0 all the cars
-    file = open(os.path.dirname(__file__) + '/../data/test_0', 'a')  # File to write the scores of every possible car if necessary
+    file = open(var.PATH_DATA + '/test_0', 'a')  # File to write the scores of every possible car if necessary
 
 
 def open_window():
@@ -58,16 +54,13 @@ def play(cars=None):
     Args:
         cars (list): list of cars (if None, it is the first time we play)
     """
-    global time_begin_turn
 
     cars = init_play(cars)
 
     while var.PLAY:  # While the game is not stopped
-        time_begin_turn = time.time()
-
         ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
 
-        if not var.PAUSE:  # If the game is not paused
+        if not var.PAUSE and not var.FPS_TOO_HIGH:  # If the game is not paused
             play_turn(cars)  # Play a turn
 
             # If we want to restart the last_run
@@ -78,6 +71,7 @@ def play(cars=None):
             if var.NB_CARS_ALIVE == 0 or var.TICKS_REMAINING == 0 or var.CHANGE_GENERATION:
                 stop_play(cars)  # Stop the game
 
+        ui.erase()  # Erase the buttons
         ui.display(cars)  # Activate the buttons (This is here because we have to do this after erasing the screen and
         # we have ton continue to check the buttons even if the game is paused)
 
@@ -126,8 +120,9 @@ def play_turn(cars):
     Args:
         cars (list): list of cars
     """
-    # Erase things
-    ui.erase()
+    var.TIME_LAST_TURN = time.time()  # We get the time at the beginning of the turn
+
+    # Erase cars
     rect_blit_car = union_rect(var.RECTS_BLIT_CAR)  # Union of the rects for the blit
     var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
     var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
@@ -169,7 +164,12 @@ def stop_play(cars):
     Args:
         cars (list): list of cars
     """
-    pygame.time.wait(1000)  # We wait 1 second
+    time_before = time.time()  # We get the time before the genetic algorithm
+    while time.time() - time_before < 1:  # We wait 1 second
+        ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
+        ui.erase()  # Erase the buttons
+        ui.display(cars)  # Activate the buttons
+
     var.CHANGE_GENERATION = False  # We stop the change of generation
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
 
@@ -191,12 +191,15 @@ def update_fps():
     Update the fps
     """
     try:  # To avoid division by 0
-        var.ACTUAL_FPS = int(1 / (time.time() - time_begin_turn))  # Actual FPS
+        var.ACTUAL_FPS = int(1 / (time.time() - var.TIME_LAST_TURN))  # Actual FPS
     except ZeroDivisionError:
         var.ACTUAL_FPS = 0
 
-    while time.time() - time_begin_turn < 1 / var.FPS:  # Wait to have the right FPS
+    if time.time() - var.TIME_LAST_TURN < 1 / var.FPS:  # Wait to have the right FPS
         var.ACTUAL_FPS = var.FPS
+        var.FPS_TOO_HIGH = True  # The fps are too high
+    else:
+        var.FPS_TOO_HIGH = False  # The fps are not too high
 
 
 def change_checkpoints():
@@ -204,12 +207,11 @@ def change_checkpoints():
     Change the checkpoints of the actual map
     """
     # We display the image that explain that we are in the checkpoint mode
-    image_checkpoint = pygame.image.load(
-        os.path.dirname(__file__) + '/../images/checkpoint.png')  # Image of the checkpoint
+    image_checkpoint = pygame.image.load(var.PATH_IMAGE + '/checkpoint.png')  # Image of the checkpoint
     var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
     pygame.display.flip()  # Update the screen
     # We open the file to write the checkpoints
-    with open(os.path.dirname(__file__) + '/../data/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
+    with open(var.PATH_DATA + '/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
         while 1:
             # We detect the mouse click to write the coordinates in the file
             for event in pygame.event.get():
@@ -253,7 +255,6 @@ if __name__ == '__main__':
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
         display.edit_background()  # Add elements not clickable to the background
-
 
         if var.SHOW_ANALYSIS:
             scores = analyze_data('/test_' + str(var.NUM_MAP), '/result_analysis')
