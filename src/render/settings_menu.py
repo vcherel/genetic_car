@@ -91,7 +91,7 @@ see_checkpoints_text = var.FONT.render('Voir les checkpoints :', True, (0, 0, 0)
 
 cone_text = var.LARGE_FONT.render('Cônes', True, (0, 0, 0), (128, 128, 128))  # Text of the window
 width_cone_text = var.FONT.render('Largeur :', True, (0, 0, 0), (128, 128, 128))  # Text of the width cone button
-height_cone_text = var.FONT.render('Hauteur :', True, (0, 0, 0), (128, 128, 128))  # Text of the height cone button
+length_cone_text = var.FONT.render('Hauteur :', True, (0, 0, 0), (128, 128, 128))  # Text of the length cone button
 
 
 class Settings:
@@ -124,7 +124,7 @@ class Settings:
 
         # Cone section
         self.width_cone_button = None  # The button to change the width of the cones
-        self.height_cone_button = None  # The button to change the height of the cones
+        self.length_cone_button = None  # The button to change the length of the cones
 
         self.writing_buttons = []   # List of all the buttons with writing buttons
 
@@ -202,14 +202,14 @@ class Settings:
                                         pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
                                         pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
                                         variable=var.WIDTH_CONE, text=str(var.WIDTH_CONE), scale_x=0.5, scale_y=1)
-        self.height_cone_button = Button(x2 + 160, y2[10] - 3, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
+        self.length_cone_button = Button(x2 + 160, y2[10] - 3, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                         variable=var.HEIGHT_CONE, text=str(var.HEIGHT_CONE), scale_x=0.5, scale_y=1)
+                                         variable=var.LENGTH_CONE, text=str(var.LENGTH_CONE), scale_x=0.5, scale_y=1)
 
         self.writing_buttons = [self.fps_button, self.timer_button, self.max_speed_button, self.turn_angle_button,
                                 self.acceleration_button, self.deceleration_button, self.mutation_button, self.crossover_button,
-                                self.proportion_button, self.seed_button, self.width_cone_button, self.height_cone_button]
+                                self.proportion_button, self.seed_button, self.width_cone_button, self.length_cone_button]
 
     def show(self):
         """
@@ -270,7 +270,7 @@ def show_texts():
 
     var.WINDOW.blit(cone_text, convert_to_new_window((x2 + 85, y2[8])))
     var.WINDOW.blit(width_cone_text, convert_to_new_window((x2 + 50, y2[9])))
-    var.WINDOW.blit(height_cone_text, convert_to_new_window((x2 + 50, y2[10])))
+    var.WINDOW.blit(length_cone_text, convert_to_new_window((x2 + 50, y2[10])))
 
 
 SETTINGS = Settings()  # Create the settings window

@@ -1,4 +1,4 @@
-from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color  # To compute the coordinates of the point of the detection cone
+from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car  # To compute the coordinates of the point of the detection cone
 from src.other.constants import START_POSITIONS  # Start positions of the cars
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
@@ -16,12 +16,14 @@ min_high_speed = var.MAX_SPEED / 3 * 2
 
 
 class Car:
-    def __init__(self, genetic=None, best_scores=None, view_only=False, best_car=False):
+    def __init__(self, genetic=None, best_scores=None, color='red', view_only=False):
         """
         Initialization of the car
 
         Args:
             genetic (Genetic): genetic of the car to copy (if None, create a new genetic)
+            best_scores (list): list of the best scores of the car for each map
+            color (str): color of the car
             view_only (bool): True if the car is in view only mode, False otherwise (view only is when the car is grey)
         """
         if genetic is None:
@@ -37,22 +39,17 @@ class Car:
         self.angle = 0  # Current angle of the car
         self.pos = var.START_POSITION  # Current position of the car
 
-        if view_only:
-            self.image = var.GREY_CAR_IMAGE  # Image of the car but grey
-        elif best_car:
-            self.image = var.YELLOW_CAR_IMAGE  # Image of the car but yellow
-        else:
-            self.image = var.RED_CAR_IMAGE  # Image of the car
+        self.image = change_color_car(var.RED_CAR_IMAGE, color)  # Image of the car but grey
+        self.color = color  # Color of the car
 
         self.rotated_image = self.image  # Rotated image of the car
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
         self.rotated_rect_shown = self.image.get_rect()  # Rotated rectangle of the car shown on the screen
 
         self.view_only = view_only  # True if the car is in view only mode, False otherwise
-        self.best_car = best_car  # True if the car is the best car, False otherwise
 
         self.next_checkpoint = 0  # Next checkpoint to reach
-        self.score = 0  # Score of the car
+        self.scores = 0  # Score of the car
 
         if best_scores:
             self.best_scores = best_scores
@@ -72,7 +69,7 @@ class Car:
         Return:
             str: string representation of the car
         """
-        return f'Car: genetic : {self.genetic} ; view_only : {self.view_only} ; best_car : {self.best_car} ; position : {self.pos} ; angle : {self.angle} ; speed : {self.speed} ; acceleration : {self.acceleration} ; score : {self.score}'
+        return f'Car: genetic : {self.genetic} ; view_only : {self.view_only} ; color : {self.color} ; position : {self.pos} ; angle : {self.angle} ; speed : {self.speed} ; acceleration : {self.acceleration} ; scores : {self.scores}'
 
     def __eq__(self, other):
         """
@@ -92,7 +89,7 @@ class Car:
         """
         self.turn_played += 1  # Increment the number of turn played by the car
         if var.NUM_MAP == 5:
-            self.score += self.speed  # Increment the score of the car
+            self.scores += self.speed  # Increment the score of the car
         else:
             self.detect_checkpoint()  # Detect if the car has reached a checkpoint
         self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
@@ -101,13 +98,13 @@ class Car:
 
         # We kill the car if it has not reached a checkpoint for too long (if it's not the waiting room)
         if var.NUM_MAP != 5 and self.turn_without_checkpoint > 400 and not self.reverse:
-            if not self.view_only and not self.best_car:
-                self.image = change_color(self.image, 'light_gray')  # We convert the image of the car to light grayscale if it's a red car
+            if not self.view_only and not self.color == 'yellow':
+                self.image = change_color_car(self.image, 'light_gray')  # We convert the image of the car to light grayscale if it's a red car
             self.reverse = True
 
         # We update the best scores of the car
-        if self.score > self.best_scores[var.NUM_MAP]:
-            self.best_scores[var.NUM_MAP] = self.score
+        if self.scores > self.best_scores[var.NUM_MAP]:
+            self.best_scores[var.NUM_MAP] = self.scores
 
     def detect_checkpoint(self):
         """
@@ -120,7 +117,7 @@ class Car:
         actual_checkpoint = var.CHECKPOINTS[self.next_checkpoint]  # Actual checkpoint to reach
         if actual_checkpoint[0] - var.RADIUS_CHECKPOINT < self.pos[0] < actual_checkpoint[0] + var.RADIUS_CHECKPOINT and\
                 actual_checkpoint[1] - var.RADIUS_CHECKPOINT < self.pos[1] < actual_checkpoint[1] + var.RADIUS_CHECKPOINT:
-            self.score += 1
+            self.scores += 1
             self.next_checkpoint += 1
             self.turn_without_checkpoint = -1
             checkpoint_passed = True
@@ -140,10 +137,10 @@ class Car:
             float: acceleration of the car
         """
         # We select the right cone depending on the speed of the car
-        width, height = self.determine_size_cone()
+        width, length = self.determine_size_cone()
 
         front_of_car = self.determine_front_of_car()  # Point of the front of the car
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, width, height)  # Points of the detection cone
+        left, top, right = compute_detection_cone_points(self.angle, front_of_car, width, length)  # Points of the detection cone
 
         wall_at_top = detect_wall(front_of_car, top)  # Detect if the car is near a wall (top)
         wall_at_left = detect_wall(front_of_car, left)  # Detect if the car is near a wall (left)
@@ -218,18 +215,18 @@ class Car:
         Determine the size of the detection cone according to the speed of the car
 
         Returns:
-            width, height (int, int): the width and the height of the detection cone
+            width, length (int, int): the width and the length of the detection cone
         """
         if self.speed < min_medium_speed:
             width = self.genetic.width_slow
-            height = self.genetic.height_slow
+            length = self.genetic.length_slow
         elif self.speed < min_high_speed:
             width = self.genetic.width_medium
-            height = self.genetic.height_medium
+            length = self.genetic.length_medium
         else:
             width = self.genetic.width_fast
-            height = self.genetic.height_fast
-        return width, height
+            length = self.genetic.length_fast
+        return width, length
 
     def determine_front_of_car(self):
         """
@@ -266,7 +263,7 @@ class Car:
         """
         Reset the car
         """
-        self.__init__(self.genetic, self.best_scores, self.view_only, self.best_car)
+        self.__init__(self.genetic, self.best_scores, self.color, self.view_only)
 
 
     def draw_detection_cone(self):
@@ -276,7 +273,7 @@ class Car:
         front_of_car = self.determine_front_of_car()  # Point of the front of the car
 
         # Slow detection cone
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.height_slow)
+        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.length_slow)
         points = [front_of_car, left, top, right]  # Points of the detection cone for the rect
 
         if self.speed < min_medium_speed:
@@ -286,7 +283,7 @@ class Car:
 
 
         # Medium detection cone
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.height_medium)
+        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.length_medium)
         points.append(left)
         points.append(top)
         points.append(right)
@@ -298,7 +295,7 @@ class Car:
 
 
         # Fast detection cone
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.height_fast)
+        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.length_fast)
         points.append(left)
         points.append(top)
         points.append(right)
@@ -309,6 +306,15 @@ class Car:
 
         # We add the rect to the rects to blit
         var.RECTS_BLIT_CAR.append(create_rect_from_points(points))
+
+    def change_color(self, color):
+        """
+        Change the color of the car
+
+        Args:
+            color (str): the new color of the car
+        """
+        self.color = color
 
 
 def detect_wall(front_of_car, point):

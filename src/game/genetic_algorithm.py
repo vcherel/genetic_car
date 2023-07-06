@@ -19,7 +19,7 @@ def apply_genetic(cars):
     """
     cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
 
-    cars = sorted(cars, key=lambda c: c.score, reverse=True)  # Sort the cars by score
+    cars = sorted(cars, key=lambda c: c.scores, reverse=True)  # Sort the cars by score
 
     if cars:
         best_car = cars[0]  # We get the best car
@@ -31,8 +31,8 @@ def apply_genetic(cars):
     cars = crossover(cars)  # Crossover the cars
 
     if best_car:
-        var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic, best_car.best_scores])  # Add the best car to the memory
-        cars.append(Car(best_car.genetic, best_car=True))  # We add the best car (at the end in order to see it)
+        var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic, 'gray', best_car.best_scores])  # Add the best car to the memory
+        cars.append(Car(genetic=best_car.genetic, best_scores=best_car.best_scores, color='yellow'))  # We add the best car (at the end in order to see it)
 
     return cars
 
@@ -56,10 +56,10 @@ def select_best_cars(cars):
         probabilities = [1]
     else:
         # Sort the cars based on their score in descending order
-        sorted_cars = sorted(cars, key=lambda car: car.score, reverse=True)
+        sorted_cars = sorted(cars, key=lambda car: car.scores, reverse=True)
 
         # Calculate the weights based on the car scores
-        weights = [car.score for car in sorted_cars]
+        weights = [car.scores for car in sorted_cars]
         total_weight = sum(weights)
         probabilities = [weight / total_weight for weight in weights]
 
@@ -106,11 +106,11 @@ def mutate_one_car(car):
     """
     for attribute_name, attribute_value in vars(car.genetic).items():
         if random.random() < var.ACTUAL_CROSSOVER_CHANCE:
-            # See if it is a width or a height
+            # See if it is a width or a length
             if attribute_name.startswith('width'):
                 multiplier = var.WIDTH_CONE
             else:
-                multiplier = var.HEIGHT_CONE
+                multiplier = var.LENGTH_CONE
             actual_value = int(getattr(car.genetic, attribute_name) / multiplier)  # Get the actual value of the attribute
             setattr(car.genetic, attribute_name, multiplier * random_attribution(actual_value))
 

@@ -22,26 +22,23 @@ def scale_image(img, factor):
     return pygame.transform.scale(img, size)
 
 
-def compute_detection_cone_points(angle, front_of_car, width, height):
+def compute_detection_cone_points(angle, front_of_car, width, length):
     """
     Compute the coordinates of the points of the detection cone
     Args:
         angle (float): the angle of the car
         front_of_car (tuple(int, int)): the coordinates of the front of the car
-        width (int): the width of the window
-        height (int): the height of the window
+        width (int): the width of the cone
+        length (int): the length of the cone
 
     Returns:
         [left, top, right] (list(tuple(int, int))): the coordinates of the points of the detection cone
     """
-    angle_cone = math.degrees(math.atan(width / (2 * height)))  # Angle of the detection cone
+    angle_cone = math.degrees(math.atan(width / (2 * length)))  # Angle of the detection cone
 
-    top = front_of_car[0] + math.cos(math.radians(angle)) * height, \
-        front_of_car[1] - math.sin(math.radians(angle)) * height  # Position of the top of the cone
-    left = front_of_car[0] + math.cos(math.radians(angle + angle_cone)) * height, \
-        front_of_car[1] - math.sin(math.radians(angle + angle_cone)) * height  # Position of the left of the cone
-    right = front_of_car[0] + math.cos(math.radians(angle - angle_cone)) * height,\
-        front_of_car[1] - math.sin(math.radians(angle - angle_cone)) * height  # Position of the right of the cone
+    top = front_of_car[0] + math.cos(math.radians(angle)) * length, front_of_car[1] - math.sin(math.radians(angle)) * length  # Position of the top of the cone
+    left = front_of_car[0] + math.cos(math.radians(angle + angle_cone)) * length, front_of_car[1] - math.sin(math.radians(angle + angle_cone)) * length  # Position of the left of the cone
+    right = front_of_car[0] + math.cos(math.radians(angle - angle_cone)) * length, front_of_car[1] - math.sin(math.radians(angle - angle_cone)) * length  # Position of the right of the cone
 
     return [left, top, right]
 
@@ -136,14 +133,17 @@ def overlapping_rectangles(rect1, rect2, area_threshold=0.5):
     return intersection_area > area_threshold * min(area1, area2)
 
 
-def change_color(image, str_color):
+def change_color_car(image, str_color):
     """
-    Change the color of an image
+    Change the color of an image representing a car
 
     Args:
         image (pygame.surface.Surface): the image to change
-        str_color (str): the color to apply (gray, light_gray, yellow)
+        str_color (str): the color to apply (black, blue, brown, gray, light_blue, light_gray, light_green, orange, pink, purple, red, yellow)
     """
+    if str_color == 'red':   # If the color is red, we don't need to change it (the car is already red)
+        return image
+
     # Create a new surface with the same dimensions and transparency settings as the original image
     new_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
     new_image.convert_alpha()
@@ -157,15 +157,40 @@ def change_color(image, str_color):
             # Check if the pixel is transparent
             if color.a != 0:
                 average_value = sum(color[:3]) // 3
-                r, g, b = 0, 0, 0
-                if str_color == 'gray':
+
+                if str_color == 'black':
+                    r, g, b = average_value // 2, average_value // 2, average_value // 2
+                elif str_color == 'blue':
+                    r, g, b = 0, 0, average_value
+                elif str_color == 'brown':
+                    orange_value = min(average_value, 255)
+                    r, g, b = orange_value, orange_value // 2, 0
+                elif str_color == 'gray':
                     r, g, b = average_value, average_value, average_value
+                elif str_color == 'green':
+                    r, g, b = 0, average_value, 0
+                elif str_color == 'light_blue':
+                    light_blue_value = min(average_value + 100, 255)
+                    r, g, b = 0, light_blue_value, light_blue_value
                 elif str_color == 'light_gray':
                     light_gray_value = min(average_value + 75, 255)
                     r, g, b = light_gray_value, light_gray_value, light_gray_value
+                elif str_color == 'light_green':
+                    light_green_value = min(average_value + 100, 255)
+                    r, g, b = 0, light_green_value, 0
+                elif str_color == 'orange':
+                    orange_value = min(average_value + 125, 255)
+                    r, g, b = orange_value, orange_value // 2, 0
+                elif str_color == 'pink':
+                    pink_value = min(average_value + 100, 255)
+                    r, g, b = pink_value, 0, pink_value
+                elif str_color == 'purple':
+                    r, g, b = average_value, 0, average_value
                 elif str_color == 'yellow':
                     yellow_value = min(average_value + 50, 255)
                     r, g, b = yellow_value, yellow_value, 0
+                else:
+                    r, g, b = 0, 0, 0
 
                 # Set the pixel in the new image to the correct value
                 new_image.set_at((x, y), (r, g, b, color.a))

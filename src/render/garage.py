@@ -92,7 +92,7 @@ class Garage:
                     # If the rectangle is in the good page
                     if 10 * self.actual_page <= self.nb_rectangle < 10 * (self.actual_page + 1):
                         self.rectangles.append(RectGarage(id_car=memory_car[0], name=memory_car[1], type_car=key, genetic=memory_car[2],
-                                                          id_rect=id_rect, pos=(self.actual_x, self.actual_y), scores=memory_car[3]))  # We create the rectangles
+                                                          id_rect=id_rect, pos=(self.actual_x, self.actual_y), color=memory_car[3], scores=memory_car[4]))  # We create the rectangles
                         id_rect += 1  # We add one to the number to identify the id of the rectangle
                         self.update_variables()  # We change the values of the variables
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage

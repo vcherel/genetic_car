@@ -1,4 +1,4 @@
-from src.other.constants import RGB_VALUES, PATH_IMAGE, START_POSITIONS  # Import the constants
+from src.other.constants import RGB_VALUES_DICE, PATH_IMAGE, START_POSITIONS  # Import the constants
 from src.other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
 from src.render.display import draw_detection_cone, draw_dice  # Import the display functions
 from src.game.genetic import Genetic  # Import the genetic class
@@ -100,7 +100,7 @@ class DiceMenu:
         var.WINDOW.blit(var.TEXT_SLOW, (convert_to_new_window((self.rect_x + x1 + 30, self.rect_y + 50))))
         var.WINDOW.blit(var.TEXT_MEDIUM, (convert_to_new_window((self.rect_x + x2 + 14, self.rect_y + 50))))
         var.WINDOW.blit(var.TEXT_FAST, (convert_to_new_window((self.rect_x + x3 + 14, self.rect_y + 50))))
-        var.WINDOW.blit(var.TEXT_HEIGHT, (convert_to_new_window((self.rect_x + 20, self.rect_y + 350))))
+        var.WINDOW.blit(var.TEXT_LENGTH, (convert_to_new_window((self.rect_x + 20, self.rect_y + 350))))
         var.WINDOW.blit(var.TEXT_WIDTH, (convert_to_new_window((self.rect_x + 30, self.rect_y + 160))))
 
         x, y = self.rect_x + 675, self.rect_y + 290
@@ -108,12 +108,12 @@ class DiceMenu:
         draw_detection_cone((x + 125, y + 25), self.dice_values)
 
         # Display the dice
-        draw_dice(x=self.rect_x + x1, y=self.rect_y + y1, color=RGB_VALUES[0], value=self.dice_values[0], black_dots=True)
-        draw_dice(x=self.rect_x + x2, y=self.rect_y + y1, color=RGB_VALUES[1], value=self.dice_values[1])
-        draw_dice(x=self.rect_x + x3, y=self.rect_y + y1, color=RGB_VALUES[2], value=self.dice_values[2])
-        draw_dice(x=self.rect_x + x1, y=self.rect_y + y2, color=RGB_VALUES[3], value=self.dice_values[3])
-        draw_dice(x=self.rect_x + x2, y=self.rect_y + y2, color=RGB_VALUES[4], value=self.dice_values[4])
-        draw_dice(x=self.rect_x + x3, y=self.rect_y + y2, color=RGB_VALUES[5], value=self.dice_values[5])
+        draw_dice(x=self.rect_x + x1, y=self.rect_y + y1, color=RGB_VALUES_DICE[0], value=self.dice_values[0], black_dots=True)
+        draw_dice(x=self.rect_x + x2, y=self.rect_y + y1, color=RGB_VALUES_DICE[1], value=self.dice_values[1])
+        draw_dice(x=self.rect_x + x3, y=self.rect_y + y1, color=RGB_VALUES_DICE[2], value=self.dice_values[2])
+        draw_dice(x=self.rect_x + x1, y=self.rect_y + y2, color=RGB_VALUES_DICE[3], value=self.dice_values[3])
+        draw_dice(x=self.rect_x + x2, y=self.rect_y + y2, color=RGB_VALUES_DICE[4], value=self.dice_values[4])
+        draw_dice(x=self.rect_x + x3, y=self.rect_y + y2, color=RGB_VALUES_DICE[5], value=self.dice_values[5])
 
         # Display the buttons
         for index, writing_button in enumerate(self.writing_buttons):
@@ -140,7 +140,8 @@ class DiceMenu:
 
         if self.by_camera:
             var.WINDOW.blit(var.BACKGROUND, rect_camera_frame, rect_camera_frame)  # We erase the dice menu
-            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic(self.dice_values), [0] * len(START_POSITIONS)])  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE),
+                                                Genetic(self.dice_values), 'gray', [0] * len(START_POSITIONS)])  # We add the dice to the memory
             var.ACTUAL_ID_MEMORY_DICE += 1  # We increment the id of the dice
 
     def save_values(self, index, writing_button):

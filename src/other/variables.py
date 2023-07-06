@@ -1,4 +1,4 @@
-from src.other.utils import scale_image, change_color, convert_to_new_window  # Import the utils functions
+from src.other.utils import scale_image, change_color_car, convert_to_new_window  # Import the utils functions
 from src.other.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
 from src.render.display import edit_background  # Import the display functions
 from src.game.genetic import Genetic  # Import the Genetic class
@@ -35,8 +35,6 @@ SCALE_RESIZE_Y = 1  # Scale of the window after resizing on the y-axis
 
 # IMAGES
 RED_CAR_IMAGE = None  # Image of the original car
-GREY_CAR_IMAGE = None  # Image of the car in view only mode
-YELLOW_CAR_IMAGE = None  # Image of the best car
 BIG_RED_CAR_IMAGE = None
 
 
@@ -58,7 +56,7 @@ CARS_LAST_RUN = []  # Cars of the last run
 
 # CHARACTERISTICS CARS
 WIDTH_CONE = 16  # Width multiplier of the cone
-HEIGHT_CONE = 11  # Height multiplier of the cone
+LENGTH_CONE = 11  # Length multiplier of the cone
 MAX_SPEED = 8  # Maximum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
 ACCELERATION = 0.2  # Acceleration of the car
@@ -70,7 +68,7 @@ BUTTONS = []  # List of the buttons
 TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
 TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  # Text of the medium button
 TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
-TEXT_HEIGHT = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the height button
+TEXT_LENGTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the length button
 TEXT_WIDTH = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
 
 
@@ -114,7 +112,7 @@ DISPLAY_SETTINGS = False  # True if we are displaying the settings
 # MEMORY
 CARS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
 MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, genetic are cars from the genetic algorithm
-# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic, score], ...], "genetic": [[id, name, Genetic, score], ...]}
+# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic, score, color], ...], "genetic": [[id, name, Genetic, score, color], ...]}
 ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
 ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 
@@ -157,7 +155,7 @@ def change_map(first_time=False):
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
     """
-    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, GREY_CAR_IMAGE, YELLOW_CAR_IMAGE, BIG_RED_CAR_IMAGE
+    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, BIG_RED_CAR_IMAGE
 
     # If we change map for the first time, we don't change the map
     if not first_time:
@@ -175,8 +173,6 @@ def change_map(first_time=False):
     BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
 
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
-    GREY_CAR_IMAGE = change_color(RED_CAR_IMAGE, 'gray')  # Image of the car in view only mode (grayscale)
-    YELLOW_CAR_IMAGE = change_color(RED_CAR_IMAGE, 'yellow')  # Image of the best car (yellow scale)
 
     update_visual_variables()  # Update the variables used to display things
 
@@ -239,17 +235,17 @@ def load_variables():
     Load the variables of the game (number of the map, number of cars, cars, ...)
     """
     global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE, TIME_GENERATION, MAX_SPEED, TURN_ANGLE,\
-        ACCELERATION, DECELERATION, MUTATION_CHANCE, CROSSOVER_CHANCE, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, HEIGHT_CONE
+        ACCELERATION, DECELERATION, MUTATION_CHANCE, CROSSOVER_CHANCE, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE
 
     # We open the file parameters to read the number of the map and the number of cars
     with open(PATH_DATA + '/parameters', 'r') as file_parameters_read:
         try:
             num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance,\
-                crossover_chance, proportion_car_kept, seed, width_cone, height_cone = file_parameters_read.readlines()
+                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = file_parameters_read.readlines()
         except ValueError:
             # Sometimes the file parameters is not complete, so we complete it
             num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance, \
-                crossover_chance, proportion_car_kept, seed, width_cone, height_cone = 0, 50, 60, 60, 8, 5, 0.2, -1, 0.3, 0.3, 0.1, 22, 16, 11
+                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = 0, 50, 60, 60, 8, 5, 0.2, -1, 0.3, 0.3, 0.1, 22, 16, 11
 
         NUM_MAP = int(num_map)  # Map number
         NB_CARS = int(nb_cars)  # Number of cars
@@ -264,14 +260,14 @@ def load_variables():
         PROPORTION_CARS_KEPT = float(proportion_car_kept)  # Proportion of car kept
         SEED = int(seed)  # Seed of the random
         WIDTH_CONE = int(width_cone)  # Width of the cone of vision
-        HEIGHT_CONE = int(height_cone)  # Height of the cone of vision
+        LENGTH_CONE = int(length_cone)  # Length of the cone of vision
 
 
     with open(PATH_DATA + '/cars', 'r') as file_cars_read:
         """
         Format of the file cars:
-        id1 type_car1 name1   width_fast1   height_fast1   width_medium1   height_medium1   width_slow1   height_slow1
-        id2 type_car2 name2   width_fast2   height_fast2   width_medium2   height_medium2   width_slow2   height_slow2
+        id  type_car name  width_fast  length_slow  length_medium  length_fast  width_slow  width_medium  width_fast  color  score_map1  score_map2  score_map3  score_map4  score_map5
+        id  type_car name  width_fast  length_slow  length_medium  length_fast  width_slow  width_medium  width_fast  color  score_map1  score_map2  score_map3  score_map4  score_map5
         ...
         """
         lines = file_cars_read.readlines()  # We read the file
@@ -283,9 +279,10 @@ def load_variables():
             name = line[2]  # Name of the car
 
             genetic = Genetic([int(line[i]) for i in range(3, 9)])  # Genetic of the car
-            score = [int(line[i]) for i in range(9, 9 + len(START_POSITIONS))]  # Score of the car
+            color = line[9]
+            score = [int(line[i]) for i in range(10, 10 + len(START_POSITIONS))]  # Score of the car
 
-            MEMORY_CARS.get(type_car).append([id_car, name, genetic, score])  # We add the car to the memory
+            MEMORY_CARS.get(type_car).append([id_car, name, genetic, color, score])  # We add the car to the memory
             if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                 ACTUAL_ID_MEMORY_DICE = id_car + 1
 
@@ -298,17 +295,22 @@ def save_variables():
     with open(PATH_DATA + '/parameters', 'w') as file_parameters_write:
         file_parameters_write.write(f'{NUM_MAP}\n{NB_CARS}\n{FPS}\n{TIME_GENERATION}\n{MAX_SPEED}\n{TURN_ANGLE}\n'
                                     f'{ACCELERATION}\n{DECELERATION}\n{MUTATION_CHANCE}\n{CROSSOVER_CHANCE}\n'
-                                    f'{PROPORTION_CARS_KEPT}\n{SEED}\n{WIDTH_CONE}\n{HEIGHT_CONE}')
+                                    f'{PROPORTION_CARS_KEPT}\n{SEED}\n{WIDTH_CONE}\n{LENGTH_CONE}')
 
     with open(PATH_DATA + '/cars', 'w') as file_cars_write:
         for key in MEMORY_CARS.keys():
-            for car in MEMORY_CARS.get(key):
-                str_to_write = f'{car[0]} {key} {car[1]} {car[2].height_slow // HEIGHT_CONE}' \
-                               f' {car[2].height_medium // HEIGHT_CONE} {car[2].height_fast // HEIGHT_CONE}' \
-                               f' {car[2].width_slow // WIDTH_CONE} {car[2].width_medium // WIDTH_CONE}' \
-                               f' {car[2].width_fast // WIDTH_CONE}'
+            for memory_car in MEMORY_CARS.get(key):
+                """
+                Format of memory_car:
+                [id_car, name, genetic, color, score]
+                """
 
-                for score in car[3]:
+                str_to_write = f'{memory_car[0]} {key} {memory_car[1]} {memory_car[2].length_slow // LENGTH_CONE}' \
+                               f' {memory_car[2].length_medium // LENGTH_CONE} {memory_car[2].length_fast // LENGTH_CONE}' \
+                               f' {memory_car[2].width_slow // WIDTH_CONE} {memory_car[2].width_medium // WIDTH_CONE}' \
+                               f' {memory_car[2].width_fast // WIDTH_CONE} {memory_car[3]}'
+
+                for score in memory_car[4]:
                     str_to_write += f' {int(score)}'
                 str_to_write += '\n'
                 file_cars_write.write(str_to_write)
@@ -326,4 +328,19 @@ def update_car_name(type_car, id_car, name):
     for car in MEMORY_CARS.get(type_car):
         if car[0] == id_car:
             car[1] = name
+            break
+
+
+def update_car_color(type_car, id_car, color):
+    """
+    Update the color of the car in the memory
+
+    Args:
+        type_car: type of the car (generation or dice)
+        id_car: id of the car
+        color: new color of the car
+    """
+    for car in MEMORY_CARS.get(type_car):
+        if car[0] == id_car:
+            car[3] = color
             break

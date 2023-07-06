@@ -1,5 +1,5 @@
-from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, change_color  # Import the utils functions
-from src.other.constants import RGB_VALUES  # Import the constants
+from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, change_color_car  # Import the utils functions
+from src.other.constants import RGB_VALUES_DICE  # Import the constants
 from src.other import variables as var  # Import the variables
 import pygame  # To use pygame
 import cv2  # To use OpenCV
@@ -60,17 +60,19 @@ def draw_detection_cone(pos, dice_values):
 
     Args:
         pos (int, int): position of the car
-        dice_values (list): list of the dice values for the detection cones [height_slow, height_medium, height_fast, width_slow, width_medium, width_fast]
+        dice_values (list): list of the dice values for the detection cones [length_slow, length_medium, length_fast, width_slow, width_medium, width_fast]
     """
     pos = convert_to_new_window(pos)  # Convert the position to the new window
+    width_multiplier = var.SCALE_RESIZE_X * var.WIDTH_CONE * 3  # Multiplier for the width of the cone
+    length_multiplier = var.SCALE_RESIZE_Y * var.LENGTH_CONE * 3  # Multiplier for the length of the cone
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[3], dice_values[0])
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[3] * width_multiplier, dice_values[0] * length_multiplier)
     pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), 5)
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[4], dice_values[1])
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[4] * width_multiplier, dice_values[1] * length_multiplier)
     pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), 5)
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[5], dice_values[2])
+    left, top, right = compute_detection_cone_points(90, pos, dice_values[5] * width_multiplier, dice_values[2] * length_multiplier)
     pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), 5)
 
 
@@ -83,39 +85,39 @@ def show_car_window(car):
     """
     var.DISPLAY_CAR_WINDOW = True  # Display the car
 
-    rect = pygame.Rect(convert_to_new_window((350, 125, 700, 550)))  # Create the rectangle for the window
-    rect_x = 350
-    rect_y = 125
+    rect_x = 300
+    rect_y = 190
+    rect = pygame.Rect(convert_to_new_window((rect_x, rect_y, 750, 500)))  # Create the rectangle for the window
     pygame.draw.rect(var.WINDOW, (128, 128, 128), rect, 0)  # Draw the rectangle (inside)
     pygame.draw.rect(var.WINDOW, (1, 1, 1), rect, 2)  # Draw the rectangle (contour)
 
-    x, y = rect_x + 425, rect_y + 300  # Position of the car
+    x, y = rect_x + 485, rect_y + 225  # Position of the car
 
-    if car.view_only:
-        image = change_color(var.BIG_RED_CAR_IMAGE, 'gray')
-    elif car.best_car:
-        image = change_color(var.BIG_RED_CAR_IMAGE, 'yellow')
-    elif car.reverse:
-        image = change_color(var.BIG_RED_CAR_IMAGE, 'light_gray')
-    else:
-        image = var.BIG_RED_CAR_IMAGE
+    image = change_color_car(var.BIG_RED_CAR_IMAGE, car.color)  # Change the color of the car
 
     image = scale_image(image, var.SCALE_RESIZE_X)  # Scale the image
     var.WINDOW.blit(image, convert_to_new_window((x, y)))  # Draw the red car
     draw_detection_cone((x + 125, y + 25), car.genetic.get_list())  # Draw the detection cones
 
-    var.WINDOW.blit(var.TEXT_SLOW, convert_to_new_window((rect_x + 90, rect_y + 150)))  # Draw the slow text
-    var.WINDOW.blit(var.TEXT_MEDIUM, convert_to_new_window((rect_x + 200, rect_y + 150)))  # Draw the medium text
-    var.WINDOW.blit(var.TEXT_FAST, convert_to_new_window((rect_x + 325, rect_y + 150)))  # Draw the fast text
-
-    x1, x2, x3 = 75, 200, 325
+    # Draw the dice
+    x_distance = 120
+    x1 = 160
+    x2 = x1 + x_distance
+    x3 = x2 + x_distance
     y1, y2 = 225, 350
-    draw_dice(x=rect_x + x1, y=rect_y + y1, color=RGB_VALUES[0], value=car.genetic.height_slow // var.HEIGHT_CONE, factor=0.75, black_dots=True)
-    draw_dice(x=rect_x + x2, y=rect_y + y1, color=RGB_VALUES[1], value=car.genetic.height_medium // var.HEIGHT_CONE, factor=0.75)
-    draw_dice(x=rect_x + x3, y=rect_y + y1, color=RGB_VALUES[2], value=car.genetic.height_fast // var.HEIGHT_CONE, factor=0.75)
-    draw_dice(x=rect_x + x1, y=rect_y + y2, color=RGB_VALUES[3], value=car.genetic.width_slow // var.WIDTH_CONE, factor=0.75)
-    draw_dice(x=rect_x + x2, y=rect_y + y2, color=RGB_VALUES[4], value=car.genetic.width_medium // var.WIDTH_CONE, factor=0.75)
-    draw_dice(x=rect_x + x3, y=rect_y + y2, color=RGB_VALUES[5], value=car.genetic.width_fast // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y1, color=RGB_VALUES_DICE[0], value=car.genetic.length_slow // var.LENGTH_CONE, factor=0.75, black_dots=True)
+    draw_dice(x=rect_x + x2, y=rect_y + y1, color=RGB_VALUES_DICE[1], value=car.genetic.length_medium // var.LENGTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y1, color=RGB_VALUES_DICE[2], value=car.genetic.length_fast // var.LENGTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y2, color=RGB_VALUES_DICE[3], value=car.genetic.width_slow // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x2, y=rect_y + y2, color=RGB_VALUES_DICE[4], value=car.genetic.width_medium // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y2, color=RGB_VALUES_DICE[5], value=car.genetic.width_fast // var.WIDTH_CONE, factor=0.75)
+
+    # Draw the text
+    var.WINDOW.blit(var.TEXT_SLOW, convert_to_new_window((rect_x + 175, rect_y + 150)))  # Draw the slow text
+    var.WINDOW.blit(var.TEXT_MEDIUM, convert_to_new_window((rect_x + 275, rect_y + 150)))  # Draw the medium text
+    var.WINDOW.blit(var.TEXT_FAST, convert_to_new_window((rect_x + 400, rect_y + 150)))  # Draw the fast text
+    var.WINDOW.blit(var.TEXT_LENGTH, convert_to_new_window((rect_x + 20, rect_y + 250)))  # Draw the length text
+    var.WINDOW.blit(var.TEXT_WIDTH, convert_to_new_window((rect_x + 10, rect_y + 375)))  # Draw the width text
 
 
 def erase_car_window():
@@ -124,7 +126,7 @@ def erase_car_window():
     """
     var.DISPLAY_CAR_WINDOW = False  # Don't display the car
 
-    rect = pygame.Rect(convert_to_new_window((350, 125, 700, 550)))  # Create the rectangle for the window
+    rect = pygame.Rect(convert_to_new_window((300, 190, 750, 500)))  # Create the rectangle for the window
     var.WINDOW.blit(var.BACKGROUND, rect, rect)  # Blit the background on the rectangle
 
 

@@ -1,10 +1,12 @@
 from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
+from src.other.constants import PATH_IMAGE, CAR_COLORS  # Import the constants
 from src.render.dice_menu import DICE_MENU  # Import the dice menu
-from src.other.constants import PATH_IMAGE  # Import the constants
 from src.render.button import Button  # Import the button class
 import src.other.variables as var  # Import the variables
 from src.game.car import Car  # Import the car class
+import random  # To get random numbers
 import pygame  # To play the game
+import time  # To get the time
 
 
 """
@@ -15,7 +17,7 @@ dict_check = [False] * 10  # List of the state of the checkbox
 
 
 class RectGarage:
-    def __init__(self, id_car, type_car, name, genetic, id_rect, pos, scores):
+    def __init__(self, id_car, type_car, name, genetic, id_rect, pos, color, scores):
         """
         Initialization of the rectangle garage
         A Rectangle garage is a rectangle that contains the cars saved in the garage menu
@@ -32,7 +34,9 @@ class RectGarage:
         self.id_car = id_car  # Id of the car
         self.id_rect = id_rect  # Id of the rectangle
         self.type_car = type_car  # Type of the car
-        self.car = Car(genetic, scores, view_only=True)  # Car of the rectangle
+        self.car = Car(genetic, scores, color, view_only=True)  # Car of the rectangle
+
+        self.last_time_color_clicked = 0  # Last time the color was clicked
 
         # Buttons
         self.edit_button = Button(pos[0] + 188, pos[1] + 40, pygame.image.load(PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
@@ -68,19 +72,33 @@ class RectGarage:
         Returns:
             bool: True if the car is deleted, False otherwise
         """
-        # We draw the rectangle
+        # We draw the rectangle for the car
         new_pos = convert_to_new_window(self.pos)
-        pygame.draw.rect(var.WINDOW, (0, 0, 0), (new_pos[0], new_pos[1], var.SCALE_RESIZE_X * 225,  var.SCALE_RESIZE_Y * 75), 2)
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), (new_pos[0], new_pos[1], var.SCALE_RESIZE_X * 225,  var.SCALE_RESIZE_Y * 75), 2)
 
+        # We draw the rects for the color of the car
+        pos_color = convert_to_new_window((self.pos[0] + 154, self.pos[1] + 40))
+        rect_color = pygame.rect.Rect(pos_color[0], pos_color[1], var.SCALE_RESIZE_X * 26, var.SCALE_RESIZE_Y * 26)
+        pygame.draw.rect(var.WINDOW, CAR_COLORS[self.car.color], rect_color, 0)
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 2)
+
+        # We change the color of the car if the user clicked on the color
+        if pygame.mouse.get_pressed()[0] and rect_color.collidepoint(pygame.mouse.get_pos()) and time.time() - self.last_time_color_clicked > 0.2:
+            self.last_time_color_clicked = time.time()
+            self.car.change_color(random.choice(list(CAR_COLORS.keys())))  # We change the color of the car randomly
+            var.update_car_color(self.type_car, self.id_car, self.car.color)  # We update the color of the car in the file
+
+
+        # Button with the name of the car
         self.name_button.draw()
         if self.name_button.just_clicked:
             self.name_button.text = ''  # We reset the name at the beginning
 
         # Text for the score of the car
         if var.NUM_MAP == 5:   # If it's the map 5 (waiting screen), we divide the score by 100 and cast it to an int
-            text = var.SMALL_FONT.render(f'Meilleur score : {int(self.car.best_scores[var.NUM_MAP] / 100)}', True, (0, 0, 0))
+            text = var.SMALL_FONT.render(f'Score : {int(self.car.best_scores[var.NUM_MAP] / 100)}', True, (0, 0, 0))
         else:
-            text = var.SMALL_FONT.render(f'Meilleur score : {self.car.best_scores[var.NUM_MAP]}', True, (0, 0, 0))
+            text = var.SMALL_FONT.render(f'Score : {self.car.best_scores[var.NUM_MAP]}', True, (0, 0, 0))
         var.WINDOW.blit(text, (new_pos[0] + 20, new_pos[1] + 45))
 
         # Button to select a car
@@ -116,7 +134,10 @@ class RectGarage:
         return False
 
 
-    def save(self):
+    def save_new_car_name(self):
+        """
+        Save the car in the memory (when the user has finished editing the name of the car)
+        """
         if self.name_button.text == '':
             self.name_button.text = f'Voiture_{self.id_car}'
 

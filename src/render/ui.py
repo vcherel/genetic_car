@@ -119,7 +119,7 @@ def handle_clicks(cars):
         for rect_garage in GARAGE.rectangles:
             if rect_garage.name_button.activated:
                 rect_garage.name_button.activated = False
-                rect_garage.save()  # Save the name of the car
+                rect_garage.save_new_car_name()  # Save the name of the car
 
     if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not garage_button.rect.collidepoint(pygame.mouse.get_pos()):
         delete_garage()  # Delete the garage if we click outside of it
@@ -169,9 +169,9 @@ def handle_clicks(cars):
             SETTINGS.width_cone_button.deactivate()  # Stop changing the value of the width of the cone
             var.WIDTH_CONE = SETTINGS.width_cone_button.variable  # Change the value of the width of the cone
 
-        if SETTINGS.height_cone_button.activated:
-            SETTINGS.height_cone_button.deactivate()  # Stop changing the value of the height of the cone
-            var.HEIGHT_CONE = SETTINGS.height_cone_button.variable  # Change the value of the height of the cone
+        if SETTINGS.length_cone_button.activated:
+            SETTINGS.length_cone_button.deactivate()  # Stop changing the value of the length of the cone
+            var.LENGTH_CONE = SETTINGS.length_cone_button.variable  # Change the value of the length of the cone
 
         # If we click outside the settings, we close it
         if not SETTINGS.rect.collidepoint(pygame.mouse.get_pos()):
@@ -218,7 +218,7 @@ def handle_key_press(event):
         for rect_garage in GARAGE.rectangles:
             if rect_garage.name_button.activated:
                 if rect_garage.name_button.update(event):  # If the value has been saved
-                    rect_garage.save()
+                    rect_garage.save_new_car_name()  # Save the name of the car
 
     if var.DISPLAY_SETTINGS:
         if SETTINGS.fps_button.activated:
@@ -265,9 +265,9 @@ def handle_key_press(event):
             if SETTINGS.width_cone_button.update(event):
                 var.WIDTH_CONE = SETTINGS.width_cone_button.variable
 
-        if SETTINGS.height_cone_button.activated:
-            if SETTINGS.height_cone_button.update(event):
-                var.HEIGHT_CONE = SETTINGS.height_cone_button.variable
+        if SETTINGS.length_cone_button.activated:
+            if SETTINGS.length_cone_button.update(event):
+                var.LENGTH_CONE = SETTINGS.length_cone_button.variable
 
 
 def display(cars=None):
@@ -380,7 +380,8 @@ def display_dice_button():
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE), Genetic(), [0] * len(START_POSITIONS)])  # We add the dice to the memory
+            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE),
+                                                Genetic(), 'gray' [0] * len(START_POSITIONS)])  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
             DICE_MENU.init('dice', scores=capture_dice(), by_camera=True)  # We initialize the variables of the dice

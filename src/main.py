@@ -177,7 +177,7 @@ def stop_play(cars):
 
     if var.TEST_ALL_CARS:  # If we want to test all cars
         for car in cars:
-            file.write(f'{car.genetic} {car.score}\n')  # Write the score of the car
+            file.write(f'{car.genetic} {car.scores}\n')  # Write the score of the car
         return  # We stop the game
     else:
         cars = apply_genetic(cars)  # Genetic algorithm
@@ -227,13 +227,13 @@ def run_all_cars():
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
     tab_cars = []
-    for height_slow in range(1, 7):
-        for height_medium in range(1, 7):
-            for height_fast in range(1, 7):
+    for length_slow in range(1, 7):
+        for length_medium in range(1, 7):
+            for length_fast in range(1, 7):
                 for width_slow in range(1, 7):
                     for width_medium in range(1, 7):
                         for width_fast in range(1, 7):
-                            genetic = Genetic([height_slow, height_medium, height_fast, width_slow, width_medium, width_fast])
+                            genetic = Genetic([length_slow, length_medium, length_fast, width_slow, width_medium, width_fast])
                             tab_cars.append(Car(genetic))
                             if len(tab_cars) == 15:
                                 play(tab_cars)  # We play the game to test the cars
