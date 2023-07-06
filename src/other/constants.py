@@ -6,9 +6,8 @@ This file contains all the constants of the game used in multiple other files
 
 # Debug
 CHANGE_CHECKPOINTS = False  # Change the checkpoint for the actual map
-
-RGB_VALUES_DICE = [(240, 170, 25), (255, 100, 0), (204, 0, 0), (0, 200, 0), (102, 0, 102), (0, 0, 0)]  # RGB values of the dice
-# The order is: dark_yellow, orange, red, green, purple, black
+RGB_VALUES_DICE = [(220, 220, 0), (250, 120, 0), (204, 0, 0), (240, 170, 25), (0, 175, 0), (0, 0, 0), (255, 255, 255)]
+# The order is: yellow, orange, red, dark_yellow, green, black
 
 # The different colors of the cars (black, blue, brown, gray, light_blue, light_green, orange, pink, purple)
 CAR_COLORS = {'black': (0, 0, 0), 'blue': (0, 0, 255), 'brown': (153, 76, 0), 'gray': (128, 128, 128), 'light_blue': (0, 255, 255),

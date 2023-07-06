@@ -80,6 +80,7 @@ class DiceMenu:
             self.rect_x = 300
             self.rect_y = 125
 
+        print(self.dice_values)
         self.writing_buttons = [self.dice_button(x1, y1, self.dice_values[0]), self.dice_button(x2, y1, self.dice_values[1]),
                                 self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
                                 self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
@@ -105,13 +106,13 @@ class DiceMenu:
 
         x, y = self.rect_x + 675, self.rect_y + 290
         var.WINDOW.blit(scale_image(var.BIG_RED_CAR_IMAGE, var.SCALE_RESIZE_X), (convert_to_new_window((x, y))))
-        draw_detection_cone((x + 125, y + 25), self.dice_values)
+        draw_detection_cone((x + 125, y + 25), self.dice_values, factor=3, width_line=5)
 
         # Display the dice
-        draw_dice(x=self.rect_x + x1, y=self.rect_y + y1, color=RGB_VALUES_DICE[0], value=self.dice_values[0], black_dots=True)
+        draw_dice(x=self.rect_x + x1, y=self.rect_y + y1, color=RGB_VALUES_DICE[0], value=self.dice_values[0])
         draw_dice(x=self.rect_x + x2, y=self.rect_y + y1, color=RGB_VALUES_DICE[1], value=self.dice_values[1])
         draw_dice(x=self.rect_x + x3, y=self.rect_y + y1, color=RGB_VALUES_DICE[2], value=self.dice_values[2])
-        draw_dice(x=self.rect_x + x1, y=self.rect_y + y2, color=RGB_VALUES_DICE[3], value=self.dice_values[3])
+        draw_dice(x=self.rect_x + x1, y=self.rect_y + y2, color=RGB_VALUES_DICE[3], value=self.dice_values[3], black_dots=True)
         draw_dice(x=self.rect_x + x2, y=self.rect_y + y2, color=RGB_VALUES_DICE[4], value=self.dice_values[4])
         draw_dice(x=self.rect_x + x3, y=self.rect_y + y2, color=RGB_VALUES_DICE[5], value=self.dice_values[5])
 

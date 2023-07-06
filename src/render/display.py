@@ -54,26 +54,52 @@ def draw_circle(circle, image):
     cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
 
 
-def draw_detection_cone(pos, dice_values):
+def draw_detection_cone(pos, dice_values, angle=90, factor=1, width_line=2, actual_mode=None):
     """
     Draw the detection cones for a car
 
     Args:
         pos (int, int): position of the car
         dice_values (list): list of the dice values for the detection cones [length_slow, length_medium, length_fast, width_slow, width_medium, width_fast]
+        angle (int): angle of the detection cones
+        factor (int): factor to multiply the dice values
+        width_line (int): width of the line of the detection cones
+        actual_mode (str): actual mode of the car (slow, medium, fast)
+
+    Returns:
+        list: list of the points of the detection cones (to blit it easily)
     """
+
     pos = convert_to_new_window(pos)  # Convert the position to the new window
-    width_multiplier = var.SCALE_RESIZE_X * var.WIDTH_CONE * 3  # Multiplier for the width of the cone
-    length_multiplier = var.SCALE_RESIZE_Y * var.LENGTH_CONE * 3  # Multiplier for the length of the cone
+    width_multiplier = var.SCALE_RESIZE_X * var.WIDTH_CONE * factor  # Multiplier for the width of the cone
+    length_multiplier = var.SCALE_RESIZE_Y * var.LENGTH_CONE * factor  # Multiplier for the length of the cone
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[3] * width_multiplier, dice_values[0] * length_multiplier)
-    pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), 5)
+    left, top, right = compute_detection_cone_points(angle, pos, dice_values[3] * width_multiplier, dice_values[0] * length_multiplier)
+    points = [pos, left, top, right]
+    if actual_mode == 'slow':
+        pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line * 2)
+    else:
+        pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line)
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[4] * width_multiplier, dice_values[1] * length_multiplier)
-    pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), 5)
+    left, top, right = compute_detection_cone_points(angle, pos, dice_values[4] * width_multiplier, dice_values[1] * length_multiplier)
+    if actual_mode == 'medium':
+        pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line * 2)
+    else:
+        pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line)
+    points.append(left)
+    points.append(top)
+    points.append(right)
 
-    left, top, right = compute_detection_cone_points(90, pos, dice_values[5] * width_multiplier, dice_values[2] * length_multiplier)
-    pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), 5)
+    left, top, right = compute_detection_cone_points(angle, pos, dice_values[5] * width_multiplier, dice_values[2] * length_multiplier)
+    if actual_mode == 'fast':
+        pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line * 2)
+    else:
+        pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line)
+    points.append(left)
+    points.append(top)
+    points.append(right)
+
+    return points
 
 
 def show_car_window(car):
@@ -97,7 +123,7 @@ def show_car_window(car):
 
     image = scale_image(image, var.SCALE_RESIZE_X)  # Scale the image
     var.WINDOW.blit(image, convert_to_new_window((x, y)))  # Draw the red car
-    draw_detection_cone((x + 125, y + 25), car.genetic.get_list())  # Draw the detection cones
+    draw_detection_cone((x + 125, y + 25), car.genetic.get_list(), factor=3, width_line=5)  # Draw the detection cones
 
     # Draw the dice
     x_distance = 120

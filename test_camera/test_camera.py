@@ -75,7 +75,7 @@ circles = circles[0, :]  # The array is in an array, we take the first element
 plt.imshow(detected_edges, cmap='gray')  # Image with the edges
 
 # Find the contours of the dice
-contours, hierarchy = cv2.findContours(detected_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+contours, _ = cv2.findContours(detected_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 # Since we have 2 dices, and we want score of each one we need to split them into two image then recognise their scores.
 x0, y0, w0, h0 = cv2.boundingRect(contours[0])  # Find the rectangle around the first dice

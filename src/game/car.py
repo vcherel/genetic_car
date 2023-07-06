@@ -1,4 +1,5 @@
-from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car  # To compute the coordinates of the point of the detection cone
+from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car  # Utils functions
+from src.render.display import draw_detection_cone  # To draw the detection cone
 from src.other.constants import START_POSITIONS  # Start positions of the cars
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 import src.other.variables as var  # Variables of the game
@@ -271,41 +272,15 @@ class Car:
         Draw the 3 detection cones of the car
         """
         front_of_car = self.determine_front_of_car()  # Point of the front of the car
-
-        # Slow detection cone
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_slow, self.genetic.length_slow)
-        points = [front_of_car, left, top, right]  # Points of the detection cone for the rect
-
-        if self.speed < min_medium_speed:
-            pygame.draw.polygon(var.WINDOW, (255, 255, 0), (front_of_car, left, top, right), 3)
+        if self.speed < min_high_speed:
+            actual_mode = 'slow'
+        elif self.speed > min_high_speed:
+            actual_mode = 'fast'
         else:
-            pygame.draw.polygon(var.WINDOW, (255, 255, 0), (front_of_car, left, top, right), 1)
-
-
-        # Medium detection cone
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_medium, self.genetic.length_medium)
-        points.append(left)
-        points.append(top)
-        points.append(right)
-
-        if min_medium_speed < self.speed < min_high_speed:
-            pygame.draw.polygon(var.WINDOW, (255, 128, 0), (front_of_car, left, top, right), 3)
-        else:
-            pygame.draw.polygon(var.WINDOW, (255, 128, 0), (front_of_car, left, top, right), 1)
-
-
-        # Fast detection cone
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, self.genetic.width_fast, self.genetic.length_fast)
-        points.append(left)
-        points.append(top)
-        points.append(right)
-        if self.speed > min_high_speed:
-            pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 3)
-        else:
-            pygame.draw.polygon(var.WINDOW, (255, 0, 0), (front_of_car, left, top, right), 1)
+            actual_mode = 'medium'
 
         # We add the rect to the rects to blit
-        var.RECTS_BLIT_CAR.append(create_rect_from_points(points))
+        var.RECTS_BLIT_CAR.append(create_rect_from_points(draw_detection_cone(front_of_car, self.genetic.get_list(), self.angle, actual_mode=actual_mode)))
 
     def change_color(self, color):
         """

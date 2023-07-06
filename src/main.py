@@ -240,7 +240,6 @@ def run_all_cars():
                                 tab_cars = []
 
 
-
 if __name__ == '__main__':
     """
     Main program

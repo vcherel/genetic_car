@@ -1,5 +1,5 @@
-from src.other.utils import scale_image, change_color_car, convert_to_new_window  # Import the utils functions
 from src.other.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
+from src.other.utils import scale_image, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
 from src.game.genetic import Genetic  # Import the Genetic class
 import pygame  # To use pygame
