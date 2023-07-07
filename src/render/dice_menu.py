@@ -23,6 +23,9 @@ rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 
 class DiceMenu:
+    """
+    This class is used to represent the dice menu that appears when we want to change the value of the parameters of a car
+    """
     def __init__(self):
         """
         Initialize the dice menu

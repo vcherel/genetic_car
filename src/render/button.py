@@ -9,6 +9,9 @@ This file contains the Button class and all the functions related to it
 
 
 class Button:
+    """
+    This class is used to represent a button used in the ui
+    """
     def __init__(self, x=None, y=None, image=None, image_hover=None, image_clicked=None, checkbox=False, writing_button=False, text=None, variable=None, name=None, scale=1, scale_x=None, scale_y=None):
         """
         Initialization of a button

@@ -17,6 +17,9 @@ dict_check = [False] * 10  # List of the state of the checkbox
 
 
 class RectGarage:
+    """
+    This class is used to represent a slot for a car in the garage menu
+    """
     def __init__(self, id_car, type_car, name, genetic, id_rect, pos, color, scores):
         """
         Initialization of the rectangle garage

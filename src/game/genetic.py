@@ -8,7 +8,7 @@ This file contains the Genetic class used to store the genetic parameters of a c
 
 class Genetic:
     """
-    The class is used to represent a genetic algorithm and store the genetic parameters of a car
+    This class is used to represent a genetic algorithm and store the genetic parameters of a car
     """
     def __init__(self, list_parameters=None):
         """

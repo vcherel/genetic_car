@@ -95,6 +95,9 @@ length_cone_text = var.FONT.render('Hauteur :', True, (0, 0, 0), (128, 128, 128)
 
 
 class Settings:
+    """
+    This class is used to create the settings window, used to change the settings of the simulation
+    """
     def __init__(self):
         """
         Initialize the settings window the first time

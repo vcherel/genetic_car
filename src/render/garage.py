@@ -12,6 +12,9 @@ This function contains the Garage class and all the functions related to it. The
 
 
 class Garage:
+    """
+    This class is used to represent the garage, used to store the cars
+    """
     def __init__(self):
         """
         Initialize the garage

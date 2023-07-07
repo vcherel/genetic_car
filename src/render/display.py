@@ -40,20 +40,6 @@ def display_text_ui(caption, pos, font, background_color=(128, 128, 128)):
     var.RECTS_BLIT_UI.append(text_rec(text, pos))  # Add the rectangle of the text to the list of rectangles to blit
 
 
-def draw_circle(circle, image):
-    """
-    Draw the circles on the image
-
-    Args:
-        circle (numpy.ndarray): The circle to draw
-        image (numpy.ndarray): Image on which to draw the circles
-    """
-    # Draw the outer circle
-    cv2.circle(image, (int(circle[0]), int(circle[1])), int(circle[2]), (0, 255, 0), 2)
-    # Draw the center of the circle
-    cv2.circle(image, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
-
-
 def draw_detection_cone(pos, dice_values, angle=90, factor=1, width_line=2, actual_mode=None):
     """
     Draw the detection cones for a car
@@ -190,25 +176,25 @@ def draw_dots(x, y, nb_dots, factor, color=(255, 255, 255)):
         color (tuple): Color of the dots. Defaults to white.
     """
     dot_radius = 10
-    dot_padding = 32
+    dot_offset = 32
     position_dot = []  # They will correspond to the positions of the dots in the new window
 
     # Calculate the positions of the dots based on the number of dots
     if nb_dots == 1:
         position_dot = scale_positions(x, y, [(60, 60)], factor)
     elif nb_dots == 2:
-        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (120 - dot_padding, 120 - dot_padding)], factor)
+        position_dot = scale_positions(x, y, [(dot_offset, dot_offset), (120 - dot_offset, 120 - dot_offset)], factor)
     elif nb_dots == 3:
-        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (60, 60), (120 - dot_padding, 120 - dot_padding)], factor)
+        position_dot = scale_positions(x, y, [(dot_offset, dot_offset), (60, 60), (120 - dot_offset, 120 - dot_offset)], factor)
     elif nb_dots == 4:
-        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (dot_padding, 120 - dot_padding), (120 - dot_padding, dot_padding),
-                                              (120 - dot_padding, 120 - dot_padding)], factor)
+        position_dot = scale_positions(x, y, [(dot_offset, dot_offset), (dot_offset, 120 - dot_offset), (120 - dot_offset, dot_offset),
+                                              (120 - dot_offset, 120 - dot_offset)], factor)
     elif nb_dots == 5:
-        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (dot_padding, 120 - dot_padding), (120 - dot_padding, dot_padding),
-                                       (120 - dot_padding, 120 - dot_padding), (60, 60)], factor)
+        position_dot = scale_positions(x, y, [(dot_offset, dot_offset), (dot_offset, 120 - dot_offset), (120 - dot_offset, dot_offset),
+                                       (120 - dot_offset, 120 - dot_offset), (60, 60)], factor)
     elif nb_dots == 6:
-        position_dot = scale_positions(x, y, [(dot_padding, dot_padding), (dot_padding, 120 - dot_padding), (120 - dot_padding, dot_padding),
-                                              (120 - dot_padding, 120 - dot_padding), (dot_padding, 60), (120 - dot_padding, 60)], factor)
+        position_dot = scale_positions(x, y, [(dot_offset, dot_offset), (dot_offset, 120 - dot_offset), (120 - dot_offset, dot_offset),
+                                              (120 - dot_offset, 120 - dot_offset), (dot_offset, 60), (120 - dot_offset, 60)], factor)
 
     # Draw the dots on the dice
     for dot_pos in position_dot:

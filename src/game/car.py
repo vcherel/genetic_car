@@ -17,6 +17,9 @@ min_high_speed = var.MAX_SPEED / 3 * 2
 
 
 class Car:
+    """
+    Class representing a car in the game
+    """
     def __init__(self, genetic=None, best_scores=None, color='red', view_only=False):
         """
         Initialization of the car
