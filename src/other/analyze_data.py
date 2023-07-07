@@ -78,3 +78,28 @@ def show_analysis(scores):
 
             # Draw the circle with the calculated color
             pygame.draw.circle(var.BACKGROUND, circle_color, pos, 25)
+
+
+def compute_mean_bgr():
+    """
+    Compute the mean BGR value using the data in the mean_bgr file
+    """
+    b, g, r = [], [], []
+    with open(var.PATH_DATA + '/mean_bgr', 'r') as file:
+        for line in file:
+            bgr = line.split()
+            b.append(float(bgr[0]))
+            g.append(float(bgr[1]))
+            r.append(float(bgr[2]))
+
+    mean_b = sum(b) / len(b)
+    mean_g = sum(g) / len(g)
+    mean_r = sum(r) / len(r)
+
+    return mean_b, mean_g, mean_r
+
+
+
+if __name__ == '__main__':
+    mean_bgr = compute_mean_bgr()
+    print(mean_bgr)

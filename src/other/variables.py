@@ -20,11 +20,13 @@ LARGE_FONT = pygame.font.SysFont('Arial', 30)  # Font of the text
 
 # DISPLAY
 WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size
-WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Initialization of the window
 BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
 BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to detect collisions)
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
+
+
+# RESIZE
 RESIZE = False  # True if we are resizing the window, False otherwise
 TIME_RESIZE = 0  # Time when we started to resize the window
 RESIZE_DIMENSIONS = None  # Dimensions of the window after resizing
@@ -32,8 +34,16 @@ SCALE_RESIZE_X = 1  # Scale of the window after resizing on the x-axis
 SCALE_RESIZE_Y = 1  # Scale of the window after resizing on the y-axis
 
 
+# TEXT
+TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
+TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  # Text of the medium button
+TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
+TEXT_LENGTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the length button
+TEXT_WIDTH = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
+
 
 # IMAGES
+WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Initialization of the window
 RED_CAR_IMAGE = None  # Image of the original car
 BIG_RED_CAR_IMAGE = None
 
@@ -61,15 +71,6 @@ MAX_SPEED = 8  # Maximum speed of the car
 TURN_ANGLE = 5  # Angle of rotation of the car
 ACCELERATION = 0.2  # Acceleration of the car
 DECELERATION = -1  # Deceleration of the car
-
-
-# BUTTONS
-BUTTONS = []  # List of the buttons
-TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
-TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  # Text of the medium button
-TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
-TEXT_LENGTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the length button
-TEXT_WIDTH = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
 
 
 # DEBUG
@@ -121,6 +122,7 @@ ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 FPS = 60  # FPS of the game
 ACTUAL_FPS = 60  # Actual FPS
 SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoints, False otherwise
+BUTTONS = []  # List of the buttons
 
 
 
