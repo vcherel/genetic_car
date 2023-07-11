@@ -331,7 +331,8 @@ def display_start_button():
     Display the start button used to start the simulation
     """
     var.START = start_button.draw()  # Draw the start button
-    var.RECTS_BLIT_UI.append(start_button.rect)  # To erase the contour of button
+    if start_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(start_button.rect)  # To erase the contour of button
     if start_button.just_clicked and (var.NB_CARS != 0 or var.CARS_FROM_GARAGE):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
@@ -356,7 +357,8 @@ def display_garage_button():
     Display the garage button used to see what cars are stored in the garage
     """
     var.DISPLAY_GARAGE = garage_button.draw()  # Draw the garage button
-    var.RECTS_BLIT_UI.append(garage_button.rect)  # We add the rect of the garage button to the list of rects to blit
+    if garage_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(garage_button.rect)  # We add the rect of the garage button to the list of rects to blit
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
@@ -373,7 +375,8 @@ def display_dice_button():
     Display the dice button used to create a car by filming dice
     """
     dice_button.draw()  # Draw the dice button
-    var.RECTS_BLIT_UI.append(dice_button.rect)  # We add the rect of the dice button to the list of rects to blit
+    if dice_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(dice_button.rect)  # We add the rect of the dice button to the list of rects to blit
     if dice_button.just_clicked:   # Dice button is just clicked
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage when the dice button is pressed
@@ -400,7 +403,8 @@ def display_map_button(cars):
     Display the map button used to change the map
     """
     map_button.draw()  # Draw the map button
-    var.RECTS_BLIT_UI.append(map_button.rect)  # We add the rect of the map button to the list of rects to blit
+    if map_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(map_button.rect)  # We add the rect of the map button to the list of rects to blit
     if map_button.just_clicked:  # Map button is just clicked
         pygame.display.flip()  # To see the red contour of the button
         var.change_map()  # We change the map

@@ -59,7 +59,7 @@ class Button:
             self.activated = False    # True if the checkbox is checked, False otherwise
             self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been activated ; -1 if the button has just been deactivated
             self.time_clicked = 0   # Time when the button is clicked
-
+            self.mouse_over_button = False  # True if the mouse is over the button, False otherwise
 
             self.writing_button = writing_button  # True if the button is a writing button, False otherwise
             self.text = text  # Text of the button
@@ -84,6 +84,7 @@ class Button:
         """
         image = self.image  # Image of the button
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
+            self.mouse_over_button = True
             if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 300:    # Mouse clicked for the first time
                 self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
                 if self.checkbox or self.writing_button:
@@ -103,6 +104,7 @@ class Button:
             if self.image_hover:
                 image = self.image_hover   # Change the image if it's possible
         else:
+            self.mouse_over_button = False
             self.just_clicked = 0   # The button has not just been clicked
             if not self.checkbox and not self.writing_button:
                 self.activated = False  # Change the state if it's a simple button
