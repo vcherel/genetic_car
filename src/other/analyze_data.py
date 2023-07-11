@@ -1,6 +1,6 @@
-from src.other.constants import PATH_DATA  # Import the path of the data
+from src.data.constants import PATH_DATA  # Import the path of the data
 import matplotlib.pyplot as plt  # For plotting the histogram
-import src.other.variables as var  # For the path of the data
+import src.data.variables as var  # For the path of the data
 import pygame  # To use pygame
 
 """

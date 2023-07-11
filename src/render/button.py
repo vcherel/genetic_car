@@ -1,5 +1,5 @@
 from src.other.utils import convert_to_new_window  # To convert the position of the button
-import src.other.variables as var  # Import the variables
+import src.data.variables as var  # Import the data
 import os.path  # To get the path of the file
 import pygame  # To use pygame
 

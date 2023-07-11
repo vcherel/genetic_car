@@ -1,16 +1,16 @@
 from src.other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
 from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
 from src.other.camera import capture_dice  # Import the function to capture the dice
-from src.other.constants import PATH_IMAGE, START_POSITIONS  # Import constants
+from src.data.constants import PATH_IMAGE, START_POSITIONS  # Import constants
 from src.render.display import display_text_ui  # Import functions from display
 from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.render.settings_menu import SETTINGS  # Import the settings window
 from src.render.garage import GARAGE  # Import functions from garage
 from src.game.genetic import Genetic  # Import the genetic class
-import src.other.variables as var  # Import the variables
+import src.data.variables as var  # Import the data
 from src.render.button import Button  # Import the button
 import pygame  # To use pygame
-import time  # To get the time
+import time  # To get the time*
 
 
 """
@@ -38,8 +38,11 @@ def init():
     global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button
 
     # Buttons
-    stop_button = Button(1420, 4, pygame.image.load(PATH_IMAGE + '/stop_button.png'), scale=0.1)
-    pause_button = Button(1417, 56, pygame.image.load(PATH_IMAGE + '/pause_button.png'), checkbox=True, scale=0.11)
+    stop_button = Button(1425, 4, pygame.image.load(PATH_IMAGE + '/stop_button_1.png'),
+                         pygame.image.load(PATH_IMAGE + '/stop_button_2.png'), scale=0.25)
+    pause_button = Button(1425, 56, pygame.image.load(PATH_IMAGE + '/pause_button_1.png'),
+                          pygame.image.load(PATH_IMAGE + '/pause_button_2.png'),
+                          pygame.image.load(PATH_IMAGE + '/pause_button_3.png'), checkbox=True, scale=0.25)
     start_button = Button(1330, 18, pygame.image.load(PATH_IMAGE + '/start_button_1.png'),
                           pygame.image.load(PATH_IMAGE + '/start_button_2.png'),
                           pygame.image.load(PATH_IMAGE + '/start_button_3.png'), scale=0.35)
@@ -285,7 +288,7 @@ def display(cars=None):
 
 def display_buttons(cars):
     """
-    Draw the buttons and change the state of the variables
+    Draw the buttons and change the state of the data
 
     Args:
         cars (list): List of cars in case we want to change the map and init the positions of the cars
@@ -307,6 +310,8 @@ def display_stop_button():
     Display the stop button used to stop the simulation
     """
     stop_button.draw()  # Draw the stop button
+    if stop_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(stop_button.rect)  # We add the rect to the list of rects to blit
     if stop_button.just_clicked:
         if var.PLAY:
             var.PLAY = False  # We stop the simulation
@@ -319,6 +324,8 @@ def display_pause_button():
     Display the pause button used to pause the simulation
     """
     var.PAUSE = pause_button.draw()  # Draw the pause button
+    if pause_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(pause_button.rect)
     if pause_button.just_clicked:  # Pause button is just clicked
         if var.PAUSE:
             pause(from_button=True)  # We pause the simulation
@@ -390,7 +397,7 @@ def display_dice_button():
                                                 Genetic(), 'gray' [0] * len(START_POSITIONS)])  # We add the dice to the memory
         else:  # If we use the camera we capture the dice
             pause()
-            DICE_MENU.init('dice', scores=capture_dice(), by_camera=True)  # We initialize the variables of the dice
+            DICE_MENU.init('dice', scores=capture_dice(), by_camera=True)  # We initialize the data of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
     if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
@@ -485,6 +492,7 @@ def unpause(from_button=False):
     if not from_button:  # If the unpause is not from the pause button we have to uncheck the button
         var.PAUSE = False  # We unpause the simulation
         pause_button.activated = False  # We uncheck the pause button
+        var.RECTS_BLIT_UI.append(pause_button.rect)  # We add the rect of the pause button to the list of rects to blit
 
     if var.DISPLAY_CAR_WINDOW:
         erase_car_window()

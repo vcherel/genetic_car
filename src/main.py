@@ -1,4 +1,4 @@
-from src.other.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
+from src.data.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
 from src.other.analyze_data import analyze_data, show_analysis  # To analyze the data of all the cars
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.render.settings_menu import SETTINGS  # Import the settings
@@ -6,7 +6,7 @@ from src.render.garage import add_garage_cars  # Import the garage
 from src.game.genetic import Genetic  # Import the genetic class
 from src.other.utils import union_rect  # Import the utils
 import src.render.display as display  # Import the display
-import src.other.variables as var  # Import the variables
+import src.data.variables as var  # Import the data
 import traceback  # To get the traceback of errors
 from src.game.car import Car  # Import the car
 import random  # To generate random numbers
@@ -44,6 +44,8 @@ def open_window():
 
         if var.START:   # When the game starts
             play()  # Play the game to begin
+
+        var.CLOCK.tick(25)  # Limit the fps
 
 
 def play(cars=None):
@@ -103,11 +105,11 @@ def init_play(cars):
                     cars.append(car)
 
         cars = add_garage_cars(cars)  # We add the car from the garage to the list of cars
-        var.init_variables(len(cars))  # Initialize the variables
+        var.init_variables(len(cars))  # Initialize the data
 
     else:           # If we already played
         cars = add_garage_cars(cars)  # We add the car from the garage to the list of cars
-        var.init_variables(len(cars), replay=True)  # Initialize the variables
+        var.init_variables(len(cars), replay=True)  # Initialize the data
 
     return cars
 
@@ -246,7 +248,7 @@ if __name__ == '__main__':
     """
     try:
         random.seed(var.SEED)  # Initialize the random seed
-        var.load_variables()  # Load the variables
+        var.load_variables()  # Load the data
         var.change_map(first_time=True)  # Change the map to the first one
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings

@@ -1,4 +1,4 @@
-from src.other.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
+from src.data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
 from src.other.utils import scale_image, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
 from src.game.genetic import Genetic  # Import the Genetic class
@@ -6,7 +6,7 @@ import pygame  # To use pygame
 import sys  # To quit the game
 
 """
-This file contains all the variables of the game used in multiple other files
+This file contains all the data of the game used in multiple other files
 """
 
 # PYGAME
@@ -145,13 +145,13 @@ def resize_window(dimensions):
 
     WIDTH_SCREEN, HEIGHT_SCREEN = dimensions  # Update the dimensions
     WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Resize the window
-    update_visual_variables()  # Update the visual variables
+    update_visual_variables()  # Update the visual data
     pygame.display.flip()  # Update the display
 
 
 def change_map(first_time=False):
     """
-    Change the map and all the variables associated. It is used at the beginning of the game and when we press the button to change the map
+    Change the map and all the data associated. It is used at the beginning of the game and when we press the button to change the map
     When it's the first time we keep the actual map but when we press the button we change the map to the next one
 
     Args:
@@ -176,7 +176,7 @@ def change_map(first_time=False):
 
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
 
-    update_visual_variables()  # Update the variables used to display things
+    update_visual_variables()  # Update the data used to display things
 
     CHECKPOINTS = []  # List of checkpoints
     with open(PATH_DATA + '/checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:
@@ -195,7 +195,7 @@ def change_map(first_time=False):
 
 def update_visual_variables():
     """
-    Update the variables used to display things according to the size of the new window
+    Update the data used to display things according to the size of the new window
     """
     global BACKGROUND, START_POSITION, RADIUS_CHECKPOINT, SCALE_RESIZE_X, SCALE_RESIZE_Y
 
@@ -215,7 +215,7 @@ def update_visual_variables():
 
 def init_variables(nb_cars, replay=False):
     """
-    Initialize the variables of the game (number of car alive, time remaining, start time, ...)
+    Initialize the data of the game (number of car alive, time remaining, start time, ...)
     """
     global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, ACTUAL_ID_MEMORY_GENETIC, TICKS_REMAINING, ACTUAL_CROSSOVER_CHANCE, ACTUAL_MUTATION_CHANCE
 
@@ -233,7 +233,7 @@ def init_variables(nb_cars, replay=False):
 
 def load_variables():
     """
-    Load the variables of the game (number of the map, number of cars, cars, ...)
+    Load the data of the game (number of the map, number of cars, cars, ...)
     """
     global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE, TIME_GENERATION, MAX_SPEED, TURN_ANGLE,\
         ACCELERATION, DECELERATION, MUTATION_CHANCE, CROSSOVER_CHANCE, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE
@@ -292,7 +292,7 @@ def load_variables():
 
 def save_variables():
     """"
-    Load the variables of the game (number of the map, number of cars, cars, ...)
+    Load the data of the game (number of the map, number of cars, cars, ...)
     """
     # We change the variable in the file parameters
     with open(PATH_DATA + '/parameters', 'w') as file_parameters_write:

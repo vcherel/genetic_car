@@ -1,8 +1,8 @@
 from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
-from src.other.constants import PATH_IMAGE, CAR_COLORS  # Import the constants
+from src.data.constants import PATH_IMAGE, CAR_COLORS  # Import the constants
 from src.render.dice_menu import DICE_MENU  # Import the dice menu
 from src.render.button import Button  # Import the button class
-import src.other.variables as var  # Import the variables
+import src.data.variables as var  # Import the data
 from src.game.car import Car  # Import the car class
 import random  # To get random numbers
 import pygame  # To play the game
@@ -116,7 +116,7 @@ class RectGarage:
 
         # Button to edit a car
         if self.edit_button is not None and self.edit_button.draw():  # We check the state of the button
-            DICE_MENU.init(self.type_car, self.car.genetic.get_list(), self.id_car)  # We initialize the dice variables
+            DICE_MENU.init(self.type_car, self.car.genetic.get_list(), self.id_car)  # We initialize the dice data
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
         # Button to delete a car

@@ -1,8 +1,8 @@
 from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car  # Utils functions
 from src.render.display import draw_detection_cone  # To draw the detection cone
-from src.other.constants import START_POSITIONS  # Start positions of the cars
+from src.data.constants import START_POSITIONS  # Start positions of the cars
 from src.game.genetic import Genetic  # Genetic algorithm of the car
-import src.other.variables as var  # Variables of the game
+import src.data.variables as var  # Variables of the game
 import pygame  # Pygame library
 import math  # Math library
 

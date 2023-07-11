@@ -1,9 +1,9 @@
-from src.other.constants import RGB_VALUES_DICE, PATH_IMAGE, START_POSITIONS  # Import the constants
+from src.data.constants import RGB_VALUES_DICE, PATH_IMAGE, START_POSITIONS  # Import the constants
 from src.other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
 from src.render.display import draw_detection_cone, draw_dice  # Import the display functions
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button class
-import src.other.variables as var  # Import the variables
+import src.data.variables as var  # Import the data
 import pygame  # Import pygame module
 
 
@@ -17,7 +17,7 @@ x1, x2, x3 = 175, 355, 535  # x coordinates of the dice
 y1, y2 = 120, 315           # y coordinates of the dice
 
 # Camera
-camera_frame = pygame.image.load(PATH_IMAGE + '/nothing.png')  # Frame of the camera at the last update
+camera_frame = None  # Frame of the camera at the last update
 rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 
@@ -125,7 +125,7 @@ class DiceMenu:
                 self.writing_buttons[index].text = ''
 
         # Display the image of the last frame of the camera
-        if self.by_camera:  # If we are modifying dice from the camera
+        if self.by_camera and camera_frame is not None:  # If we are modifying dice from the camera
             var.WINDOW.blit(camera_frame, (rect_camera_frame.x, rect_camera_frame.y))
             pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_camera_frame, 2)
 
@@ -165,7 +165,7 @@ class DiceMenu:
 
 def save_camera_frame(frame):
     """
-    We save the frame of the camera in variables (CAMERA_FRAME, RECT_CAMERA_FRAME) to display it on the screen
+    We save the frame of the camera in data (CAMERA_FRAME, RECT_CAMERA_FRAME) to display it on the screen
     """
     global camera_frame, rect_camera_frame
 

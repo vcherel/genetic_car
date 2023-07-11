@@ -1,9 +1,7 @@
 from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, change_color_car  # Import the utils functions
-from src.other.constants import RGB_VALUES_DICE  # Import the constants
-from src.other import variables as var  # Import the variables
+from src.data.constants import RGB_VALUES_DICE  # Import the constants
+from src.data import variables as var
 import pygame  # To use pygame
-import cv2  # To use OpenCV
-
 
 """
 This file contains all the functions to display elements on the screen

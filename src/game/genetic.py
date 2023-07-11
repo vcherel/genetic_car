@@ -1,4 +1,4 @@
-import src.other.variables as var  # Import the variables
+import src.data.variables as var  # Import the data
 import random  # Used to generate random numbers
 
 """

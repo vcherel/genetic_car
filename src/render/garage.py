@@ -1,8 +1,8 @@
 from src.other.utils import convert_to_new_window  # To convert the position if we resize the window
 from src.render.rect_garage import RectGarage, reset_dict_check  # Import the rectangle garage
-from src.other.constants import PATH_IMAGE  # To get the path of the image
+from src.data.constants import PATH_IMAGE  # To get the path of the image
 from src.render.button import Button  # Import the button
-import src.other.variables as var  # Import the variable
+import src.data.variables as var  # Import the variable
 import pygame  # To use pygame
 
 
@@ -86,7 +86,7 @@ class Garage:
 
 
         if self.reload_page:  # If we have to change the page of the garage
-            # Reset the variables
+            # Reset the data
             self.reset_variables()
 
             id_rect = 0  # The number to identify the id of the rectangle
@@ -97,7 +97,7 @@ class Garage:
                         self.rectangles.append(RectGarage(id_car=memory_car[0], name=memory_car[1], type_car=key, genetic=memory_car[2],
                                                           id_rect=id_rect, pos=(self.actual_x, self.actual_y), color=memory_car[3], scores=memory_car[4]))  # We create the rectangles
                         id_rect += 1  # We add one to the number to identify the id of the rectangle
-                        self.update_variables()  # We change the values of the variables
+                        self.update_variables()  # We change the values of the data
                     self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
 
             self.reload_page = False  # We don't have to change the page of the garage anymore
@@ -118,7 +118,7 @@ class Garage:
 
     def update_variables(self):
         """
-        Update the variables to draw the next rectangle in the garage
+        Update the data to draw the next rectangle in the garage
         """
         if self.change_y:  # If we have to change the y position (it means we are at the right of the garage)
             self.actual_y += 90
@@ -129,7 +129,7 @@ class Garage:
 
     def reset_variables(self):
         """
-        Reset the variables
+        Reset the data
         """
         var.CARS_FROM_GARAGE = []  # We reset the list of the cars from the garage
         self.rectangles = []  # We reset the list of the rectangle in the garage

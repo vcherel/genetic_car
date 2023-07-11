@@ -1,4 +1,4 @@
-import src.other.variables as var  # Variables of the game
+import src.data.variables as var  # Variables of the game
 import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
 

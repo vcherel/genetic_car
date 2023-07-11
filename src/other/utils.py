@@ -1,4 +1,4 @@
-import src.other.variables as var  # To use the variables
+import src.data.variables as var  # To use the data
 import pygame  # To use pygame
 import math  # To use math
 
@@ -98,39 +98,6 @@ def text_rec(text, pos):
     rect = text.get_rect()  # Get the rect of the text
     rect.x, rect.y = pos[0], pos[1]  # Change the position of the rect
     return rect
-
-
-def overlapping_rectangles(rect1, rect2, area_threshold=0.5):
-    """
-    Check if two rectangles are overlapping for more than half of their area
-
-    Args:
-        rect1 (tuple(int, int, int, int)): the first rectangle (x, y, w, h)
-        rect2 (tuple(int, int, int, int)): the second rectangle (x, y, w, h)
-        area_threshold (float): the minimum overlapping area threshold
-
-    Returns:
-        bool: True if the rectangles are overlapping, False otherwise
-    """
-    x1, y1, w1, h1 = rect1
-    x2, y2, w2, h2 = rect2
-
-    # Calculate the coordinates of the intersection rectangle
-    x_left = max(x1, x2)
-    y_top = max(y1, y2)
-    x_right = min(x1 + w1, x2 + w2)
-    y_bottom = min(y1 + h1, y2 + h2)
-
-    # Check if the rectangles are not overlapping
-    if x_right <= x_left or y_bottom <= y_top:
-        return False
-
-    # Calculate the areas of the rectangles and the intersection
-    area1 = w1 * h1
-    area2 = w2 * h2
-    intersection_area = (x_right - x_left) * (y_bottom - y_top)
-
-    return intersection_area > area_threshold * min(area1, area2)
 
 
 def change_color_car(image, str_color):
