@@ -4,6 +4,7 @@ from src.render.dice_menu import save_camera_frame  # To save the camera frame
 import matplotlib.pyplot as plt  # To show images
 import src.other.variables as var  # Variables
 import random  # To generate random numbers
+import warnings  # To ignore warnings
 import numpy as np  # To use numpy
 import pygame  # To use Pygame
 import cv2  # To use OpenCV
@@ -31,9 +32,7 @@ memory_rects = {}  # Format : {rect : lifetime_remaining} ; lifetime_remaining :
 final_score = {'yellow': random.randint(1, 6), 'orange': random.randint(1, 6), 'red': random.randint(1, 6),
                'dark_yellow': random.randint(1, 6), 'green': random.randint(1, 6), 'black': random.randint(1, 6)}
 
-frame_view = np.empty([2, 2])  # The frame of the camera (viewed by the user
-
-
+frame_view = np.empty([2, 2])  # The frame of the camera (viewed by the user)
 count_iterations = 0  # The number of iterations of the program
 
 # The parameters of the HoughCircles function
@@ -42,14 +41,15 @@ dict_p2 = {'red': 16, 'green': 16, 'yellow': 16, 'orange': 16, 'dark_yellow': 16
 dict_dp = {'red': 5, 'green': 5, 'yellow': 5, 'orange': 5, 'dark_yellow': 5, 'black': 5}
 
 
-# Optimization
+# Optimization and debug parameters
+show_clicks = False  # To show the coordinates and color of the position where the user clicked
 
 # To find what is the color of each dice
 write_mean_bgr = False
 file_write_mean_bgr = open(var.PATH_DATA + '/mean_bgr', 'a')  # The file in which we will write the parameters
 
 # Optimization parameters for HoughCircles function
-optimize = True
+optimize = False
 colors_optimize = ['red']
 score_optimize = 1
 coordinates_optimize = [(229, 265)]
@@ -87,7 +87,7 @@ def capture_dice():
         rectangles = find_rectangles(frame)  # Find the rectangles on the image
 
         # Draw the rectangles on the image
-        draw_rectangle(rectangles, thickness=1)
+        # draw_rectangle(rectangles, thickness=1)
 
         # We take in memory for each color the bgr color and the rectangle to prevent 2 colors from being the same
         colors = {}  # List of the colors of the dice (key: name_color, value: ColorDice)
@@ -111,16 +111,13 @@ def capture_dice():
             # We draw the rectangle on the image
             draw_rectangle((x, y, w, h), real_bgr_values[color])
 
-            if image is None:
-                print('image is None !!!!')  # I have some random error so I put this to see if it happens again
-
             score = determine_score(image, rect, color, scores_colors[color])  # We determine the score of the dice
 
             if color in final_score:
                 final_score[color] = score  # We add the score to the final score
 
             # We write the value of the dice on the image
-            cv2.putText(frame_view, f'score: {score}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(frame_view, f'Score: {score}', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 50, 50), 2)
 
         # We display the frame on the window
         image_rgb = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
@@ -133,33 +130,39 @@ def capture_dice():
         var.WINDOW.blit(var.LARGE_FONT.render("Cliquez n'importe où pour quitter cette fenêtre", True, (255, 0, 255)), convert_to_new_window((440, 600)))  # Text of the selected dice
         pygame.display.flip()  # We update the window
 
-        # Detect a click on the window to stop the program
-        click = False
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                click = True
-                break
-
-        if click:  # We stop the program after a click
-            pos = pygame.mouse.get_pos()
-            pos = (pos[0] - rect_window.x, pos[1] - rect_window.y)
-            # Print the position of the click
-            print(pos)
-            # Print the color of the pixel
-            # print(frame[pos[1], pos[0]])
-            var.WINDOW.blit(var.BACKGROUND, rect_window, rect_window)  # We erase the window
-            break
-
         if count_iterations == waiting and optimize:
             display_dictionaries_optimization()  # Sort the dictionaries
 
-    cap.release()  # Release the VideoCapture object
-    cv2.destroyAllWindows()  # Close all windows
+        # Detect a click on the window to stop the program
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:  # We stop the program after a click
+                if show_clicks:
+                    show_click(rect_window, frame)  # We display the click
+                var.WINDOW.blit(var.BACKGROUND, rect_window, rect_window)  # We erase the window
 
-    frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
-    save_camera_frame(frame_view)  # Save the image into the variables (CAMERA_FRAME and RECT_CAMERA_FRAME)
+                cap.release()  # Release the VideoCapture object
+                cv2.destroyAllWindows()  # Close all windows
 
-    return list(final_score.values())
+                frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
+                save_camera_frame(frame_view)  # Save the image into the variables (CAMERA_FRAME and RECT_CAMERA_FRAME)
+
+                return list(final_score.values())
+
+
+def show_click(rect_window, frame):
+    """
+    Display the click in the terminal
+
+    Args:
+        rect_window (pygame.rect.Rect): Rectangle of the window
+        frame (numpy.ndarray): Image of the camera
+    """
+    pos = pygame.mouse.get_pos()
+    pos = (pos[0] - rect_window.x, pos[1] - rect_window.y)
+    # Print the position of the click
+    print(pos)
+    # Print the color of the pixel
+    print(frame[pos[1], pos[0]])
 
 
 def optimize_parameters(image, color, value, rect):
@@ -514,23 +517,25 @@ def determine_score(image, rect, color, scores):
     Returns:
         (int): Score of the dice
     """
+    circles = []
 
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert the image to grayscale
-    image = cv2.medianBlur(image, 3)  # We blur the image
-    # image = cv2.Canny(image, 50, 120)  # We apply the Canny filter to the image
+    try:
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert the image to grayscale
+        circles = add_new_circles(circles, gray_image, color)
 
-    # Find the circles in the image (corresponding to the points of the dice)
-    circles = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=dict_dp[color] / 10, minDist=3,
-                               param1=dict_p1[color], param2=dict_p2[color], minRadius=0, maxRadius=11)
+        image = cv2.medianBlur(gray_image, 3)  # We blur the image
+        circles = add_new_circles(circles, image, color)
 
-    # TODO : multiple methods and merge them
+        image = cv2.Canny(gray_image, 50, 120)  # We apply the Canny filter to the image
+        circles = add_new_circles(circles, image, color)
 
-    if count_iterations == waiting and optimize:
-        if color in colors_optimize:
-            optimize_parameters(image, color, score_optimize, rect)  # Optimize the parameters of the HoughCircles function
+    except cv2.error:
+        print('Error in determine_score')
 
-    if circles is not None:
-        circles = circles[0, :]  # The array is in an array, we take the first element
+    if circles:
+        # We make sure we don't have any overlapping circles
+        circles = remove_circles_duplicate(circles)
+
         score = len(circles)  # We count the number of circles
 
         # We convert the coordinates of the circles to the coordinates of the window
@@ -555,9 +560,59 @@ def determine_score(image, rect, color, scores):
     return score
 
 
+def add_new_circles(circles, image, color):
+    """
+    Find new circles and add them to the list of circles
+
+    Args:
+        circles (list): List of circles
+        image (numpy.ndarray): Image of the dice
+        color (str): Color of the dice
+
+    Returns:
+        (list): List of circles with the new circles
+    """
+    new_circles = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=dict_dp[color] / 10, minDist=3,
+                                   param1=dict_p1[color], param2=dict_p2[color], minRadius=0, maxRadius=11)
+    if new_circles is not None:
+        for circle in new_circles[0, :]:
+            circles.append(circle)
+
+    return circles
+
+
+def remove_circles_duplicate(circles):
+    """
+    Remove the circles that are too close to each other
+
+    Args:
+        circles (list): List of circles
+
+    Returns:
+        (list): List of circles without the circles that are too close to each other
+    """
+    new_circles = []
+    for circle in circles:
+        present = False
+        for new_circle in new_circles:
+            if np.linalg.norm(circle[:2] - new_circle[:2]) < 10:
+                present = True
+                break
+        if not present:
+            new_circles.append(circle)
+
+    return new_circles
+
+
 def compute_mean_bgr(image):
     """
     Compute the mean BGR values of the image without the white or black dots
+
+    Args:
+        image (numpy.ndarray): Image of the dice
+
+    Returns:
+        (numpy.ndarray): Mean BGR values of the image without the white or black dots
     """
     threshold_distance = 150  # The threshold distance to consider a pixel as a white or black dot
     white = np.array([200, 200, 200])  # Assuming white color value
@@ -582,7 +637,9 @@ def compute_mean_bgr(image):
     new_list = array[mask]
 
     # Calculate the mean BGR values on the filtered array
-    mean_bgr = np.mean(new_list, axis=0)
+    with warnings.catch_warnings():  # I expect to see RuntimeWarnings in this block
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        mean_bgr = np.mean(new_list, axis=0)
 
     return mean_bgr
 
@@ -608,7 +665,7 @@ def draw_circle(circles):
     Draw the circles on the frame
 
     Args:
-        circles (numpy.ndarray): The circles to draw
+        circles (list): The circles to draw
     """
     for circle in circles:
         # Draw the outer circle

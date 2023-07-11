@@ -157,7 +157,7 @@ def change_map(first_time=False):
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
     """
-    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, BIG_RED_CAR_IMAGE
+    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE
 
     # If we change map for the first time, we don't change the map
     if not first_time:
@@ -197,7 +197,7 @@ def update_visual_variables():
     """
     Update the variables used to display things according to the size of the new window
     """
-    global BACKGROUND, START_POSITION, RADIUS_CHECKPOINT, BIG_RED_CAR_IMAGE, SCALE_RESIZE_X, SCALE_RESIZE_Y
+    global BACKGROUND, START_POSITION, RADIUS_CHECKPOINT, SCALE_RESIZE_X, SCALE_RESIZE_Y
 
     # This background will be shown but will not be used to detect collisions
     BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
@@ -207,7 +207,6 @@ def update_visual_variables():
 
     SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
     SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
-    BIG_RED_CAR_IMAGE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
 
     edit_background()  # Edit the background
     WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
@@ -237,7 +236,7 @@ def load_variables():
     Load the variables of the game (number of the map, number of cars, cars, ...)
     """
     global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE, TIME_GENERATION, MAX_SPEED, TURN_ANGLE,\
-        ACCELERATION, DECELERATION, MUTATION_CHANCE, CROSSOVER_CHANCE, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE
+        ACCELERATION, DECELERATION, MUTATION_CHANCE, CROSSOVER_CHANCE, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE
 
     # We open the file parameters to read the number of the map and the number of cars
     with open(PATH_DATA + '/parameters', 'r') as file_parameters_read:
@@ -287,6 +286,8 @@ def load_variables():
             MEMORY_CARS.get(type_car).append([id_car, name, genetic, color, score])  # We add the car to the memory
             if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                 ACTUAL_ID_MEMORY_DICE = id_car + 1
+
+    BIG_RED_CAR_IMAGE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
 
 
 def save_variables():

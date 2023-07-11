@@ -22,7 +22,7 @@ use_camera = True  # If we don't use the camera
 
 stop_button = Button()  # Button to stop the game
 pause_button = Button()  # Button to pause the game
-play_button = Button()  # Button to start the game
+start_button = Button()  # Button to start the game
 nb_cars_button = Button()  # Button to change the number of cars
 garage_button = Button()  # Button to open the garage
 dice_button = Button()  # Button to see the dice with the camera
@@ -31,16 +31,18 @@ restart_button = Button()  # Button to restart the game
 settings_button = Button()  # Button to open the settings
 skip_button = Button()  # Button to go to the next generation
 
-BUTTONS = [stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button]  # List of all the buttons
+BUTTONS = [stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button]  # List of all the buttons
 
 
 def init():
-    global stop_button, pause_button, play_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button
+    global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button
 
     # Buttons
     stop_button = Button(1420, 4, pygame.image.load(PATH_IMAGE + '/stop_button.png'), scale=0.1)
     pause_button = Button(1417, 56, pygame.image.load(PATH_IMAGE + '/pause_button.png'), checkbox=True, scale=0.11)
-    play_button = Button(1320, 15, pygame.image.load(PATH_IMAGE + '/start_button.png'), scale=0.18)
+    start_button = Button(1330, 18, pygame.image.load(PATH_IMAGE + '/start_button_1.png'),
+                          pygame.image.load(PATH_IMAGE + '/start_button_2.png'),
+                          pygame.image.load(PATH_IMAGE + '/start_button_3.png'), scale=0.35)
     nb_cars_button = Button(1095, 58, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
                             pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
                             pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
@@ -293,11 +295,11 @@ def display_buttons(cars):
     display_start_button()  # Display the start button
     display_nb_cars_button()  # Display the nb cars button
     display_garage_button()  # Display the garage button
-    display_dice_button()  # Display the dice button
     display_map_button(cars)  # Display the map button
     display_restart_button()  # Display the restart button
     display_settings_button()  # Display the settings button
     display_skip_button()  # Display the next generation button
+    display_dice_button()  # Display the dice button
 
 
 def display_stop_button():
@@ -328,8 +330,9 @@ def display_start_button():
     """
     Display the start button used to start the simulation
     """
-    var.START = play_button.draw()  # Draw the start button
-    if play_button.just_clicked and (var.NB_CARS != 0 or var.CARS_FROM_GARAGE):
+    var.START = start_button.draw()  # Draw the start button
+    var.RECTS_BLIT_UI.append(start_button.rect)  # To erase the contour of button
+    if start_button.just_clicked and (var.NB_CARS != 0 or var.CARS_FROM_GARAGE):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
@@ -399,13 +402,12 @@ def display_map_button(cars):
     map_button.draw()  # Draw the map button
     var.RECTS_BLIT_UI.append(map_button.rect)  # We add the rect of the map button to the list of rects to blit
     if map_button.just_clicked:  # Map button is just clicked
-        pause()
+        pygame.display.flip()  # To see the red contour of the button
         var.change_map()  # We change the map
         if cars:
             for car in cars:
                 car.reset()  # We reset the cars
             var.NB_CARS_ALIVE = len(cars)
-        unpause()
 
 
 def display_restart_button():
