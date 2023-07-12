@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt  # To show images
 import warnings  # To ignore warnings
+import math  # To use math functions
 import numpy as np  # To use numpy
 import pygame  # To use pygame
 
@@ -98,7 +100,7 @@ def check_overlapping_rectangles(rectangles):
 
 def overlapping_rectangles(rect1, rect2, area_threshold):
     """
-    Check if two rectangles are overlapping for more than half of their area
+    Check if two rectangles are overlapping for more than the area threshold
 
     Args:
         rect1 (tuple(int, int, int, int)): the first rectangle (x, y, w, h)
@@ -129,27 +131,55 @@ def overlapping_rectangles(rect1, rect2, area_threshold):
     return intersection_area > area_threshold * min(area1, area2)
 
 
-def remove_circles_duplicate(circles):
+def circles_too_close(circle1, circle2, distance_threshold=7):
     """
-    Remove the circles that are too close to each other
+        Check if two circles are overlapping for more than the area threshold
+
+        Args:
+            circle1 (tuple(int, int, int)): the first circle (x, y, r)
+            circle2 (tuple(int, int, int)): the second circle (x, y, r)
+            distance_threshold (float): the minimum distance between the centers of the circles
+
+        Returns:
+            bool: True if the circles are overlapping, False otherwise
+        """
+    x1, y1, _ = circle1
+    x2, y2, _ = circle2
+
+    # Calculate the distance between the centers of the circles
+    distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+    # Check if the circles are overlapping
+    if distance <= distance_threshold:
+        return True
+
+    return False
+
+
+def calculate_intersection_area(circle1, circle2, distance):
+    """
+    Calculate the area of intersection between two circles
 
     Args:
-        circles (list): List of circles
-
-    Returns:
-        (list): List of circles without the circles that are too close to each other
+        circle1 (tuple(int, int, int)): the first circle (x, y, r)
+        circle2 (tuple(int, int, int)): the second circle (x, y, r)
+        distance (float): the distance between the centers of the circles
     """
-    new_circles = []
-    for circle in circles:
-        present = False
-        for new_circle in new_circles:
-            if np.linalg.norm(circle[:2] - new_circle[:2]) < 10:
-                present = True
-                break
-        if not present:
-            new_circles.append(circle)
+    x1, y1, r1 = circle1
+    x2, y2, r2 = circle2
 
-    return new_circles
+    # Calculate the area of intersection using the formula for two overlapping circles
+    if distance >= abs(r1 - r2):
+        if distance <= r1 + r2:
+            a = (r1**2 - r2**2 + distance**2) / (2 * distance)
+            h = math.sqrt(r1**2 - a**2)
+            intersection_area = r1**2 * math.acos(a / r1) - a * h
+        else:
+            intersection_area = min(math.pi * r1**2, math.pi * r2**2)
+    else:
+        intersection_area = 0
+
+    return intersection_area
 
 
 def compute_mean_bgr(image):
@@ -191,3 +221,27 @@ def compute_mean_bgr(image):
 
     return mean_bgr
 
+
+def biggest_rect(rect1, rect2):
+    """
+    Return the biggest rectangle (in terms of area)
+    """
+    if rect1[2] * rect1[3] > rect2[2] * rect2[3]:
+        return rect1
+    else:
+        return rect2
+
+
+def show_image(image, gray=True):
+    """
+    Show an image in a window
+
+    Args:
+        image (numpy.ndarray): The image
+        gray (bool): If the image is in gray scale
+    """
+    if gray:
+        plt.imshow(image, cmap='gray')  # Image with the edges
+    else:
+        plt.imshow(image)
+    plt.show()

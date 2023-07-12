@@ -2,7 +2,6 @@ from src.other.camera_utils import *  # Utils functions for the camera
 from src.data.data_structures import ColorDice  # To find the color of each dice
 from src.render.dice_menu import save_camera_frame  # To save the camera frame
 from src.other.utils import convert_to_new_window  # Utils functions
-import matplotlib.pyplot as plt  # To show images
 import src.data.variables as var  # Variables
 import random  # To generate random numbers
 import numpy as np  # To use numpy
@@ -28,8 +27,8 @@ scores_colors = {'yellow': [], 'orange': [], 'red': [], 'dark_yellow': [], 'gree
 # The rects kept in memory (when we detect a rectangle, if it overlaps with a rectangle in memory, we display the rectangle in memory)
 memory_rects = {}  # Format : {rect : lifetime_remaining} ; lifetime_remaining : the number of frames the rectangle will be displayed unless it is detected again
 
-# The scores we will return, initialized to random values
-final_score = {}
+# The circles kept in memory (when we detect a circle, if it overlaps with a circle in memory, we display the circle in memory)
+memory_circles = {'yellow': {}, 'orange': {}, 'red': {}, 'dark_yellow': {}, 'green': {}, 'black': {}}  # Format : {color : {circle : lifetime_remaining}}
 
 frame_view = np.empty([2, 2])  # The frame of the camera (viewed by the user)
 count_iterations = 0  # The number of iterations of the program
@@ -38,10 +37,7 @@ count_iterations = 0  # The number of iterations of the program
 list_p1 = [150]
 list_p2 = [16]
 list_dp = [5]
-dict_p1 = {'red': [150], 'green': [150, 100], 'yellow': [150], 'orange': [150], 'dark_yellow': [150], 'black': [150]}
-dict_p2 = {'red':  [16], 'green': [16, 59], 'yellow': [16], 'orange': [16], 'dark_yellow': [16], 'black': [16]}
-dict_dp = {'red': [5], 'green': [5, 65], 'yellow': [5], 'orange': [5], 'dark_yellow': [5], 'black': [5]}
-
+max_radius_circle = 7  # The maximum radius of the circles we want to detect
 
 # Optimization and debug parameters
 show_clicks = False  # To show the coordinates and color of the position where the user clicked
@@ -51,19 +47,17 @@ write_mean_bgr = False
 file_write_mean_bgr = open(var.PATH_DATA + '/mean_bgr', 'a')  # The file in which we will write the parameters
 
 # Optimization parameters for HoughCircles function
-optimize = False  # To optimize the parameters of the HoughCircles function
-p1_min, p1_max = 50, 200  # The min and max values of the parameters
+optimize_hough_circle = False  # To optimize the parameters of the HoughCircles function
+# The min and max values of the parameters
+p1_min, p1_max = 50, 200
 p2_min, p2_max = 10, 80
 dp_min, dp_max = 30, 150
-colors_optimize_values = {'green': 6}  # The colors we want to optimize and the value of the dice we want to optimize
-colors_optimize_coordinates = {'green': [(326, 359), (332, 370), (337, 380), (344, 351), (349, 362), (354, 372)]}  # The coordinates of the dice we want to optimize
-waiting = 100  # The number of iterations we wait before starting to optimize
+# The colors we want to optimize and the value of the dice we want to optimize
+theorical_values = {}  # Format : {color : value}
+# The coordinates of the dice we want to optimize
+theorical_coordinates = {}  # Format : {color : [(x1, y1), (x2, y2)]}
+wait_optimize = 100  # The number of iterations we wait before starting to optimize
 dict_p1_opti, dict_p2_opti, dict_dp_opti = {}, {}, {}  # Format : {value : count}
-p1_red, p2_red, dp_red, p1_green, p2_green, dp_green = {}, {}, {}, {}, {}, {}
-p1_yellow, p2_yellow, dp_yellow, p1_orange, p2_orange, dp_orange = {}, {}, {}, {}, {}, {}
-p1_dark_yellow, p2_dark_yellow, dp_dark_yellow, p1_black, p2_black, dp_black = {}, {}, {}, {}, {}, {}
-dict_colors = {'red': [p1_red, p2_red, dp_red], 'green': [p1_green, p2_green, dp_green], 'yellow': [p1_yellow, p2_yellow, dp_yellow],
-               'orange': [p1_orange, p2_orange, dp_orange], 'dark_yellow': [p1_dark_yellow, p2_dark_yellow, dp_dark_yellow], 'black': [p1_black, p2_black, dp_black]}
 
 
 def capture_dice():
@@ -73,7 +67,7 @@ def capture_dice():
     Returns:
         (dict) : The scores of the dice
     """
-    global final_score, frame_view, count_iterations
+    global frame_view, count_iterations
 
     final_score = {'yellow': random.randint(1, 6), 'orange': random.randint(1, 6), 'red': random.randint(1, 6),
                    'dark_yellow': random.randint(1, 6), 'green': random.randint(1, 6), 'black': random.randint(1, 6)}
@@ -90,7 +84,7 @@ def capture_dice():
 
         if frame is None:  # We don't have a camera connected
             print('Aucune caméra détectée')
-            return end_capture_dice(cap)
+            return end_capture_dice(cap, final_score)
 
         frame_view = frame.copy()  # We make a copy of the frame to display it on the window (with rectangles, texts, ...)
 
@@ -112,7 +106,7 @@ def capture_dice():
             if write_mean_bgr:
                 write_mean_bgr_value(rect, mean_bgr)
 
-            colors = determine_colors(ColorDice(mean_bgr, rect), colors)  # We determine the color of the rectangle
+            colors = determine_color(ColorDice(mean_bgr, rect), colors)  # We determine the color of the rectangle
 
         for color in colors:
             rect = x, y, w, h = colors[color].rect  # We get the coordinates of the rectangle
@@ -133,17 +127,9 @@ def capture_dice():
             cv2.putText(frame_view, f'Score: {score}', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 50, 50), 2)
 
         # We display the frame on the window
-        image_rgb = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
-        image_pygame = pygame.surfarray.make_surface(image_rgb)  # Convert the image to a pygame image
-        image_turned = pygame.transform.rotate(image_pygame, -90)  # Rotate the image
-        image = pygame.transform.flip(image_turned, True, False)  # Flip the image
-        image = pygame.transform.scale(image, (rect_window.width, rect_window.height))  # Resize the image
-        var.WINDOW.blit(image, rect_window)  # We display the frame on the window
-        pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_window, 2)  # We draw a rectangle on the window
-        var.WINDOW.blit(var.LARGE_FONT.render("Cliquez n'importe où pour quitter cette fenêtre", True, (255, 0, 255)), convert_to_new_window((440, 600)))  # Text of the selected dice
-        pygame.display.flip()  # We update the window
+        display_frame(rect_window)
 
-        if count_iterations == waiting and optimize:
+        if count_iterations == wait_optimize and optimize_hough_circle:
             print('Fin')
             display_dictionaries_optimization()  # Sort the dictionaries
 
@@ -157,127 +143,7 @@ def capture_dice():
                 frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
                 save_camera_frame(frame_view)  # Save the image into the data (CAMERA_FRAME and RECT_CAMERA_FRAME)
 
-                return end_capture_dice(cap)  # End the capture of the dice
-
-
-def end_capture_dice(cap):
-    """
-    End the capture of the dice
-
-    Args:
-        cap (cv2.VideoCapture): VideoCapture object
-
-    Returns:
-        (list) : The scores of the dice
-    """
-    cap.release()  # Release the VideoCapture object
-    cv2.destroyAllWindows()  # Close all windows
-
-    return list(final_score.values())
-
-
-def optimize_parameters(image, color, value, rect):
-    """
-    Optimize the parameters of the HoughCircles function by testing different values and printing the results
-    Args:
-        image (numpy.ndarray): Image on which to optimize the parameters (must be in grayscale)
-        color (str): Color of the dice
-        value (int): Number of circles to detect
-        rect (tuple): Coordinates of the rectangle
-    """
-    for p1 in range(p1_min, p1_max + 1):
-        print(p1)
-        for p2 in range(p2_min, p2_max + 1):
-            for dp in range(dp_min, dp_max + 1):
-                if p1 > p2:
-                    optimize_hough_circles(image, color, value, rect, p1, p2, dp)
-
-
-def optimize_hough_circles(image, color, value, rect, p1, p2, dp):
-    """
-    Run the HoughCircles function with the given parameters and verify if the result is correct to save the parameters
-    in dictionaries
-
-    Args:
-        image (numpy.ndarray): Image on which to optimize the parameters (must be in grayscale)
-        color (str): Color of the dice
-        value (int): Number of circles to detect
-        rect (tuple): Coordinates of the rectangle
-        p1 (int): First parameter of the HoughCircles function
-        p2 (int): Second parameter of the HoughCircles function
-        dp (int): Third parameter of the HoughCircles function
-    """
-    c = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=dp / 10, minDist=5, param1=p1, param2=p2,
-                         minRadius=1, maxRadius=10)
-    if c is not None and verif_coordinates(c[0, :], rect, colors_optimize_coordinates[color]):
-        if len(c) == value:  # All points are detected
-            print(f'Bingo : {p1} {p2} {dp}')
-
-        if p1 not in dict_p1_opti:
-            dict_p1_opti[p1] = 1
-        else:
-            dict_p1_opti[p1] += 1
-        if p2 not in dict_p2_opti:
-            dict_p2_opti[p2] = 1
-        else:
-            dict_p2_opti[p2] += 1
-        if dp not in dict_dp_opti:
-            dict_dp_opti[dp] = 1
-        else:
-            dict_dp_opti[dp] += 1
-        if p1 not in dict_colors[color][0]:
-            dict_colors[color][0][p1] = 1
-        else:
-            dict_colors[color][0][p1] += 1
-        if p2 not in dict_colors[color][1]:
-            dict_colors[color][1][p2] = 1
-        else:
-            dict_colors[color][1][p2] += 1
-        if dp not in dict_colors[color][2]:
-            dict_colors[color][2][dp] = 1
-        else:
-            dict_colors[color][2][dp] += 1
-
-
-def display_dictionaries_optimization():
-    """
-    Sort the dictionaries of the optimization of the parameters of the HoughCircles function
-    """
-    global dict_p1_opti, dict_p2_opti, dict_dp_opti, p1_red, p2_red, dp_red, p1_green, p2_green, dp_green, p1_yellow, p2_yellow,\
-        dp_yellow, p1_orange, p2_orange, dp_orange, p1_dark_yellow, p2_dark_yellow, dp_dark_yellow, p1_black, p2_black, dp_black
-
-    # We sort the dictionaries
-    dict_p1_opti = {k: v for k, v in sorted(dict_p1_opti.items(), key=lambda item: item[1], reverse=True)}
-    dict_p2_opti = {k: v for k, v in sorted(dict_p2_opti.items(), key=lambda item: item[1], reverse=True)}
-    dict_dp_opti = {k: v for k, v in sorted(dict_dp_opti.items(), key=lambda item: item[1], reverse=True)}
-    p1_red = {k: v for k, v in sorted(p1_red.items(), key=lambda item: item[1], reverse=True)}
-    p2_red = {k: v for k, v in sorted(p2_red.items(), key=lambda item: item[1], reverse=True)}
-    dp_red = {k: v for k, v in sorted(dp_red.items(), key=lambda item: item[1], reverse=True)}
-    p1_green = {k: v for k, v in sorted(p1_green.items(), key=lambda item: item[1], reverse=True)}
-    p2_green = {k: v for k, v in sorted(p2_green.items(), key=lambda item: item[1], reverse=True)}
-    dp_green = {k: v for k, v in sorted(dp_green.items(), key=lambda item: item[1], reverse=True)}
-    p1_yellow = {k: v for k, v in sorted(p1_yellow.items(), key=lambda item: item[1], reverse=True)}
-    p2_yellow = {k: v for k, v in sorted(p2_yellow.items(), key=lambda item: item[1], reverse=True)}
-    dp_yellow = {k: v for k, v in sorted(dp_yellow.items(), key=lambda item: item[1], reverse=True)}
-    p1_orange = {k: v for k, v in sorted(p1_orange.items(), key=lambda item: item[1], reverse=True)}
-    p2_orange = {k: v for k, v in sorted(p2_orange.items(), key=lambda item: item[1], reverse=True)}
-    dp_orange = {k: v for k, v in sorted(dp_orange.items(), key=lambda item: item[1], reverse=True)}
-    p1_dark_yellow = {k: v for k, v in sorted(p1_dark_yellow.items(), key=lambda item: item[1], reverse=True)}
-    p2_dark_yellow = {k: v for k, v in sorted(p2_dark_yellow.items(), key=lambda item: item[1], reverse=True)}
-    dp_dark_yellow = {k: v for k, v in sorted(dp_dark_yellow.items(), key=lambda item: item[1], reverse=True)}
-    p1_black = {k: v for k, v in sorted(p1_black.items(), key=lambda item: item[1], reverse=True)}
-    p2_black = {k: v for k, v in sorted(p2_black.items(), key=lambda item: item[1], reverse=True)}
-    dp_black = {k: v for k, v in sorted(dp_black.items(), key=lambda item: item[1], reverse=True)}
-
-    # We create the file
-    with open(var.PATH_DATA + '/optimization', 'w') as file_write:
-        # We print the dictionaries
-        file_write.write(f'p1 : {dict_p1_opti}\np2 : {dict_p2_opti}\ndp : {dict_dp_opti}\np1_red : {p1_red}\np2_red : {p2_red}\n'
-                         f'dp_red : {dp_red}\np1_green : {p1_green}\np2_green : {p2_green}\ndp_green : {dp_green}\n'
-                         f'p1_yellow : {p1_yellow}\np2_yellow : {p2_yellow}\ndp_yellow : {dp_yellow}\np1_orange : {p1_orange}\n'
-                         f'p2_orange : {p2_orange}\ndp_orange : {dp_orange}\np1_dark_yellow : {p1_dark_yellow}\n'
-                         f'p2_dark_yellow : {p2_dark_yellow}\ndp_dark_yellow : {dp_dark_yellow}\np1_black : {p1_black}\n'
-                         f'p2_black : {p2_black}\ndp_black : {dp_black}')
+                return end_capture_dice(cap, final_score)  # End the capture of the dice
 
 
 def find_rectangles(frame):
@@ -291,13 +157,11 @@ def find_rectangles(frame):
         list: The list of rectangles found
     """
     contours = find_contours(frame)  # We find the contours
-    rectangles = check_contours_validity(contours)  # We check the validity of the contours
-    rectangles = check_overlapping_rectangles(rectangles)  # We remove the duplicate rectangles
+    rectangles = get_rectangles_from_contours(contours)  # We check the validity of the contours
     rectangles = add_offset(rectangles, offset=7)  # We add an offset to the rectangles
     rectangles = add_rect_from_memory(rectangles)  # We add the rectangles from the memory
-    rectangles = check_overlapping_rectangles(rectangles)  # We remove the duplicate rectangles again
 
-    update_memory_rect()  # We update the memory of the rectangles (we decrease the lifetime of the rectangles)
+    update_memory(memory_rects)  # We update the memory of the rectangles (we decrease the lifetime of the rectangles)
 
     return rectangles
 
@@ -335,9 +199,9 @@ def find_contours(image):
     return contours
 
 
-def check_contours_validity(contours):
+def get_rectangles_from_contours(contours):
     """
-    Verify that the rectangle is not too big or too small, and that it is not too close to the edge of the image
+    We create a list of valid rectangles from the list of contours without duplicates
 
     Args:
         contours (list): List of contours found
@@ -348,60 +212,100 @@ def check_contours_validity(contours):
     rectangles = []  # List of rectangles
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)  # We get the coordinates of the rectangle
-        min_size = 35  # Minimum size of the rectangle
-        max_size = 80  # Maximum size of the rectangle
-        if min_size < w < max_size and min_size < h < max_size:  # If the rectangle is not too big or too small
-            # Check if the rectangle is not too close to the edge of the image
-            if x > 5 and y > 5 and x + w < 635 and y + h < 475:
+
+        if valid_rectangle(x, y, w, h):  # We check if the rectangle is valid
+            # Check if the rectangle is not already in the list (if it is we add the biggest one)
+            rectangle_already_in_list = False  # Boolean to know if the rectangle is already in the list
+            for rectangle in rectangles:
+                if overlapping_rectangles((x, y, w, h), rectangle, area_threshold=0.6):
+                    rectangle_already_in_list = True
+                    if w * h > rectangle[2] * rectangle[3]:
+                        rectangles.remove(rectangle)
+                        rectangles.append((x, y, w, h))
+                    break
+
+            if not rectangle_already_in_list:
                 rectangles.append((x, y, w, h))
 
     return rectangles
 
 
-def add_rect_from_memory(rectangles):
+def valid_rectangle(x, y, w, h, min_size=40, max_size=75):
     """
-    Add the rectangles from the memory to the list of rectangles
+    Check if the rectangle is valid (not too big or too small, not too close to the edge of the image)
+    """
+    return min_size < w < max_size and min_size < h < max_size and x > 5 and y > 5 and x + w < 635 and y + h < 475
+
+
+def add_rect_from_memory(rectangles, lifetime=25, area_threshold=0.9):
+    """
+    Add the rectangles from the memory to the list of rectangles, without duplicates
 
     Args:
         rectangles (list): List of rectangles found
+        lifetime (int): Lifetime of the rectangles in the memory when they are detected
+        area_threshold (float): Threshold of the area of the rectangles to consider that they are the same
 
     Returns:
         list: List of rectangles found
     """
-    new_rectangles = []
 
-    for memory_rect in memory_rects:
-        new_rectangles.append(memory_rect)
-        for rect in rectangles:
-            # If we find a rect that is already in the memory, we reset the lifetime of the rectangle
-            if overlapping_rectangles(rect, memory_rect, area_threshold=0.8):
-                memory_rects[memory_rect] = 20  # We reset the lifetime of the rectangle
+    new_rectangles = list(memory_rects.keys())  # List of rectangles to add to the list of rectangles
+
+    # We look at each rectangle
+    for rectangle in rectangles:
+        rect_already_in_memory = False  # Boolean to know if the rectangle is already in the memory
+
+        # We look if the rectangle is already in the memory
+        for memory_rect in memory_rects:
+            if overlapping_rectangles(rectangle, memory_rect, area_threshold):
+                rect_already_in_memory = True
+                memory_rects[memory_rect] = lifetime  # We reset the lifetime of the rectangle
                 break
 
-    for rect in rectangles:
-        new_rectangles.append(rect)
-        memory_rects[rect] = 20  # We add the rectangle to the memory
+        if not rect_already_in_memory:
+            new_rectangles.append(rectangle)
+            memory_rects[rectangle] = lifetime  # We add the rectangle to the memory
 
     return new_rectangles
 
 
-def update_memory_rect():
+def search_rectangle(rect, rectangles):
     """
-    Update the memory of the rectangles (we decrease the lifetime of the rectangles and delete the old ones)
+    Search if a rectangle is in the list of rectangles
+
+    Args:
+        rect (tuple): Rectangle to search
+        rectangles (list): List of rectangles
+
+    Returns:
+        rect: rect if it's not in the list, the biggest rectangle between rect and the rectangle in the list if it's in the list
     """
-    # We update the lifetime of the rectangles in memory
-    memory_rect_to_delete = []
-    for rect in memory_rects:
-        memory_rects[rect] -= 1  # We decrease the number of times the rectangle is in the memory
-        if memory_rects[rect] == 0:  # If the rectangle is not in the memory anymore
-            memory_rect_to_delete.append(rect)  # We add the rectangle to the list of rectangles to delete
+    for rectangle in rectangles:
+        if overlapping_rectangles(rect, rectangle, area_threshold=0.6) and rect[2] * rect[3] < rectangle[2] * rectangle[3]:
+            return rectangle
 
-    # We delete the rectangles from the memory
-    for rect in memory_rect_to_delete:
-        del memory_rects[rect]
+    return rect
 
 
-def determine_colors(color_dice, dict_color_dice):
+def update_memory(memory):
+    """
+    Update the memory of the rectangles or the circles (we decrease the lifetime of the objects and delete the objects if the lifetime reach 0)
+
+    Args:
+        memory (dict): Dictionary of the objects in the memory
+    """
+    memory_to_delete = []  # List of objects to delete from the memory
+    for key in memory:  # We look at each object in the memory
+        memory[key] -= 1  # We decrease the lifetime of the object
+        if memory[key] == 0:  # If the object die
+            memory_to_delete.append(key)  # We add the object to the list of objects to delete
+
+    for key in memory_to_delete:  # We delete the objects from the memory
+        del memory[key]
+
+
+def determine_color(color_dice, dict_color_dice):
     """
     Determine the colors of the dice on the image. We try to find the color with the minimum distance between the mean
     BGR values and the BGR values of each color. There may be conflicts between the colors, and in this case, we
@@ -447,11 +351,11 @@ def determine_colors(color_dice, dict_color_dice):
 
             # We restart the function with the old dice
             old_dice.bad_colors.append(name_color)
-            dict_color_dice = determine_colors(old_dice, dict_color_dice)
+            dict_color_dice = determine_color(old_dice, dict_color_dice)
         else:
             # If the old dice is closer to the color we want, we restart the function with the new dice
             color_dice.bad_colors.append(name_color)
-            dict_color_dice = determine_colors(color_dice, dict_color_dice)
+            dict_color_dice = determine_color(color_dice, dict_color_dice)
 
     return dict_color_dice
 
@@ -471,7 +375,7 @@ def write_mean_bgr_value(rect, mean_bgr):
         file_write_mean_bgr.write(f'{mean_bgr[0]} {mean_bgr[1]} {mean_bgr[2]}\n')
 
 
-def determine_score(image, rect, color, scores):
+def determine_score(image, rect, color, scores, len_memory=40):
     """
     Determine the score of the dice
 
@@ -480,38 +384,30 @@ def determine_score(image, rect, color, scores):
         rect (tuple): Coordinates of the rectangle (x, y, w, h)
         color (str): Color of the dice
         scores (list): List of the previous scores of the dice
+        len_memory (int): Number of previous scores to keep in memory
 
     Returns:
         (int): Score of the dice
     """
-    circles = []
 
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # Convert the image to grayscale
-    circles = add_circles_by_hough_function(circles, gray_image)
+    circles = find_circles(gray_image, color)  # We find the circles on the image
 
-    image = cv2.medianBlur(gray_image, 3)  # We blur the image
-    circles = add_circles_by_hough_function(circles, image)
-
-    image = cv2.Canny(gray_image, 50, 120)  # We apply the Canny filter to the image
-    circles = add_circles_by_hough_function(circles, image)
-
-    # Optimize the parameters of the HoughCircles function
-    if count_iterations == waiting and optimize:
-        if color in colors_optimize_values:
-            optimize_parameters(gray_image, color, colors_optimize_values[color], rect)
+    # Optimize the parameters of the HoughCircles function if necessary
+    if count_iterations == wait_optimize and optimize_hough_circle:
+        if color in theorical_values:
+            optimize_parameters(gray_image, color, theorical_coordinates[color], rect)
 
     if circles:
-        # We make sure we don't have any overlapping circles
-        circles = remove_circles_duplicate(circles)
-
         score = len(circles)  # We count the number of circles
 
         # We convert the coordinates of the circles to the coordinates of the window
+        circles_to_draw = []
         for circle in circles:
-            circle[0], circle[1] = circle[0] + rect[0], circle[1] + rect[1]
+            circles_to_draw.append((circle[0] + rect[0], circle[1] + rect[1], circle[2]))
 
         # We draw the circles
-        draw_circle(circles)
+        draw_circle(circles_to_draw)
     else:
         score = random.randint(1, 6)  # If we don't find any circle, we choose a random number between 1 and 6
 
@@ -519,7 +415,7 @@ def determine_score(image, rect, color, scores):
         score = 6
 
     scores.append(score)  # We add the score to the list of scores
-    if len(scores) > 50:
+    if len(scores) > len_memory:
         scores.pop(0)  # We remove the first score
 
     # We find the number the most present in the list of scores
@@ -528,12 +424,40 @@ def determine_score(image, rect, color, scores):
     return score
 
 
-def add_circles_by_hough_function(circles, image):
+def find_circles(gray_image, color):
+    """
+    Find the circles in the image
+
+    Args:
+        gray_image (numpy.ndarray): Image of the dice in grayscale
+        color (str): Color of the dice
+
+    Returns:
+        (list): List of circles
+    """
+    circles = []
+    circles = add_circles(circles, gray_image)
+
+    blur_image = cv2.medianBlur(gray_image, 3)  # We blur the image
+    circles = add_circles(circles, blur_image)
+
+    canny_image = cv2.Canny(gray_image, 50, 120)  # We apply the Canny filter to the image
+    circles = add_circles(circles, canny_image)
+
+    # We add the circle from the memory
+    circles = add_circle_from_memory(circles, color)
+
+    update_memory(memory_circles[color])
+
+    return circles
+
+
+def add_circles(actual_circles, image):
     """
     Find new circles with the houghCircle function and add them to the list of circles
 
     Args:
-        circles (list): List of circles
+        actual_circles (list): List of circles
         image (numpy.ndarray): Image of the dice
 
     Returns:
@@ -541,12 +465,122 @@ def add_circles_by_hough_function(circles, image):
     """
     for index in range(len(list_p1)):  # We try to find circles with different parameters for the current color
         new_circles = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=list_dp[index] / 10, minDist=3,
-                                       param1=list_p1[index], param2=list_p2[index], minRadius=0, maxRadius=10)
-        if new_circles is not None:
-            for circle in new_circles[0, :]:
-                circles.append(circle)
+                                       param1=list_p1[index], param2=list_p2[index], minRadius=0, maxRadius=max_radius_circle)
 
-    return circles
+        if new_circles is not None:
+            # Transform the circles to a list of tuple instead of numpy.ndarray of numpy.ndarray (to be able to add them to a dictionary like a key)
+            new_circles = [tuple(new_circle.tolist()) for new_circle in new_circles[0, :]]
+
+            # We add the new circles to the list of circles
+            for circle_to_add in new_circles:
+                circle_already_in_list = False  # Boolean to know if the circle is already in the list
+
+                for circle in actual_circles:  # We look if the circle is already in the list
+                    if circles_too_close(circle, circle_to_add):
+                        circle_already_in_list = True
+                        break
+
+                if not circle_already_in_list:
+                    actual_circles.append(circle_to_add)
+
+    return actual_circles
+
+
+def add_circle_from_memory(circles, color, lifetime=30):
+    """
+    Add the circles from the memory to the list of circles
+
+    Args:
+        circles (list): List of circles
+        color (str): Color of the dice
+        lifetime (int): Lifetime of the circles in the memory when they are detected
+    """
+    new_circles = list(memory_circles[color].keys())  # List of circles to add to the list of circles
+
+    # We look at each circle
+    for circle in circles:
+        circle_already_in_memory = False  # Boolean to know if the circle is already in the memory
+
+        # We look if the circle is already in the memory
+        for memory_circle in memory_circles[color]:
+            if circles_too_close(circle, memory_circle):
+                circle_already_in_memory = True
+                memory_circles[color][memory_circle] = lifetime
+                break
+
+        if not circle_already_in_memory:
+            new_circles.append(circle)
+            memory_circles[color][circle] = lifetime  # We add the circle to the memory
+
+    return new_circles
+
+
+def optimize_parameters(image, color, value, rect):
+    """
+    Optimize the parameters of the HoughCircles function by testing different values and printing the results
+    Args:
+        image (numpy.ndarray): Image on which to optimize the parameters (must be in grayscale)
+        color (str): Color of the dice
+        value (int): Number of circles to detect
+        rect (tuple): Coordinates of the rectangle
+    """
+    for p1 in range(p1_min, p1_max + 1):
+        print(p1)
+        for p2 in range(p2_min, p2_max + 1):
+            for dp in range(dp_min, dp_max + 1):
+                if p1 > p2:
+                    optimize_hough_circles(image, color, value, rect, p1, p2, dp)
+
+
+def optimize_hough_circles(image, color, value, rect, p1, p2, dp):
+    """
+    Run the HoughCircles function with the given parameters and verify if the result is correct to save the parameters
+    in dictionaries
+
+    Args:
+        image (numpy.ndarray): Image on which to optimize the parameters (must be in grayscale)
+        color (str): Color of the dice
+        value (int): Number of circles to detect
+        rect (tuple): Coordinates of the rectangle
+        p1 (int): First parameter of the HoughCircles function
+        p2 (int): Second parameter of the HoughCircles function
+        dp (int): Third parameter of the HoughCircles function
+    """
+    c = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=dp / 10, minDist=5, param1=p1, param2=p2,
+                         minRadius=1, maxRadius=max_radius_circle)
+    if c is not None and verif_coordinates(c[0, :], rect, theorical_coordinates[color]):
+        if len(c) == value:  # All points are detected
+            print(f'Bingo : {p1} {p2} {dp}')
+
+        if p1 not in dict_p1_opti:
+            dict_p1_opti[p1] = 1
+        else:
+            dict_p1_opti[p1] += 1
+        if p2 not in dict_p2_opti:
+            dict_p2_opti[p2] = 1
+        else:
+            dict_p2_opti[p2] += 1
+        if dp not in dict_dp_opti:
+            dict_dp_opti[dp] = 1
+        else:
+            dict_dp_opti[dp] += 1
+
+
+def display_dictionaries_optimization():
+    """
+    Sort the dictionaries of the optimization of the parameters of the HoughCircles function
+    """
+    global dict_p1_opti, dict_p2_opti, dict_dp_opti
+
+    # We sort the dictionaries
+    dict_p1_opti = {k: v for k, v in sorted(dict_p1_opti.items(), key=lambda item: item[1], reverse=True)}
+    dict_p2_opti = {k: v for k, v in sorted(dict_p2_opti.items(), key=lambda item: item[1], reverse=True)}
+    dict_dp_opti = {k: v for k, v in sorted(dict_dp_opti.items(), key=lambda item: item[1], reverse=True)}
+
+    # We create the file
+    with open(var.PATH_DATA + '/optimization', 'w') as file_write:
+        # We print the dictionaries
+        file_write.write(f'p1 : {dict_p1_opti}\np2 : {dict_p2_opti}\ndp : {dict_dp_opti}')
 
 
 def draw_rectangle(rectangle, color=(0, 0, 0), thickness=3):
@@ -579,16 +613,37 @@ def draw_circle(circles):
         cv2.circle(frame_view, (int(circle[0]), int(circle[1])), 2, (0, 0, 255), 3)
 
 
-def show_image(image, gray=True):
+def display_frame(rect_window):
     """
-    Show an image in a window
+    Display the frame on the window
 
     Args:
-        image (numpy.ndarray): The image
-        gray (bool): If the image is in gray scale
+        rect_window (pygame.rect.Rect) : The rectangle of the window
     """
-    if gray:
-        plt.imshow(image, cmap='gray')  # Image with the edges
-    else:
-        plt.imshow(image)
-    plt.show()
+    image_rgb = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
+    image_pygame = pygame.surfarray.make_surface(image_rgb)  # Convert the image to a pygame image
+    image_turned = pygame.transform.rotate(image_pygame, -90)  # Rotate the image
+    image = pygame.transform.flip(image_turned, True, False)  # Flip the image
+    image = pygame.transform.scale(image, (rect_window.width, rect_window.height))  # Resize the image
+    var.WINDOW.blit(image, rect_window)  # We display the frame on the window
+    pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_window, 2)  # We draw a rectangle on the window
+    var.WINDOW.blit(var.LARGE_FONT.render("Cliquez n'importe où pour quitter cette fenêtre", True, (255, 0, 255)),
+                    convert_to_new_window((440, 600)))  # Text of the selected dice
+    pygame.display.flip()  # We update the window
+
+
+def end_capture_dice(cap, final_score):
+    """
+    End the capture of the dice
+
+    Args:
+        cap (cv2.VideoCapture): VideoCapture object
+        final_score (dict): Final score of the dice
+
+    Returns:
+        (list) : The scores of the dice
+    """
+    cap.release()  # Release the VideoCapture object
+    cv2.destroyAllWindows()  # Close all windows
+
+    return list(final_score.values())

@@ -17,7 +17,9 @@ pip install pygame
 pip install opencv-python
 pip install matplotlib
 ```
-Assurez- vous d’avoir Python 3.8 installé sur votre machine. Si ce n’est pas le cas, vous pouvez l’installer sur ce site : “https://www.python.org/downloads/release/python-380/” Vous pouvez ensuite lancer le programme avec la commande :
+Assurez- vous d’avoir Python 3.8 installé sur votre machine. 
+Si ce n’est pas le cas, vous pouvez l’installer ic : “https://www.python.org/downloads/release/python-380/”.
+Vous pouvez ensuite lancer le programme avec la commande :
 
 ```bash
 python3.8 main.py
