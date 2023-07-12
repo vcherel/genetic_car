@@ -458,7 +458,16 @@ def display_text():
     Display the text of the UI (time remaining, nb cars, generation, FPS)
     """
     # Time remaining
-    display_text_ui(f'Tours restants : {var.TICKS_REMAINING} ({int(var.TICKS_REMAINING / var.FPS)}s)', convert_to_new_window((1, 20)), var.FONT)
+    if var.PLAY and var.ACTUAL_FPS != 0:  # If the simulation is playing we display the time remaining in seconds if the simulation stays at this fps
+        time_remaining = int(var.TICKS_REMAINING / var.ACTUAL_FPS)
+        var.LAST_TIME_REMAINING.append(time_remaining)
+        if len(var.LAST_TIME_REMAINING) > var.FPS:
+            var.LAST_TIME_REMAINING.pop(0)
+        time_remaining = max(set(var.LAST_TIME_REMAINING), key=var.LAST_TIME_REMAINING.count)
+    else:  # If the simulation is paused we display the time remaining theoretically in seconds
+        time_remaining = int(var.TICKS_REMAINING / var.FPS)
+
+    display_text_ui(f'Tours restants : {var.TICKS_REMAINING} ({time_remaining}s)', convert_to_new_window((1, 20)), var.FONT)
     display_text_ui(f'Nombre de voitures restantes : {var.NB_CARS_ALIVE}', convert_to_new_window((1, 50)), var.FONT)
     display_text_ui(f'Génération : {var.NUM_GENERATION}', convert_to_new_window((1, 80)), var.FONT)
 

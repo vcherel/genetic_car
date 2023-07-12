@@ -89,7 +89,7 @@ seed_text = var.FONT.render('Seed :', True, (0, 0, 0), (128, 128, 128))  # Text 
 see_cursor_text = var.FONT.render('Voir les clics :', True, (0, 0, 0), (128, 128, 128))  # Text of the see clics button
 see_checkpoints_text = var.FONT.render('Voir les checkpoints :', True, (0, 0, 0), (128, 128, 128))  # Text of the see checkpoints button
 
-cone_text = var.LARGE_FONT.render('Cônes', True, (0, 0, 0), (128, 128, 128))  # Text of the window
+cone_text = var.LARGE_FONT.render('Cônes de vision', True, (0, 0, 0), (128, 128, 128))  # Text of the window
 width_cone_text = var.FONT.render('Largeur :', True, (0, 0, 0), (128, 128, 128))  # Text of the width cone button
 length_cone_text = var.FONT.render('Hauteur :', True, (0, 0, 0), (128, 128, 128))  # Text of the length cone button
 

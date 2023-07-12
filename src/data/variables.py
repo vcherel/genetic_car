@@ -91,6 +91,7 @@ PAUSE = False  # Pause the game (True or False)
 TICKS_REMAINING = 0  # Iterations remaining for the genetic algorithm
 TIME_LAST_TURN = 0  # Time of the last turn
 FPS_TOO_HIGH = False  # True if the FPS is too high, False otherwise
+LAST_TIME_REMAINING = []  # List of the remaining time during the last turns
 
 
 # GENETIC

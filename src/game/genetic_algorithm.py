@@ -19,51 +19,58 @@ def apply_genetic(cars):
     """
     cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
 
-    cars = sorted(cars, key=lambda c: c.scores, reverse=True)  # Sort the cars by score
-
     if cars:
-        best_car = cars[0]  # We get the best car
+        cars = sorted(cars, key=lambda c: c.scores, reverse=True)  # Sort the cars by score
+        cars_to_keep = find_cars_to_keep(cars)  # We find the cars to keep (the best cars)
+        cars = init_cars(cars_to_keep, var.NB_CARS - len(cars_to_keep))  # Select the best cars
+        cars = mutate(cars)  # Mutate the cars
+        cars = crossover(cars)  # Crossover the cars
+        cars = add_cars_to_keep(cars, cars_to_keep)  # We add the best cars to the list
     else:
-        best_car = None
-
-    cars = select_best_cars(cars)  # Select the best cars
-    cars = mutate(cars)  # Mutate the cars
-    cars = crossover(cars)  # Crossover the cars
-
-    if best_car:
-        var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic, 'gray', best_car.best_scores])  # Add the best car to the memory
-        cars.append(Car(genetic=best_car.genetic, best_scores=best_car.best_scores, color='yellow'))  # We add the best car (at the end in order to see it)
+        cars = [Car() for _ in range(var.NB_CARS)]  # If there is no car, we add random cars
 
     return cars
 
 
-def select_best_cars(cars):
+def find_cars_to_keep(cars):
     """
-    Select the best cars to keep for the next generation
-    We keep the best car, and we copy it to have the same number of cars
+    Find the cars to keep (the best cars) and add the best car to the memory
 
     Args:
         cars (list): list of cars
 
     Returns:
-        list: list of the best cars
+        list: list of cars to keep
     """
-    # Select the best cars using PERCENTAGE_BEST_CARS
-    num_best_cars = int(var.PROPORTION_CARS_KEPT * len(cars))
+    number_to_keep = int(var.PROPORTION_CARS_KEPT * len(cars))  # Number of cars to keep
+    cars_to_keep = cars[:number_to_keep]  # Select the best cars
 
-    if num_best_cars == 0:
-        sorted_cars = [Car()]  # If there is no best car, we add a random car
-        probabilities = [1]
-    else:
-        # Sort the cars based on their score in descending order
-        sorted_cars = sorted(cars, key=lambda car: car.scores, reverse=True)
+    best_car = cars[0]  # We get the best car
+    var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic, 'gray', best_car.best_scores])  # Add the best car to the memory
 
-        # Calculate the weights based on the car scores
-        weights = [car.scores for car in sorted_cars]
-        total_weight = sum(weights)
-        probabilities = [weight / total_weight for weight in weights]
+    if len(cars_to_keep) == 0:
+        cars_to_keep.append(best_car)
 
-    selected_cars = random.choices(sorted_cars, probabilities, k=var.NB_CARS - 1)  # We choose the cars based on their probabilities
+    return cars_to_keep
+
+
+def init_cars(cars_to_keep, number_cars):
+    """
+    Initialize the cars we will mutate and crossover
+
+    Args:
+        cars_to_keep (list): list of cars we will copy
+        number_cars (int): number of cars we will mutate and crossover
+
+    Returns:
+        list: list of the cars we will mutate and crossover
+    """
+    # Calculate the weights based on the car scores
+    weights = [car.scores for car in cars_to_keep]
+    total_weight = sum(weights)
+    probabilities = [weight / total_weight for weight in weights]
+
+    selected_cars = random.choices(cars_to_keep, probabilities, k=number_cars)  # We choose the cars based on their probabilities
     cars = [Car(car.genetic) for car in selected_cars]
 
     return cars
@@ -137,6 +144,26 @@ def crossover(cars):
                         setattr(car1.genetic, attribute_name, getattr(car2.genetic, attribute_name))
                         setattr(car2.genetic, attribute_name, attribute_value)
                         break
+    return cars
+
+
+def add_cars_to_keep(cars, cars_to_keep):
+    """
+    Add the best cars to the list
+
+    Args:
+        cars (list): list of cars that have been mutated and crossed
+        cars_to_keep (list): list of cars to keep (the best cars)
+
+    Returns:
+        list: list of cars
+    """
+    for car in cars_to_keep[1:]:
+        cars.append(Car(genetic=car.genetic, best_scores=car.best_scores))
+
+    best_car = cars_to_keep[0]  # We add the best car at the end, so we will see it on top of the others
+    cars.append(Car(genetic=best_car.genetic, best_scores=best_car.best_scores, color='yellow'))
+
     return cars
 
 
