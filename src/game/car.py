@@ -250,7 +250,7 @@ class Car:
         self.dead = True  # The car is dead
         var.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
 
-    def draw_car(self):
+    def draw(self):
         """
         Draw the car
         """
@@ -262,13 +262,11 @@ class Car:
         if var.DEBUG and not self.dead:
             self.draw_detection_cone()  # Draw the detection cone of the car
 
-
     def reset(self):
         """
         Reset the car
         """
         self.__init__(self.genetic, self.best_scores, self.color, self.view_only)
-
 
     def draw_detection_cone(self):
         """

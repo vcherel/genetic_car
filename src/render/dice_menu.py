@@ -106,9 +106,9 @@ class DiceMenu:
         var.WINDOW.blit(var.TEXT_LENGTH, (convert_to_new_window((self.rect_x + 20, self.rect_y + 350))))
         var.WINDOW.blit(var.TEXT_WIDTH, (convert_to_new_window((self.rect_x + 30, self.rect_y + 160))))
 
-        x, y = self.rect_x + 675, self.rect_y + 290
+        x, y = self.rect_x + 750, self.rect_y + 275
         var.WINDOW.blit(scale_image(var.BIG_RED_CAR_IMAGE, var.SCALE_RESIZE_X), (convert_to_new_window((x, y))))
-        draw_detection_cone((x + 125, y + 25), self.dice_values, factor=3, width_line=5)
+        draw_detection_cone((x + 52, y - 3), self.dice_values, factor=3, width_line=5)
 
         # Display the dice
         draw_dice(x=self.rect_x + x1, y=self.rect_y + y1, color=RGB_VALUES_DICE[0], value=self.dice_values[0])

@@ -61,13 +61,13 @@ def draw_detection_cone(pos, dice_values, angle=90, factor=1, width_line=2, actu
     left, top, right = compute_detection_cone_points(angle, pos, dice_values[3] * width_multiplier, dice_values[0] * length_multiplier)
     points = [pos, left, top, right]
     if actual_mode == 'slow':
-        pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line * 2)
+        pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line * 3)
     else:
         pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line)
 
     left, top, right = compute_detection_cone_points(angle, pos, dice_values[4] * width_multiplier, dice_values[1] * length_multiplier)
     if actual_mode == 'medium':
-        pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line * 2)
+        pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line * 3)
     else:
         pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line)
     points.append(left)
@@ -76,7 +76,7 @@ def draw_detection_cone(pos, dice_values, angle=90, factor=1, width_line=2, actu
 
     left, top, right = compute_detection_cone_points(angle, pos, dice_values[5] * width_multiplier, dice_values[2] * length_multiplier)
     if actual_mode == 'fast':
-        pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line * 2)
+        pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line * 3)
     else:
         pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line)
     points.append(left)
@@ -101,13 +101,13 @@ def show_car_window(car):
     pygame.draw.rect(var.WINDOW, (128, 128, 128), rect, 0)  # Draw the rectangle (inside)
     pygame.draw.rect(var.WINDOW, (1, 1, 1), rect, 2)  # Draw the rectangle (contour)
 
-    x, y = rect_x + 485, rect_y + 225  # Position of the car
+    x, y = rect_x + 565, rect_y + 230  # Position of the car
 
     image = change_color_car(var.BIG_RED_CAR_IMAGE, car.color)  # Change the color of the car
 
     image = scale_image(image, var.SCALE_RESIZE_X)  # Scale the image
     var.WINDOW.blit(image, convert_to_new_window((x, y)))  # Draw the red car
-    draw_detection_cone((x + 125, y + 25), car.genetic.get_list(), factor=3, width_line=5)  # Draw the detection cones
+    draw_detection_cone((x + 52, y - 3), car.genetic.get_list(), factor=3, width_line=5)  # Draw the detection cones
 
     # Draw the dice
     x_distance = 120
@@ -124,10 +124,10 @@ def show_car_window(car):
 
     # Draw the text
     var.WINDOW.blit(var.TEXT_SLOW, convert_to_new_window((rect_x + 175, rect_y + 150)))  # Draw the slow text
-    var.WINDOW.blit(var.TEXT_MEDIUM, convert_to_new_window((rect_x + 275, rect_y + 150)))  # Draw the medium text
+    var.WINDOW.blit(var.TEXT_MEDIUM, convert_to_new_window((rect_x + 277, rect_y + 150)))  # Draw the medium text
     var.WINDOW.blit(var.TEXT_FAST, convert_to_new_window((rect_x + 400, rect_y + 150)))  # Draw the fast text
-    var.WINDOW.blit(var.TEXT_LENGTH, convert_to_new_window((rect_x + 20, rect_y + 250)))  # Draw the length text
-    var.WINDOW.blit(var.TEXT_WIDTH, convert_to_new_window((rect_x + 10, rect_y + 375)))  # Draw the width text
+    var.WINDOW.blit(var.TEXT_LENGTH, convert_to_new_window((rect_x + 25, rect_y + 250)))  # Draw the length text
+    var.WINDOW.blit(var.TEXT_WIDTH, convert_to_new_window((rect_x + 15, rect_y + 375)))  # Draw the width text
 
 
 def erase_car_window():

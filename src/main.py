@@ -134,7 +134,7 @@ def play_turn(cars):
     for car in cars:  # For each car
         if not car.dead:  # If the car is not dead
             car.move()  # Move the car
-        car.draw_car()  # Draw the cars
+        car.draw()  # Draw the cars
 
     var.TICKS_REMAINING -= 1  # We decrease the number of iterations remaining
 

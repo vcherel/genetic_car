@@ -42,7 +42,8 @@ class RectGarage:
         self.last_time_color_clicked = 0  # Last time the color was clicked
 
         # Buttons
-        self.edit_button = Button(pos[0] + 188, pos[1] + 40, pygame.image.load(PATH_IMAGE + '/pen.png'), scale=0.032)  # Button to edit the car
+        self.edit_button = Button(pos[0] + 188, pos[1] + 40, pygame.image.load(PATH_IMAGE + '/pen_1.png'),
+                                  pygame.image.load(PATH_IMAGE + '/pen_2.png'), scale=0.15)  # Button to edit the car
         self.select_button = Button(pos[0] + 188, pos[1] + 8, pygame.image.load(PATH_IMAGE + '/checkbox_1.png'),
                                     pygame.image.load(PATH_IMAGE + '/checkbox_2.png'),
                                     pygame.image.load(PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.07)  # Button of the writing button
@@ -83,14 +84,16 @@ class RectGarage:
         pos_color = convert_to_new_window((self.pos[0] + 154, self.pos[1] + 40))
         rect_color = pygame.rect.Rect(pos_color[0], pos_color[1], var.SCALE_RESIZE_X * 26, var.SCALE_RESIZE_Y * 26)
         pygame.draw.rect(var.WINDOW, CAR_COLORS[self.car.color], rect_color, 0)
-        pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 2)
 
-        # We change the color of the car if the user clicked on the color
-        if pygame.mouse.get_pressed()[0] and rect_color.collidepoint(pygame.mouse.get_pos()) and time.time() - self.last_time_color_clicked > 0.2:
-            self.last_time_color_clicked = time.time()
-            self.car.change_color(random.choice(list(CAR_COLORS.keys())))  # We change the color of the car randomly
-            var.update_car_color(self.type_car, self.id_car, self.car.color)  # We update the color of the car in the file
-
+        if rect_color.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
+            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 4)
+            # We change the color of the car if the user clicked on the color
+            if pygame.mouse.get_pressed()[0] and time.time() - self.last_time_color_clicked > 0.2:
+                self.last_time_color_clicked = time.time()
+                self.car.change_color(random.choice(list(CAR_COLORS.keys())))  # We change the color of the car randomly
+                var.update_car_color(self.type_car, self.id_car, self.car.color)  # We update the color of the car in the file
+        else:
+            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 2)
 
         # Button with the name of the car
         self.name_button.draw()

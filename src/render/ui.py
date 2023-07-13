@@ -59,9 +59,15 @@ def init():
     map_button = Button(780, 30, pygame.image.load(PATH_IMAGE + '/map_button_1.png'),
                         pygame.image.load(PATH_IMAGE + '/map_button_2.png'),
                         pygame.image.load(PATH_IMAGE + '/map_button_3.png'))
-    restart_button = Button(1290, 2, pygame.image.load(PATH_IMAGE + '/restart_button.png'), scale=0.08)
-    settings_button = Button(285, 5, pygame.image.load(PATH_IMAGE + '/settings_button.png'), scale=0.065, checkbox=True)
-    skip_button = Button(1290, 80, pygame.image.load(PATH_IMAGE + '/skip_button.png'), scale=0.05)
+    restart_button = Button(1287, 4, pygame.image.load(PATH_IMAGE + '/restart_button_1.png'),
+                            pygame.image.load(PATH_IMAGE + '/restart_button_2.png'),
+                            pygame.image.load(PATH_IMAGE + '/restart_button_3.png'), scale=0.2)
+    settings_button = Button(285, 5, pygame.image.load(PATH_IMAGE + '/settings_button_1.png'),
+                             pygame.image.load(PATH_IMAGE + '/settings_button_2.png'),
+                             pygame.image.load(PATH_IMAGE + '/settings_button_3.png'), scale=0.65, checkbox=True)
+    skip_button = Button(1290, 80, pygame.image.load(PATH_IMAGE + '/skip_button_1.png'),
+                         pygame.image.load(PATH_IMAGE + '/skip_button_2.png'),
+                         pygame.image.load(PATH_IMAGE + '/skip_button_3.png'), scale=0.45)
 
 
 def handle_events(cars=None):
@@ -427,6 +433,8 @@ def display_restart_button():
     """
     if restart_button.draw() and var.CARS_LAST_RUN:  # Draw the restart button
         var.PLAY_LAST_RUN = True  # We play the last run
+    if restart_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(restart_button.rect)
 
 
 def display_settings_button():
@@ -442,6 +450,8 @@ def display_settings_button():
             SETTINGS.erase()
     if var.DISPLAY_SETTINGS:  # If the garage is displayed we draw it and do the actions
         SETTINGS.show()
+    if settings_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(settings_button.rect)
 
 
 def display_skip_button():
@@ -451,6 +461,8 @@ def display_skip_button():
     skip_button.draw()  # Draw the next generation button
     if skip_button.just_clicked:  # Next generation button is just clicked
         var.CHANGE_GENERATION = True  # We change the generation
+    if skip_button.mouse_over_button:
+        var.RECTS_BLIT_UI.append(skip_button.rect)  # We add the rect of the next generation button to the list of rects to blit
 
 
 def display_text():
@@ -461,9 +473,9 @@ def display_text():
     if var.PLAY and var.ACTUAL_FPS != 0:  # If the simulation is playing we display the time remaining in seconds if the simulation stays at this fps
         time_remaining = int(var.TICKS_REMAINING / var.ACTUAL_FPS)
         var.LAST_TIME_REMAINING.append(time_remaining)
-        if len(var.LAST_TIME_REMAINING) > var.FPS:
+        if len(var.LAST_TIME_REMAINING) > 50:
             var.LAST_TIME_REMAINING.pop(0)
-        time_remaining = max(set(var.LAST_TIME_REMAINING), key=var.LAST_TIME_REMAINING.count)
+        time_remaining = max(set(var.LAST_TIME_REMAINING), key=var.LAST_TIME_REMAINING.count)  # We take the most common value
     else:  # If the simulation is paused we display the time remaining theoretically in seconds
         time_remaining = int(var.TICKS_REMAINING / var.FPS)
 

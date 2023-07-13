@@ -13,8 +13,8 @@ RGB_VALUES_DICE = [(220, 220, 0), (250, 120, 0), (204, 0, 0), (240, 170, 25), (0
 CAR_COLORS = {'black': (0, 0, 0), 'blue': (0, 0, 255), 'brown': (153, 76, 0), 'gray': (128, 128, 128), 'light_blue': (0, 255, 255),
               'light_green': (0, 255, 0), 'orange': (255, 128, 0), 'pink': (204, 0, 204), 'purple': (102, 0, 204)}
 
-START_POSITIONS = [(600, 165), (760, 180), (600, 197), (725, 165), (734, 241), (820, 395)]  # Start position
-CAR_SIZES = [0.13, 0.1, 0.06, 0.09, 0.15, 0.11]  # Size of the cars
+START_POSITIONS = [(718, 168), (760, 180), (355, 184), (725, 165), (734, 241), (820, 395)]  # Start position
+CAR_SIZES = [13, 10, 6, 9, 15, 11]  # Size of the cars
 
 PATH_DATA = os.path.dirname(__file__) + '/../../data'  # Path of the data folder
 PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder

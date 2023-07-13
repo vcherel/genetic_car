@@ -271,7 +271,7 @@ def show_texts():
     var.WINDOW.blit(see_cursor_text, convert_to_new_window((x2 + 10, y2[6])))
     var.WINDOW.blit(see_checkpoints_text, convert_to_new_window((x2 + 10, y2[7])))
 
-    var.WINDOW.blit(cone_text, convert_to_new_window((x2 + 85, y2[8])))
+    var.WINDOW.blit(cone_text, convert_to_new_window((x2 + 28, y2[8])))
     var.WINDOW.blit(width_cone_text, convert_to_new_window((x2 + 50, y2[9])))
     var.WINDOW.blit(length_cone_text, convert_to_new_window((x2 + 50, y2[10])))
 

@@ -168,14 +168,14 @@ def change_map(first_time=False):
             NUM_MAP += 1
 
     START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the cars
-    RADIUS_CHECKPOINT = 600 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
+    RADIUS_CHECKPOINT = 7.5 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
 
     # We create a background to create the mask of collision, this background has a size of 1500*700
     background = pygame.Surface((1500, 700))  # Image of the background
     background.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
     BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
 
-    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.bmp'), CAR_SIZES[NUM_MAP])  # Image of the car
+    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), CAR_SIZES[NUM_MAP] / 75)  # Image of the car
 
     update_visual_variables()  # Update the data used to display things
 
@@ -288,7 +288,7 @@ def load_variables():
             if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
                 ACTUAL_ID_MEMORY_DICE = id_car + 1
 
-    BIG_RED_CAR_IMAGE = pygame.transform.rotate(pygame.image.load(PATH_IMAGE + '/car.bmp'), 90)
+    BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
 
 def save_variables():

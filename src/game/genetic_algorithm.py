@@ -42,7 +42,7 @@ def find_cars_to_keep(cars):
     Returns:
         list: list of cars to keep
     """
-    number_to_keep = int(var.PROPORTION_CARS_KEPT * len(cars))  # Number of cars to keep
+    number_to_keep = min(int(var.PROPORTION_CARS_KEPT * len(cars)), var.NB_CARS)  # Number of cars to keep
     cars_to_keep = cars[:number_to_keep]  # Select the best cars
 
     best_car = cars[0]  # We get the best car
@@ -68,6 +68,8 @@ def init_cars(cars_to_keep, number_cars):
     # Calculate the weights based on the car scores
     weights = [car.scores for car in cars_to_keep]
     total_weight = sum(weights)
+    if total_weight == 0:  # To avoid division by 0
+        total_weight = 1
     probabilities = [weight / total_weight for weight in weights]
 
     selected_cars = random.choices(cars_to_keep, probabilities, k=number_cars)  # We choose the cars based on their probabilities

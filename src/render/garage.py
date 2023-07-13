@@ -61,8 +61,12 @@ class Garage:
         self.trash_button = Button(930, 135, pygame.image.load(PATH_IMAGE + '/trash_button_1.png'),
                                    pygame.image.load(PATH_IMAGE + '/trash_button_2.png'),
                                    pygame.image.load(PATH_IMAGE + '/trash_button_3.png'), scale=0.2)
-        self.next_button = Button(940, 620, pygame.image.load(PATH_IMAGE + '/next_page_button.png'), scale=0.1)
-        self.previous_button = Button(520, 620, pygame.transform.flip(pygame.image.load(PATH_IMAGE + '/next_page_button.png'), True, False), scale=0.1)
+        self.next_button = Button(940, 623, pygame.image.load(PATH_IMAGE + '/next_page_button_1.png'),
+                                  pygame.image.load(PATH_IMAGE + '/next_page_button_2.png'),
+                                  pygame.image.load(PATH_IMAGE + '/next_page_button_3.png'), scale=0.2)
+        self.previous_button = Button(520, 623, pygame.transform.flip(pygame.image.load(PATH_IMAGE + '/next_page_button_1.png'), True, False),
+                                      pygame.transform.flip(pygame.image.load(PATH_IMAGE + '/next_page_button_2.png'), True, False),
+                                      pygame.transform.flip(pygame.image.load(PATH_IMAGE + '/next_page_button_3.png'), True, False), scale=0.2)
 
     def display_garage(self):
         """
