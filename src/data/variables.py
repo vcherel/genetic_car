@@ -49,7 +49,7 @@ BIG_RED_CAR_IMAGE = None
 
 
 # GAME
-SEED = 22  # Seed of the game
+SEED = None  # Seed of the game
 NUM_MAP = 0  # Number of the map
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
@@ -247,7 +247,7 @@ def load_variables():
         except ValueError:
             # Sometimes the file parameters is not complete, so we complete it
             num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance, \
-                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = 0, 50, 60, 60, 8, 5, 0.2, -1, 0.3, 0.3, 0.1, 22, 16, 11
+                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = 0, 50, 60, 60, 9, 8, 0.1, -0.6, 0.3, 0.3, 0.1, 0, 16, 11
 
         NUM_MAP = int(num_map)  # Map number
         NB_CARS = int(nb_cars)  # Number of cars

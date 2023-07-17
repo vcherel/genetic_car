@@ -151,23 +151,29 @@ class Button:
         self.just_clicked = -1
         self.time_clicked = pygame.time.get_ticks()
         if self.writing_button:
-            self.save()
+            self.save_text()
 
-    def save(self):
+    def save_text(self):
+        """
+        Save the text of the button in the file parameters
+        """
         if self.variable is not None:
             try:
                 # We detect if there is a decimal point
-                if '.' in self.text:
-                    self.variable = float(self.text)
+                if self.text.startswith('-'):
+                    signe = -1
+                    self.text = self.text[1:]
                 else:
-                    self.variable = int(self.text)  # Convert the text to an integer
+                    signe = 1
+
+                if '.' in self.text:
+                    self.variable = signe * float(self.text)
+                else:
+                    self.variable = signe * int(self.text)  # Convert the text to an integer
 
                 if self.name == 'dice':  # If it's a dice value we check if it's between 1 and 6
                     self.variable = max(1, self.variable)
                     self.variable = min(6, self.variable)
-                else:
-                    if self.variable < 0:
-                        self.variable = 0
 
                 # If it's the number of cars we change the variable in the file parameters
                 if self.name == 'nb_cars':

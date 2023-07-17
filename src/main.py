@@ -93,6 +93,8 @@ def init_play(cars):
     Returns:
         list: list of cars
     """
+    random.seed(var.SEED)  # Initialize the random seed
+
     if not cars:  # If it is the first time we play (or if we were watching to cars from the garage only)
         # We add the cars without repetition
         cars = []  # List of cars
@@ -171,6 +173,7 @@ def stop_play(cars):
         ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
         ui.erase()  # Erase the buttons
         ui.display(cars)  # Activate the buttons
+        pygame.display.flip()  # Update the screen
 
     var.CHANGE_GENERATION = False  # We stop the change of generation
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
@@ -247,7 +250,6 @@ if __name__ == '__main__':
     Main program
     """
     try:
-        random.seed(var.SEED)  # Initialize the random seed
         var.load_variables()  # Load the data
         var.change_map(first_time=True)  # Change the map to the first one
         ui.init()  # Initialize the ui

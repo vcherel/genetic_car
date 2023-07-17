@@ -155,17 +155,22 @@ class Car:
             self.acceleration = var.DECELERATION
         else:
             self.acceleration = var.ACCELERATION
+
+        if self.speed == 0:
+            turn_angle = var.TURN_ANGLE
+        else:
+            turn_angle = min(var.TURN_ANGLE, var.TURN_ANGLE / self.speed * 5)  # Angle of the turn of the car (when we go fast we turn less than when we go slow)
         
         # If there is a wall on the left or on the right of the car, we turn it
         if wall_at_left and wall_at_right:
             if wall_at_left < wall_at_right:
-                self.angle -= var.TURN_ANGLE
+                self.angle -= turn_angle
             else:
-                self.angle += var.TURN_ANGLE
+                self.angle += turn_angle
         elif wall_at_left:
-            self.angle -= var.TURN_ANGLE
+            self.angle -= turn_angle
         elif wall_at_right:
-            self.angle += var.TURN_ANGLE
+            self.angle += turn_angle
 
     def update_pos(self):
         """
@@ -199,6 +204,7 @@ class Car:
 
         car_mask = pygame.mask.from_surface(self.rotated_image)
 
+        
         if var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
             # We move the car backward because we don't want the car to bo on top of the wall
             speed = 1  # Speed of the car
@@ -206,13 +212,19 @@ class Car:
             dx = math.cos(radians) * speed  # The movement of the car on the x-axis
             dy = math.sin(radians) * speed  # The movement of the car on the y-axis
             # While it touches the wall
+            count = 0
             while var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
+                count += 1
+                if count == 20:  # To avoid a car teleporting we try to move in the other direction (to avoid the case when the back of the car is in the wall)
+                    dx = -dx
+                    dy = -dy
+
                 self.pos = self.pos[0] - dx, self.pos[1] - dy  # Update the position of the car
                 self.rotated_image = pygame.transform.rotate(self.image, self.angle)  # Rotate the image of the car
                 self.rotated_rect = self.rotated_image.get_rect(center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
                 car_mask = pygame.mask.from_surface(self.rotated_image)
 
-            self.kill()  # Collision with the walls of the circuit
+            self.kill()  # Collision with a wall
 
     def determine_size_cone(self):
         """

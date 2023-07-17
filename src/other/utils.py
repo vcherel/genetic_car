@@ -34,6 +34,9 @@ def compute_detection_cone_points(angle, front_of_car, width, length):
     Returns:
         [left, top, right] (list(tuple(int, int))): the coordinates of the points of the detection cone
     """
+    if length == 0:  # To avoid division by 0
+        return []
+
     angle_cone = math.degrees(math.atan(width / (2 * length)))  # Angle of the detection cone
 
     top = front_of_car[0] + math.cos(math.radians(angle)) * length, front_of_car[1] - math.sin(math.radians(angle)) * length  # Position of the top of the cone

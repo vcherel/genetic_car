@@ -1,3 +1,4 @@
+import itertools  # Used to get all the combinations of cars
 import src.data.variables as var  # Variables of the game
 import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
@@ -20,10 +21,12 @@ def apply_genetic(cars):
     cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
 
     if cars:
+        # We sort the cars by score
         cars = sorted(cars, key=lambda c: c.scores, reverse=True)  # Sort the cars by score
+
         cars_to_keep = find_cars_to_keep(cars)  # We find the cars to keep (the best cars)
-        cars = init_cars(cars_to_keep, var.NB_CARS - len(cars_to_keep))  # Select the best cars
-        cars = mutate(cars)  # Mutate the cars
+        cars = init_cars(cars_to_keep, var.NB_CARS - len(cars_to_keep))  # Select the best cars that we will mutate
+        cars = mutate(cars, cars_to_keep)  # Mutate the cars
         cars = crossover(cars)  # Crossover the cars
         cars = add_cars_to_keep(cars, cars_to_keep)  # We add the best cars to the list
     else:
@@ -42,14 +45,14 @@ def find_cars_to_keep(cars):
     Returns:
         list: list of cars to keep
     """
-    number_to_keep = min(int(var.PROPORTION_CARS_KEPT * len(cars)), var.NB_CARS)  # Number of cars to keep
+    number_to_keep = max(min(int(var.PROPORTION_CARS_KEPT * len(cars)), var.NB_CARS), 1)  # Number of cars to keep
     cars_to_keep = cars[:number_to_keep]  # Select the best cars
 
-    best_car = cars[0]  # We get the best car
+    best_car = cars_to_keep[0]  # We get the best car
     var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic, 'gray', best_car.best_scores])  # Add the best car to the memory
 
-    if len(cars_to_keep) == 0:
-        cars_to_keep.append(best_car)
+    for car in cars_to_keep:
+        car.reset()  # We reset the cars
 
     return cars_to_keep
 
@@ -78,12 +81,13 @@ def init_cars(cars_to_keep, number_cars):
     return cars
 
 
-def mutate(cars):
+def mutate(cars, cars_to_keep):
     """
     Mutate the cars
 
     Args:
         cars (list): list of cars
+        cars_to_keep (list): list of cars we will not mutate and keep in the next turn
 
     Returns:
         list: list of cars mutated
@@ -92,11 +96,10 @@ def mutate(cars):
 
     for car in cars:
         added = False
-        count = 0  # Number of times we tried to add the car
         while not added:
             car = mutate_one_car(car)  # Mutate the car
-            count += 1
-            if car not in new_cars or count > 150:  # If the car is not already in the list or if we have tried too many times
+
+            if car not in new_cars and car not in cars_to_keep:  # If the car is not already in the list or if we have tried too many times
                 added = True
                 new_cars.append(car)  # We add the car to the list
 
@@ -113,15 +116,18 @@ def mutate_one_car(car):
     Returns:
         Car: the mutated car
     """
-    for attribute_name, attribute_value in vars(car.genetic).items():
-        if random.random() < var.ACTUAL_CROSSOVER_CHANCE:
-            # See if it is a width or a length
-            if attribute_name.startswith('width'):
-                multiplier = var.WIDTH_CONE
-            else:
-                multiplier = var.LENGTH_CONE
-            actual_value = int(getattr(car.genetic, attribute_name) / multiplier)  # Get the actual value of the attribute
-            setattr(car.genetic, attribute_name, multiplier * random_attribution(actual_value))
+    has_muted = False  # True if the car has mutated
+    while not has_muted:  # We try mutating the car until it mutates
+        for attribute_name, attribute_value in vars(car.genetic).items():
+            if random.random() < var.ACTUAL_CROSSOVER_CHANCE:
+                has_muted = True
+                # See if it is a width or a length
+                if attribute_name.startswith('width'):
+                    multiplier = var.WIDTH_CONE
+                else:
+                    multiplier = var.LENGTH_CONE
+                actual_value = int(getattr(car.genetic, attribute_name) / multiplier)  # Get the actual value of the attribute
+                setattr(car.genetic, attribute_name, multiplier * random_attribution(actual_value))
 
     return car
 
@@ -136,15 +142,28 @@ def crossover(cars):
     Returns:
         list: list of cars crossed
     """
-    for i in range(len(cars)):
-        for j in range(len(cars)):  # We search for all pairs of cars
-            if random.random() < var.ACTUAL_CROSSOVER_CHANCE and i != j:  # If we do a crossover
-                car1, car2 = (cars[i], cars[j])
-                id_changed_attribute = random.randint(0, 5)  # We choose a random attribute to exchange
+    for car1, car2 in itertools.combinations(cars, 2):  # We take all the combinations of cars
+        if random.random() < var.ACTUAL_CROSSOVER_CHANCE and car1 != car2:  # If we do a crossover
+            car_added = False
+            count = 0
+            while not car_added and count < 10:  # We try to add the cars until we succeed, or we have tried too many times
+                count += 1
+                number_attributes_exchanged = random.randint(1, 6)  # We choose a random number of attributes to exchange
+                ids_changed_attributes = random.sample(range(0, 6), number_attributes_exchanged)  # We choose the attributes to exchange
                 for k, (attribute_name, attribute_value) in enumerate(vars(car1.genetic).items()):
-                    if k == id_changed_attribute:
-                        setattr(car1.genetic, attribute_name, getattr(car2.genetic, attribute_name))
-                        setattr(car2.genetic, attribute_name, attribute_value)
+                    if k in ids_changed_attributes:
+                        genetic_1, genetic_2 = car1.genetic, car2.genetic
+                        setattr(genetic_1, attribute_name, getattr(genetic_2, attribute_name))
+                        setattr(genetic_2, attribute_name, attribute_value)
+                        new_car_1 = Car(genetic=genetic_1, best_scores=car1.best_scores, color=car1.color)
+                        new_car_2 = Car(genetic=genetic_2, best_scores=car2.best_scores, color=car2.color)
+
+                        # We verify that the new cars are not already in the list
+                        if new_car_1 not in cars and new_car_2 not in cars:
+                            cars.remove(car1)
+                            cars.remove(car2)
+                            cars.append(new_car_1)
+                            cars.append(new_car_2)
                         break
     return cars
 
