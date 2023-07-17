@@ -67,16 +67,25 @@ CARS_LAST_RUN = []  # Cars of the last run
 # CHARACTERISTICS CARS
 WIDTH_CONE = 16  # Width multiplier of the cone
 LENGTH_CONE = 11  # Length multiplier of the cone
-MAX_SPEED = 8  # Maximum speed of the car
-TURN_ANGLE = 5  # Angle of rotation of the car
-ACCELERATION = 0.2  # Acceleration of the car
-DECELERATION = -1  # Deceleration of the car
+MAX_SPEED = 9  # Maximum speed of the car
+TURN_ANGLE = 8  # Angle of rotation of the car
+ACCELERATION = 0.1  # Acceleration of the car
+DECELERATION = 0.6  # Deceleration of the car
 
 
 # DEBUG
-DEBUG = False  # True for debug mode, False for normal mode
-TEST_ALL_CARS = False  # True to test all the cars, False to play the game normally
 SEE_CURSOR = False  # True to see the cursor position and color when clicking
+DEBUG = False  # True for debug mode, False for normal mode
+
+
+# TESTS
+TEST_ALL_CARS = False  # True to test all the cars, False to play the game normally
+SHOW_ANALYSIS = False  # True to see the analysis of the tests, False otherwise
+TEST_MUTATION_CROSSOVER = False  # True to test the mutation and crossover, False to play the game normally
+TEST_VALUE_GENETIC_PARAMETERS = True  # True to test the value of the genetic parameters, False to play the game normally
+TEST_FINISHED = False  # True if a car completed a lap, False otherwise
+TEST_MODE = ''  # Mode of the test ('mutation_only', 'mutation_crossover', crossover_mutation')
+FILE_TEST = None  # File to save the results of the tests
 
 
 # CHECKPOINTS
@@ -98,9 +107,7 @@ LAST_TIME_REMAINING = []  # List of the remaining time during the last turns
 TIME_GENERATION = 60  # Time of a generation
 NUM_GENERATION = 1  # Number of the generation
 MUTATION_CHANCE = 0.3  # Chance of mutation
-ACTUAL_MUTATION_CHANCE = None  # Actual chance of mutation
 CROSSOVER_CHANCE = 0.3  # Chance of crossover
-ACTUAL_CROSSOVER_CHANCE = None  # Actual chance of crossover
 PROPORTION_CARS_KEPT = 0.1  # Percentage used to know how many cars we keep for the next generation
 
 
@@ -122,7 +129,6 @@ ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
 # OTHER
 FPS = 60  # FPS of the game
 ACTUAL_FPS = 60  # Actual FPS
-SHOW_ANALYSIS = False  # True to show the analysis of the cars on the checkpoints, False otherwise
 BUTTONS = []  # List of the buttons
 
 
@@ -193,7 +199,6 @@ def change_map(first_time=False):
             CHECKPOINTS.append((int(a), int(b)))
 
 
-
 def update_visual_variables():
     """
     Update the data used to display things according to the size of the new window
@@ -218,13 +223,11 @@ def init_variables(nb_cars, replay=False):
     """
     Initialize the data of the game (number of car alive, time remaining, start time, ...)
     """
-    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, ACTUAL_ID_MEMORY_GENETIC, TICKS_REMAINING, ACTUAL_CROSSOVER_CHANCE, ACTUAL_MUTATION_CHANCE
+    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, ACTUAL_ID_MEMORY_GENETIC, TICKS_REMAINING
 
     NB_CARS_ALIVE = nb_cars  # Number of cars alive
     TICKS_REMAINING = TIME_GENERATION * 60  # Number of iterations remaining for the generation
     DISPLAY_GARAGE = False  # We don't display the garage
-    ACTUAL_CROSSOVER_CHANCE = CROSSOVER_CHANCE
-    ACTUAL_MUTATION_CHANCE = MUTATION_CHANCE
     if replay:  # If we replay from the last cars
         NUM_GENERATION += 1
     else:  # If we start a new run

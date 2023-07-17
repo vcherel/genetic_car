@@ -1,6 +1,6 @@
 from src.other.camera_utils import *  # Utils functions for the camera
 from src.data.data_structures import ColorDice  # To find the color of each dice
-from src.render.dice_menu import save_camera_frame  # To save the camera frame
+from src.render.dice_menu import update_pygame_camera_frame  # To save the camera frame
 from src.other.utils import convert_to_new_window  # Utils functions
 import src.data.variables as var  # Variables
 import random  # To generate random numbers
@@ -44,7 +44,7 @@ show_clicks = False  # To show the coordinates and color of the position where t
 
 # To find what is the color of each dice
 write_mean_bgr = False
-file_write_mean_bgr = open(var.PATH_DATA + '/mean_bgr', 'a')  # The file in which we will write the parameters
+file_write_mean_bgr = None  # The file in which we will write the parameters
 
 # Optimization parameters for HoughCircles function
 optimize_hough_circle = False  # To optimize the parameters of the HoughCircles function
@@ -141,7 +141,7 @@ def capture_dice():
                 var.WINDOW.blit(var.BACKGROUND, rect_window, rect_window)  # We erase the window
 
                 frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
-                save_camera_frame(frame_view)  # Save the image into the data (CAMERA_FRAME and RECT_CAMERA_FRAME)
+                update_pygame_camera_frame(frame_view)  # Update the frame of the camera shown in pygame
 
                 return end_capture_dice(cap, final_score)  # End the capture of the dice
 
@@ -368,6 +368,11 @@ def write_mean_bgr_value(rect, mean_bgr):
         rect (tuple): Coordinates of the rectangle (x, y, w, h)
         mean_bgr (numpy.ndarray): Mean BGR values of the dice
     """
+    global file_write_mean_bgr
+
+    if file_write_mean_bgr is None:
+        file_write_mean_bgr = open(var.PATH_DATA + '/mean_bgr', 'a')  # The file in which we will write the parameters
+
     rect_detection = (250, 150, 150, 150)
     draw_rectangle(rect_detection, color=(0, 255, 0), thickness=1)
     if overlapping_rectangles(rect, rect_detection, area_threshold=0.1):

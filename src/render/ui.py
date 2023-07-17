@@ -9,7 +9,6 @@ from src.render.garage import GARAGE  # Import functions from garage
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button
 import src.data.variables as var  # Import the data
-import random  # To generate random numbers
 import pygame  # To use pygame
 import time  # To get the time*
 

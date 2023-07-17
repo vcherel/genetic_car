@@ -159,17 +159,14 @@ class Button:
         """
         if self.variable is not None:
             try:
-                # We detect if there is a decimal point
-                if self.text.startswith('-'):
-                    signe = -1
-                    self.text = self.text[1:]
-                else:
-                    signe = 1
-
                 if '.' in self.text:
-                    self.variable = signe * float(self.text)
+                    self.variable = float(self.text)
+                    if self.variable <= 0:
+                        self.variable = 0.1
                 else:
-                    self.variable = signe * int(self.text)  # Convert the text to an integer
+                    self.variable = int(self.text)  # Convert the text to an integer
+                    if self.variable < 0:
+                        self.variable = 30
 
                 if self.name == 'dice':  # If it's a dice value we check if it's between 1 and 6
                     self.variable = max(1, self.variable)
@@ -184,6 +181,6 @@ class Button:
                 if self.name == 'dice':
                     self.variable = 1
                 else:
-                    self.variable = 50
+                    self.variable = 30
 
             self.text = str(self.variable)  # Reset the text

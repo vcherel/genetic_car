@@ -1,5 +1,5 @@
+from src.data.analyze_data import analyze_data_scores, show_positions_crash  # Import the analyze_data function
 from src.data.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
-from src.other.analyze_data import analyze_data, show_analysis  # To analyze the data of all the cars
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.render.settings_menu import SETTINGS  # Import the settings
 from src.render.garage import add_garage_cars  # Import the garage
@@ -9,6 +9,7 @@ import src.render.display as display  # Import the display
 import src.data.variables as var  # Import the data
 import traceback  # To get the traceback of errors
 from src.game.car import Car  # Import the car
+import itertools  # To iterate over the cars
 import random  # To generate random numbers
 import src.render.ui as ui  # Import the ui
 import pygame  # To use pygame
@@ -17,9 +18,6 @@ import time  # To get the time
 """
 This file contains all the functions used to play the game
 """
-
-if var.TEST_ALL_CARS:  # If we want to test all the cars
-    file = open(PATH_DATA + '/test_0', 'a')  # File to write the scores of every possible car if necessary
 
 
 def open_window():
@@ -71,6 +69,10 @@ def play(cars=None):
             # We stop the game if all the cars are dead or if the time is over or if we want to change the generation
             if var.NB_CARS_ALIVE == 0 or var.TICKS_REMAINING == 0 or var.CHANGE_GENERATION:
                 stop_play(cars)  # Stop the game
+                if var.TEST_ALL_CARS:
+                    return  # If we want to test all the cars, we stop the game here so that we can test the next cars
+                if (var.TEST_VALUE_GENETIC_PARAMETERS or var.TEST_MUTATION_CROSSOVER) and var.TEST_FINISHED:
+                    return  # We quit if we finished the tests
 
         ui.erase()  # Erase the buttons
         ui.display(cars)  # Activate the buttons (This is here because we have to do this after erasing the screen and
@@ -169,11 +171,13 @@ def stop_play(cars):
     """
 
     time_before = time.time()  # We get the time before the genetic algorithm
-    while time.time() - time_before < 1:  # We wait 1 second
-        ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
-        ui.erase()  # Erase the buttons
-        ui.display(cars)  # Activate the buttons
-        pygame.display.flip()  # Update the screen
+
+    if not var.TEST_MUTATION_CROSSOVER and not var.TEST_ALL_CARS:  # If we don't want to test the mutation and crossover
+        while time.time() - time_before < 1:  # We wait 1 second
+            ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
+            ui.erase()  # Erase the buttons
+            ui.display(cars)  # Activate the buttons
+            pygame.display.flip()  # Update the screen
 
     var.CHANGE_GENERATION = False  # We stop the change of generation
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
@@ -182,9 +186,22 @@ def stop_play(cars):
 
     if var.TEST_ALL_CARS:  # If we want to test all cars
         for car in cars:
-            file.write(f'{car.genetic} {car.scores}\n')  # Write the score of the car
+            var.FILE_TEST.write(f'{car.genetic} {car.score}\n')  # Write the score of the car
         return  # We stop the game
+
     else:
+        if var.TEST_MUTATION_CROSSOVER or var.TEST_VALUE_GENETIC_PARAMETERS:  # If we want to test the mutation and the crossover order
+            var.LAP_COMPLETED = False
+            for car in cars:
+                if car.score > 150:
+                    var.FILE_TEST.write(f'{var.NUM_GENERATION}\n')
+                    var.TEST_FINISHED = True
+                    return  # We stop the game
+            if var.NUM_GENERATION > 24:
+                var.FILE_TEST.write(f'{var.NUM_GENERATION}\n')
+                var.TEST_FINISHED = True
+                return
+
         cars = apply_genetic(cars)  # Genetic algorithm
         play(cars)  # Restart the game with the new cars
 
@@ -225,24 +242,53 @@ def change_checkpoints():
                     file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
 
 
-def run_all_cars():
+def run_test_all_cars():
     """
     Run all cars and save the results in a file
     """
+    var.FILE_TEST = open(f'{PATH_DATA}/test_all_cars_{var.NUM_MAP}', 'a')  # We open the file to write the results
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
     tab_cars = []
-    for length_slow in range(1, 7):
-        for length_medium in range(1, 7):
-            for length_fast in range(1, 7):
-                for width_slow in range(1, 7):
-                    for width_medium in range(1, 7):
-                        for width_fast in range(1, 7):
-                            genetic = Genetic([length_slow, length_medium, length_fast, width_slow, width_medium, width_fast])
-                            tab_cars.append(Car(genetic))
-                            if len(tab_cars) == 15:
-                                play(tab_cars)  # We play the game to test the cars
-                                tab_cars = []
+
+    genetic_combinations = itertools.product(range(1, 7), repeat=6)
+    for combination in genetic_combinations:
+        genetic = Genetic(combination)
+        tab_cars.append(Car(genetic))
+        if len(tab_cars) == 100:
+            play(tab_cars)  # We play the game to test the cars
+            tab_cars = []
+
+
+def run_test_mutation_crossover():
+    """
+    Run the genetic algorithm with different mutation and crossover orders
+    """
+    var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
+    var.PLAY = True
+
+    for var.TEST_MODE in ['crossover_mutation']:
+        var.FILE_TEST = open(f'{PATH_DATA}/test_{var.TEST_MODE}_{var.NUM_MAP}', 'a')
+        for var.SEED in range(100, 200):
+            play()
+            var.NUM_GENERATION = 0
+
+
+def run_test_value_genetic_parameters():
+    """
+    Run the genetic algorithm with different genetic parameters and save the results in a file
+    """
+    path_test = f'{PATH_DATA}/tests'
+    var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
+    var.PLAY = True
+
+    for var.MUTATION_CHANCE in [0.8]:
+        for var.CROSSOVER_CHANCE in [0.2, 0.5, 0.8]:
+            for var.PROPORTION_CARS_KEPT in [0.2, 0.5, 0.8]:
+                var.FILE_TEST = open(f'{path_test}/test_{var.MUTATION_CHANCE}_{var.CROSSOVER_CHANCE}_{var.PROPORTION_CARS_KEPT}', 'a')
+                for var.SEED in range(30):
+                    play()
+                    var.NUM_GENERATION = 0
 
 
 if __name__ == '__main__':
@@ -257,12 +303,17 @@ if __name__ == '__main__':
         display.edit_background()  # Add elements not clickable to the background
 
         if var.SHOW_ANALYSIS:
-            scores = analyze_data('/test_' + str(var.NUM_MAP), '/result_analysis')
-            show_analysis(scores)
+            scores_cars = analyze_data_scores('/test_all_cars_2', '/test_all_cars_2_analysis')
+            show_positions_crash(scores_cars)
 
         # If we want to run all the cars
         if var.TEST_ALL_CARS:
-            run_all_cars()  # Run all cars
+            run_test_all_cars()  # Run all cars
+        # If we want to see what is the best genetic algorithm
+        elif var.TEST_MUTATION_CROSSOVER:
+            run_test_mutation_crossover()  # Test the mutation and the crossover
+        elif var.TEST_VALUE_GENETIC_PARAMETERS:
+            run_test_value_genetic_parameters()
         else:
             open_window()  # Start the game
 

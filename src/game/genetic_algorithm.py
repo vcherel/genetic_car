@@ -22,12 +22,26 @@ def apply_genetic(cars):
 
     if cars:
         # We sort the cars by score
-        cars = sorted(cars, key=lambda c: c.scores, reverse=True)  # Sort the cars by score
+        cars = sorted(cars, key=lambda c: c.score, reverse=True)  # Sort the cars by score
 
         cars_to_keep = find_cars_to_keep(cars)  # We find the cars to keep (the best cars)
         cars = init_cars(cars_to_keep, var.NB_CARS - len(cars_to_keep))  # Select the best cars that we will mutate
-        cars = mutate(cars, cars_to_keep)  # Mutate the cars
-        cars = crossover(cars)  # Crossover the cars
+
+        # We change the genetic algorithm mode if we are in the test mode
+        if var.TEST_MUTATION_CROSSOVER:
+            if var.TEST_MODE == 'mutation_only':
+                cars = mutate(cars, cars_to_keep)  # Mutate the cars
+            elif var.TEST_MODE == 'mutation_crossover':
+                cars = mutate(cars, cars_to_keep)  # Mutate the cars
+                cars = crossover(cars)  # Crossover the cars
+            elif var.TEST_MODE == 'crossover_mutation':
+                cars = crossover(cars)
+                cars = mutate(cars, cars_to_keep)  # Mutate the cars
+
+        else:
+            cars = crossover(cars)  # Crossover the cars
+            cars = mutate(cars, cars_to_keep)  # Mutate the cars
+
         cars = add_cars_to_keep(cars, cars_to_keep)  # We add the best cars to the list
     else:
         cars = [Car() for _ in range(var.NB_CARS)]  # If there is no car, we add random cars
@@ -69,7 +83,7 @@ def init_cars(cars_to_keep, number_cars):
         list: list of the cars we will mutate and crossover
     """
     # Calculate the weights based on the car scores
-    weights = [car.scores for car in cars_to_keep]
+    weights = [car.score for car in cars_to_keep]
     total_weight = sum(weights)
     if total_weight == 0:  # To avoid division by 0
         total_weight = 1
@@ -119,7 +133,7 @@ def mutate_one_car(car):
     has_muted = False  # True if the car has mutated
     while not has_muted:  # We try mutating the car until it mutates
         for attribute_name, attribute_value in vars(car.genetic).items():
-            if random.random() < var.ACTUAL_CROSSOVER_CHANCE:
+            if random.random() < var.MUTATION_CHANCE:
                 has_muted = True
                 # See if it is a width or a length
                 if attribute_name.startswith('width'):
@@ -143,7 +157,7 @@ def crossover(cars):
         list: list of cars crossed
     """
     for car1, car2 in itertools.combinations(cars, 2):  # We take all the combinations of cars
-        if random.random() < var.ACTUAL_CROSSOVER_CHANCE and car1 != car2:  # If we do a crossover
+        if random.random() < var.CROSSOVER_CHANCE and car1 != car2:  # If we do a crossover
             car_added = False
             count = 0
             while not car_added and count < 10:  # We try to add the cars until we succeed, or we have tried too many times

@@ -163,22 +163,23 @@ class DiceMenu:
                     car[2] = Genetic(self.dice_values)
 
 
-def save_camera_frame(frame):
+def update_pygame_camera_frame(frame):
     """
-    We save the frame of the camera in data (CAMERA_FRAME, RECT_CAMERA_FRAME) to display it on the screen
+    Transform the openCV frame to a pygame frame and update the variables of the camera frame in the dice menu
+
+    Args:
+        frame (numpy.ndarray): Frame of the camera
     """
     global camera_frame, rect_camera_frame
 
     frame = pygame.surfarray.make_surface(frame)  # Convert the camera frame to a surface
+
     # Resize, rotate and flip the camera frame
-    frame = pygame.transform.scale(frame, (int(frame.get_width() * 0.75), int(frame.get_height() * 0.75)))
-    frame = pygame.transform.rotate(frame, -90)
-    camera_frame = pygame.transform.flip(frame, True, False)
+    camera_frame = pygame.transform.flip(pygame.transform.rotate(pygame.transform.scale(frame, (int(frame.get_width() * 0.75), int(frame.get_height() * 0.75))), -90), True, False)
 
     # Get the rectangle of the camera frame
     rect_camera_frame = camera_frame.get_rect()
-    rect_camera_frame.x = 0
-    rect_camera_frame.y = 200
+    rect_camera_frame.x, rect_camera_frame.y = 0, 200  # We place the camera frame in the window at the right place
 
     # Resize the camera frame to fit the window
     rect_camera_frame = pygame.rect.Rect(convert_to_new_window(rect_camera_frame))  # Convert the rectangle to the new window
