@@ -2,6 +2,7 @@ from src.data.constants import PATH_DATA  # Import the path of the data
 from statistics import mean, median, variance  # To use statistics on the data
 import matplotlib.pyplot as plt  # For plotting the histogram
 import src.data.variables as var  # For the path of the data
+import pylab  # To use the boxplot
 import pygame  # To use pygame
 
 """
@@ -124,6 +125,16 @@ def analyze_genetic_algorithm():
         for line in file:
             data = line.split()
             crossover_mutation.append(int(data[0]))
+
+    data = [mutation_only, mutation_crossover, crossover_mutation]
+    plt.boxplot(data)  # Plot the boxplot
+    plt.title('Nombre de générations pour compléter un tour\n pour les 3 algorithmes génétiques (sur 150 essais)')
+    plt.ylim(0, 15)  # Adjust the y-axis as needed
+    plt.ylabel('Nombre de générations')
+    pylab.xticks([1, 2, 3], ['Mutation', 'Mutation-crossover', 'Crossover-mutation'])  # Add legend
+
+    plt.savefig('algo_gen.png')
+    plt.show()
 
     print(mean(mutation_only), mean(mutation_crossover), mean(crossover_mutation))
     print(median(mutation_only), median(mutation_crossover), median(crossover_mutation))

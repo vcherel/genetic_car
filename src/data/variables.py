@@ -25,6 +25,15 @@ BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to de
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
 
+# Explosions
+SEE_EXPLOSIONS = True  # True if we want to see the explosions, False otherwise
+EXPLOSIONS = pygame.sprite.Group()  # Group of all the explosions
+EXPLOSION_IMAGES = []  # List of all the images of the explosion
+for num in range(1, 10):
+    image = pygame.image.load(f'{PATH_IMAGE}/explosion_1/{num}.png')  # Load the image
+    image = scale_image(image, 1)  # Scale the image
+    EXPLOSION_IMAGES.append(image)
+
 
 # RESIZE
 RESIZE = False  # True if we are resizing the window, False otherwise
@@ -82,7 +91,7 @@ DEBUG = False  # True for debug mode, False for normal mode
 TEST_ALL_CARS = False  # True to test all the cars, False to play the game normally
 SHOW_ANALYSIS = False  # True to see the analysis of the tests, False otherwise
 TEST_MUTATION_CROSSOVER = False  # True to test the mutation and crossover, False to play the game normally
-TEST_VALUE_GENETIC_PARAMETERS = True  # True to test the value of the genetic parameters, False to play the game normally
+TEST_VALUE_GENETIC_PARAMETERS = False  # True to test the value of the genetic parameters, False to play the game normally
 TEST_FINISHED = False  # True if a car completed a lap, False otherwise
 TEST_MODE = ''  # Mode of the test ('mutation_only', 'mutation_crossover', crossover_mutation')
 FILE_TEST = None  # File to save the results of the tests

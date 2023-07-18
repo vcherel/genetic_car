@@ -2,6 +2,7 @@ from src.other.utils import compute_detection_cone_points, point_out_of_window, 
 from src.render.display import draw_detection_cone  # To draw the detection cone
 from src.data.constants import START_POSITIONS  # Start positions of the cars
 from src.game.genetic import Genetic  # Genetic algorithm of the car
+from src.render.explosion import Explosion  # To render explosions
 import src.data.variables as var  # Variables of the game
 import pygame  # Pygame library
 import math  # Math library
@@ -261,6 +262,8 @@ class Car:
         """
         self.dead = True  # The car is dead
         var.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
+        if var.SEE_EXPLOSIONS:
+            var.EXPLOSIONS.add(Explosion(self.pos))  # Add an explosion  # at the position of the car
 
     def draw(self):
         """

@@ -62,6 +62,10 @@ def play(cars=None):
         if not var.PAUSE and not var.FPS_TOO_HIGH:  # If the game is not paused
             play_turn(cars)  # Play a turn
 
+            # Display explosions
+            var.EXPLOSIONS.draw(var.WINDOW)  # Display the explosions
+            var.EXPLOSIONS.update()  # Update the explosions
+
             # If we want to restart the last_run
             if var.PLAY_LAST_RUN:
                 replay_last_run()  # Replay the last run
@@ -76,7 +80,7 @@ def play(cars=None):
 
         ui.erase()  # Erase the buttons
         ui.display(cars)  # Activate the buttons (This is here because we have to do this after erasing the screen and
-        # we have ton continue to check the buttons even if the game is paused)
+        # We have ton continue to check the buttons even if the game is paused)
 
         pygame.display.flip()  # Update the screen
 
@@ -174,9 +178,20 @@ def stop_play(cars):
 
     if not var.TEST_MUTATION_CROSSOVER and not var.TEST_ALL_CARS:  # If we don't want to test the mutation and crossover
         while time.time() - time_before < 1:  # We wait 1 second
+            # Erase cars (we do this to erase the explosions frames that we don't want to see)
+            rect_blit_car = union_rect(var.RECTS_BLIT_CAR)  # Union of the rects for the blit
+            var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
+            var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
+
+            # Display explosions
+            var.EXPLOSIONS.draw(var.WINDOW)  # Display the explosions
+            var.EXPLOSIONS.update()  # Update the explosions
+
+            # Display the buttons
             ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
             ui.erase()  # Erase the buttons
             ui.display(cars)  # Activate the buttons
+
             pygame.display.flip()  # Update the screen
 
     var.CHANGE_GENERATION = False  # We stop the change of generation
