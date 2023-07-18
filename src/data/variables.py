@@ -25,7 +25,8 @@ BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to de
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
 
-# Explosions
+
+# EXPLOSIONS
 SEE_EXPLOSIONS = False  # True if we want to see the explosions, False otherwise
 EXPLOSIONS = pygame.sprite.Group()  # Group of all the explosions
 EXPLOSION_IMAGES = []  # List of all the images of the explosion
@@ -261,7 +262,7 @@ def load_variables():
         except ValueError:
             # Sometimes the file parameters is not complete, so we complete it
             num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance, \
-                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = 0, 50, 60, 60, 9, 8, 0.1, -0.6, 0.3, 0.3, 0.1, 0, 16, 11
+                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = 0, 50, 60, 60, 9, 8, 0.1, 0.6, 0.3, 0.3, 0.1, 0, 16, 11
 
         NUM_MAP = int(num_map)  # Map number
         NB_CARS = int(nb_cars)  # Number of cars

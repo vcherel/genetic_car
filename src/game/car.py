@@ -16,8 +16,9 @@ min_speed = 1  # Minimum speed of the car
 min_medium_speed = var.MAX_SPEED / 3
 min_high_speed = var.MAX_SPEED / 3 * 2
 
-add_to_speed_angle = 1  # Value added to the speed angle each turn
-drift_factor = 2  # Factor of the drift
+add_to_speed_angle = 2  # Value added to the speed angle each turn to make it equals to the real angle
+drift_factor = 2  # When this factor is high the car drifts more
+turn_decrease_factor = 1  # Factor of the decrease of the turn angle (when at high speed, the car turns 'turn_decrease_factor' times slower)
 
 
 class Car:
@@ -39,16 +40,15 @@ class Car:
         else:
             self.genetic = genetic.copy()  # Genetic of the car
 
-        self.dead = False  # True if the car is dead, False otherwise
 
         self.speed = 0  # Current speed of the car
         self.acceleration = 0  # Current acceleration of the car
 
         self.angle = 0  # Current angle of the car
-        self.pos = var.START_POSITION  # Current position of the car
+        self.drift_angle = 0  # Current speed angle of the car (when the car turns the angle change but the speed angle turns slower)
 
-        # Drifting parameters
-        self.speed_angle = 0  # Current speed angle of the car (when the car turns the angle change but the speed angle turns slower)
+        self.pos = var.START_POSITION  # Current position of the car
+        self.front_of_car = self.pos  # Current position of the front of the car
 
         self.image = change_color_car(var.RED_CAR_IMAGE, color)  # Image of the car but grey
         self.color = color  # Color of the car
@@ -60,18 +60,16 @@ class Car:
         self.view_only = view_only  # True if the car is in view only mode, False otherwise
 
         self.next_checkpoint = 0  # Next checkpoint to reach
-        self.score = 0  # Score of the car
+        self.turn_without_checkpoint = 0  # Number of turn played by the car without reaching a checkpoint
 
+        self.dead = False  # True if the car is dead, False otherwise
+        self.reverse = False  # True if the car is going in the wrong way, False otherwise
+
+        self.score = 0  # Score of the car
         if best_scores:
             self.best_scores = best_scores
         else:
             self.best_scores = [0] * len(START_POSITIONS)  # Best scores of the car
-
-        self.turn_played = 0  # Number of turn played by the car
-        self.turn_without_checkpoint = 0  # Number of turn played by the car without reaching a checkpoint
-        self.reverse = False  # True if the car is going in the wrong way, False otherwise
-
-        self.points_detection_cone = []  # Points of the detection cone if DEBUG is True
 
     def __str__(self):
         """
@@ -98,18 +96,21 @@ class Car:
         """
         Move the car and update its state
         """
-        self.turn_played += 1  # Increment the number of turn played by the car
         if var.NUM_MAP == 5:  # This map is a waiting room where the car just have to drive the longest distance possible
             self.score += self.speed  # Increment the score of the car
         else:
             self.detect_checkpoint()  # Detect if the car has reached a checkpoint
 
-        self.change_acceleration_and_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
+        wall_left, wall_top, wall_right = self.detect_walls()  # Detect if there is wall in the detection cone of the car
+        self.update_acceleration(wall_top)  # Change the acceleration of the car depending on the detected walls
+        turn_angle = self.update_angle(wall_left, wall_right)  # Change the speed and the angle of the car depending on the detected walls
+        self.update_drift_angle(turn_angle)  # Update the drift angle of the car
+        self.update_speed()  # Update the speed of the car
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead
 
-        # We kill the car if it has not reached a checkpoint for too long (if it's not the waiting room)
-        if var.NUM_MAP != 5 and self.turn_without_checkpoint > 400 and not self.reverse:
+        # If we are in a circuit and the car is going backwards, we force it to go in the wall
+        if var.NUM_MAP != 5 and self.turn_without_checkpoint > 100 and not self.reverse:
             if not self.view_only and not self.color == 'yellow':
                 self.image = change_color_car(self.image, 'light_gray')  # We convert the image of the car to light grayscale if it's a red car
             self.reverse = True
@@ -141,74 +142,110 @@ class Car:
         else:
             self.turn_without_checkpoint += 1
 
-    def change_acceleration_and_angle(self):
+    def detect_walls(self):
         """
-        Change the acceleration and the angle of the car (depending on the genetic cone)
+        Detect if there is wall in the detection cone of the car, and return boolean values depending on the presence
+        of wall at the left top and right of the cone
+
+        Returns:
+            bool: True if there is a wall at the left of the cone, False otherwise
+            bool: True if there is a wall at the top of the cone, False otherwise
+            bool: True if there is a wall at the right of the cone, False otherwise
+        """
+        width, length = self.determine_size_cone()  # We select the right cone depending on the speed of the car
+        self.front_of_car = self.determine_front_of_car()  # Point at the front of the car
+        left, top, right = compute_detection_cone_points(self.angle, self.front_of_car, width, length)  # Points of the detection cone (represented by a triangle)
+
+        return detect_wall(self.front_of_car, left), detect_wall(self.front_of_car, top), detect_wall(self.front_of_car, right)
+
+    def update_acceleration(self, wall_top):
+        """
+        Change the acceleration of the car (depending on the genetic cone)
+        If there is a wall in front of the car, we decelerate it
+
+        Args:
+            wall_top (bool or float) : True if there is a wall, False otherwise
+            If it is a float, it is the distance between the front of the car and the wall in this direction
+        """
+        if not wall_top or self.reverse:  # We don't brake if the car is going backwards
+            self.acceleration = var.ACCELERATION
+        else:
+            self.acceleration -= var.DECELERATION
+
+    def update_angle(self, wall_left, wall_right):
+        """
+        Change the angle of the car depending on the genetic cone
+        If the closest wall is on the left of the car, we turn it to the right, and vice versa
+        We also change the drift angle of the car depending on the angle of the car
+
+        Args:
+            wall_left (bool or float): True if there is a wall at the left, False otherwise
+            wall_right (bool or float) : True if there is a wall at the right, False otherwise
+            If it is a float, it is the distance between the front of the car and the wall in this direction
 
         Return:
-            float: acceleration of the car
+            float: angle of the turn of the car in this turn
         """
-        if self.speed_angle != self.angle:
-            if self.angle - add_to_speed_angle < self.speed_angle < self.angle + add_to_speed_angle:
-                self.speed_angle = self.angle
-            elif self.speed_angle > self.angle:
-                self.speed_angle -= add_to_speed_angle
-            else:
-                self.speed_angle += add_to_speed_angle
-
-        # We select the right cone depending on the speed of the car
-        width, length = self.determine_size_cone()
-
-        front_of_car = self.determine_front_of_car()  # Point of the front of the car
-        left, top, right = compute_detection_cone_points(self.angle, front_of_car, width, length)  # Points of the detection cone
-
-        wall_at_top = detect_wall(front_of_car, top)  # Detect if the car is near a wall (top)
-        wall_at_left = detect_wall(front_of_car, left)  # Detect if the car is near a wall (left)
-        wall_at_right = detect_wall(front_of_car, right)  # Detect if the car is near a wall (right)
-
-        # If there is a wall in front of the car, we decelerate it
-        if wall_at_top:
-            self.acceleration = -var.DECELERATION
-        else:
-            self.acceleration = var.ACCELERATION
-
-        if self.speed == 0:
+        # The angle of turn is different depending on the speed of the car (the faster the car goes, the less it turns)
+        if self.speed == 0:  # To avoid division by 0
             turn_angle = var.TURN_ANGLE
         else:
-            turn_angle = min(var.TURN_ANGLE, var.TURN_ANGLE / self.speed * 5)  # Angle of the turn of the car (when we go fast we turn less than when we go slow)
+            # When at high speed, the car turns 'turn_decrease_factor' times slower
+            turn_angle = min(var.TURN_ANGLE, var.TURN_ANGLE * var.MAX_SPEED / (turn_decrease_factor * self.speed))  # Angle of the turn of the car
         
         # If there is a wall on the left or on the right of the car, we turn it (if there is a wall on the left and on the right, we turn the car in the direction where there is the most space)
-        if wall_at_left and wall_at_right and wall_at_left < wall_at_right:
-            turn_angle = -turn_angle
-        elif wall_at_left:
-            turn_angle = -turn_angle
-        elif not wall_at_right:  # We don't turn the car if there is no wall
-            turn_angle = 0
+        if not wall_left and not wall_right:
+            turn_angle = 0  # We don't turn the car if there is no wall
+        elif wall_left:
+            if wall_right:  # In the case where there is a wall on the left and on the right, we turn the car in the direction where there is the most space
+                if wall_left < wall_right:
+                    turn_angle = -turn_angle
+            else:  # The case where there is only a wall on the left
+                turn_angle = -turn_angle
 
-        self.angle += turn_angle
-        drift_value = 1 - self.speed / var.MAX_SPEED
-        if drift_value == 0:
-            drift_value = 1
-        else:
-            drift_value = 1
-        self.speed_angle += turn_angle / (drift_factor * drift_value)
+        if not self.reverse:  # We don't turn the car if it is going backward
+            self.angle += turn_angle
 
-    def update_pos(self):
+        return turn_angle
+
+    def update_drift_angle(self, turn_angle):
         """
-        Update the position and the angle of the car
+        Update the drift angle of the car depending on the angle of the car and the turn angle
+        The speed of the car is applied in the drift angle, and the direction of the car is applied in the angle of the car
+
+        Args:
+            turn_angle (float): angle of the turn of the car in this turn
         """
-        # Change the speed of the car
+        # If the drift angle is different from the angle of the car, we change it to be closer to the angle of the car
+        if not math.isclose(self.drift_angle, self.angle):
+            # If it can be done in one turn, we do it exactly
+            if self.angle - add_to_speed_angle < self.drift_angle < self.angle + add_to_speed_angle:
+                self.drift_angle = self.angle
+            # If it can't be done in one turn, we approach the good value
+            elif self.drift_angle > self.angle:
+                self.drift_angle -= add_to_speed_angle
+            else:
+                self.drift_angle += add_to_speed_angle
+
+        if not self.reverse:  # We don't change the drift angle if the car is going backward because it is not turning anymore
+            self.drift_angle += turn_angle / drift_factor
+
+    def update_speed(self):
+        """
+        Change the speed of the car depending on the acceleration of the car
+        """
         self.speed += self.acceleration  # Update the speed of the car
 
         # Limit the speed of the car (between MIN_SPEED and MAX_SPEED)
-        if self.speed > var.MAX_SPEED:  # If the speed is too high
-            self.speed = var.MAX_SPEED  # Set the speed to the maximum speed
-        elif self.speed < min_speed:  # If the speed is negative
-            self.speed = min_speed  # Set the speed to 0
+        self.speed = max(min(self.speed, var.MAX_SPEED), min_speed)
 
+    def update_pos(self):
+        """
+        Update the position of the car
+        """
         # Move the car
         if var.DO_DRIFT:
-            radians = math.radians(-self.speed_angle)  # Convert the angle to radians
+            radians = math.radians(-self.drift_angle)  # Convert the angle to radians
         else:
             radians = math.radians(-self.angle)
         dx = math.cos(radians) * self.speed  # The movement of the car on the x-axis
@@ -230,6 +267,8 @@ class Car:
 
         
         if var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
+            # This part was used to avoid determinism problems
+            """
             # We move the car backward because we don't want the car to bo on top of the wall
             speed = 1  # Speed of the car
             radians = math.radians(-self.speed_angle)  # Convert the angle to radians
@@ -247,6 +286,7 @@ class Car:
                 self.rotated_image = pygame.transform.rotate(self.image, self.angle)  # Rotate the image of the car
                 self.rotated_rect = self.rotated_image.get_rect(center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
                 car_mask = pygame.mask.from_surface(self.rotated_image)
+            """
 
             self.kill()  # Collision with a wall
 
@@ -310,7 +350,6 @@ class Car:
         """
         Draw the 3 detection cones of the car
         """
-        front_of_car = self.determine_front_of_car()  # Point of the front of the car
         if self.speed < min_high_speed:
             actual_mode = 'slow'
         elif self.speed > min_high_speed:
@@ -318,8 +357,9 @@ class Car:
         else:
             actual_mode = 'medium'
 
-        # We add the rect to the rects to blit
-        var.RECTS_BLIT_CAR.append(create_rect_from_points(draw_detection_cone(front_of_car, self.genetic.get_list(), self.angle, actual_mode=actual_mode)))
+        # We draw the detection cone
+        points_detection_cone = draw_detection_cone(self.front_of_car, self.genetic.get_list(), self.angle, actual_mode=actual_mode)
+        var.RECTS_BLIT_CAR.append(create_rect_from_points(points_detection_cone))  # Add the rect of the cones to the list to blit it
 
     def change_color(self, color):
         """
@@ -340,7 +380,8 @@ def detect_wall(front_of_car, point):
         point (tuple(int, int)): the coordinates of the point
 
     Returns:
-        bool : True if there is a wall, False otherwise
+        bool or float : True if there is a wall, False otherwise
+        If it is a float, it is the distance between the front of the car and the wall in this direction
     """
     x1, y1 = front_of_car  # Coordinates of the front of the car
     x2, y2 = point  # Coordinates of the point
@@ -362,6 +403,5 @@ def detect_wall(front_of_car, point):
         y = int(a * x + b)
         # We check if the pixel is black (wall)
         if point_out_of_window((x, y)) or var.BACKGROUND_MASK.get_at((x, y)):
-            return math.sqrt(
-                (x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
+            return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
     return False  # There is no wall

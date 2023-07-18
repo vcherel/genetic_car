@@ -61,13 +61,13 @@ def draw_detection_cone(pos, dice_values, angle=90, factor=1, width_line=2, actu
     left, top, right = compute_detection_cone_points(angle, pos, dice_values[3] * width_multiplier, dice_values[0] * length_multiplier)
     points = [pos, left, top, right]
     if actual_mode == 'slow':
-        pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line * 3)
+        pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line * 2)
     else:
         pygame.draw.polygon(var.WINDOW, (255, 255, 0), (pos, left, top, right), width_line)
 
     left, top, right = compute_detection_cone_points(angle, pos, dice_values[4] * width_multiplier, dice_values[1] * length_multiplier)
     if actual_mode == 'medium':
-        pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line * 3)
+        pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line * 2)
     else:
         pygame.draw.polygon(var.WINDOW, (255, 128, 0), (pos, left, top, right), width_line)
     points.append(left)
@@ -76,7 +76,7 @@ def draw_detection_cone(pos, dice_values, angle=90, factor=1, width_line=2, actu
 
     left, top, right = compute_detection_cone_points(angle, pos, dice_values[5] * width_multiplier, dice_values[2] * length_multiplier)
     if actual_mode == 'fast':
-        pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line * 3)
+        pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line * 2)
     else:
         pygame.draw.polygon(var.WINDOW, (255, 0, 0), (pos, left, top, right), width_line)
     points.append(left)

@@ -87,7 +87,10 @@ class DiceMenu:
                                 self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
                                 self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
 
-        self.check_button = Button(self.rect_x + 900, self.rect_y + 460, pygame.image.load(PATH_IMAGE + '/check.png'), scale=0.12)
+        self.check_button = Button(self.rect_x + 888, self.rect_y + 445,
+                                   pygame.image.load(PATH_IMAGE + '/check_button_1.png'),
+                                   pygame.image.load(PATH_IMAGE + '/check_button_2.png'),
+                                   pygame.image.load(PATH_IMAGE + '/check_button_3.png'), scale=0.4)
 
     def display_dice_menu(self):
         """
