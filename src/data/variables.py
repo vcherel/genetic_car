@@ -26,13 +26,14 @@ RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the scree
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
 
 # Explosions
-SEE_EXPLOSIONS = True  # True if we want to see the explosions, False otherwise
+SEE_EXPLOSIONS = False  # True if we want to see the explosions, False otherwise
 EXPLOSIONS = pygame.sprite.Group()  # Group of all the explosions
 EXPLOSION_IMAGES = []  # List of all the images of the explosion
 for num in range(1, 10):
-    image = pygame.image.load(f'{PATH_IMAGE}/explosion_1/{num}.png')  # Load the image
+    image = pygame.image.load(f'{PATH_IMAGE}/explosion/{num}.png')  # Load the image
     image = scale_image(image, 1)  # Scale the image
     EXPLOSION_IMAGES.append(image)
+RECTS_BLIT_EXPLOSION = []  # Coordinates of the rects used to erase the explosions of the screen
 
 
 # RESIZE
@@ -71,6 +72,7 @@ START_POSITION = None  # Start position of the car
 NB_CARS_ALIVE = 0  # Number of cars alive
 NB_CARS = 50  # Number of cars
 CARS_LAST_RUN = []  # Cars of the last run
+DO_DRIFT = True  # True if we want to see the drift of the cars, False otherwise
 
 
 # CHARACTERISTICS CARS

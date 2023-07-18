@@ -37,8 +37,8 @@ class Explosion(pygame.sprite.Sprite):
             self.timer = pygame.time.get_ticks()
             self.index += 1
             self.image = self.images[self.index]  # Update the image
-            var.RECTS_BLIT_CAR.append(self.rect)  # We blit the background to remove the last image of the explosion
+            var.RECTS_BLIT_EXPLOSION.append(self.rect)  # We blit the background to remove the last image of the explosion
 
         if self.index >= len(self.images) - 1:  # We have reached the end of the animation, and we can kill the explosion
-            var.RECTS_BLIT_CAR.append(self.rect)  # We blit the background to remove the explosion
+            var.RECTS_BLIT_EXPLOSION.append(self.rect)  # We blit the background to remove the explosion
             self.kill()  # Kill the explosion

@@ -16,6 +16,9 @@ min_speed = 1  # Minimum speed of the car
 min_medium_speed = var.MAX_SPEED / 3
 min_high_speed = var.MAX_SPEED / 3 * 2
 
+add_to_speed_angle = 1  # Value added to the speed angle each turn
+drift_factor = 2  # Factor of the drift
+
 
 class Car:
     """
@@ -43,6 +46,9 @@ class Car:
 
         self.angle = 0  # Current angle of the car
         self.pos = var.START_POSITION  # Current position of the car
+
+        # Drifting parameters
+        self.speed_angle = 0  # Current speed angle of the car (when the car turns the angle change but the speed angle turns slower)
 
         self.image = change_color_car(var.RED_CAR_IMAGE, color)  # Image of the car but grey
         self.color = color  # Color of the car
@@ -93,11 +99,12 @@ class Car:
         Move the car and update its state
         """
         self.turn_played += 1  # Increment the number of turn played by the car
-        if var.NUM_MAP == 5:
+        if var.NUM_MAP == 5:  # This map is a waiting room where the car just have to drive the longest distance possible
             self.score += self.speed  # Increment the score of the car
         else:
             self.detect_checkpoint()  # Detect if the car has reached a checkpoint
-        self.change_speed_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
+
+        self.change_acceleration_and_angle()  # Change the speed and the angle of the car (depending on the genetic cone)
         self.update_pos()  # Update the position and orientation of the car
         self.detect_collision()  # Detect if the car is dead
 
@@ -134,13 +141,21 @@ class Car:
         else:
             self.turn_without_checkpoint += 1
 
-    def change_speed_angle(self):
+    def change_acceleration_and_angle(self):
         """
         Change the acceleration and the angle of the car (depending on the genetic cone)
 
         Return:
             float: acceleration of the car
         """
+        if self.speed_angle != self.angle:
+            if self.angle - add_to_speed_angle < self.speed_angle < self.angle + add_to_speed_angle:
+                self.speed_angle = self.angle
+            elif self.speed_angle > self.angle:
+                self.speed_angle -= add_to_speed_angle
+            else:
+                self.speed_angle += add_to_speed_angle
+
         # We select the right cone depending on the speed of the car
         width, length = self.determine_size_cone()
 
@@ -162,16 +177,21 @@ class Car:
         else:
             turn_angle = min(var.TURN_ANGLE, var.TURN_ANGLE / self.speed * 5)  # Angle of the turn of the car (when we go fast we turn less than when we go slow)
         
-        # If there is a wall on the left or on the right of the car, we turn it
-        if wall_at_left and wall_at_right:
-            if wall_at_left < wall_at_right:
-                self.angle -= turn_angle
-            else:
-                self.angle += turn_angle
+        # If there is a wall on the left or on the right of the car, we turn it (if there is a wall on the left and on the right, we turn the car in the direction where there is the most space)
+        if wall_at_left and wall_at_right and wall_at_left < wall_at_right:
+            turn_angle = -turn_angle
         elif wall_at_left:
-            self.angle -= turn_angle
-        elif wall_at_right:
-            self.angle += turn_angle
+            turn_angle = -turn_angle
+        elif not wall_at_right:  # We don't turn the car if there is no wall
+            turn_angle = 0
+
+        self.angle += turn_angle
+        drift_value = 1 - self.speed / var.MAX_SPEED
+        if drift_value == 0:
+            drift_value = 1
+        else:
+            drift_value = 1
+        self.speed_angle += turn_angle / (drift_factor * drift_value)
 
     def update_pos(self):
         """
@@ -187,7 +207,10 @@ class Car:
             self.speed = min_speed  # Set the speed to 0
 
         # Move the car
-        radians = math.radians(-self.angle)  # Convert the angle to radians
+        if var.DO_DRIFT:
+            radians = math.radians(-self.speed_angle)  # Convert the angle to radians
+        else:
+            radians = math.radians(-self.angle)
         dx = math.cos(radians) * self.speed  # The movement of the car on the x-axis
         dy = math.sin(radians) * self.speed  # The movement of the car on the y-axis
         self.pos = self.pos[0] + dx, self.pos[1] + dy  # Update the position of the car
@@ -209,7 +232,7 @@ class Car:
         if var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
             # We move the car backward because we don't want the car to bo on top of the wall
             speed = 1  # Speed of the car
-            radians = math.radians(-self.angle)  # Convert the angle to radians
+            radians = math.radians(-self.speed_angle)  # Convert the angle to radians
             dx = math.cos(radians) * speed  # The movement of the car on the x-axis
             dy = math.sin(radians) * speed  # The movement of the car on the y-axis
             # While it touches the wall

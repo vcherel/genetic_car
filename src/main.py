@@ -136,6 +136,11 @@ def play_turn(cars):
     var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
     var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
 
+    # Erase explosions
+    rect_blit_explosion = union_rect(var.RECTS_BLIT_EXPLOSION)  # Union of the rects for the blit
+    var.WINDOW.blit(var.BACKGROUND, rect_blit_explosion, rect_blit_explosion)  # Erase the explosions
+    var.RECTS_BLIT_EXPLOSION = []  # We reset the list of rects to blit
+
     if var.SEE_CHECKPOINTS:
         display.show_checkpoints()  # Display the checkpoints
 
@@ -178,10 +183,10 @@ def stop_play(cars):
 
     if not var.TEST_MUTATION_CROSSOVER and not var.TEST_ALL_CARS:  # If we don't want to test the mutation and crossover
         while time.time() - time_before < 1:  # We wait 1 second
-            # Erase cars (we do this to erase the explosions frames that we don't want to see)
-            rect_blit_car = union_rect(var.RECTS_BLIT_CAR)  # Union of the rects for the blit
-            var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
-            var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
+            # Erase explosions
+            rect_blit_explosion = union_rect(var.RECTS_BLIT_EXPLOSION)  # Union of the rects for the blit
+            var.WINDOW.blit(var.BACKGROUND, rect_blit_explosion, rect_blit_explosion)  # Erase the explosions
+            var.RECTS_BLIT_EXPLOSION = []  # We reset the list of rects to blit
 
             # Display explosions
             var.EXPLOSIONS.draw(var.WINDOW)  # Display the explosions
