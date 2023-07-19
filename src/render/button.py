@@ -12,7 +12,7 @@ class Button:
     """
     This class is used to represent a button used in the ui
     """
-    def __init__(self, x=None, y=None, image=None, image_hover=None, image_clicked=None, checkbox=False, writing_button=False, text=None, variable=None, name=None, scale=1, scale_x=None, scale_y=None):
+    def __init__(self, x=None, y=None, image=None, image_hover=None, image_clicked=None, checkbox=False, writing_button=False, text=None, variable=None, variable_name=None, name=None, scale=1, scale_x=None, scale_y=None):
         """
         Initialization of a button
 
@@ -26,6 +26,7 @@ class Button:
             writing_button (bool): True if the button is a writing button, False otherwise
             text (str): text of the writing button
             variable (int) : variable associated to the text of the writing button
+            variable_name (str): name of the variable associated to the text of the writing button (used for the settings)
             name (str): name of the button (used to know if there is special actions to do)
             scale (float): scale of the button
             scale_x (float): scale of the button on the x-axis
@@ -64,6 +65,8 @@ class Button:
             self.writing_button = writing_button  # True if the button is a writing button, False otherwise
             self.text = text  # Text of the button
             self.variable = variable  # Variable of the button
+            self.variable_name = variable_name  # Name of the variable of the button
+
             self.name = name    # Name of the button
 
     def __str__(self):
@@ -73,7 +76,9 @@ class Button:
         Returns:
             str: string representation of the button
         """
-        return f'Button : x = {self.x} ; y = {self.y} ; activated = {self.activated} ; just_clicked = {self.just_clicked} ; time_clicked = {self.time_clicked} ; check_box = {self.checkbox} ; writing_button = {self.writing_button} ; text = {self.text} ; variable = {self.variable} ; name = {self.name}'
+        return f'Button : x = {self.x} ; y = {self.y} ; activated = {self.activated} ; just_clicked = {self.just_clicked}' \
+               f' ; time_clicked = {self.time_clicked} ; check_box = {self.checkbox} ; writing_button = {self.writing_button}' \
+               f' ; text = {self.text} ; variable = {self.variable} ; name_variable = {self.variable_name}, name = {self.name}'
 
     def draw(self):
         """

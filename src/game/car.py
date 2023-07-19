@@ -17,7 +17,6 @@ min_medium_speed = var.MAX_SPEED / 3
 min_high_speed = var.MAX_SPEED / 3 * 2
 
 add_to_speed_angle = 2  # Value added to the speed angle each turn to make it equals to the real angle
-drift_factor = 2.6  # When this factor is high the car drifts more
 turn_decrease_factor = 1  # Factor of the decrease of the turn angle (when at high speed, the car turns 'turn_decrease_factor' times slower)
 
 
@@ -228,7 +227,7 @@ class Car:
                 self.drift_angle += add_to_speed_angle
 
         if not self.reverse:  # We don't change the drift angle if the car is going backward because it is not turning anymore
-            self.drift_angle += turn_angle / drift_factor
+            self.drift_angle += turn_angle / var.DRIFT_FACTOR
 
     def update_speed(self):
         """

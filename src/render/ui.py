@@ -136,53 +136,10 @@ def handle_clicks(cars):
         delete_garage()  # Delete the garage if we click outside of it
 
     if var.DISPLAY_SETTINGS:
-        if SETTINGS.fps_button.activated:
-            SETTINGS.fps_button.deactivate()  # Stop changing the value of the fps
-            var.FPS = SETTINGS.fps_button.variable  # Change the value of the fps
-
-        if SETTINGS.time_generation_button.activated:
-            SETTINGS.time_generation_button.deactivate()  # Stop changing the value of the timer
-            var.TIME_GENERATION = SETTINGS.time_generation_button.variable  # Change the value of the timer
-
-        if SETTINGS.max_speed_button.activated:
-            SETTINGS.max_speed_button.deactivate()  # Stop changing the value of the max speed
-            var.MAX_SPEED = SETTINGS.max_speed_button.variable  # Change the value of the max speed
-
-        if SETTINGS.turn_angle_button.activated:
-            SETTINGS.turn_angle_button.deactivate()  # Stop changing the value of the turn angle
-            var.TURN_ANGLE = SETTINGS.turn_angle_button.variable  # Change the value of the turn angle
-
-        if SETTINGS.acceleration_button.activated:
-            SETTINGS.acceleration_button.deactivate()  # Stop changing the value of the acceleration
-            var.ACCELERATION = SETTINGS.acceleration_button.variable  # Change the value of the acceleration
-
-        if SETTINGS.deceleration_button.activated:
-            SETTINGS.deceleration_button.deactivate()  # Stop changing the value of the deceleration
-            var.DECELERATION = SETTINGS.deceleration_button.variable  # Change the value of the deceleration
-
-        if SETTINGS.mutation_button.activated:
-            SETTINGS.mutation_button.deactivate()  # Stop changing the value of the mutation
-            var.CHANCE_MUTATION = SETTINGS.mutation_button.variable  # Change the value of the mutation
-
-        if SETTINGS.crossover_button.activated:
-            SETTINGS.crossover_button.deactivate()  # Stop changing the value of the crossover
-            var.CHANCE_CROSSOVER = SETTINGS.crossover_button.variable  # Change the value of the crossover
-
-        if SETTINGS.proportion_button.activated:
-            SETTINGS.proportion_button.deactivate()  # Stop changing the value of the proportion
-            var.PROPORTION = SETTINGS.proportion_button.variable  # Change the value of the proportion
-
-        if SETTINGS.seed_button.activated:
-            SETTINGS.seed_button.deactivate()  # Stop changing the value of the seed
-            var.SEED = SETTINGS.seed_button.variable  # Change the value of the seed
-
-        if SETTINGS.width_cone_button.activated:
-            SETTINGS.width_cone_button.deactivate()  # Stop changing the value of the width of the cone
-            var.WIDTH_CONE = SETTINGS.width_cone_button.variable  # Change the value of the width of the cone
-
-        if SETTINGS.length_cone_button.activated:
-            SETTINGS.length_cone_button.deactivate()  # Stop changing the value of the length of the cone
-            var.LENGTH_CONE = SETTINGS.length_cone_button.variable  # Change the value of the length of the cone
+        for button in SETTINGS.writing_buttons:
+            if button.activated:
+                button.deactivate()  # Stop changing the value of the button
+                setattr(var, button.variable_name, button.variable)
 
         # If we click outside the settings, we close it
         if not SETTINGS.rect.collidepoint(pygame.mouse.get_pos()):
@@ -232,53 +189,9 @@ def handle_key_press(event):
                     rect_garage.save_new_car_name()  # Save the name of the car
 
     if var.DISPLAY_SETTINGS:
-        if SETTINGS.fps_button.activated:
-            if SETTINGS.fps_button.update(event):
-                var.FPS = SETTINGS.fps_button.variable
-
-        if SETTINGS.time_generation_button.activated:
-            if SETTINGS.time_generation_button.update(event):
-                var.TIME_GENERATION = SETTINGS.time_generation_button.variable
-
-        if SETTINGS.max_speed_button.activated:
-            if SETTINGS.max_speed_button.update(event):
-                var.MAX_SPEED = SETTINGS.max_speed_button.variable
-
-        if SETTINGS.turn_angle_button.activated:
-            if SETTINGS.turn_angle_button.update(event):
-                var.TURN_ANGLE = SETTINGS.turn_angle_button.variable
-
-        if SETTINGS.acceleration_button.activated:
-            if SETTINGS.acceleration_button.update(event):
-                var.ACCELERATION = SETTINGS.acceleration_button.variable
-
-        if SETTINGS.deceleration_button.activated:
-            if SETTINGS.deceleration_button.update(event):
-                var.DECELERATION = SETTINGS.deceleration_button.variable
-
-        if SETTINGS.mutation_button.activated:
-            if SETTINGS.mutation_button.update(event):
-                var.CHANCE_MUTATION = SETTINGS.mutation_button.variable
-
-        if SETTINGS.crossover_button.activated:
-            if SETTINGS.crossover_button.update(event):
-                var.CHANCE_CROSSOVER = SETTINGS.crossover_button.variable
-
-        if SETTINGS.proportion_button.activated:
-            if SETTINGS.proportion_button.update(event):
-                var.PROPORTION_CARS_KEPT = SETTINGS.proportion_button.variable
-
-        if SETTINGS.seed_button.activated:
-            if SETTINGS.seed_button.update(event):
-                var.SEED = SETTINGS.seed_button.variable
-
-        if SETTINGS.width_cone_button.activated:
-            if SETTINGS.width_cone_button.update(event):
-                var.WIDTH_CONE = SETTINGS.width_cone_button.variable
-
-        if SETTINGS.length_cone_button.activated:
-            if SETTINGS.length_cone_button.update(event):
-                var.LENGTH_CONE = SETTINGS.length_cone_button.variable
+        for button in SETTINGS.writing_buttons:
+            if button.activated and button.update(event):  # If the value has been saved
+                setattr(var, button.variable_name, button.variable)  # Change the value of the variable
 
 
 def display(cars=None):

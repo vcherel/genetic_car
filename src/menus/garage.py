@@ -45,7 +45,6 @@ class Garage:
         return string
 
     def init(self):
-        print('init garage')
         """
         Initialize the garage during the game
         """

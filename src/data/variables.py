@@ -70,6 +70,7 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 NB_CARS = 50  # Number of cars
 CARS_LAST_RUN = []  # Cars of the last run
 DO_DRIFT = True  # True if we want to see the drift of the cars, False otherwise
+DRIFT_FACTOR = 2.6  # Factor of the drift
 
 
 # CHARACTERISTICS CARS
