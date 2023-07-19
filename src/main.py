@@ -256,11 +256,11 @@ def change_checkpoints():
     Change the checkpoints of the actual map
     """
     # We display the image that explain that we are in the checkpoint mode
-    image_checkpoint = pygame.image.load(PATH_IMAGE + '/checkpoint.png')  # Image of the checkpoint
+    image_checkpoint = pygame.image.load(PATH_IMAGE + 'checkpoint.png')  # Image of the checkpoint
     var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
     pygame.display.flip()  # Update the screen
     # We open the file to write the checkpoints
-    with open(PATH_DATA + '/checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
+    with open(PATH_DATA + 'checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
         while 1:
             # We detect the mouse click to write the coordinates in the file
             for event in pygame.event.get():
@@ -275,7 +275,7 @@ def run_test_all_cars():
     """
     Run all cars and save the results in a file
     """
-    var.FILE_TEST = open(f'{PATH_DATA}/test_all_cars_{var.NUM_MAP}', 'a')  # We open the file to write the results
+    var.FILE_TEST = open(f'{PATH_DATA}test_all_cars_{var.NUM_MAP}', 'a')  # We open the file to write the results
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
     tab_cars = []
@@ -297,7 +297,7 @@ def run_test_mutation_crossover():
     var.PLAY = True
 
     for var.TEST_MODE in ['crossover_mutation']:
-        var.FILE_TEST = open(f'{PATH_DATA}/test_{var.TEST_MODE}_{var.NUM_MAP}', 'a')
+        var.FILE_TEST = open(f'{PATH_DATA}test_{var.TEST_MODE}_{var.NUM_MAP}', 'a')
         for var.SEED in range(100, 200):
             play()
             var.NUM_GENERATION = 0
@@ -307,14 +307,14 @@ def run_test_value_genetic_parameters():
     """
     Run the genetic algorithm with different genetic parameters and save the results in a file
     """
-    path_test = f'{PATH_DATA}/tests'
+    path_test = f'{PATH_DATA}tests/'
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 
     for var.CHANCE_MUTATION in [0.8]:
         for var.CHANCE_CROSSOVER in [0.2, 0.5, 0.8]:
             for var.PROPORTION_CARS_KEPT in [0.2, 0.5, 0.8]:
-                var.FILE_TEST = open(f'{path_test}/test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
+                var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
                 for var.SEED in range(30):
                     play()
                     var.NUM_GENERATION = 0
@@ -333,7 +333,7 @@ if __name__ == '__main__':
         display.edit_background()  # Add elements not clickable to the background
 
         if var.SHOW_ANALYSIS:
-            scores_cars = analyze_data_scores('/test_all_cars_2', '/test_all_cars_2_analysis')
+            scores_cars = analyze_data_scores('test_all_cars_2', 'test_all_cars_2_analysis')
             show_positions_crash(scores_cars)
 
         # If we want to run all the cars

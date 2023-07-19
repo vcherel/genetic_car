@@ -130,7 +130,6 @@ def capture_dice():
         display_frame(rect_window)
 
         if count_iterations == wait_optimize and optimize_hough_circle:
-            print('Fin')
             display_dictionaries_optimization()  # Sort the dictionaries
 
         # Detect a click on the window to stop the program
@@ -371,7 +370,7 @@ def write_mean_bgr_value(rect, mean_bgr):
     global file_write_mean_bgr
 
     if file_write_mean_bgr is None:
-        file_write_mean_bgr = open(var.PATH_DATA + '/mean_bgr', 'a')  # The file in which we will write the parameters
+        file_write_mean_bgr = open(var.PATH_DATA + 'mean_bgr', 'a')  # The file in which we will write the parameters
 
     rect_detection = (250, 150, 150, 150)
     draw_rectangle(rect_detection, color=(0, 255, 0), thickness=1)
@@ -583,7 +582,7 @@ def display_dictionaries_optimization():
     dict_dp_opti = {k: v for k, v in sorted(dict_dp_opti.items(), key=lambda item: item[1], reverse=True)}
 
     # We create the file
-    with open(var.PATH_DATA + '/optimization', 'w') as file_write:
+    with open(var.PATH_DATA + 'optimization', 'w') as file_write:
         # We print the dictionaries
         file_write.write(f'p1 : {dict_p1_opti}\np2 : {dict_p2_opti}\ndp : {dict_dp_opti}')
 

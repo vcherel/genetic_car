@@ -190,18 +190,18 @@ def change_map(first_time=False):
     background.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
     BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
 
-    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), CAR_SIZES[NUM_MAP] / 75)  # Image of the car
+    RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + 'car.png'), CAR_SIZES[NUM_MAP] / 75)  # Image of the car
 
     EXPLOSION_IMAGES = []  # List of all the images of the explosion
     for num in range(1, 10):
-        image = pygame.image.load(f'{PATH_IMAGE}/explosion/{num}.png')  # Load the image
+        image = pygame.image.load(f'{PATH_IMAGE}explosion/{num}.png')  # Load the image
         image = scale_image(image, CAR_SIZES[NUM_MAP] / 25)  # Scale the image
         EXPLOSION_IMAGES.append(image)
 
     update_visual_variables()  # Update the data used to display things
 
     CHECKPOINTS = []  # List of checkpoints
-    with open(PATH_DATA + '/checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:
+    with open(PATH_DATA + 'checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:
         """
         Format of the file checkpoints:
         x1 y1
@@ -223,7 +223,7 @@ def update_visual_variables():
     # This background will be shown but will not be used to detect collisions
     BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))  # Blit the circuit on the background surface
+    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background_{str(NUM_MAP)}.png'), convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))  # Blit the circuit on the background surface
 
     SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
     SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
@@ -257,7 +257,7 @@ def load_variables():
         ACCELERATION, DECELERATION, CHANCE_MUTATION, CHANCE_CROSSOVER, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE
 
     # We open the file parameters to read the number of the map and the number of cars
-    with open(PATH_DATA + '/parameters', 'r') as file_parameters_read:
+    with open(PATH_DATA + 'parameters', 'r') as file_parameters_read:
         try:
             num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance,\
                 crossover_chance, proportion_car_kept, seed, width_cone, length_cone = file_parameters_read.readlines()
@@ -282,7 +282,7 @@ def load_variables():
         LENGTH_CONE = int(length_cone)  # Length of the cone of vision
 
 
-    with open(PATH_DATA + '/cars', 'r') as file_cars_read:
+    with open(PATH_DATA + 'cars', 'r') as file_cars_read:
         """
         Format of the file cars:
         id  type_car name  width_fast  length_slow  length_medium  length_fast  width_slow  width_medium  width_fast  color  score_map1  score_map2  score_map3  score_map4  score_map5
@@ -313,12 +313,12 @@ def save_variables():
     Load the data of the game (number of the map, number of cars, cars, ...)
     """
     # We change the variable in the file parameters
-    with open(PATH_DATA + '/parameters', 'w') as file_parameters_write:
+    with open(PATH_DATA + 'parameters', 'w') as file_parameters_write:
         file_parameters_write.write(f'{NUM_MAP}\n{NB_CARS}\n{FPS}\n{TIME_GENERATION}\n{MAX_SPEED}\n{TURN_ANGLE}\n'
                                     f'{ACCELERATION}\n{DECELERATION}\n{CHANCE_MUTATION}\n{CHANCE_CROSSOVER}\n'
                                     f'{PROPORTION_CARS_KEPT}\n{SEED}\n{WIDTH_CONE}\n{LENGTH_CONE}')
 
-    with open(PATH_DATA + '/cars', 'w') as file_cars_write:
+    with open(PATH_DATA + 'cars', 'w') as file_cars_write:
         for key in MEMORY_CARS.keys():
             for memory_car in MEMORY_CARS.get(key):
                 """

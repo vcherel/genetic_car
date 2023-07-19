@@ -1,7 +1,7 @@
 from src.other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
 from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
 from src.other.camera import capture_dice  # Import the function to capture the dice
-from src.data.constants import PATH_IMAGE, START_POSITIONS  # Import constants
+from src.data.constants import START_POSITIONS  # Import constants
 from src.render.display import display_text_ui  # Import functions from display
 from src.menus.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.menus.settings_menu import SETTINGS  # Import the settings window
@@ -38,36 +38,16 @@ def init():
     global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button
 
     # Buttons
-    stop_button = Button(1425, 4, pygame.image.load(PATH_IMAGE + '/stop_button_1.png'),
-                         pygame.image.load(PATH_IMAGE + '/stop_button_2.png'), scale=0.25)
-    pause_button = Button(1425, 56, pygame.image.load(PATH_IMAGE + '/pause_button_1.png'),
-                          pygame.image.load(PATH_IMAGE + '/pause_button_2.png'),
-                          pygame.image.load(PATH_IMAGE + '/pause_button_3.png'), checkbox=True, scale=0.25)
-    start_button = Button(1330, 18, pygame.image.load(PATH_IMAGE + '/start_button_1.png'),
-                          pygame.image.load(PATH_IMAGE + '/start_button_2.png'),
-                          pygame.image.load(PATH_IMAGE + '/start_button_3.png'), scale=0.35)
-    nb_cars_button = Button(1095, 58, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                            pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                            pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                            text=str(var.NB_CARS), variable=var.NB_CARS, name='nb_cars')
-    garage_button = Button(350, 30, pygame.image.load(PATH_IMAGE + '/garage_button_1.png'),
-                           pygame.image.load(PATH_IMAGE + '/garage_button_2.png'),
-                           pygame.image.load(PATH_IMAGE + '/garage_button_3.png'), checkbox=True)
-    dice_button = Button(500, 30, pygame.image.load(PATH_IMAGE + '/dice_button_1.png'),
-                         pygame.image.load(PATH_IMAGE + '/dice_button_2.png'),
-                         pygame.image.load(PATH_IMAGE + '/dice_button_3.png'))
-    map_button = Button(780, 30, pygame.image.load(PATH_IMAGE + '/map_button_1.png'),
-                        pygame.image.load(PATH_IMAGE + '/map_button_2.png'),
-                        pygame.image.load(PATH_IMAGE + '/map_button_3.png'))
-    restart_button = Button(1287, 4, pygame.image.load(PATH_IMAGE + '/restart_button_1.png'),
-                            pygame.image.load(PATH_IMAGE + '/restart_button_2.png'),
-                            pygame.image.load(PATH_IMAGE + '/restart_button_3.png'), scale=0.2)
-    settings_button = Button(285, 5, pygame.image.load(PATH_IMAGE + '/settings_button_1.png'),
-                             pygame.image.load(PATH_IMAGE + '/settings_button_2.png'),
-                             pygame.image.load(PATH_IMAGE + '/settings_button_3.png'), scale=0.65, checkbox=True)
-    skip_button = Button(1290, 80, pygame.image.load(PATH_IMAGE + '/skip_button_1.png'),
-                         pygame.image.load(PATH_IMAGE + '/skip_button_2.png'),
-                         pygame.image.load(PATH_IMAGE + '/skip_button_3.png'), scale=0.45)
+    stop_button = Button(x=1425, y=4, image_name='stop', scale=0.25)
+    pause_button = Button(x=1425, y=56, image_name='pause', checkbox=True, scale=0.25)
+    start_button = Button(x=1330, y=18, image_name='start', scale=0.35)
+    nb_cars_button = Button(x=1095, y=58, image_name='writing', variable=var.NB_CARS, name='nb_cars')
+    garage_button = Button(x=350, y=30, image_name='garage', checkbox=True)
+    dice_button = Button(x=500, y=30, image_name='dice')
+    map_button = Button(x=780, y=30, image_name='map')
+    restart_button = Button(x=1287, y=4, image_name='restart', scale=0.2)
+    settings_button = Button(x=285, y=5, image_name='settings', checkbox=True, scale=0.65)
+    skip_button = Button(x=1290, y=80, image_name='skip', scale=0.45)
 
 
 def handle_events(cars=None):
@@ -113,6 +93,8 @@ def handle_clicks(cars):
     Args:
         cars (list): List of cars in case we want to display a car by clicking on it
     """
+    print(var.DISPLAY_SETTINGS)
+
     if nb_cars_button.activated:  # If we click outside the writing button, we stop changing the number of cars
         nb_cars_button.deactivate()
         var.NB_CARS = nb_cars_button.variable
@@ -139,7 +121,7 @@ def handle_clicks(cars):
         for button in SETTINGS.writing_buttons:
             if button.activated:
                 button.deactivate()  # Stop changing the value of the button
-                setattr(var, button.variable_name, button.variable)
+                setattr(var, button.name, button.variable)
 
         # If we click outside the settings, we close it
         if not SETTINGS.rect.collidepoint(pygame.mouse.get_pos()):
@@ -191,7 +173,7 @@ def handle_key_press(event):
     if var.DISPLAY_SETTINGS:
         for button in SETTINGS.writing_buttons:
             if button.activated and button.update(event):  # If the value has been saved
-                setattr(var, button.variable_name, button.variable)  # Change the value of the variable
+                setattr(var, button.name, button.variable)  # Change the value of the variable
 
 
 def display(cars=None):

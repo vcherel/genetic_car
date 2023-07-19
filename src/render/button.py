@@ -12,29 +12,26 @@ class Button:
     """
     This class is used to represent a button used in the ui
     """
-    def __init__(self, x=None, y=None, image=None, image_hover=None, image_clicked=None, checkbox=False, writing_button=False, text=None, variable=None, variable_name=None, name=None, scale=1, scale_x=None, scale_y=None):
+    def __init__(self, x=None, y=None, image_name=None, only_one_image=False, checkbox=False, writing_button=False, variable=None, name=None, scale=1, scale_x=None, scale_y=None):
         """
         Initialization of a button
 
         Args:
             x (int): x position of the button
             y (int): y position of the button
-            image (pygame.Surface): image of the button
-            image_hover (pygame.Surface): image of the button when the mouse is over it
-            image_clicked (pygame.Surface): image of the button when it is clicked
+            image_name (str): name of the image of the button (int the images folder)
+            only_one_image (bool): True if the button has only one image, False otherwise (it means there is three images depending on the state of the button)
             checkbox (bool): True if the button is a checkbox, False otherwise
             writing_button (bool): True if the button is a writing button, False otherwise
-            text (str): text of the writing button
             variable (int) : variable associated to the text of the writing button
-            variable_name (str): name of the variable associated to the text of the writing button (used for the settings)
-            name (str): name of the button (used to know if there is special actions to do)
+            name (str): name of the button (used to know if there is special actions to do) or the name of the variable
+            associated to the text of the writing button (used for the settings)
             scale (float): scale of the button
             scale_x (float): scale of the button on the x-axis
             scale_y (float): scale of the button on the y-axis
 
         """
-        if x is not None:  # If it's a real object
-
+        if x is not None:  # If it's a real object we initialize it
             # If the scale is the same for x and y we can use scale instead of scale_x and scale_y
             if scale_x is None:
                 scale_x = scale
@@ -44,28 +41,37 @@ class Button:
 
             self.x, self.y = convert_to_new_window((x, y))  # Position of the button (converted to the new window)
 
-            self.image = pygame.transform.scale(image, (int(image.get_width() * scale_x), int(image.get_height() * scale_y)))  # Image of the button
-            if image_hover is not None:
+            # In this case we only have one image for the button
+            if only_one_image:
+                image = pygame.image.load(var.PATH_IMAGE + image_name + '.png')  # Image of the button
+                self.image_hover = None
+                self.image_clicked = None
+            else:  # In this case we have three images for the button
+                image = pygame.image.load(var.PATH_IMAGE + image_name + '_1.png')
+                image_hover = pygame.image.load(var.PATH_IMAGE + image_name + '_2.png')
                 self.image_hover = pygame.transform.scale(image_hover, (int(image_hover.get_width() * scale_x), int(image_hover.get_height() * scale_y)))
-            else:
-                self.image_hover = None  # Image of the button when the mouse is over it
-            if image_clicked is not None:
+                image_clicked = pygame.image.load(var.PATH_IMAGE + image_name + '_3.png')
                 self.image_clicked = pygame.transform.scale(image_clicked, (int(image_clicked.get_width() * scale_x), int(image_clicked.get_height() * scale_y)))
-            else:
-                self.image_clicked = None  # Image of the button when it is clicked
 
+            self.image = pygame.transform.scale(image, (int(image.get_width() * scale_x), int(image.get_height() * scale_y)))  # Image of the button
             self.rect = self.image.get_rect()  # Rectangle of the button
             self.rect.topleft = (self.x, self.y)  # Position of the button
-            self.checkbox = checkbox   # True if the button is a checkbox, False otherwise
+
             self.activated = False    # True if the checkbox is checked, False otherwise
             self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been activated ; -1 if the button has just been deactivated
             self.time_clicked = 0   # Time when the button is clicked
             self.mouse_over_button = False  # True if the mouse is over the button, False otherwise
 
+            self.checkbox = checkbox  # True if the button is a checkbox, False otherwise
+            if image_name == 'checkbox':
+                self.checkbox = True
+
             self.writing_button = writing_button  # True if the button is a writing button, False otherwise
-            self.text = text  # Text of the button
+            if image_name == 'writing':
+                self.writing_button = True
+
+            self.text = str(variable)  # Text of the button
             self.variable = variable  # Variable of the button
-            self.variable_name = variable_name  # Name of the variable of the button
 
             self.name = name    # Name of the button
 
@@ -78,7 +84,7 @@ class Button:
         """
         return f'Button : x = {self.x} ; y = {self.y} ; activated = {self.activated} ; just_clicked = {self.just_clicked}' \
                f' ; time_clicked = {self.time_clicked} ; check_box = {self.checkbox} ; writing_button = {self.writing_button}' \
-               f' ; text = {self.text} ; variable = {self.variable} ; name_variable = {self.variable_name}, name = {self.name}'
+               f' ; text = {self.text} ; variable = {self.variable} ; name = {self.name}'
 
     def draw(self):
         """

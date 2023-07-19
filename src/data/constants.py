@@ -16,5 +16,5 @@ CAR_COLORS = {'black': (0, 0, 0), 'blue': (0, 0, 255), 'brown': (153, 76, 0), 'g
 START_POSITIONS = [(718, 168), (760, 180), (355, 184), (725, 165), (734, 241), (820, 395)]  # Start position
 CAR_SIZES = [13, 10, 12, 9, 20, 15]  # Size of the cars
 
-PATH_DATA = os.path.dirname(__file__) + '/../../data'  # Path of the data folder
-PATH_IMAGE = os.path.dirname(__file__) + '/../../images'  # Path of the image folder
+PATH_DATA = os.path.dirname(__file__) + '/../../data/'  # Path of the data folder
+PATH_IMAGE = os.path.dirname(__file__) + '/../../images/'  # Path of the image folder

@@ -57,91 +57,33 @@ class Settings:
         self.rect = self.image.get_rect()  # Get the rectangle of the image
         self.rect.x, self.rect.y = self.x, self.y  # Set the position of the rectangle
 
-        self.see_cursor_button = Button(1340, 650, pygame.image.load(PATH_IMAGE + '/checkbox_1.png'),
-                                        pygame.image.load(PATH_IMAGE + '/checkbox_2.png'),
-                                        pygame.image.load(PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.02)
+        self.see_cursor_button = Button(x=1340, y=650, image_name='checkbox', scale=0.02)
 
         # General section
-        self.fps_button = Button(292, 221, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                 pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                 pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                 variable=var.FPS, variable_name='FPS', text=str(var.FPS), scale_x=0.5)
-        self.seed_button = Button(290, 288, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                  pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                  pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                  variable=var.SEED, variable_name='SEED', text=str(var.SEED), scale_x=0.5)
+        self.fps_button = Button(x=292, y=221, image_name='writing', variable=var.FPS, name='FPS', scale_x=0.5)
+        self.seed_button = Button(x=290, y=288, image_name='writing', variable=var.SEED, name='SEED', scale_x=0.5)
 
         # Display section
-        self.see_cones_button = Button(474, 455, pygame.image.load(PATH_IMAGE + '/checkbox_1.png'),
-                                       pygame.image.load(PATH_IMAGE + '/checkbox_2.png'),
-                                       pygame.image.load(PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.1)
-        self.see_explosions_button = Button(402, 530, pygame.image.load(PATH_IMAGE + '/checkbox_1.png'),
-                                            pygame.image.load(PATH_IMAGE + '/checkbox_2.png'),
-                                            pygame.image.load(PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.1)
-        self.see_checkpoints_button = Button(412, 597, pygame.image.load(PATH_IMAGE + '/checkbox_1.png'),
-                                             pygame.image.load(PATH_IMAGE + '/checkbox_2.png'),
-                                             pygame.image.load(PATH_IMAGE + '/checkbox_3.png'), checkbox=True,
-                                             scale=0.1)  # The button to see the checkpoints
+        self.see_cones_button = Button(x=474, y=455, image_name='checkbox', scale=0.1)
+        self.see_explosions_button = Button(x=402, y=530, image_name='checkbox', scale=0.1)
+        self.see_checkpoints_button = Button(x=412, y=597, image_name='checkbox', scale=0.1)
 
         # Car section
-        self.max_speed_button = Button(847, 223, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                       pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                       pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                       variable=var.MAX_SPEED, variable_name='MAX_SPEED', text=str(var.MAX_SPEED), scale_x=0.5)
-
-        self.turn_angle_button = Button(864, 278, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                        pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                        pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                        variable=var.TURN_ANGLE, variable_name='TURN_ANGLE',
-                                        text=str(var.TURN_ANGLE), scale_x=0.5)
-        self.acceleration_button = Button(791, 343, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'),
-                                          writing_button=True, variable_name='ACCELERATION', variable=var.ACCELERATION,
-                                          text=str(var.ACCELERATION), scale_x=0.5)
-        self.deceleration_button = Button(742, 402, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                          pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'),
-                                          writing_button=True, variable_name='DECELERATION', variable=var.DECELERATION,
-                                          text=str(var.DECELERATION), scale_x=0.5)
-        self.drift_button = Button(777, 461, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                   pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                   pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'),
-                                   writing_button=True, variable_name='DRIFT_FACTOR', variable=var.DRIFT_FACTOR,
-                                   text=str(var.DRIFT_FACTOR), scale_x=0.5)
+        self.max_speed_button = Button(x=847, y=223, image_name='writing', variable=var.MAX_SPEED, name='MAX_SPEED', scale_x=0.5)
+        self.turn_angle_button = Button(x=864, y=278, image_name='writing', variable=var.TURN_ANGLE, name='TURN_ANGLE', scale_x=0.5)
+        self.acceleration_button = Button(x=791, y=343, image_name='writing', name='ACCELERATION', variable=var.ACCELERATION, scale_x=0.5)
+        self.deceleration_button = Button(x=742, y=402, image_name='writing', name='DECELERATION', variable=var.DECELERATION, scale_x=0.5)
+        self.drift_button = Button(x=777, y=461, image_name='writing', name='DRIFT_FACTOR', variable=var.DRIFT_FACTOR, scale_x=0.5)
 
         # Genetic section
-        self.crossover_button = Button(1229, 221, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                       pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                       pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                       variable=var.CHANCE_CROSSOVER, variable_name='CHANCE_CROSSOVER',
-                                       text=str(var.CHANCE_CROSSOVER), scale_x=0.5)
-        self.mutation_button = Button(1222, 298, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                      variable=var.CHANCE_MUTATION, variable_name='CHANCE_MUTATION',
-                                      text=str(var.CHANCE_MUTATION), scale_x=0.5)
-        self.proportion_button = Button(1280, 370, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                        pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                        pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                        variable=var.PROPORTION_CARS_KEPT, variable_name='PROPORTION_CARS_KEPT',
-                                        text=str(var.PROPORTION_CARS_KEPT), scale_x=0.5)
-        self.time_generation_button = Button(1260, 446, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                             pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                             pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                             variable=var.TIME_GENERATION, variable_name='TIME_GENERATION',
-                                             text=str(var.TIME_GENERATION), scale_x=0.5)
+        self.crossover_button = Button(x=1229, y=221, image_name='writing', variable=var.CHANCE_CROSSOVER, name='CHANCE_CROSSOVER', scale_x=0.5)
+        self.mutation_button = Button(x=1222, y=298, image_name='writing', variable=var.CHANCE_MUTATION, name='CHANCE_MUTATION', scale_x=0.5)
+        self.proportion_button = Button(x=1280, y=370, image_name='writing', variable=var.PROPORTION_CARS_KEPT, name='PROPORTION_CARS_KEPT', scale_x=0.5)
+        self.time_generation_button = Button(x=1260, y=446, image_name='writing', variable=var.TIME_GENERATION, name='TIME_GENERATION', scale_x=0.5)
 
         # Cone section
-        self.width_cone_button = Button(718, 610, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                        pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                        pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True,
-                                        variable=var.WIDTH_CONE, variable_name='SEED', text=str(var.WIDTH_CONE), scale_x=0.5)
-        self.length_cone_button = Button(1110, 610, pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                                         pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                                         pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'),
-                                         writing_button=True, variable=var.LENGTH_CONE, variable_name='LENGTH_CONE',
-                                         text=str(var.LENGTH_CONE), scale_x=0.5)
+        self.width_cone_button = Button(x=718, y=610, image_name='writing', variable=var.WIDTH_CONE, name='SEED', scale_x=0.5)
+        self.length_cone_button = Button(x=1110, y=610, image_name='writing', variable=var.LENGTH_CONE, name='LENGTH_CONE', scale_x=0.5)
 
         self.writing_buttons = [self.fps_button, self.time_generation_button, self.max_speed_button, self.turn_angle_button,
                                 self.acceleration_button, self.deceleration_button, self.mutation_button, self.crossover_button,

@@ -1,5 +1,5 @@
 from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
-from src.data.constants import PATH_IMAGE, CAR_COLORS  # Import the constants
+from src.data.constants import CAR_COLORS  # Import the constants
 from src.menus.dice_menu import DICE_MENU  # Import the dice menu
 from src.render.button import Button  # Import the button class
 import src.data.variables as var  # Import the data
@@ -42,16 +42,10 @@ class RectGarage:
         self.last_time_color_clicked = 0  # Last time the color was clicked
 
         # Buttons
-        self.edit_button = Button(pos[0] + 188, pos[1] + 40, pygame.image.load(PATH_IMAGE + '/pen_1.png'),
-                                  pygame.image.load(PATH_IMAGE + '/pen_2.png'), scale=0.15)  # Button to edit the car
-        self.select_button = Button(pos[0] + 188, pos[1] + 8, pygame.image.load(PATH_IMAGE + '/checkbox_1.png'),
-                                    pygame.image.load(PATH_IMAGE + '/checkbox_2.png'),
-                                    pygame.image.load(PATH_IMAGE + '/checkbox_3.png'), checkbox=True, scale=0.07)  # Button of the writing button
-        self.delete_button = Button(pos[0] + 153, pos[1] + 5, pygame.image.load(PATH_IMAGE + '/trash_button_1.png'),
-                                    pygame.image.load(PATH_IMAGE + '/trash_button_2.png'),
-                                    pygame.image.load(PATH_IMAGE + '/trash_button_3.png'),
-                                    scale=0.14)  # Button to delete the car
-        self.name_button = Button(pos[0] + 10, pos[1] + 10, pygame.image.load(PATH_IMAGE + '/grey.png'), writing_button=True, text=name, scale=6)  # Button to edit the name of the car
+        self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image_name='pen', scale=0.15)  # Button to edit the car
+        self.select_button = Button(x=pos[0] + 188, y=pos[1] + 8, image_name='checkbox', scale=0.07)  # Button of the writing button
+        self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 5, image_name='trash', scale=0.14)  # Button to delete the car
+        self.name_button = Button(x=pos[0] + 10, y=pos[1] + 10, only_one_image=True, image_name='grey', writing_button=True, scale=6)  # Button to edit the name of the car
 
         if dict_check[self.id_rect]:
             self.select_button.activated = True

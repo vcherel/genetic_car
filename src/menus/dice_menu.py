@@ -53,11 +53,7 @@ class DiceMenu:
             Button: The dice button
         """
 
-        return Button(self.rect_x + x + 45, self.rect_y + y + 140,
-                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_1.png'),
-                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_2.png'),
-                      pygame.image.load(PATH_IMAGE + '/writing_rectangle_3.png'), writing_button=True, variable=value,
-                      text=str(value), name='dice', scale_y=1, scale_x=0.25)
+        return Button(x=self.rect_x + x + 45, y=self.rect_y + y + 140, image_name='writing', variable=value, name='dice', scale_x=0.25)
 
     def init(self, type_car, scores, id_car=None, by_camera=False):
         """
@@ -87,10 +83,7 @@ class DiceMenu:
                                 self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
                                 self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
 
-        self.check_button = Button(self.rect_x + 888, self.rect_y + 445,
-                                   pygame.image.load(PATH_IMAGE + '/check_button_1.png'),
-                                   pygame.image.load(PATH_IMAGE + '/check_button_2.png'),
-                                   pygame.image.load(PATH_IMAGE + '/check_button_3.png'), scale=0.4)
+        self.check_button = Button(x=self.rect_x + 888, y=self.rect_y + 445, image_name='check', scale=0.4)
 
     def display_dice_menu(self):
         """

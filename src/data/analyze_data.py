@@ -94,7 +94,7 @@ def compute_mean_bgr():
         mean_r (float): Mean R value
     """
     b, g, r = [], [], []
-    with open(var.PATH_DATA + '/mean_bgr', 'r') as file:
+    with open(var.PATH_DATA + 'mean_bgr', 'r') as file:
         for line in file:
             bgr = line.split()
             b.append(float(bgr[0]))
@@ -111,17 +111,17 @@ def analyze_genetic_algorithm():
     mutation_only = []  # The number of generations to complete a lap with only mutation
     mutation_crossover = []  # The number of generations to complete a lap with mutation and then crossover
     crossover_mutation = []  # The number of generations to complete a lap with crossover and then mutation
-    with open(var.PATH_DATA + '/test_mutation_only_2', 'r') as file:
+    with open(var.PATH_DATA + 'test_mutation_only_2', 'r') as file:
         for line in file:
             data = line.split()
             mutation_only.append(int(data[0]))
 
-    with open(var.PATH_DATA + '/test_mutation_crossover_2', 'r') as file:
+    with open(var.PATH_DATA + 'test_mutation_crossover_2', 'r') as file:
         for line in file:
             data = line.split()
             mutation_crossover.append(int(data[0]))
 
-    with open(var.PATH_DATA + '/test_crossover_mutation_2', 'r') as file:
+    with open(var.PATH_DATA + 'test_crossover_mutation_2', 'r') as file:
         for line in file:
             data = line.split()
             crossover_mutation.append(int(data[0]))
