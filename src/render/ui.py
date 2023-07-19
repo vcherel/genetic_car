@@ -3,9 +3,9 @@ from src.render.display import show_car_window, erase_car_window  # Import the f
 from src.other.camera import capture_dice  # Import the function to capture the dice
 from src.data.constants import PATH_IMAGE, START_POSITIONS  # Import constants
 from src.render.display import display_text_ui  # Import functions from display
-from src.render.dice_menu import DICE_MENU  # Import functions from dice menu
-from src.render.settings_menu import SETTINGS  # Import the settings window
-from src.render.garage import GARAGE  # Import functions from garage
+from src.menus.dice_menu import DICE_MENU  # Import functions from dice menu
+from src.menus.settings_menu import SETTINGS  # Import the settings window
+from src.menus.garage import GARAGE  # Import functions from garage
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button
 import src.data.variables as var  # Import the data
@@ -140,9 +140,9 @@ def handle_clicks(cars):
             SETTINGS.fps_button.deactivate()  # Stop changing the value of the fps
             var.FPS = SETTINGS.fps_button.variable  # Change the value of the fps
 
-        if SETTINGS.timer_button.activated:
-            SETTINGS.timer_button.deactivate()  # Stop changing the value of the timer
-            var.TIME_GENERATION = SETTINGS.timer_button.variable  # Change the value of the timer
+        if SETTINGS.time_generation_button.activated:
+            SETTINGS.time_generation_button.deactivate()  # Stop changing the value of the timer
+            var.TIME_GENERATION = SETTINGS.time_generation_button.variable  # Change the value of the timer
 
         if SETTINGS.max_speed_button.activated:
             SETTINGS.max_speed_button.deactivate()  # Stop changing the value of the max speed
@@ -236,9 +236,9 @@ def handle_key_press(event):
             if SETTINGS.fps_button.update(event):
                 var.FPS = SETTINGS.fps_button.variable
 
-        if SETTINGS.timer_button.activated:
-            if SETTINGS.timer_button.update(event):
-                var.TIME_GENERATION = SETTINGS.timer_button.variable
+        if SETTINGS.time_generation_button.activated:
+            if SETTINGS.time_generation_button.update(event):
+                var.TIME_GENERATION = SETTINGS.time_generation_button.variable
 
         if SETTINGS.max_speed_button.activated:
             if SETTINGS.max_speed_button.update(event):
@@ -375,7 +375,6 @@ def display_garage_button():
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
-            GARAGE.init()
         else:
             unpause()
             GARAGE.erase_garage()

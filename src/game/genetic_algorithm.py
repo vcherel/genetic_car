@@ -133,7 +133,7 @@ def mutate_one_car(car):
     has_muted = False  # True if the car has mutated
     while not has_muted:  # We try mutating the car until it mutates
         for attribute_name, attribute_value in vars(car.genetic).items():
-            if random.random() < var.MUTATION_CHANCE:
+            if random.random() < var.CHANCE_MUTATION:
                 has_muted = True
                 # See if it is a width or a length
                 if attribute_name.startswith('width'):
@@ -157,7 +157,7 @@ def crossover(cars):
         list: list of cars crossed
     """
     for car1, car2 in itertools.combinations(cars, 2):  # We take all the combinations of cars
-        if random.random() < var.CROSSOVER_CHANCE and car1 != car2:  # If we do a crossover
+        if random.random() < var.CHANCE_CROSSOVER and car1 != car2:  # If we do a crossover
             car_added = False
             count = 0
             while not car_added and count < 10:  # We try to add the cars until we succeed, or we have tried too many times

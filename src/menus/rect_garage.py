@@ -1,6 +1,6 @@
 from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
 from src.data.constants import PATH_IMAGE, CAR_COLORS  # Import the constants
-from src.render.dice_menu import DICE_MENU  # Import the dice menu
+from src.menus.dice_menu import DICE_MENU  # Import the dice menu
 from src.render.button import Button  # Import the button class
 import src.data.variables as var  # Import the data
 from src.game.car import Car  # Import the car class

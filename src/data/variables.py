@@ -27,13 +27,9 @@ RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the sc
 
 
 # EXPLOSIONS
-SEE_EXPLOSIONS = False  # True if we want to see the explosions, False otherwise
+SEE_EXPLOSIONS = True  # True if we want to see the explosions, False otherwise
 EXPLOSIONS = pygame.sprite.Group()  # Group of all the explosions
 EXPLOSION_IMAGES = []  # List of all the images of the explosion
-for num in range(1, 10):
-    image = pygame.image.load(f'{PATH_IMAGE}/explosion/{num}.png')  # Load the image
-    image = scale_image(image, 1)  # Scale the image
-    EXPLOSION_IMAGES.append(image)
 RECTS_BLIT_EXPLOSION = []  # Coordinates of the rects used to erase the explosions of the screen
 
 
@@ -118,8 +114,8 @@ LAST_TIME_REMAINING = []  # List of the remaining time during the last turns
 # GENETIC
 TIME_GENERATION = 60  # Time of a generation
 NUM_GENERATION = 1  # Number of the generation
-MUTATION_CHANCE = 0.3  # Chance of mutation
-CROSSOVER_CHANCE = 0.3  # Chance of crossover
+CHANCE_MUTATION = 0.3  # Chance of mutation
+CHANCE_CROSSOVER = 0.3  # Chance of crossover
 PROPORTION_CARS_KEPT = 0.1  # Percentage used to know how many cars we keep for the next generation
 
 
@@ -176,7 +172,7 @@ def change_map(first_time=False):
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
     """
-    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE
+    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, EXPLOSION_IMAGES
 
     # If we change map for the first time, we don't change the map
     if not first_time:
@@ -194,6 +190,12 @@ def change_map(first_time=False):
     BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
 
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), CAR_SIZES[NUM_MAP] / 75)  # Image of the car
+
+    EXPLOSION_IMAGES = []  # List of all the images of the explosion
+    for num in range(1, 10):
+        image = pygame.image.load(f'{PATH_IMAGE}/explosion/{num}.png')  # Load the image
+        image = scale_image(image, CAR_SIZES[NUM_MAP] / 25)  # Scale the image
+        EXPLOSION_IMAGES.append(image)
 
     update_visual_variables()  # Update the data used to display things
 
@@ -220,7 +222,6 @@ def update_visual_variables():
     # This background will be shown but will not be used to detect collisions
     BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    edit_background()  # Edit the background
     BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))  # Blit the circuit on the background surface
 
     SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
@@ -252,7 +253,7 @@ def load_variables():
     Load the data of the game (number of the map, number of cars, cars, ...)
     """
     global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE, TIME_GENERATION, MAX_SPEED, TURN_ANGLE,\
-        ACCELERATION, DECELERATION, MUTATION_CHANCE, CROSSOVER_CHANCE, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE
+        ACCELERATION, DECELERATION, CHANCE_MUTATION, CHANCE_CROSSOVER, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE
 
     # We open the file parameters to read the number of the map and the number of cars
     with open(PATH_DATA + '/parameters', 'r') as file_parameters_read:
@@ -272,8 +273,8 @@ def load_variables():
         TURN_ANGLE = int(turn_angle)  # Angle of the turn of the car
         ACCELERATION = float(acceleration)  # Acceleration of the car
         DECELERATION = float(deceleration)  # Deceleration of the car
-        MUTATION_CHANCE = float(mutation_chance)  # Chance of mutation
-        CROSSOVER_CHANCE = float(crossover_chance)  # Chance of crossover
+        CHANCE_MUTATION = float(mutation_chance)  # Chance of mutation
+        CHANCE_CROSSOVER = float(crossover_chance)  # Chance of crossover
         PROPORTION_CARS_KEPT = float(proportion_car_kept)  # Proportion of car kept
         SEED = int(seed)  # Seed of the random
         WIDTH_CONE = int(width_cone)  # Width of the cone of vision
@@ -313,7 +314,7 @@ def save_variables():
     # We change the variable in the file parameters
     with open(PATH_DATA + '/parameters', 'w') as file_parameters_write:
         file_parameters_write.write(f'{NUM_MAP}\n{NB_CARS}\n{FPS}\n{TIME_GENERATION}\n{MAX_SPEED}\n{TURN_ANGLE}\n'
-                                    f'{ACCELERATION}\n{DECELERATION}\n{MUTATION_CHANCE}\n{CROSSOVER_CHANCE}\n'
+                                    f'{ACCELERATION}\n{DECELERATION}\n{CHANCE_MUTATION}\n{CHANCE_CROSSOVER}\n'
                                     f'{PROPORTION_CARS_KEPT}\n{SEED}\n{WIDTH_CONE}\n{LENGTH_CONE}')
 
     with open(PATH_DATA + '/cars', 'w') as file_cars_write:

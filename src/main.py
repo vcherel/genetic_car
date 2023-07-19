@@ -1,8 +1,8 @@
 from src.data.analyze_data import analyze_data_scores, show_positions_crash  # Import the analyze_data function
 from src.data.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from src.render.settings_menu import SETTINGS  # Import the settings
-from src.render.garage import add_garage_cars  # Import the garage
+from src.menus.garage import GARAGE, add_garage_cars  # Import the garage
+from src.menus.settings_menu import SETTINGS  # Import the settings
 from src.game.genetic import Genetic  # Import the genetic class
 from src.other.utils import union_rect  # Import the utils
 import src.render.display as display  # Import the display
@@ -188,6 +188,15 @@ def stop_play(cars):
             var.WINDOW.blit(var.BACKGROUND, rect_blit_explosion, rect_blit_explosion)  # Erase the explosions
             var.RECTS_BLIT_EXPLOSION = []  # We reset the list of rects to blit
 
+            # Erase cars
+            rect_blit_car = union_rect(var.RECTS_BLIT_CAR)  # Union of the rects for the blit
+            var.WINDOW.blit(var.BACKGROUND, rect_blit_car, rect_blit_car)  # Erase the cars
+            var.RECTS_BLIT_CAR = []  # We reset the list of rects to blit
+
+            # Display cars
+            for car in cars:  # For each car
+                car.draw()  # Draw the cars
+
             # Display explosions
             var.EXPLOSIONS.draw(var.WINDOW)  # Display the explosions
             var.EXPLOSIONS.update()  # Update the explosions
@@ -302,10 +311,10 @@ def run_test_value_genetic_parameters():
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 
-    for var.MUTATION_CHANCE in [0.8]:
-        for var.CROSSOVER_CHANCE in [0.2, 0.5, 0.8]:
+    for var.CHANCE_MUTATION in [0.8]:
+        for var.CHANCE_CROSSOVER in [0.2, 0.5, 0.8]:
             for var.PROPORTION_CARS_KEPT in [0.2, 0.5, 0.8]:
-                var.FILE_TEST = open(f'{path_test}/test_{var.MUTATION_CHANCE}_{var.CROSSOVER_CHANCE}_{var.PROPORTION_CARS_KEPT}', 'a')
+                var.FILE_TEST = open(f'{path_test}/test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
                 for var.SEED in range(30):
                     play()
                     var.NUM_GENERATION = 0
@@ -320,6 +329,7 @@ if __name__ == '__main__':
         var.change_map(first_time=True)  # Change the map to the first one
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
+        GARAGE.init()  # Initialize the garage
         display.edit_background()  # Add elements not clickable to the background
 
         if var.SHOW_ANALYSIS:

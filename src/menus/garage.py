@@ -1,5 +1,5 @@
 from src.other.utils import convert_to_new_window  # To convert the position if we resize the window
-from src.render.rect_garage import RectGarage, reset_dict_check  # Import the rectangle garage
+from src.menus.rect_garage import RectGarage, reset_dict_check  # Import the rectangle garage
 from src.data.constants import PATH_IMAGE  # To get the path of the image
 from src.render.button import Button  # Import the button
 import src.data.variables as var  # Import the variable
@@ -45,6 +45,7 @@ class Garage:
         return string
 
     def init(self):
+        print('init garage')
         """
         Initialize the garage during the game
         """

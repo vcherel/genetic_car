@@ -7,18 +7,26 @@ This file contains all the utility functions used in multiple other files
 """
 
 
-def scale_image(img, factor):
+def scale_image(img, factor=None):
     """
     Change the scale of an image
 
     Args:
         img (pygame.Surface): the image to scale
-        factor (float): the scale factor
+        factor (float or tuple(float, float)): the scale factor, if it is a tuple the factor is different for the width and the height
+        If the factor is None, we scale the image to the size of the new window
 
     Returns:
         scaled_image (pygame.image): the scaled image
     """
-    size = round(img.get_width() * factor), round(img.get_height() * factor)
+    if factor is None:
+        x, y = var.SCALE_RESIZE_X, var.SCALE_RESIZE_Y
+    elif isinstance(factor, float):
+        x, y = factor, factor
+    else:
+        x, y = factor[0], factor[1]
+
+    size = round(img.get_width() * x), round(img.get_height() * y)
     return pygame.transform.scale(img, size)
 
 

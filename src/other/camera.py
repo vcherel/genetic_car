@@ -1,6 +1,6 @@
 from src.other.camera_utils import *  # Utils functions for the camera
 from src.data.data_structures import ColorDice  # To find the color of each dice
-from src.render.dice_menu import update_pygame_camera_frame  # To save the camera frame
+from src.menus.dice_menu import update_pygame_camera_frame  # To save the camera frame
 from src.other.utils import convert_to_new_window  # Utils functions
 import src.data.variables as var  # Variables
 import random  # To generate random numbers
