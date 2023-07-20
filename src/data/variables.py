@@ -1,6 +1,7 @@
 from src.data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
 from src.other.utils import scale_image, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
+from src.data.data_structures import MemoryCar  # Import the MemoryCar class
 from src.game.genetic import Genetic  # Import the Genetic class
 import pygame  # To use pygame
 import sys  # To quit the game
@@ -27,7 +28,7 @@ RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the sc
 
 
 # EXPLOSIONS
-SEE_EXPLOSIONS = True  # True if we want to see the explosions, False otherwise
+SHOW_EXPLOSIONS = True  # True if we want to see the explosions, False otherwise
 EXPLOSIONS = pygame.sprite.Group()  # Group of all the explosions
 EXPLOSION_IMAGES = []  # List of all the images of the explosion
 RECTS_BLIT_EXPLOSION = []  # Coordinates of the rects used to erase the explosions of the screen
@@ -128,18 +129,15 @@ DISPLAY_SETTINGS = False  # True if we are displaying the settings
 
 
 # MEMORY
-CARS_FROM_GARAGE = []  # Genetics from the garage that we want to add to the game
-MEMORY_CARS = {'dice': [], 'genetic': []}  # Memory of the cars, Dice are cars from the camera, genetic are cars from the genetic algorithm
-# Format of MEMORY_CARS:   {"dice": [[id, name, Genetic, score, color], ...], "genetic": [[id, name, Genetic, score, color], ...]}
-ACTUAL_ID_MEMORY_GENETIC = 1  # Biggest id of the memory for the genetic cars
-ACTUAL_ID_MEMORY_DICE = 1  # Biggest id of the memory for the dice cars
+MEMORY_CARS = []  # Memory of the cars, format: [car_memory_1, car_memory_2, ...]
+SELECTED_MEMORY_CARS = []  # Genetics from the garage that we want to add to the game
+ACTUAL_IDS_MEMORY_CARS = 1  # Biggest id of the memory for the dice cars
 
 
 # OTHER
 FPS = 60  # FPS of the game
 ACTUAL_FPS = 60  # Actual FPS
 BUTTONS = []  # List of the buttons
-
 
 
 def exit_game():
@@ -223,7 +221,9 @@ def update_visual_variables():
     # This background will be shown but will not be used to detect collisions
     BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background_{str(NUM_MAP)}.png'), convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))  # Blit the circuit on the background surface
+    # Blit the circuit on the background surface
+    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background_{str(NUM_MAP)}.png'),
+                                           convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))
 
     SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
     SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
@@ -237,7 +237,7 @@ def init_variables(nb_cars, replay=False):
     """
     Initialize the data of the game (number of car alive, time remaining, start time, ...)
     """
-    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, ACTUAL_ID_MEMORY_GENETIC, TICKS_REMAINING
+    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, TICKS_REMAINING
 
     NB_CARS_ALIVE = nb_cars  # Number of cars alive
     TICKS_REMAINING = TIME_GENERATION * 60  # Number of iterations remaining for the generation
@@ -246,15 +246,14 @@ def init_variables(nb_cars, replay=False):
         NUM_GENERATION += 1
     else:  # If we start a new run
         NUM_GENERATION = 1  # Number of the generation
-        ACTUAL_ID_MEMORY_GENETIC += 1  # We increment the id of the memory
 
 
 def load_variables():
     """
     Load the data of the game (number of the map, number of cars, cars, ...)
     """
-    global NUM_MAP, NB_CARS, FPS, ACTUAL_ID_MEMORY_GENETIC, ACTUAL_ID_MEMORY_DICE, TIME_GENERATION, MAX_SPEED, TURN_ANGLE,\
-        ACCELERATION, DECELERATION, CHANCE_MUTATION, CHANCE_CROSSOVER, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE
+    global NUM_MAP, NB_CARS, FPS, TIME_GENERATION, MAX_SPEED, TURN_ANGLE, ACCELERATION, DECELERATION, CHANCE_MUTATION,\
+        CHANCE_CROSSOVER, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE, ACTUAL_IDS_MEMORY_CARS
 
     # We open the file parameters to read the number of the map and the number of cars
     with open(PATH_DATA + 'parameters', 'r') as file_parameters_read:
@@ -281,29 +280,25 @@ def load_variables():
         WIDTH_CONE = int(width_cone)  # Width of the cone of vision
         LENGTH_CONE = int(length_cone)  # Length of the cone of vision
 
-
     with open(PATH_DATA + 'cars', 'r') as file_cars_read:
         """
         Format of the file cars:
-        id  type_car name  width_fast  length_slow  length_medium  length_fast  width_slow  width_medium  width_fast  color  score_map1  score_map2  score_map3  score_map4  score_map5
-        id  type_car name  width_fast  length_slow  length_medium  length_fast  width_slow  width_medium  width_fast  color  score_map1  score_map2  score_map3  score_map4  score_map5
+        id name color width_fast  length_slow  length_medium  length_fast  width_slow  width_medium  width_fast score_map1  score_map2  score_map3  score_map4  score_map5
         ...
         """
         lines = file_cars_read.readlines()  # We read the file
         for line in lines:
             line = line.split(' ')
 
-            id_car = int(line[0])  # Id of the car
-            type_car = line[1]  # Type of the car (generation or dice)
-            name = line[2]  # Name of the car
-
+            id_car = int(line[0])  # Id of the car (unique int)
+            name = line[1]  # Name of the car
+            color = line[2]
             genetic = Genetic([int(line[i]) for i in range(3, 9)])  # Genetic of the car
-            color = line[9]
-            score = [int(line[i]) for i in range(10, 10 + len(START_POSITIONS))]  # Score of the car
+            scores = [int(line[i]) for i in range(9, 9 + len(START_POSITIONS))]  # Score of the car
 
-            MEMORY_CARS.get(type_car).append([id_car, name, genetic, color, score])  # We add the car to the memory
-            if type_car == 'dice' and id_car >= ACTUAL_ID_MEMORY_DICE:  # We change the biggest id of the memory if necessary
-                ACTUAL_ID_MEMORY_DICE = id_car + 1
+            MEMORY_CARS.append(MemoryCar(id_car, name, color, genetic, scores))  # We create the memory car
+            if ACTUAL_IDS_MEMORY_CARS <= id_car:
+                ACTUAL_IDS_MEMORY_CARS = id_car + 1
 
     BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
@@ -319,49 +314,9 @@ def save_variables():
                                     f'{PROPORTION_CARS_KEPT}\n{SEED}\n{WIDTH_CONE}\n{LENGTH_CONE}')
 
     with open(PATH_DATA + 'cars', 'w') as file_cars_write:
-        for key in MEMORY_CARS.keys():
-            for memory_car in MEMORY_CARS.get(key):
-                """
-                Format of memory_car:
-                [id_car, name, genetic, color, score]
-                """
-
-                str_to_write = f'{memory_car[0]} {key} {memory_car[1]} {memory_car[2].length_slow // LENGTH_CONE}' \
-                               f' {memory_car[2].length_medium // LENGTH_CONE} {memory_car[2].length_fast // LENGTH_CONE}' \
-                               f' {memory_car[2].width_slow // WIDTH_CONE} {memory_car[2].width_medium // WIDTH_CONE}' \
-                               f' {memory_car[2].width_fast // WIDTH_CONE} {memory_car[3]}'
-
-                for score in memory_car[4]:
-                    str_to_write += f' {int(score)}'
-                str_to_write += '\n'
-                file_cars_write.write(str_to_write)
-
-
-def update_car_name(type_car, id_car, name):
-    """
-    Update the name of the car in the memory
-
-    Args:
-        type_car: type of the car (generation or dice)
-        id_car: id of the car
-        name: new name of the car
-    """
-    for car in MEMORY_CARS.get(type_car):
-        if car[0] == id_car:
-            car[1] = name
-            break
-
-
-def update_car_color(type_car, id_car, color):
-    """
-    Update the color of the car in the memory
-
-    Args:
-        type_car: type of the car (generation or dice)
-        id_car: id of the car
-        color: new color of the car
-    """
-    for car in MEMORY_CARS.get(type_car):
-        if car[0] == id_car:
-            car[3] = color
-            break
+        for memory_car in MEMORY_CARS:
+            str_to_write = f'{memory_car.id} {memory_car.name} {memory_car.color} {memory_car.genetic}'
+            for score in memory_car.best_scores:
+                str_to_write += f' {score}'
+            str_to_write += '\n'
+            file_cars_write.write(str_to_write)

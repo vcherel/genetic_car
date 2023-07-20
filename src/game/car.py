@@ -24,7 +24,7 @@ class Car:
     """
     Class representing a car in the game
     """
-    def __init__(self, genetic=None, best_scores=None, color='red', view_only=False):
+    def __init__(self, genetic=None, best_scores=None, color='red', id_memory_car=None):
         """
         Initialization of the car
 
@@ -32,7 +32,7 @@ class Car:
             genetic (Genetic): genetic of the car to copy (if None, create a new genetic)
             best_scores (list): list of the best scores of the car for each map
             color (str): color of the car
-            view_only (bool): True if the car is in view only mode, False otherwise (view only is when the car is grey)
+            id_memory_car (int): id of the car in the memory (it means the car is in view only mode)
         """
         if genetic is None:
             self.genetic = Genetic()  # Genetic of the car
@@ -56,13 +56,13 @@ class Car:
         self.rotated_rect = self.image.get_rect()  # Rotated rectangle of the car
         self.rotated_rect_shown = self.image.get_rect()  # Rotated rectangle of the car shown on the screen
 
-        self.view_only = view_only  # True if the car is in view only mode, False otherwise
-
         self.next_checkpoint = 0  # Next checkpoint to reach
         self.turn_without_checkpoint = 0  # Number of turn played by the car without reaching a checkpoint
 
         self.dead = False  # True if the car is dead, False otherwise
         self.reverse = False  # True if the car is going in the wrong way, False otherwise
+
+        self.id_memory_car = id_memory_car  # Id of the car in the memory (it means the car is in view only mode)
 
         self.score = 0  # Score of the car
         if best_scores:
@@ -77,7 +77,7 @@ class Car:
         Return:
             str: string representation of the car
         """
-        return f'Car: genetic : {self.genetic} ; view_only : {self.view_only} ; color : {self.color} ; position : {self.pos} ; angle : {self.angle} ; speed : {self.speed} ; acceleration : {self.acceleration} ; scores : {self.score}'
+        return f'Car: genetic : {self.genetic} ; color : {self.color} ; position : {self.pos} ; angle : {self.angle} ; speed : {self.speed} ; acceleration : {self.acceleration} ; scores : {self.score}'
 
     def __eq__(self, other):
         """
@@ -110,7 +110,7 @@ class Car:
 
         # If we are in a circuit and the car is going backwards, we force it to go in the wall
         if var.NUM_MAP != 5 and self.turn_without_checkpoint > 100 and not self.reverse:
-            if not self.view_only and not self.color == 'yellow':
+            if self.id_memory_car is None and not self.color == 'yellow':
                 self.image = change_color_car(self.image, 'light_gray')  # We convert the image of the car to light grayscale if it's a red car
             self.reverse = True
 
@@ -324,7 +324,7 @@ class Car:
         """
         self.dead = True  # The car is dead
         var.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
-        if var.SEE_EXPLOSIONS:
+        if var.SHOW_EXPLOSIONS:
             var.EXPLOSIONS.add(Explosion(self.pos))  # Add an explosion  # at the position of the car
 
     def draw(self):
@@ -343,7 +343,7 @@ class Car:
         """
         Reset the car
         """
-        self.__init__(self.genetic, self.best_scores, self.color, self.view_only)
+        self.__init__(genetic=self.genetic, best_scores=self.best_scores, color=self.color, id_memory_car=self.id_memory_car)
 
     def draw_detection_cone(self):
         """

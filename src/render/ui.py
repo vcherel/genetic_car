@@ -1,16 +1,17 @@
 from src.other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
 from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
 from src.other.camera import capture_dice  # Import the function to capture the dice
-from src.data.constants import START_POSITIONS  # Import constants
 from src.render.display import display_text_ui  # Import functions from display
 from src.menus.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.menus.settings_menu import SETTINGS  # Import the settings window
-from src.menus.garage import GARAGE  # Import functions from garage
+from src.data.data_structures import MemoryCar  # Import the car memory
+from src.menus.garage_menu import GARAGE  # Import the garage window
+from src.data.constants import START_POSITIONS  # Import constants
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button
 import src.data.variables as var  # Import the data
 import pygame  # To use pygame
-import time  # To get the time*
+import time  # To get the time
 
 
 """
@@ -64,7 +65,7 @@ def handle_events(cars=None):
         var.resize_window(var.RESIZE_DIMENSIONS)  # Resize the window
         init()   # Reinitialize the buttons
         SETTINGS.init()  # Reinitialize the settings window
-        GARAGE.init()  # Reinitialize the garage window
+        GARAGE.resize()  # Reinitialize the garage window
 
     # Pygame events
     for event in pygame.event.get():
@@ -93,8 +94,6 @@ def handle_clicks(cars):
     Args:
         cars (list): List of cars in case we want to display a car by clicking on it
     """
-    print(var.DISPLAY_SETTINGS)
-
     if nb_cars_button.activated:  # If we click outside the writing button, we stop changing the number of cars
         nb_cars_button.deactivate()
         var.NB_CARS = nb_cars_button.variable
@@ -110,7 +109,7 @@ def handle_clicks(cars):
 
     if GARAGE.rectangles:
         for rect_garage in GARAGE.rectangles:
-            if rect_garage.name_button.activated:
+            if rect_garage.name_button.activated and not rect_garage.name_button.rect.collidepoint(pygame.mouse.get_pos()):  # If we click outside the writing button, we stop changing the name of the car
                 rect_garage.name_button.activated = False
                 rect_garage.save_new_car_name()  # Save the name of the car
 
@@ -164,12 +163,14 @@ def handle_key_press(event):
                 if writing_button.update(event):  # If the value has been saved
                     DICE_MENU.save_values(index, writing_button)  # Save the values of the dice
 
+    # We change value of car name if necessary
     if GARAGE.rectangles:
         for rect_garage in GARAGE.rectangles:
             if rect_garage.name_button.activated:
                 if rect_garage.name_button.update(event):  # If the value has been saved
                     rect_garage.save_new_car_name()  # Save the name of the car
 
+    # We change value of settings if necessary
     if var.DISPLAY_SETTINGS:
         for button in SETTINGS.writing_buttons:
             if button.activated and button.update(event):  # If the value has been saved
@@ -241,7 +242,7 @@ def display_start_button():
     var.START = start_button.draw()  # Draw the start button
     if start_button.mouse_over_button:
         var.RECTS_BLIT_UI.append(start_button.rect)  # To erase the contour of button
-    if start_button.just_clicked and (var.NB_CARS != 0 or var.CARS_FROM_GARAGE):
+    if start_button.just_clicked and (var.NB_CARS != 0 or var.SELECTED_MEMORY_CARS):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage
@@ -274,7 +275,7 @@ def display_garage_button():
             unpause()
             GARAGE.erase_garage()
     if var.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
-        GARAGE.display_garage()
+        GARAGE.draw()
 
 
 def display_dice_button():
@@ -293,16 +294,19 @@ def display_dice_button():
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.get('dice').append([var.ACTUAL_ID_MEMORY_DICE, 'Dé_' + str(var.ACTUAL_ID_MEMORY_DICE),
-                                                Genetic(), 'gray' [0] * len(START_POSITIONS)])  # We add the dice to the memory
+            var.MEMORY_CARS.append(MemoryCar(var.ACTUAL_IDS_MEMORY_CARS, f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
+                                             'gray', Genetic(), [0] * len(START_POSITIONS)))  # We add the dice to the memory
+            var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
+
         else:  # If we use the camera we capture the dice
             pause()
-            DICE_MENU.init('dice', scores=capture_dice(), by_camera=True)  # We initialize the data of the dice
+            DICE_MENU.init(values=capture_dice(), by_camera=True)  # We initialize the data of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
     if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
-        if DICE_MENU.display_dice_menu():
+        if DICE_MENU.display_dice_menu():  # If the user has validated the dice
             DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
+            GARAGE.reload_page = True  # We reload the garage page
 
 
 def display_map_button(cars):
@@ -343,7 +347,7 @@ def display_settings_button():
             unpause()
             SETTINGS.erase()
     if var.DISPLAY_SETTINGS:  # If the garage is displayed we draw it and do the actions
-        SETTINGS.show()
+        SETTINGS.draw()
     if settings_button.mouse_over_button:
         var.RECTS_BLIT_UI.append(settings_button.rect)
 

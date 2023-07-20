@@ -553,9 +553,6 @@ def optimize_hough_circles(image, color, value, rect, p1, p2, dp):
     c = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=dp / 10, minDist=5, param1=p1, param2=p2,
                          minRadius=1, maxRadius=max_radius_circle)
     if c is not None and verif_coordinates(c[0, :], rect, theorical_coordinates[color]):
-        if len(c) == value:  # All points are detected
-            print(f'Bingo : {p1} {p2} {dp}')
-
         if p1 not in dict_p1_opti:
             dict_p1_opti[p1] = 1
         else:

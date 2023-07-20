@@ -1,5 +1,6 @@
 import itertools  # Used to get all the combinations of cars
 import src.data.variables as var  # Variables of the game
+from src.data.data_structures import MemoryCar  # Import the car memory
 import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
 
@@ -18,7 +19,7 @@ def apply_genetic(cars):
     Returns:
         list: list of cars with the genetic algorithm applied
     """
-    cars = [car for car in cars if not car.view_only]  # We remove the cars that are only here for the visuals
+    cars = [car for car in cars if not car.id_memory_car]  # We remove the cars that are only here for the visuals
 
     if cars:
         # We sort the cars by score
@@ -63,7 +64,9 @@ def find_cars_to_keep(cars):
     cars_to_keep = cars[:number_to_keep]  # Select the best cars
 
     best_car = cars_to_keep[0]  # We get the best car
-    var.MEMORY_CARS.get('genetic').append([var.NUM_GENERATION, 'Génération_' + str(var.NUM_GENERATION), best_car.genetic, 'gray', best_car.best_scores])  # Add the best car to the memory
+    var.MEMORY_CARS.append(MemoryCar(var.ACTUAL_IDS_MEMORY_CARS, f'Génération_{var.NUM_GENERATION}',
+                                     'gray', best_car.genetic, best_car.best_scores))  # Add the best car to the memory
+    var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the memory cars
 
     for car in cars_to_keep:
         car.reset()  # We reset the cars

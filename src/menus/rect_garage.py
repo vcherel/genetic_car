@@ -1,9 +1,9 @@
 from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
+from src.data.data_structures import MemoryCar  # Import the memory car class
 from src.data.constants import CAR_COLORS  # Import the constants
 from src.menus.dice_menu import DICE_MENU  # Import the dice menu
 from src.render.button import Button  # Import the button class
 import src.data.variables as var  # Import the data
-from src.game.car import Car  # Import the car class
 import random  # To get random numbers
 import pygame  # To play the game
 import time  # To get the time
@@ -13,43 +13,34 @@ import time  # To get the time
 This file contains the RectGarage class and all the functions related to it. A rectangle garage is a rectangle that contains the cars saved in the garage menu.
 """
 
-dict_check = [False] * 10  # List of the state of the checkbox
-
 
 class RectGarage:
     """
     This class is used to represent a slot for a car in the garage menu
     """
-    def __init__(self, id_car, type_car, name, genetic, id_rect, pos, color, scores):
+    def __init__(self, x, y, id_rect, memory_car, selected):
         """
         Initialization of the rectangle garage
         A Rectangle garage is a rectangle that contains the cars saved in the garage menu
 
         Args:
-            id_car (int): id of the car
-            type_car (str): type of the car ('dice' or 'genetic')
-            name (str): name of the rectangle
-            genetic (Genetic): genetic of the car
+            x (int): x position of the rectangle
+            y (int): y position of the rectangle
+            # TODO : a dictionary to find x and y from id_rect
             id_rect (int): id of the rectangle
-            pos (tuple): position of the rectangle
+            memory_car (MemoryCar): memory car of the rectangle
         """
-        self.pos = pos  # Position of the rectangle
-        self.id_car = id_car  # Id of the car
+        self.x, self.y = x, y  # Position of the rectangle
         self.id_rect = id_rect  # Id of the rectangle
-        self.type_car = type_car  # Type of the car
-        self.car = Car(genetic, scores, color, view_only=True)  # Car of the rectangle
-
+        self.memory_car = memory_car  # Memory car of the rectangle
         self.last_time_color_clicked = 0  # Last time the color was clicked
 
         # Buttons
-        self.edit_button = Button(x=pos[0] + 188, y=pos[1] + 40, image_name='pen', scale=0.15)  # Button to edit the car
-        self.select_button = Button(x=pos[0] + 188, y=pos[1] + 8, image_name='checkbox', scale=0.07)  # Button of the writing button
-        self.delete_button = Button(x=pos[0] + 153, y=pos[1] + 5, image_name='trash', scale=0.14)  # Button to delete the car
-        self.name_button = Button(x=pos[0] + 10, y=pos[1] + 10, only_one_image=True, image_name='grey', writing_button=True, scale=6)  # Button to edit the name of the car
-
-        if dict_check[self.id_rect]:
-            self.select_button.activated = True
-            var.CARS_FROM_GARAGE.append(self.car)
+        self.edit_button = Button(x=x + 188, y=y + 40, image_name='pen', scale=0.15)  # Button to edit the car
+        self.select_button = Button(x=x + 188, y=y + 8, image_name='checkbox', scale=0.07)  # Button of the writing button
+        self.selected = selected  # If the car is selected or not
+        self.delete_button = Button(x=x + 153, y=y + 5, image_name='trash', scale=0.14)  # Button to delete the car
+        self.name_button = Button(x=x + 10, y=y + 10, only_one_image=True, image_name='grey', writing_button=True, variable=self.memory_car.name, name='car_name', scale=6)  # Button to edit the name of the car
 
     def __str__(self):
         """
@@ -60,7 +51,7 @@ class RectGarage:
         """
         return f'RectGarage {self.id_rect} : Checked = {self.select_button.activated}, Name = {self.name_button.name}'
 
-    def draw_rect_garage(self, time_since_last_delete=0):
+    def draw(self, time_since_last_delete):
         """
         Draw the rectangle in the garage menu
 
@@ -68,89 +59,109 @@ class RectGarage:
             time_since_last_delete (int): time since the last deletion of a car to avoid multiple deletions
 
         Returns:
-            bool: True if the car is deleted, False otherwise
+            (bool, bool): (True if the car is deleted, False otherwise ; True if the select button is clicked, False otherwise)
         """
-        # We draw the rectangle for the car
-        new_pos = convert_to_new_window(self.pos)
-        pygame.draw.rect(var.WINDOW, (1, 1, 1), (new_pos[0], new_pos[1], var.SCALE_RESIZE_X * 225,  var.SCALE_RESIZE_Y * 75), 2)
+        # We draw the rectangle itself
+        pygame.draw.rect(var.WINDOW, (1, 1, 1), (convert_to_new_window((self.x, self.y, 225,  75))), 2)
 
+        self.draw_rect_color()  # We draw the rectangle of the color
+        self.draw_name_button()  # We draw the name button
+        self.draw_score()  # We draw the score
+        select_car = self.draw_select_button()  # We draw the select button
+        self.draw_edit_button()  # We draw the edit button
+        delete_car = self.draw_delete_button(time_since_last_delete)  # We draw the delete button
+
+        return delete_car, select_car
+
+    def draw_rect_color(self):
+        """
+        Draw the rectangle where we can find the color of the car, depending on the mouse state
+        """
         # We draw the rects for the color of the car
-        pos_color = convert_to_new_window((self.pos[0] + 154, self.pos[1] + 40))
-        rect_color = pygame.rect.Rect(pos_color[0], pos_color[1], var.SCALE_RESIZE_X * 26, var.SCALE_RESIZE_Y * 26)
-        pygame.draw.rect(var.WINDOW, CAR_COLORS[self.car.color], rect_color, 0)
+        rect_color = pygame.rect.Rect(convert_to_new_window((self.x + 154, self.y + 40, 26, 26)))
+        pygame.draw.rect(var.WINDOW, CAR_COLORS[self.memory_car.color], rect_color, 0)  # We fill the rectangle with the color of the car
 
         if rect_color.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
             pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 4)
             # We change the color of the car if the user clicked on the color
-            if pygame.mouse.get_pressed()[0] and time.time() - self.last_time_color_clicked > 0.2:
+            if pygame.mouse.get_pressed()[0] and time.time() - self.last_time_color_clicked > 0.3:
                 self.last_time_color_clicked = time.time()
-                self.car.change_color(random.choice(list(CAR_COLORS.keys())))  # We change the color of the car randomly
-                var.update_car_color(self.type_car, self.id_car, self.car.color)  # We update the color of the car in the file
+                self.memory_car.color = random.choice(list(CAR_COLORS.keys()))  # We change the color of the car randomly
         else:
             pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 2)
 
-        # Button with the name of the car
-        self.name_button.draw()
+    def draw_name_button(self):
+        """
+        Draw the button to edit the name of the car
+        """
+        self.name_button.draw(True)
         if self.name_button.just_clicked:
             self.name_button.text = ''  # We reset the name at the beginning
 
-        # Text for the score of the car
-        if var.NUM_MAP == 5:   # If it's the map 5 (waiting screen), we divide the score by 100 and cast it to an int
-            text = var.SMALL_FONT.render(f'Score : {int(self.car.best_scores[var.NUM_MAP] / 100)}', True, (0, 0, 0))
+    def draw_score(self):
+        """
+        Draw the score of the car
+        """
+        if var.NUM_MAP == 5:  # If it's the map 5 (waiting screen), we divide the score by 100 and cast it to an int
+            text = var.SMALL_FONT.render(f'Score : {int(self.memory_car.best_scores[var.NUM_MAP] / 100)}', True, (0, 0, 0))
         else:
-            text = var.SMALL_FONT.render(f'Score : {self.car.best_scores[var.NUM_MAP]}', True, (0, 0, 0))
-        var.WINDOW.blit(text, (new_pos[0] + 20, new_pos[1] + 45))
+            text = var.SMALL_FONT.render(f'Score : {self.memory_car.best_scores[var.NUM_MAP]}', True, (0, 0, 0))
+        var.WINDOW.blit(text, convert_to_new_window((self.x + 20, self.y + 45)))
 
-        # Button to select a car
-        if self.select_button.draw():
-            if not dict_check[self.id_rect]:
-                dict_check[self.id_rect] = True
-                var.CARS_FROM_GARAGE.append(self.car)
-        else:
-            if dict_check[self.id_rect]:
-                dict_check[self.id_rect] = False
-                var.CARS_FROM_GARAGE.remove(self.car)
+    def draw_select_button(self):
+        """
+        Draw the button to select a car
 
-        # Button to edit a car
-        if self.edit_button is not None and self.edit_button.draw():  # We check the state of the button
-            DICE_MENU.init(self.type_car, self.car.genetic.get_list(), self.id_car)  # We initialize the dice data
+        Returns:
+            bool: True if the select button is clicked, False otherwise
+        """
+        self.select_button.draw()
+        if self.select_button.just_clicked:
+            if self.select_button.activated:  # Button activated
+                var.SELECTED_MEMORY_CARS.append(self.memory_car)
+                self.selected = True
+
+            else:  # Button deactivated
+                for selected_memory_car in var.SELECTED_MEMORY_CARS:
+                    if selected_memory_car.id == self.memory_car.id:
+                        var.SELECTED_MEMORY_CARS.remove(selected_memory_car)
+                        break
+                self.selected = False
+
+            return True
+        return False
+
+    def draw_edit_button(self):
+        """
+        Draw the button to edit a car
+        """
+        if self.edit_button.draw():  # We check the state of the button
+            DICE_MENU.init(values=self.memory_car.genetic.get_list(), id_memory_car=self.memory_car.id)  # We initialize the dice data
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
-        # Button to delete a car
-        if self.delete_button.draw() and pygame.time.get_ticks() - time_since_last_delete > 200:  # We check the state of the button
+    def draw_delete_button(self, time_since_last_delete):
+        """
+        Draw the button to delete a car if necessary
 
-            # We change the state of the checkbox
-            if self.id_rect == 9:
-                dict_check[self.id_rect] = False
-            else:
-                for i in range(self.id_rect, 9):
-                    dict_check[i] = dict_check[i + 1]
+        Args:
+            time_since_last_delete (int): time since the last deletion of a car to avoid multiple deletions
 
-            for item in var.MEMORY_CARS.get(self.type_car):
-                if item[0] == self.id_car:
-                    var.MEMORY_CARS.get(self.type_car).remove(item)
-                    return True
+        Returns:
+            bool: True if the car is deleted, False otherwise
+        """
+        if self.delete_button.draw() and time.time() - time_since_last_delete > 0.2:  # We check the state of the button
+            var.MEMORY_CARS.remove(self.memory_car)
+            return True
 
         return False
 
-
     def save_new_car_name(self):
         """
-        Save the car in the memory (when the user has finished editing the name of the car)
+        Save the new name of the car when it is changed
         """
-        if self.name_button.text == '':
-            self.name_button.text = f'Voiture_{self.id_car}'
-
-        # We change the value of the car in the memory
-        var.update_car_name(self.type_car, self.id_car, self.name_button.text)
-
-        self.name_button.activated = False  # We stop changing the name of the car
-        self.draw_rect_garage()  # We display the rectangle with the new text
+        for memory_car in var.MEMORY_CARS:
+            if memory_car.id == self.memory_car.id:
+                memory_car.name = self.name_button.name
+                break
 
 
-def reset_dict_check():
-    """
-    Reset the state of the checkbox
-    """
-    global dict_check
-    dict_check = [False] * 10

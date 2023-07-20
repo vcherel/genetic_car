@@ -29,3 +29,34 @@ class ColorDice:
             self.bad_colors = []
         else:
             self.bad_colors = bad_colors  # The color that we know is not the color of the dice
+
+
+class MemoryCar:
+    """
+    This class represents a car in the memory
+    """
+    def __init__(self, id_car, name, color, genetic, best_scores):
+        """
+        Initialize the MemoryCar object
+
+        Args:
+            id_car (int): Id of the car (unique)
+            name (str): Name of the car
+            color (str): Color of the car
+            genetic (Genetic): Genetic of the car
+            best_scores (list): Scores of the car
+        """
+        self.id = id_car
+        self.name = name
+        self.color = color
+        self.genetic = genetic
+        self.best_scores = best_scores
+
+    def __str__(self):
+        """
+        Return the string of the car (to write it in the file)
+        """
+        string = f'{self.id} {self.name} {self.color} {self.genetic}'
+        for score in self.best_scores:
+            string += f' {score}'
+        return string

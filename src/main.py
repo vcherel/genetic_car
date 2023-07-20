@@ -1,7 +1,7 @@
 from src.data.analyze_data import analyze_data_scores, show_positions_crash  # Import the analyze_data function
 from src.data.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from src.menus.garage import GARAGE, add_garage_cars  # Import the garage
+from src.menus.garage_menu import GARAGE, add_garage_cars  # Import the garage
 from src.menus.settings_menu import SETTINGS  # Import the settings
 from src.game.genetic import Genetic  # Import the genetic class
 from src.other.utils import union_rect  # Import the utils
@@ -329,7 +329,6 @@ if __name__ == '__main__':
         var.change_map(first_time=True)  # Change the map to the first one
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
-        GARAGE.init()  # Initialize the garage
         display.edit_background()  # Add elements not clickable to the background
 
         if var.SHOW_ANALYSIS:
@@ -345,7 +344,7 @@ if __name__ == '__main__':
         elif var.TEST_VALUE_GENETIC_PARAMETERS:
             run_test_value_genetic_parameters()
         else:
-            open_window()  # Start the game
+            open_window()  # Start the application
 
     except Exception as e:
         traceback.print_exc()  # Print the error

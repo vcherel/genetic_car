@@ -13,8 +13,8 @@ class Settings:
         """
         Initialize the settings window the first time
         """
-        self.rect = None  # Rectangle of the window
         self.image = None  # Image of the window
+        self.rect = None  # Rect of the window
         self.x = self.y = None  # Position of the window
 
         self.see_cursor_button = None  # The button to see the clics
@@ -54,10 +54,9 @@ class Settings:
         """
         self.x, self.y = convert_to_new_window((175, 125))  # Position of the window
         self.image = scale_image(pygame.image.load(PATH_IMAGE + '/settings_menu.png'))  # Load the image of the window
-        self.rect = self.image.get_rect()  # Get the rectangle of the image
-        self.rect.x, self.rect.y = self.x, self.y  # Set the position of the rectangle
+        self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Create the rect of the window
 
-        self.see_cursor_button = Button(x=1340, y=650, image_name='checkbox', scale=0.02)
+        self.see_cursor_button = Button(x=1340, y=650, image_name='checkbox', scale=0.02)  # Hidden button to see the cursor
 
         # General section
         self.fps_button = Button(x=292, y=221, image_name='writing', variable=var.FPS, name='FPS', scale_x=0.5)
@@ -66,6 +65,7 @@ class Settings:
         # Display section
         self.see_cones_button = Button(x=474, y=455, image_name='checkbox', scale=0.1)
         self.see_explosions_button = Button(x=402, y=530, image_name='checkbox', scale=0.1)
+        self.see_explosions_button.activated = True  # We activate the explosions by default
         self.see_checkpoints_button = Button(x=412, y=597, image_name='checkbox', scale=0.1)
 
         # Car section
@@ -90,7 +90,7 @@ class Settings:
                                 self.proportion_button, self.seed_button, self.width_cone_button, self.length_cone_button,
                                 self.drift_button]
 
-    def show(self):
+    def draw(self):
         """
         Display the settings window
         """
@@ -107,7 +107,7 @@ class Settings:
         var.SEE_CHECKPOINTS = self.see_checkpoints_button.draw()  # Check the state of the button
         if self.see_checkpoints_button.just_clicked and not var.SEE_CHECKPOINTS:
             var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Erase the checkpoints
-        var.SEE_EXPLOSIONS = self.see_explosions_button.draw()  # Check the state of the button
+        var.SHOW_EXPLOSIONS = self.see_explosions_button.draw()  # Check the state of the button
 
     def erase(self):
         """

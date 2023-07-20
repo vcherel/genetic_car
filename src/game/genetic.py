@@ -42,7 +42,7 @@ class Genetic:
         Returns:
             str: string representation of the genetic algorithm
         """
-        return f' {self.length_slow // var.LENGTH_CONE} {self.length_medium // var.LENGTH_CONE} {self.length_fast // var.LENGTH_CONE} ' \
+        return f'{self.length_slow // var.LENGTH_CONE} {self.length_medium // var.LENGTH_CONE} {self.length_fast // var.LENGTH_CONE} ' \
                f'{self.width_slow // var.WIDTH_CONE} {self.width_medium // var.WIDTH_CONE} {self.width_fast // var.WIDTH_CONE}'
 
     def __eq__(self, other):

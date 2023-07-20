@@ -1,7 +1,8 @@
 from src.other.utils import convert_to_new_window  # To convert the position of the button
 import src.data.variables as var  # Import the data
-import os.path  # To get the path of the file
 import pygame  # To use pygame
+import time  # To get the time
+
 
 """
 This file contains the Button class and all the functions related to it
@@ -23,7 +24,7 @@ class Button:
             only_one_image (bool): True if the button has only one image, False otherwise (it means there is three images depending on the state of the button)
             checkbox (bool): True if the button is a checkbox, False otherwise
             writing_button (bool): True if the button is a writing button, False otherwise
-            variable (int) : variable associated to the text of the writing button
+            variable (int or str) : variable associated to the text of the writing button
             name (str): name of the button (used to know if there is special actions to do) or the name of the variable
             associated to the text of the writing button (used for the settings)
             scale (float): scale of the button
@@ -58,7 +59,7 @@ class Button:
             self.rect.topleft = (self.x, self.y)  # Position of the button
 
             self.activated = False    # True if the checkbox is checked, False otherwise
-            self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been activated ; -1 if the button has just been deactivated
+            self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been clicked
             self.time_clicked = 0   # Time when the button is clicked
             self.mouse_over_button = False  # True if the mouse is over the button, False otherwise
 
@@ -86,26 +87,24 @@ class Button:
                f' ; time_clicked = {self.time_clicked} ; check_box = {self.checkbox} ; writing_button = {self.writing_button}' \
                f' ; text = {self.text} ; variable = {self.variable} ; name = {self.name}'
 
-    def draw(self):
+    def draw(self, debug=False):
         """
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
 
         Returns:
             bool: True if button activated ; False otherwise
         """
+
         image = self.image  # Image of the button
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
             self.mouse_over_button = True
-            if pygame.mouse.get_pressed()[0] == 1 and pygame.time.get_ticks() - self.time_clicked > 300:    # Mouse clicked for the first time
-                self.time_clicked = pygame.time.get_ticks()  # Get the time when the button is clicked
+            if pygame.mouse.get_pressed()[0] == 1 and time.time() - self.time_clicked > 0.3:    # Mouse clicked for the first time
+                self.time_clicked = time.time()  # Get the time when the button is clicked
                 if self.checkbox or self.writing_button:
                     self.activated = not self.activated  # Change the state of the checkbox
                 else:
                     self.activated = True     # Activate the button
-                if self.activated:
-                    self.just_clicked = 1
-                else:
-                    self.just_clicked = -1
+                self.just_clicked = 1
 
             else:
                 self.just_clicked = 0   # The button has not just been clicked
@@ -160,17 +159,24 @@ class Button:
     def deactivate(self):
         self.activated = False
         self.just_clicked = -1
-        self.time_clicked = pygame.time.get_ticks()
+        self.time_clicked = time.time()
         if self.writing_button:
             self.save_text()
 
     def save_text(self):
         """
-        Save the text of the button in the file parameters
+        Save the text of the button into the variable
         """
         if self.variable is not None:
             try:
-                if '.' in self.text:
+                if self.name == 'dice':  # If it's a dice value we check if it's between 1 and 6
+                    self.variable = max(1, self.variable)
+                    self.variable = min(6, self.variable)
+
+                elif self.name == 'car_name':
+                    self.variable = self.text
+
+                elif '.' in self.text:
                     self.variable = float(self.text)
                     if self.variable <= 0:
                         self.variable = 0.1
@@ -179,15 +185,6 @@ class Button:
                     if self.variable < 0:
                         self.variable = 30
 
-                if self.name == 'dice':  # If it's a dice value we check if it's between 1 and 6
-                    self.variable = max(1, self.variable)
-                    self.variable = min(6, self.variable)
-
-                # If it's the number of cars we change the variable in the file parameters
-                if self.name == 'nb_cars':
-                    with open(os.path.dirname(__file__) + "/../../data/parameters", "w") as file_parameters_write:
-                        file_parameters_write.write(str(var.NUM_MAP) + "\n" + str(self.variable))
-
             except ValueError:
                 if self.name == 'dice':
                     self.variable = 1
@@ -195,3 +192,8 @@ class Button:
                     self.variable = 30
 
             self.text = str(self.variable)  # Reset the text
+
+    def resize(self):
+        """
+
+        """
