@@ -30,7 +30,7 @@ class Garage:
         self.actual_y = 0  # Actual y position to write the rectangles
         self.change_y = False  # True if the y position has to change in the next rectangle (it means we are at the right of the garage)
         self.actual_page = 0  # Actual page of the garage
-        self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning)
+        self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning, when we change of page, or after a deletion)
         self.time_since_last_delete = 0  # Time since the last delete of a car
         self.trash_button = Button(x=930, y=135, image_name='trash', scale=0.2)
         self.next_button = Button(x=940, y=623, image_name='next_page', scale=0.2)
@@ -117,11 +117,12 @@ class Garage:
         self.trash_button.draw()  # We draw the trash button
         if self.trash_button.activated:
             var.MEMORY_CARS = []  # We reset the memory of the cars
+            var.ACTUAL_IDS_MEMORY_CARS = 1
             self.reload_page = True  # We have to change the page of the garage
 
     def reload(self):
         """
-        Reload the page of the garage (after a deletion or at the beginning)
+        Reload the page of the garage
         """
         self.reset()  # We reset the variables of the menu
 

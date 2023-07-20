@@ -1,5 +1,5 @@
 from src.other.camera_utils import *  # Utils functions for the camera
-from src.data.data_structures import ColorDice  # To find the color of each dice
+from src.data.data_classes import ColorDice  # To find the color of each dice
 from src.menus.dice_menu import update_pygame_camera_frame  # To save the camera frame
 from src.other.utils import convert_to_new_window  # Utils functions
 import src.data.variables as var  # Variables
@@ -400,7 +400,7 @@ def determine_score(image, rect, color, scores, len_memory=40):
     # Optimize the parameters of the HoughCircles function if necessary
     if count_iterations == wait_optimize and optimize_hough_circle:
         if color in theorical_values:
-            optimize_parameters(gray_image, color, theorical_coordinates[color], rect)
+            optimize_parameters(gray_image, color, rect)
 
     if circles:
         score = len(circles)  # We count the number of circles
@@ -519,13 +519,12 @@ def add_circle_from_memory(circles, color, lifetime=30):
     return new_circles
 
 
-def optimize_parameters(image, color, value, rect):
+def optimize_parameters(image, color, rect):
     """
     Optimize the parameters of the HoughCircles function by testing different values and printing the results
     Args:
         image (numpy.ndarray): Image on which to optimize the parameters (must be in grayscale)
         color (str): Color of the dice
-        value (int): Number of circles to detect
         rect (tuple): Coordinates of the rectangle
     """
     for p1 in range(p1_min, p1_max + 1):
@@ -533,10 +532,10 @@ def optimize_parameters(image, color, value, rect):
         for p2 in range(p2_min, p2_max + 1):
             for dp in range(dp_min, dp_max + 1):
                 if p1 > p2:
-                    optimize_hough_circles(image, color, value, rect, p1, p2, dp)
+                    optimize_hough_circles(image, color, rect, p1, p2, dp)
 
 
-def optimize_hough_circles(image, color, value, rect, p1, p2, dp):
+def optimize_hough_circles(image, color, rect, p1, p2, dp):
     """
     Run the HoughCircles function with the given parameters and verify if the result is correct to save the parameters
     in dictionaries
@@ -544,7 +543,6 @@ def optimize_hough_circles(image, color, value, rect, p1, p2, dp):
     Args:
         image (numpy.ndarray): Image on which to optimize the parameters (must be in grayscale)
         color (str): Color of the dice
-        value (int): Number of circles to detect
         rect (tuple): Coordinates of the rectangle
         p1 (int): First parameter of the HoughCircles function
         p2 (int): Second parameter of the HoughCircles function

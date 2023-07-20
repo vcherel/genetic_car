@@ -170,6 +170,7 @@ class Button:
         if self.variable is not None:
             try:
                 if self.name == 'dice':  # If it's a dice value we check if it's between 1 and 6
+                    self.variable = int(self.text)
                     self.variable = max(1, self.variable)
                     self.variable = min(6, self.variable)
 

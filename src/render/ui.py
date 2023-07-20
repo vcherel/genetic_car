@@ -4,7 +4,7 @@ from src.other.camera import capture_dice  # Import the function to capture the 
 from src.render.display import display_text_ui  # Import functions from display
 from src.menus.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.menus.settings_menu import SETTINGS  # Import the settings window
-from src.data.data_structures import MemoryCar  # Import the car memory
+from src.data.data_classes import MemoryCar  # Import the car memory
 from src.menus.garage_menu import GARAGE  # Import the garage window
 from src.data.constants import START_POSITIONS  # Import constants
 from src.game.genetic import Genetic  # Import the genetic class
@@ -99,7 +99,7 @@ def handle_clicks(cars):
         var.NB_CARS = nb_cars_button.variable
 
     if var.DISPLAY_DICE_MENU:  # If we click outside the dice menu, we stop changing the value of the dice and we save it
-        for index, writing_button in enumerate(DICE_MENU.writing_buttons):
+        for index, writing_button in enumerate(DICE_MENU.values_button):
             if writing_button.activated:
                 writing_button.deactivate()  # Stop changing the value of the dice
                 DICE_MENU.save_values(index, writing_button)  # Save the values of the dice
@@ -113,7 +113,9 @@ def handle_clicks(cars):
                 rect_garage.name_button.activated = False
                 rect_garage.save_new_car_name()  # Save the name of the car
 
-    if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not garage_button.rect.collidepoint(pygame.mouse.get_pos()):
+    if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not\
+            garage_button.rect.collidepoint(pygame.mouse.get_pos()) and not var.DISPLAY_DICE_MENU:
+        # We don't want to delete the garage if we click during the dice menu (modification of the values of a car)
         delete_garage()  # Delete the garage if we click outside of it
 
     if var.DISPLAY_SETTINGS:
@@ -158,10 +160,10 @@ def handle_key_press(event):
 
     # We change value of dice if necessary
     if var.DISPLAY_DICE_MENU:
-        for index, writing_button in enumerate(DICE_MENU.writing_buttons):
-            if writing_button.activated:
-                if writing_button.update(event):  # If the value has been saved
-                    DICE_MENU.save_values(index, writing_button)  # Save the values of the dice
+        for index, value_button in enumerate(DICE_MENU.values_button):
+            if value_button.activated:
+                if value_button.update(event):  # If the value has been saved
+                    DICE_MENU.save_values(index, value_button)  # Save the values of the dice
 
     # We change value of car name if necessary
     if GARAGE.rectangles:
@@ -302,11 +304,11 @@ def display_dice_button():
             pause()
             DICE_MENU.init(values=capture_dice(), by_camera=True)  # We initialize the data of the dice
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
+            GARAGE.reload_page = True  # We reload the page of the garage
 
     if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we draw it and do the actions
         if DICE_MENU.display_dice_menu():  # If the user has validated the dice
             DICE_MENU.erase_dice_menu()  # We erase the dice menu when the check button is pressed
-            GARAGE.reload_page = True  # We reload the garage page
 
 
 def display_map_button(cars):

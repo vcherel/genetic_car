@@ -1,6 +1,6 @@
 import itertools  # Used to get all the combinations of cars
 import src.data.variables as var  # Variables of the game
-from src.data.data_structures import MemoryCar  # Import the car memory
+from src.data.data_classes import MemoryCar  # Import the car memory
 import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
 

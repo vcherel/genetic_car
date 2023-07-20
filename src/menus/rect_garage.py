@@ -1,5 +1,5 @@
 from src.other.utils import convert_to_new_window  # To convert positions when resizing the window
-from src.data.data_structures import MemoryCar  # Import the memory car class
+from src.data.data_classes import MemoryCar  # Import the memory car class
 from src.data.constants import CAR_COLORS  # Import the constants
 from src.menus.dice_menu import DICE_MENU  # Import the dice menu
 from src.render.button import Button  # Import the button class
@@ -26,7 +26,6 @@ class RectGarage:
         Args:
             x (int): x position of the rectangle
             y (int): y position of the rectangle
-            # TODO : a dictionary to find x and y from id_rect
             id_rect (int): id of the rectangle
             memory_car (MemoryCar): memory car of the rectangle
         """
@@ -161,7 +160,5 @@ class RectGarage:
         """
         for memory_car in var.MEMORY_CARS:
             if memory_car.id == self.memory_car.id:
-                memory_car.name = self.name_button.name
+                memory_car.name = self.name_button.variable
                 break
-
-

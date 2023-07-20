@@ -1,7 +1,7 @@
 from src.other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
 from src.render.display import draw_detection_cone, draw_dice  # Import the display functions
 from src.data.constants import RGB_VALUES_DICE, START_POSITIONS  # Import the constants
-from src.data.data_structures import MemoryCar  # Import the car memory
+from src.data.data_classes import MemoryCar  # Import the car memory
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button class
 import src.data.variables as var  # Import the data
@@ -36,7 +36,7 @@ class DiceMenu:
         self.by_camera = None  # True if the dice menu is called by the camera, False if we are modifying the dice
         self.rect = None  # Rectangle of the dice menu
         self.x = self.y = None  # Coordinates of the dice menu
-        self.writing_buttons = None  # List of the rectangles to write the text
+        self.values_button = None  # List of the rectangles to write the text
         self.check_button = None  # The button to validate the dice
 
     def dice_button(self, x, y, value):
@@ -76,9 +76,9 @@ class DiceMenu:
             self.x = 300
             self.y = 125
 
-        self.writing_buttons = [self.dice_button(x1, y1, self.dice_values[0]), self.dice_button(x2, y1, self.dice_values[1]),
-                                self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
-                                self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
+        self.values_button = [self.dice_button(x1, y1, self.dice_values[0]), self.dice_button(x2, y1, self.dice_values[1]),
+                              self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
+                              self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
 
         self.check_button = Button(x=self.x + 888, y=self.y + 445, image_name='check', scale=0.4)
 
@@ -112,10 +112,10 @@ class DiceMenu:
         draw_dice(x=self.x + x3, y=self.y + y2, color=RGB_VALUES_DICE[5], value=self.dice_values[5])
 
         # Display the buttons
-        for index, writing_button in enumerate(self.writing_buttons):
+        for index, writing_button in enumerate(self.values_button):
             writing_button.draw()
             if writing_button.just_clicked:  # We erase the value of the dice if the user has clicked on the button
-                self.writing_buttons[index].text = ''
+                self.values_button[index].text = ''
 
         # Display the image of the last frame of the camera
         if self.by_camera and camera_frame is not None:  # If we are modifying dice from the camera
@@ -148,7 +148,6 @@ class DiceMenu:
             index (int): Index of the dice in the memory
             writing_button (Button): Button to write the value of the dice
         """
-        print(self.dice_values)
         self.dice_values[index] = writing_button.variable
 
         if not self.by_camera:

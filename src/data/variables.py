@@ -1,7 +1,7 @@
 from src.data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
 from src.other.utils import scale_image, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
-from src.data.data_structures import MemoryCar  # Import the MemoryCar class
+from src.data.data_classes import MemoryCar  # Import the MemoryCar class
 from src.game.genetic import Genetic  # Import the Genetic class
 import pygame  # To use pygame
 import sys  # To quit the game
@@ -317,6 +317,6 @@ def save_variables():
         for memory_car in MEMORY_CARS:
             str_to_write = f'{memory_car.id} {memory_car.name} {memory_car.color} {memory_car.genetic}'
             for score in memory_car.best_scores:
-                str_to_write += f' {score}'
+                str_to_write += f' {int(score)}'  # We cast to int because it can be a float vor the waiting map
             str_to_write += '\n'
             file_cars_write.write(str_to_write)
