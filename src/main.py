@@ -223,7 +223,6 @@ def stop_play(cars):
             var.LAP_COMPLETED = False
             for car in cars:
                 if car.score > 150:
-                    print('we write')
                     var.FILE_TEST.write(f'{var.NUM_GENERATION}\n')
                     var.TEST_FINISHED = True
                     return  # We stop the game

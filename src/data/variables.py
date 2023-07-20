@@ -57,7 +57,8 @@ BIG_RED_CAR_IMAGE = None
 
 
 # GAME
-SEED = None  # Seed of the game
+LIST_SEED = [0] * len(START_POSITIONS)  # Seed of the game for each map
+SEED = None  # Seed of the game for the current map
 NUM_MAP = 0  # Number of the map
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
@@ -68,19 +69,28 @@ PLAY_LAST_RUN = False  # True if we want to play the last run again, False other
 # CARS
 START_POSITION = None  # Start position of the car
 NB_CARS_ALIVE = 0  # Number of cars alive
-NB_CARS = 50  # Number of cars
+LIST_NB_CARS = [30] * len(START_POSITIONS)  # Number of cars for each map
+NB_CARS = None  # Number of cars for the current map
 CARS_LAST_RUN = []  # Cars of the last run
 DO_DRIFT = True  # True if we want to see the drift of the cars, False otherwise
-DRIFT_FACTOR = 2.5  # Factor of the drift
-
+LIST_DRIFT_FACTOR = [2.0] * len(START_POSITIONS)  # Factor of the drift for each map
+DRIFT_FACTOR = None  # Factor of the drift for the current map
 
 # CHARACTERISTICS CARS
-WIDTH_CONE = 16  # Width multiplier of the cone
-LENGTH_CONE = 11  # Length multiplier of the cone
-MAX_SPEED = 9  # Maximum speed of the car
-TURN_ANGLE = 8  # Angle of rotation of the car
-ACCELERATION = 0.1  # Acceleration of the car
-DECELERATION = 0.7  # Deceleration of the car
+LIST_WIDTH_CONE = [16] * len(START_POSITIONS)  # Width multiplier of the cone for each map
+WIDTH_CONE = None  # Width multiplier of the cone for the current map
+LIST_LENGTH_CONE = [11] * len(START_POSITIONS)  # Length multiplier of the cone for each map
+LENGTH_CONE = None  # Length multiplier of the cone for the current map
+LIST_MAX_SPEED = [9] * len(START_POSITIONS)  # Maximum speed of the car for each map
+MAX_SPEED = None  # Maximum speed of the car for the current map
+MIN_MEDIUM_SPEED = None  # Minimum speed of the car to be considered as medium speed
+MIN_HIGH_SPEED = None  # Minimum speed of the car to be considered as high speed
+LIST_TURN_ANGLE = [8] * len(START_POSITIONS)  # Angle of rotation of the car for each map
+TURN_ANGLE = None  # Angle of rotation of the car for the current map
+LIST_ACCELERATION = [0.1] * len(START_POSITIONS)  # Acceleration of the car for each map
+ACCELERATION = None  # Acceleration of the car for the current map
+LIST_DECELERATION = [0.7] * len(START_POSITIONS)  # Deceleration of the car for each map
+DECELERATION = None  # Deceleration of the car for the current map
 
 
 # DEBUG
@@ -114,11 +124,15 @@ LAST_TIME_REMAINING = []  # List of the remaining time during the last turns
 
 
 # GENETIC
-TIME_GENERATION = 60  # Time of a generation
+LIST_TIME_GENERATION = [60] * len(START_POSITIONS)  # Time of a generation for each map
+TIME_GENERATION = 0  # Time of a generation for the current map
 NUM_GENERATION = 1  # Number of the generation
-CHANCE_MUTATION = 0.3  # Chance of mutation
-CHANCE_CROSSOVER = 0.3  # Chance of crossover
-PROPORTION_CARS_KEPT = 0.1  # Percentage used to know how many cars we keep for the next generation
+LIST_CHANCE_MUTATION = [0.3] * len(START_POSITIONS)  # Chance of mutation for each map
+CHANCE_MUTATION = None  # Chance of mutation for the current map
+LIST_CHANCE_CROSSOVER = [0.3] * len(START_POSITIONS)  # Chance of crossover for each map
+CHANCE_CROSSOVER = None  # Chance of crossover for the current map
+LIST_PROPORTION_CARS_KEPT = [0.1] * len(START_POSITIONS)  # Percentage used to know how many cars we keep for the next generation for each map
+PROPORTION_CARS_KEPT = None  # Percentage used to know how many cars we keep for the next generation for the current map
 
 
 # MENU
@@ -144,7 +158,7 @@ def exit_game():
     """
     Exit the game
     """
-    save_variables()  # Save the cars
+    save_cars()  # Save the cars
     sys.exit()  # Quit pygame
 
 
@@ -171,7 +185,9 @@ def change_map(first_time=False):
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
     """
-    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, EXPLOSION_IMAGES
+    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, EXPLOSION_IMAGES, \
+        MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, NB_CARS, TIME_GENERATION, SEED, MAX_SPEED, TURN_ANGLE, ACCELERATION, \
+        DECELERATION, CHANCE_CROSSOVER, CHANCE_MUTATION, PROPORTION_CARS_KEPT, DRIFT_FACTOR, WIDTH_CONE, LENGTH_CONE
 
     # If we change map for the first time, we don't change the map
     if not first_time:
@@ -210,6 +226,22 @@ def change_map(first_time=False):
         for checkpoint in checkpoints:
             a, b = checkpoint.split(' ')
             CHECKPOINTS.append((int(a), int(b)))
+
+    NB_CARS = LIST_NB_CARS[NUM_MAP]  # Number of cars for the current map
+    TIME_GENERATION = LIST_TIME_GENERATION[NUM_MAP]  # Time of a generation for the current map
+    SEED = LIST_SEED[NUM_MAP]  # Seed of the game for the current map
+    MAX_SPEED = LIST_MAX_SPEED[NUM_MAP]  # Maximum speed of the car for the current map
+    MIN_MEDIUM_SPEED = MAX_SPEED / 3  # Minimum speed of the car to be considered as medium speed
+    MIN_HIGH_SPEED = MAX_SPEED / 1.5  # Minimum speed of the car to be considered as high speed
+    TURN_ANGLE = LIST_TURN_ANGLE[NUM_MAP]  # Angle of rotation of the car for the current map
+    ACCELERATION = LIST_ACCELERATION[NUM_MAP]  # Acceleration of the car for the current map
+    DECELERATION = LIST_DECELERATION[NUM_MAP]  # Deceleration of the car for the current map
+    DRIFT_FACTOR = LIST_DRIFT_FACTOR[NUM_MAP]  # Factor of the drift for the current map
+    WIDTH_CONE = LIST_WIDTH_CONE[NUM_MAP]  # Width multiplier of the cone for the current map
+    LENGTH_CONE = LIST_LENGTH_CONE[NUM_MAP]  # Length multiplier of the cone for the current map
+    CHANCE_CROSSOVER = LIST_CHANCE_CROSSOVER[NUM_MAP]  # Chance of crossover for the current map
+    CHANCE_MUTATION = LIST_CHANCE_MUTATION[NUM_MAP]  # Chance of mutation for the current map
+    PROPORTION_CARS_KEPT = LIST_PROPORTION_CARS_KEPT[NUM_MAP]  # Percentage used to know how many cars we keep for the next generation for the current map
 
 
 def update_visual_variables():
@@ -252,33 +284,55 @@ def load_variables():
     """
     Load the data of the game (number of the map, number of cars, cars, ...)
     """
-    global NUM_MAP, NB_CARS, FPS, TIME_GENERATION, MAX_SPEED, TURN_ANGLE, ACCELERATION, DECELERATION, CHANCE_MUTATION,\
-        CHANCE_CROSSOVER, PROPORTION_CARS_KEPT, SEED, WIDTH_CONE, LENGTH_CONE, BIG_RED_CAR_IMAGE, ACTUAL_IDS_MEMORY_CARS
+    global ACTUAL_IDS_MEMORY_CARS, BIG_RED_CAR_IMAGE
 
-    # We open the file parameters to read the number of the map and the number of cars
+    # We load the parameters of the game
     with open(PATH_DATA + 'parameters', 'r') as file_parameters_read:
-        try:
-            num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance,\
-                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = file_parameters_read.readlines()
-        except ValueError:
-            # Sometimes the file parameters is not complete, so we complete it
-            num_map, nb_cars, fps, time_generation, max_speed, turn_angle, acceleration, deceleration, mutation_chance, \
-                crossover_chance, proportion_car_kept, seed, width_cone, length_cone = 0, 50, 60, 60, 9, 8, 0.1, 0.6, 0.3, 0.3, 0.1, 0, 16, 11
-
-        NUM_MAP = int(num_map)  # Map number
-        NB_CARS = int(nb_cars)  # Number of cars
-        FPS = int(fps)  # FPS
-        TIME_GENERATION = int(time_generation)  # Time of a generation
-        MAX_SPEED = int(max_speed)  # Max speed of the car
-        TURN_ANGLE = int(turn_angle)  # Angle of the turn of the car
-        ACCELERATION = float(acceleration)  # Acceleration of the car
-        DECELERATION = float(deceleration)  # Deceleration of the car
-        CHANCE_MUTATION = float(mutation_chance)  # Chance of mutation
-        CHANCE_CROSSOVER = float(crossover_chance)  # Chance of crossover
-        PROPORTION_CARS_KEPT = float(proportion_car_kept)  # Proportion of car kept
-        SEED = int(seed)  # Seed of the random
-        WIDTH_CONE = int(width_cone)  # Width of the cone of vision
-        LENGTH_CONE = int(length_cone)  # Length of the cone of vision
+        """
+        Format of the file parameters:
+        # Circuit x
+        param1 = value1
+        param2 = value2
+        ...
+        # Circuit y
+        param1 = value1
+        ...
+        """
+        lines = file_parameters_read.readlines()  # We read the file
+        actual_map = -1  # Actual map (-1 because we start with the map 0)
+        for line in lines:
+            if line[0] == '#':
+                actual_map += 1  # We change the map
+            else:
+                line_split = line.split()
+                if line_split:
+                    param = line.split()[0]
+                    if param == 'nombre_voitures':
+                        LIST_NB_CARS[actual_map] = int(line.split()[2])
+                    elif param == 'temps_par_generation':
+                        LIST_TIME_GENERATION[actual_map] = int(line.split()[2])
+                    elif param == 'seed':
+                        LIST_SEED[actual_map] = int(line.split()[2])
+                    elif param == 'vitesse_max':
+                        LIST_MAX_SPEED[actual_map] = int(line.split()[2])
+                    elif param == 'angle_rotation':
+                        LIST_TURN_ANGLE[actual_map] = int(line.split()[2])
+                    elif param == 'force_acceleration':
+                        LIST_ACCELERATION[actual_map] = float(line.split()[2])
+                    elif param == 'force_freinage':
+                        LIST_DECELERATION[actual_map] = float(line.split()[2])
+                    elif param == 'coef_derapage':
+                        LIST_DRIFT_FACTOR[actual_map] = float(line.split()[2])
+                    elif param == 'largeur_cone':
+                        LIST_WIDTH_CONE[actual_map] = int(line.split()[2])
+                    elif param == 'longueur_cone':
+                        LIST_LENGTH_CONE[actual_map] = int(line.split()[2])
+                    elif param == 'chance_croisement':
+                        LIST_CHANCE_CROSSOVER[actual_map] = float(line.split()[2])
+                    elif param == 'chance_mutation':
+                        LIST_CHANCE_MUTATION[actual_map] = float(line.split()[2])
+                    elif param == 'proportion_selection':
+                        LIST_PROPORTION_CARS_KEPT[actual_map] = float(line.split()[2])
 
     with open(PATH_DATA + 'cars', 'r') as file_cars_read:
         """
@@ -303,16 +357,10 @@ def load_variables():
     BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
 
-def save_variables():
+def save_cars():
     """"
-    Load the data of the game (number of the map, number of cars, cars, ...)
+    Save the cars in the file cars
     """
-    # We change the variable in the file parameters
-    with open(PATH_DATA + 'parameters', 'w') as file_parameters_write:
-        file_parameters_write.write(f'{NUM_MAP}\n{NB_CARS}\n{FPS}\n{TIME_GENERATION}\n{MAX_SPEED}\n{TURN_ANGLE}\n'
-                                    f'{ACCELERATION}\n{DECELERATION}\n{CHANCE_MUTATION}\n{CHANCE_CROSSOVER}\n'
-                                    f'{PROPORTION_CARS_KEPT}\n{SEED}\n{WIDTH_CONE}\n{LENGTH_CONE}')
-
     with open(PATH_DATA + 'cars', 'w') as file_cars_write:
         for memory_car in MEMORY_CARS:
             str_to_write = f'{memory_car.id} {memory_car.name} {memory_car.color} {memory_car.genetic}'

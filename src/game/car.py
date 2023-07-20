@@ -13,8 +13,6 @@ This file contains the class Car used to represent a car in the game. The car is
 
 # Constants
 min_speed = 1  # Minimum speed of the car
-min_medium_speed = var.MAX_SPEED / 3
-min_high_speed = var.MAX_SPEED / 3 * 2
 
 add_to_speed_angle = 2  # Value added to the speed angle each turn to make it equals to the real angle
 turn_decrease_factor = 1  # Factor of the decrease of the turn angle (when at high speed, the car turns 'turn_decrease_factor' times slower)
@@ -296,10 +294,10 @@ class Car:
         Returns:
             width, length (int, int): the width and the length of the detection cone
         """
-        if self.speed < min_medium_speed:
+        if self.speed < var.MIN_MEDIUM_SPEED:
             width = self.genetic.width_slow
             length = self.genetic.length_slow
-        elif self.speed < min_high_speed:
+        elif self.speed < var.MIN_HIGH_SPEED:
             width = self.genetic.width_medium
             length = self.genetic.length_medium
         else:
@@ -349,9 +347,9 @@ class Car:
         """
         Draw the 3 detection cones of the car
         """
-        if self.speed < min_high_speed:
+        if self.speed < var.MIN_MEDIUM_SPEED:
             actual_mode = 'slow'
-        elif self.speed > min_high_speed:
+        elif self.speed > var.MIN_HIGH_SPEED:
             actual_mode = 'fast'
         else:
             actual_mode = 'medium'

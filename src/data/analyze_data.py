@@ -154,8 +154,9 @@ def analyze_value_genetic_parameters():
         # checking if it is a file
         if os.path.isfile(f):
             list_values = []  # List of the values for the current file
-            for line in open(f, 'r'):
-                list_values.append(int(line.split()[0]))
+            with open(f, 'r') as file:
+                for line in file:
+                    list_values.append(int(line.split()[0]))
             dict_mean_values[filename] = mean(list_values)
 
     print(dict_mean_values)

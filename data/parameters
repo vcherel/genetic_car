@@ -1,14 +1,89 @@
-0
-30
-500
-60
-9
-8
-0.1
-0.7
-0.2
-0.2
-0.2
-0
-16
-11
+# Circuit 0
+nombre_voitures = 30
+temps_par_generation = 60
+seed = 0
+vitesse_max = 9
+angle_rotation = 8
+force_acceleration = 0.1
+force_freinage = 0.7
+coef_derapage = 2
+largeur_cone = 16
+longueur_cone = 11
+chance_croisement = 0.3
+chance_mutation = 0.3
+proportion_selection = 0.1
+
+# Circuit 1
+nombre_voitures = 30
+temps_par_generation = 60
+seed = 0
+vitesse_max = 9
+angle_rotation = 8
+force_acceleration = 0.1
+force_freinage = 0.7
+coef_derapage = 2
+largeur_cone = 16
+longueur_cone = 11
+chance_croisement = 0.3
+chance_mutation = 0.3
+proportion_selection = 0.1
+
+# Circuit 2
+nombre_voitures = 30
+temps_par_generation = 60
+seed = 0
+vitesse_max = 9
+angle_rotation = 8
+force_acceleration = 0.1
+force_freinage = 0.7
+coef_derapage = 2
+largeur_cone = 16
+longueur_cone = 11
+chance_croisement = 0.3
+chance_mutation = 0.3
+proportion_selection = 0.1
+
+# Circuit 3
+nombre_voitures = 30
+temps_par_generation = 60
+seed = 0
+vitesse_max = 9
+angle_rotation = 8
+force_acceleration = 0.1
+force_freinage = 0.7
+coef_derapage = 2
+largeur_cone = 16
+longueur_cone = 11
+chance_croisement = 0.3
+chance_mutation = 0.3
+proportion_selection = 0.1
+
+# Circuit 4
+nombre_voitures = 30
+temps_par_generation = 60
+seed = 0
+vitesse_max = 9
+angle_rotation = 8
+force_acceleration = 0.1
+force_freinage = 0.7
+coef_derapage = 2
+largeur_cone = 16
+longueur_cone = 11
+chance_croisement = 0.3
+chance_mutation = 0.3
+proportion_selection = 0.1
+
+# Circuit 5
+nombre_voitures = 30
+temps_par_generation = 60
+seed = 0
+vitesse_max = 9
+angle_rotation = 8
+force_acceleration = 0.1
+force_freinage = 0.7
+coef_derapage = 2
+largeur_cone = 16
+longueur_cone = 11
+chance_croisement = 0.3
+chance_mutation = 0.3
+proportion_selection = 0.1
