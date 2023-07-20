@@ -50,7 +50,6 @@ def compute_detection_cone_points(angle, front_of_car, width, length):
     top = front_of_car[0] + math.cos(math.radians(angle)) * length, front_of_car[1] - math.sin(math.radians(angle)) * length  # Position of the top of the cone
     left = front_of_car[0] + math.cos(math.radians(angle + angle_cone)) * length, front_of_car[1] - math.sin(math.radians(angle + angle_cone)) * length  # Position of the left of the cone
     right = front_of_car[0] + math.cos(math.radians(angle - angle_cone)) * length, front_of_car[1] - math.sin(math.radians(angle - angle_cone)) * length  # Position of the right of the cone
-
     return [left, top, right]
 
 
@@ -82,16 +81,12 @@ def union_rect(rects):
     elif len(rects) == 1:
         return rects[0]
 
-    return_rect = pygame.Rect(0, 0, 0, 0)  # The union of the two rectangles we will return
-    return_rect.x = min([rect.x for rect in rects])
-    return_rect.y = min([rect.y for rect in rects])
-    return_rect.width = max([rect.x + rect.width for rect in rects]) - return_rect.x
-    return_rect.height = max([rect.y + rect.height for rect in rects]) - return_rect.y
-    offset = 5
+    offset = 5  # Offset to add to the union of the two rectangles
+    return_rect = pygame.Rect(min([rect.x for rect in rects]), min([rect.y for rect in rects]), 0, 0)  # The union of the two rectangles we will return
+    return_rect.width = max([rect.x + rect.width for rect in rects]) - return_rect.x + 2 * offset
+    return_rect.height = max([rect.y + rect.height for rect in rects]) - return_rect.y + 2 * offset
     return_rect.x -= offset
     return_rect.y -= offset
-    return_rect.width += 2 * offset
-    return_rect.height += 2 * offset
     return return_rect
 
 

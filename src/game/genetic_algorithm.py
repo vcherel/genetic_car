@@ -34,16 +34,16 @@ def apply_genetic(cars):
                 cars = mutate(cars, cars_to_keep)  # Mutate the cars
             elif var.TEST_MODE == 'mutation_crossover':
                 cars = mutate(cars, cars_to_keep)  # Mutate the cars
-                cars = crossover(cars)  # Crossover the cars
+                crossover(cars)  # Crossover the cars
             elif var.TEST_MODE == 'crossover_mutation':
-                cars = crossover(cars)
+                crossover(cars)
                 cars = mutate(cars, cars_to_keep)  # Mutate the cars
 
         else:
-            cars = crossover(cars)  # Crossover the cars
+            crossover(cars)  # Crossover the cars
             cars = mutate(cars, cars_to_keep)  # Mutate the cars
 
-        cars = add_cars_to_keep(cars, cars_to_keep)  # We add the best cars to the list
+        add_cars_to_keep(cars, cars_to_keep)  # We add the best cars to the list
     else:
         cars = [Car() for _ in range(var.NB_CARS)]  # If there is no car, we add random cars
 
@@ -182,7 +182,6 @@ def crossover(cars):
                             cars.append(new_car_1)
                             cars.append(new_car_2)
                         break
-    return cars
 
 
 def add_cars_to_keep(cars, cars_to_keep):
@@ -201,8 +200,6 @@ def add_cars_to_keep(cars, cars_to_keep):
 
     best_car = cars_to_keep[0]  # We add the best car at the end, so we will see it on top of the others
     cars.append(Car(genetic=best_car.genetic, best_scores=best_car.best_scores, color='yellow'))
-
-    return cars
 
 
 def random_attribution(value):

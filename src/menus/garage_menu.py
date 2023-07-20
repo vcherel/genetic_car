@@ -26,9 +26,6 @@ class Garage:
         self.nb_rectangle = 0  # Number of rectangle in the garage
         self.rectangles = []  # List of the rectangles in the garage
         self.selected_rects = [False] * 10  # Selected rectangles
-        self.actual_x = 0  # Actual x position to write the rectangles
-        self.actual_y = 0  # Actual y position to write the rectangles
-        self.change_y = False  # True if the y position has to change in the next rectangle (it means we are at the right of the garage)
         self.actual_page = 0  # Actual page of the garage
         self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning, when we change of page, or after a deletion)
         self.time_since_last_delete = 0  # Time since the last delete of a car
@@ -54,9 +51,6 @@ class Garage:
         """
         self.rectangles = []  # We reset the list of the rectangle in the garage
         self.nb_rectangle = 0  # Number of rectangle in the garage
-        self.actual_x = 515  # Actual x position to write the rectangles
-        self.actual_y = 185  # Actual y position to write the rectangles
-        self.change_y = False  # True if the y position has to change in the next rectangle
 
     def resize(self):
         """
@@ -117,6 +111,7 @@ class Garage:
         self.trash_button.draw()  # We draw the trash button
         if self.trash_button.activated:
             var.MEMORY_CARS = []  # We reset the memory of the cars
+            var.SELECTED_MEMORY_CARS = []  # We reset the selected memory of the cars
             var.ACTUAL_IDS_MEMORY_CARS = 1
             self.reload_page = True  # We have to change the page of the garage
 
@@ -124,31 +119,17 @@ class Garage:
         """
         Reload the page of the garage
         """
-        self.reset()  # We reset the variables of the menu
-
+        self.reset()  # We reset the variables of the menu)
         id_rect = 0  # The number to identify the id of the rectangle
         for memory_car in var.MEMORY_CARS:  # For each car in the memory
             # If the rectangle is in the good page
             if 10 * self.actual_page <= self.nb_rectangle < 10 * (self.actual_page + 1):
                 # We add the rectangle to the list of the rectangles
-                self.rectangles.append(RectGarage(x=self.actual_x, y=self.actual_y, id_rect=id_rect,
-                                                  memory_car=memory_car, selected=self.selected_rects[id_rect]))
+                self.rectangles.append(RectGarage(id_rect=id_rect, memory_car=memory_car, selected=self.selected_rects[id_rect]))
                 id_rect += 1  # We add one to the number to identify the id of the rectangle
-                self.update_variables()  # We change the values of the data so the rectangle is in the good position
             self.nb_rectangle += 1  # We add one to the number of rectangle in the garage
 
         self.reload_page = False  # We don't have to change the page of the garage anymore
-
-    def update_variables(self):
-        """
-        Update the data to draw the next rectangle in the garage
-        """
-        if self.change_y:  # If we have to change the y position (it means we are at the right of the garage)
-            self.actual_y += 90
-            self.actual_x -= 240
-        else:
-            self.actual_x += 240
-        self.change_y = not self.change_y  # At the next rectangle, we are going to change of axis
 
     def draw_arrows(self):
         """

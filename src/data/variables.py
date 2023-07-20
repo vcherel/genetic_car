@@ -71,7 +71,7 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 NB_CARS = 50  # Number of cars
 CARS_LAST_RUN = []  # Cars of the last run
 DO_DRIFT = True  # True if we want to see the drift of the cars, False otherwise
-DRIFT_FACTOR = 2.6  # Factor of the drift
+DRIFT_FACTOR = 2.5  # Factor of the drift
 
 
 # CHARACTERISTICS CARS
@@ -80,7 +80,7 @@ LENGTH_CONE = 11  # Length multiplier of the cone
 MAX_SPEED = 9  # Maximum speed of the car
 TURN_ANGLE = 8  # Angle of rotation of the car
 ACCELERATION = 0.1  # Acceleration of the car
-DECELERATION = 0.6  # Deceleration of the car
+DECELERATION = 0.7  # Deceleration of the car
 
 
 # DEBUG

@@ -2,6 +2,7 @@ from src.data.constants import PATH_DATA  # Import the path of the data
 from statistics import mean, median, variance  # To use statistics on the data
 import matplotlib.pyplot as plt  # For plotting the histogram
 import src.data.variables as var  # For the path of the data
+import os  # To iterate over the files in a folder
 import pylab  # To use the boxplot
 import pygame  # To use pygame
 
@@ -139,6 +140,25 @@ def analyze_genetic_algorithm():
     print(mean(mutation_only), mean(mutation_crossover), mean(crossover_mutation))
     print(median(mutation_only), median(mutation_crossover), median(crossover_mutation))
     print(variance(mutation_only), variance(mutation_crossover), variance(crossover_mutation))
+
+
+def analyze_value_genetic_parameters():
+    """
+    This function analyzes the values that we got from the test of genetic parameters
+    We read all files in the data/test folder, and we look at the mean number of generation needed to complete a lap
+    """
+    dict_mean_values = {}  # Dictionary of the mean values for each parameter
+
+    for filename in os.listdir(var.PATH_DATA):
+        f = var.PATH_DATA + filename
+        # checking if it is a file
+        if os.path.isfile(f):
+            list_values = []  # List of the values for the current file
+            for line in open(f, 'r'):
+                list_values.append(int(line.split()[0]))
+            dict_mean_values[filename] = mean(list_values)
+
+    print(dict_mean_values)
 
 
 if __name__ == '__main__':

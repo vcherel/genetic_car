@@ -223,6 +223,7 @@ def stop_play(cars):
             var.LAP_COMPLETED = False
             for car in cars:
                 if car.score > 150:
+                    print('we write')
                     var.FILE_TEST.write(f'{var.NUM_GENERATION}\n')
                     var.TEST_FINISHED = True
                     return  # We stop the game
@@ -311,11 +312,11 @@ def run_test_value_genetic_parameters():
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 
-    for var.CHANCE_MUTATION in [0.8]:
+    for var.CHANCE_MUTATION in [0.2, 0.5, 0.8]:
         for var.CHANCE_CROSSOVER in [0.2, 0.5, 0.8]:
             for var.PROPORTION_CARS_KEPT in [0.2, 0.5, 0.8]:
                 var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
-                for var.SEED in range(30):
+                for var.SEED in range(50):
                     play()
                     var.NUM_GENERATION = 0
 

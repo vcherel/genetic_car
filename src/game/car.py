@@ -109,7 +109,7 @@ class Car:
         self.detect_collision()  # Detect if the car is dead
 
         # If we are in a circuit and the car is going backwards, we force it to go in the wall
-        if var.NUM_MAP != 5 and self.turn_without_checkpoint > 100 and not self.reverse:
+        if var.NUM_MAP != 5 and self.turn_without_checkpoint > 150 and not self.reverse:
             if self.id_memory_car is None and not self.color == 'yellow':
                 self.image = change_color_car(self.image, 'light_gray')  # We convert the image of the car to light grayscale if it's a red car
             self.reverse = True
