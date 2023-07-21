@@ -6,7 +6,7 @@ from src.menus.dice_menu import DICE_MENU  # Import functions from dice menu
 from src.menus.settings_menu import SETTINGS  # Import the settings window
 from src.data.data_classes import MemoryCar  # Import the car memory
 from src.menus.garage_menu import GARAGE  # Import the garage window
-from src.data.constants import START_POSITIONS  # Import constants
+from src.data.constants import NB_MAPS  # Import constants
 from src.game.genetic import Genetic  # Import the genetic class
 from src.render.button import Button  # Import the button
 import src.data.variables as var  # Import the data
@@ -130,7 +130,7 @@ def handle_clicks(cars):
             SETTINGS.erase()  # Erase the settings
             unpause()  # Unpause the game
 
-    if var.SHOW_CLICS_INFOS:
+    if var.SHOW_CLICS_INFO:
         print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
         print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
@@ -298,7 +298,7 @@ def display_dice_button():
 
         elif not use_camera:  # If we don't use the camera we create a random dice
             var.MEMORY_CARS.append(MemoryCar(var.ACTUAL_IDS_MEMORY_CARS, f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
-                                             'gray', Genetic(), [0] * len(START_POSITIONS)))  # We add the dice to the memory
+                                             'gray', Genetic(), [0] * NB_MAPS))  # We add the dice to the memory
             var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
 
         else:  # If we use the camera we capture the dice

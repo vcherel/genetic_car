@@ -1,6 +1,6 @@
 from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car  # Utils functions
 from src.render.display import draw_detection_cone  # To draw the detection cone
-from src.data.constants import START_POSITIONS  # Start positions of the cars
+from src.data.constants import NB_MAPS  # Start positions of the cars
 from src.game.genetic import Genetic  # Genetic algorithm of the car
 from src.render.explosion import Explosion  # To render explosions
 import src.data.variables as var  # Variables of the game
@@ -41,8 +41,8 @@ class Car:
         self.speed = 0  # Current speed of the car
         self.acceleration = 0  # Current acceleration of the car
 
-        self.angle = 0  # Current angle of the car
-        self.drift_angle = 0  # Current speed angle of the car (when the car turns the angle change but the speed angle turns slower)
+        self.angle = var.START_ANGLE  # Current angle of the car
+        self.drift_angle = var.START_ANGLE  # Current speed angle of the car (when the car turns the angle change but the speed angle turns slower)
 
         self.pos = var.START_POSITION  # Current position of the car
         self.front_of_car = self.pos  # Current position of the front of the car
@@ -66,7 +66,7 @@ class Car:
         if best_scores:
             self.best_scores = best_scores
         else:
-            self.best_scores = [0] * len(START_POSITIONS)  # Best scores of the car
+            self.best_scores = [0] * NB_MAPS  # Best scores of the car
 
     def __str__(self):
         """
@@ -75,7 +75,7 @@ class Car:
         Return:
             str: string representation of the car
         """
-        return f'Car: genetic : {self.genetic} ; color : {self.color} ; position : {self.pos} ; angle : {self.angle} ; speed : {self.speed} ; acceleration : {self.acceleration} ; scores : {self.score}'
+        return f'Car: genetic : {self.genetic} ; color : {self.color} ; position : {self.pos} ; angle : {self.angle} ; speed : {self.speed} ; acceleration : {self.acceleration} ; score : {self.score}'
 
     def __eq__(self, other):
         """
@@ -96,7 +96,7 @@ class Car:
         Return:
             Car: copy of the car
         """
-        return Car(self.genetic.copy(), self.best_scores, self.color, self.id_memory_car)
+        return Car(genetic=self.genetic)
 
     def move(self):
         """
@@ -305,14 +305,15 @@ class Car:
             width, length (int, int): the width and the length of the detection cone
         """
         if self.speed < var.MIN_MEDIUM_SPEED:
-            width = self.genetic.width_slow
-            length = self.genetic.length_slow
+            width = self.genetic.width_slow()
+            length = self.genetic.length_slow()
         elif self.speed < var.MIN_HIGH_SPEED:
-            width = self.genetic.width_medium
-            length = self.genetic.length_medium
+            width = self.genetic.width_medium()
+            length = self.genetic.length_medium()
         else:
-            width = self.genetic.width_fast
-            length = self.genetic.length_fast
+            width = self.genetic.width_fast()
+            length = self.genetic.length_fast()
+
         return width, length
 
     def compute_front_of_car(self):
@@ -345,7 +346,7 @@ class Car:
         surface.blit(image_shown, self.rotated_rect_shown)  # We display the car
         var.RECTS_BLIT_CAR.append(self.rotated_rect_shown)    # Draw the car and add the rect to the list
 
-        if var.DEBUG and not self.dead:
+        if var.SHOW_DETECTION_CONES and not self.dead:
             self.draw_detection_cone()  # Draw the detection cone of the car
 
     def reset(self):

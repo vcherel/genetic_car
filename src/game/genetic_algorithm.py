@@ -36,14 +36,9 @@ def apply_genetic(cars):
         else:
             crossover(cars)  # Crossover the cars
             cars = mutate(cars, cars_to_keep)  # Mutate the cars
-
-
         add_cars_to_keep(cars, cars_to_keep)  # We add the best cars to the list
     else:
         cars = [Car() for _ in range(var.NB_CARS)]  # If there is no car, we add random cars
-
-    for car in cars:
-        print(car)
 
     return cars
 
@@ -159,7 +154,7 @@ def mutate_one_car(car):
 
 def crossover(cars):
     """
-    Crossover the cars (exchange some attributes between two cars)
+    Crossover the cars (exchange some attributes between two cars of the list multiple times)
 
     Args:
         cars (list): list of cars
@@ -169,25 +164,11 @@ def crossover(cars):
     """
     for car1, car2 in itertools.combinations(cars, 2):  # We take all the combinations of cars
         if random.random() < var.CHANCE_CROSSOVER and car1 != car2:  # If we do a crossover
-            car_added = False
-            count = 0
-            while not car_added and count < 10:  # We try to add the cars until we succeed, or we have tried too many times
-                count += 1
-                number_attributes_exchanged = random.randint(1, 6)  # We choose a random number of attributes to exchange
-                ids_changed_attributes = random.sample(range(0, 6), number_attributes_exchanged)  # We choose the attributes to exchange
-                for i, value in enumerate(car1.genetic.dice_values):
-                    if i in ids_changed_attributes:
-                        car1.genetic.dice_values[i], car2.genetic.dice_values[i] = car2.genetic.dice_values[i], value
-                        new_car_1 = Car(genetic=car1.genetic, best_scores=car1.best_scores, color=car1.color)
-                        new_car_2 = Car(genetic=car2.genetic, best_scores=car2.best_scores, color=car2.color)
-
-                        # We verify that the new cars are not already in the list
-                        if new_car_1 not in cars and new_car_2 not in cars:
-                            cars.remove(car1)
-                            cars.remove(car2)
-                            cars.append(new_car_1)
-                            cars.append(new_car_2)
-                        break
+            number_attributes_exchanged = random.randint(1, 6)  # We choose a random number of attributes to exchange
+            ids_changed_attributes = random.sample(range(0, 6), number_attributes_exchanged)  # We choose the attributes to exchange
+            for i, value in enumerate(car1.genetic.dice_values):
+                if i in ids_changed_attributes:
+                    car1.genetic.dice_values[i], car2.genetic.dice_values[i] = car2.genetic.dice_values[i], value
 
 
 def add_cars_to_keep(cars, cars_to_keep):

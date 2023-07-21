@@ -115,12 +115,12 @@ def show_car_window(car):
     x2 = x1 + x_distance
     x3 = x2 + x_distance
     y1, y2 = 225, 350
-    draw_dice(x=rect_x + x1, y=rect_y + y1, color=RGB_VALUES_DICE[0], value=car.genetic.length_slow // var.LENGTH_CONE, factor=0.75, black_dots=True)
-    draw_dice(x=rect_x + x2, y=rect_y + y1, color=RGB_VALUES_DICE[1], value=car.genetic.length_medium // var.LENGTH_CONE, factor=0.75)
-    draw_dice(x=rect_x + x3, y=rect_y + y1, color=RGB_VALUES_DICE[2], value=car.genetic.length_fast // var.LENGTH_CONE, factor=0.75)
-    draw_dice(x=rect_x + x1, y=rect_y + y2, color=RGB_VALUES_DICE[3], value=car.genetic.width_slow // var.WIDTH_CONE, factor=0.75)
-    draw_dice(x=rect_x + x2, y=rect_y + y2, color=RGB_VALUES_DICE[4], value=car.genetic.width_medium // var.WIDTH_CONE, factor=0.75)
-    draw_dice(x=rect_x + x3, y=rect_y + y2, color=RGB_VALUES_DICE[5], value=car.genetic.width_fast // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y1, color=RGB_VALUES_DICE[0], value=car.genetic.length_slow() // var.LENGTH_CONE, factor=0.75, black_dots=True)
+    draw_dice(x=rect_x + x2, y=rect_y + y1, color=RGB_VALUES_DICE[1], value=car.genetic.length_medium() // var.LENGTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y1, color=RGB_VALUES_DICE[2], value=car.genetic.length_fast() // var.LENGTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x1, y=rect_y + y2, color=RGB_VALUES_DICE[3], value=car.genetic.width_slow() // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x2, y=rect_y + y2, color=RGB_VALUES_DICE[4], value=car.genetic.width_medium() // var.WIDTH_CONE, factor=0.75)
+    draw_dice(x=rect_x + x3, y=rect_y + y2, color=RGB_VALUES_DICE[5], value=car.genetic.width_fast() // var.WIDTH_CONE, factor=0.75)
 
     # Draw the text
     var.WINDOW.blit(var.TEXT_SLOW, convert_to_new_window((rect_x + 175, rect_y + 150)))  # Draw the slow text

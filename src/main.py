@@ -1,5 +1,5 @@
 from src.data.analyze_data import analyze_data_scores, show_positions_crash  # Import the analyze_data function
-from src.data.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
+from src.data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.menus.garage_menu import add_garage_cars  # Import the garage
 from src.menus.settings_menu import SETTINGS  # Import the settings
@@ -28,7 +28,7 @@ def open_window():
 
     while 1:
         # If we want to change the checkpoints
-        if CHANGE_CHECKPOINTS:
+        if var.CHANGE_CHECKPOINTS:
             change_checkpoints()  # Change the checkpoints
 
         ui.handle_events()  # Detect events in the ui and do the corresponding actions
@@ -307,14 +307,17 @@ def run_test_value_genetic_parameters():
     """
     Run the genetic algorithm with different genetic parameters and save the results in a file
     """
+    var.FPS = 9999  # We set the fps to a high value to run the game faster
+    var.SHOW_EXPLOSIONS = False  # We don't show the explosions to run the game faster
+
     path_test = f'{PATH_DATA}tests/'
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 
-    for var.CHANCE_MUTATION in [0.7, 0.9]:
-        for var.CHANCE_CROSSOVER in [0.5]:
+    for var.CHANCE_MUTATION in [0.2]:
+        for var.CHANCE_CROSSOVER in [0.8]:
             for var.PROPORTION_CARS_KEPT in [0.2]:
-                var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
+                var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'w')
                 for var.SEED in range(50):
                     play()
                     var.NUM_GENERATION = 0

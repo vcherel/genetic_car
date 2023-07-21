@@ -119,8 +119,8 @@ class Settings:
             if button.just_clicked:
                 button.text = ''
 
-        var.DEBUG = self.see_cones_button.draw()  # Check the state of the button
-        var.SHOW_CLICS_INFOS = self.see_cursor_button.draw()  # Check the state of the button
+        var.SHOW_DETECTION_CONES = self.see_cones_button.draw()  # Check the state of the button
+        var.SHOW_CLICS_INFO = self.see_cursor_button.draw()  # Check the state of the button
         var.SHOW_CHECKPOINTS = self.see_checkpoints_button.draw()  # Check the state of the button
         if self.see_checkpoints_button.just_clicked and not var.SHOW_CHECKPOINTS:
             var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Erase the checkpoints

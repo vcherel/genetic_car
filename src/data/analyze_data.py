@@ -155,7 +155,8 @@ def analyze_value_genetic_parameters():
         with open(f, 'r') as file:
             for line in file:
                 list_values.append(int(line.split()[0]))
-        dict_mean_values[filename] = mean(list_values)
+        if len(list_values) != 0:
+            dict_mean_values[filename] = mean(list_values)
 
     # Sort the dictionary by values
     dict_mean_values = {k: v for k, v in sorted(dict_mean_values.items(), key=lambda item: item[1])}

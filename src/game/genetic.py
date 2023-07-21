@@ -22,10 +22,6 @@ class Genetic:
         else:                                  # If we don't have the parameters we randomize them
             self.dice_values = [random.randint(1, 6) for _ in range(6)]  # Dice values corresponding to this genome
 
-        self.length_slow = self.length_medium = self.length_fast = None  # We initialize the parameters
-        self.width_slow = self.width_medium = self.width_fast = None  # We initialize the parameters
-        self.save_values()  # Update the genetic algorithm (fill the parameters)
-
     def __str__(self):
         """
         String representation of the genetic algorithm
@@ -59,14 +55,56 @@ class Genetic:
         """
         return Genetic(self.dice_values)
 
-    def save_values(self):
+    def length_slow(self):
         """
-        Update the genetic algorithm (the dice values have changed, so we update the parameters)
-        """
-        self.length_slow = self.dice_values[0] * var.LENGTH_CONE  # Length of the detection cone when the car is going slow
-        self.length_medium = self.dice_values[1] * var.LENGTH_CONE  # Length of the detection cone when the car is going at medium speed
-        self.length_fast = self.dice_values[2] * var.LENGTH_CONE  # Length of the detection cone when the car is going fast
+        Get the length of the slow dice
 
-        self.width_slow = self.dice_values[3] * var.WIDTH_CONE  # Width of the detection cone when the car is going slow
-        self.width_medium = self.dice_values[4] * var.WIDTH_CONE  # Width of the detection cone when the car is going at medium speed
-        self.width_fast = self.dice_values[5] * var.WIDTH_CONE  # Width of the detection cone when the car is going fast
+        Returns:
+            int: length of the slow dice
+        """
+        return self.dice_values[0] * var.LENGTH_CONE
+
+    def length_medium(self):
+        """
+        Get the length of the medium dice
+
+        Returns:
+            int: length of the medium dice
+        """
+        return self.dice_values[1] * var.LENGTH_CONE
+
+    def length_fast(self):
+        """
+        Get the length of the fast dice
+
+        Returns:
+            int: length of the fast dice
+        """
+        return self.dice_values[2] * var.LENGTH_CONE
+
+    def width_slow(self):
+        """
+        Get the width of the slow dice
+
+        Returns:
+            int: width of the slow dice
+        """
+        return self.dice_values[3] * var.WIDTH_CONE
+
+    def width_medium(self):
+        """
+        Get the width of the medium dice
+
+        Returns:
+            int: width of the medium dice
+        """
+        return self.dice_values[4] * var.WIDTH_CONE
+
+    def width_fast(self):
+        """
+        Get the width of the fast dice
+
+        Returns:
+            int: width of the fast dice
+        """
+        return self.dice_values[5] * var.WIDTH_CONE

@@ -37,6 +37,8 @@ class RectGarage:
         # Buttons
         self.edit_button = Button(x=self.x + 188, y=self.y + 40, image_name='pen', scale=0.15)  # Button to edit the car
         self.select_button = Button(x=self.x + 188, y=self.y + 8, image_name='checkbox', scale=0.07)  # Button of the writing button
+        if self.selected:  # If the car is selected, we activate the button
+            self.select_button.activated = True
         self.delete_button = Button(x=self.x + 153, y=self.y + 5, image_name='trash', scale=0.14)  # Button to delete the car
         self.name_button = Button(x=self.x + 10, y=self.y + 10, only_one_image=True, image_name='grey', writing_button=True, variable=self.memory_car.name, name='car_name', scale=6)  # Button to edit the name of the car
 

@@ -1,4 +1,4 @@
-from src.data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
+from src.data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA, START_ANGLES, NB_MAPS  # Import the constants
 from src.other.utils import scale_image, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
 from src.menus.settings_menu import SETTINGS  # Import the Settings class
@@ -7,9 +7,11 @@ from src.game.genetic import Genetic  # Import the Genetic class
 import pygame  # To use pygame
 import sys  # To quit the game
 
+
 """
 This file contains all the data of the game used in multiple other files
 """
+
 
 # PYGAME
 pygame.init()  # Pygame initialization
@@ -58,9 +60,8 @@ BIG_RED_CAR_IMAGE = None
 
 
 # GAME
-LIST_SEED = [0] * len(START_POSITIONS)  # Seed of the game for each map
+LIST_SEED = [0] * NB_MAPS  # Seed of the game for each map
 SEED = None  # Seed of the game for the current map
-NUM_MAP = 0  # Number of the map
 START = False  # Start the game (True or False)
 PLAY = False  # Stop the game (True or False)
 CHANGE_GENERATION = False  # True if we want to change the generation, False otherwise
@@ -69,35 +70,36 @@ PLAY_LAST_RUN = False  # True if we want to play the last run again, False other
 
 # CARS
 START_POSITION = None  # Start position of the car
+START_ANGLE = None  # Start angle of the car
 NB_CARS_ALIVE = 0  # Number of cars alive
-LIST_NB_CARS = [30] * len(START_POSITIONS)  # Number of cars for each map
+LIST_NB_CARS = [30] * NB_MAPS  # Number of cars for each map
 NB_CARS = None  # Number of cars for the current map
 CARS_LAST_RUN = []  # Cars of the last run
 DO_DRIFT = True  # True if we want to see the drift of the cars, False otherwise
-LIST_DRIFT_FACTOR = [2.0] * len(START_POSITIONS)  # Factor of the drift for each map
+LIST_DRIFT_FACTOR = [2.0] * NB_MAPS  # Factor of the drift for each map
 DRIFT_FACTOR = None  # Factor of the drift for the current map
 
 
 # CHARACTERISTICS CARS
-LIST_WIDTH_CONE = [16] * len(START_POSITIONS)  # Width multiplier of the cone for each map
+LIST_WIDTH_CONE = [16] * NB_MAPS  # Width multiplier of the cone for each map
 WIDTH_CONE = None  # Width multiplier of the cone for the current map
-LIST_LENGTH_CONE = [11] * len(START_POSITIONS)  # Length multiplier of the cone for each map
+LIST_LENGTH_CONE = [11] * NB_MAPS  # Length multiplier of the cone for each map
 LENGTH_CONE = None  # Length multiplier of the cone for the current map
-LIST_MAX_SPEED = [9] * len(START_POSITIONS)  # Maximum speed of the car for each map
+LIST_MAX_SPEED = [9] * NB_MAPS  # Maximum speed of the car for each map
 MAX_SPEED = None  # Maximum speed of the car for the current map
 MIN_MEDIUM_SPEED = None  # Minimum speed of the car to be considered as medium speed
 MIN_HIGH_SPEED = None  # Minimum speed of the car to be considered as high speed
-LIST_TURN_ANGLE = [8] * len(START_POSITIONS)  # Angle of rotation of the car for each map
+LIST_TURN_ANGLE = [8] * NB_MAPS  # Angle of rotation of the car for each map
 TURN_ANGLE = None  # Angle of rotation of the car for the current map
-LIST_ACCELERATION = [0.1] * len(START_POSITIONS)  # Acceleration of the car for each map
+LIST_ACCELERATION = [0.1] * NB_MAPS  # Acceleration of the car for each map
 ACCELERATION = None  # Acceleration of the car for the current map
-LIST_DECELERATION = [0.7] * len(START_POSITIONS)  # Deceleration of the car for each map
+LIST_DECELERATION = [0.7] * NB_MAPS  # Deceleration of the car for each map
 DECELERATION = None  # Deceleration of the car for the current map
 
 
 # DEBUG
-SHOW_CLICS_INFOS = False  # True to see the cursor position and color when clicking
-DEBUG = False  # True for debug mode, False for normal mode
+SHOW_CLICS_INFO = False  # True to see the cursor position and color when clicking
+SHOW_DETECTION_CONES = False  # True for debug mode, False for normal mode
 
 
 # TESTS
@@ -111,6 +113,8 @@ FILE_TEST = None  # File to save the results of the tests
 
 
 # CHECKPOINTS
+NUM_MAP = 0  # Number of the map
+CHANGE_CHECKPOINTS = False  # Change the checkpoint for the actual map
 CHECKPOINTS = None  # List of checkpoints
 RADIUS_CHECKPOINT = None  # Radius of the checkpoints
 SHOW_CHECKPOINTS = False  # See the checkpoints
@@ -126,14 +130,14 @@ LAST_TIME_REMAINING = []  # List of the remaining time during the last turns
 
 
 # GENETIC
-LIST_TIME_GENERATION = [60] * len(START_POSITIONS)  # Time of a generation for each map
+LIST_TIME_GENERATION = [60] * NB_MAPS  # Time of a generation for each map
 TIME_GENERATION = 0  # Time of a generation for the current map
 NUM_GENERATION = 1  # Number of the generation
-LIST_CHANCE_MUTATION = [0.3] * len(START_POSITIONS)  # Chance of mutation for each map
+LIST_CHANCE_MUTATION = [0.3] * NB_MAPS  # Chance of mutation for each map
 CHANCE_MUTATION = None  # Chance of mutation for the current map
-LIST_CHANCE_CROSSOVER = [0.3] * len(START_POSITIONS)  # Chance of crossover for each map
+LIST_CHANCE_CROSSOVER = [0.3] * NB_MAPS  # Chance of crossover for each map
 CHANCE_CROSSOVER = None  # Chance of crossover for the current map
-LIST_PROPORTION_CARS_KEPT = [0.1] * len(START_POSITIONS)  # Percentage used to know how many cars we keep for the next generation for each map
+LIST_PROPORTION_CARS_KEPT = [0.1] * NB_MAPS  # Percentage used to know how many cars we keep for the next generation for each map
 PROPORTION_CARS_KEPT = None  # Percentage used to know how many cars we keep for the next generation for the current map
 
 
@@ -190,16 +194,17 @@ def change_map(first_time=False):
     """
     global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, EXPLOSION_IMAGES, \
         MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, NB_CARS, TIME_GENERATION, SEED, MAX_SPEED, TURN_ANGLE, ACCELERATION, \
-        DECELERATION, CHANCE_CROSSOVER, CHANCE_MUTATION, PROPORTION_CARS_KEPT, DRIFT_FACTOR, WIDTH_CONE, LENGTH_CONE
+        DECELERATION, CHANCE_CROSSOVER, CHANCE_MUTATION, PROPORTION_CARS_KEPT, DRIFT_FACTOR, WIDTH_CONE, LENGTH_CONE, START_ANGLE
 
     # If we change map for the first time, we don't change the map
     if not first_time:
-        if NUM_MAP >= len(START_POSITIONS) - 1:
+        if NUM_MAP >= NB_MAPS - 1:
             NUM_MAP = 0
         else:
             NUM_MAP += 1
 
     START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the cars
+    START_ANGLE = START_ANGLES[NUM_MAP]  # Start angle of the cars
     RADIUS_CHECKPOINT = 7.5 * CAR_SIZES[NUM_MAP]  # Radius of the checkpoints
 
     # We create a background to create the mask of collision, this background has a size of 1500*700
@@ -254,13 +259,12 @@ def update_visual_variables():
     """
     Update the data used to display things according to the size of the new window
     """
-    global BACKGROUND, START_POSITION, RADIUS_CHECKPOINT, SCALE_RESIZE_X, SCALE_RESIZE_Y
+    global BACKGROUND, SCALE_RESIZE_X, SCALE_RESIZE_Y
 
     # This background will be shown but will not be used to detect collisions
     BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    blit_circuit() # Blit the circuit on the background surface
-
+    blit_circuit()  # Blit the circuit on the background surface
 
     SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
     SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
@@ -370,7 +374,7 @@ def load_cars():
             name = line[1]  # Name of the car
             color = line[2]
             genetic = Genetic([int(line[i]) for i in range(3, 9)])  # Genetic of the car
-            scores = [int(line[i]) for i in range(9, 9 + len(START_POSITIONS))]  # Score of the car
+            scores = [int(line[i]) for i in range(9, 9 + NB_MAPS)]  # Score of the car
 
             MEMORY_CARS.append(MemoryCar(id_car, name, color, genetic, scores))  # We create the memory car
             if ACTUAL_IDS_MEMORY_CARS <= id_car:
