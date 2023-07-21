@@ -159,10 +159,10 @@ class Car:
             bool: True if there is a wall at the right of the cone, False otherwise
         """
         width, length = self.determine_size_cone()  # We select the right cone depending on the speed of the car
-        self.front_of_car = self.determine_front_of_car()  # Point at the front of the car
+        self.front_of_car = self.compute_front_of_car()  # Point at the front of the car
         left, top, right = compute_detection_cone_points(self.angle, self.front_of_car, width, length)  # Points of the detection cone (represented by a triangle)
 
-        return detect_wall(self.front_of_car, left), detect_wall(self.front_of_car, top), detect_wall(self.front_of_car, right)
+        return self.detect_wall(left), self.detect_wall(top), self.detect_wall(right)
 
     def update_acceleration(self, wall_top):
         """
@@ -257,6 +257,7 @@ class Car:
         dx = math.cos(radians) * self.speed  # The movement of the car on the x-axis
         dy = math.sin(radians) * self.speed  # The movement of the car on the y-axis
         self.pos = self.pos[0] + dx, self.pos[1] + dy  # Update the position of the car
+        self.front_of_car = self.compute_front_of_car()  # Update the position of the front of the car
 
         # Rotate the car
         self.rotated_image = pygame.transform.rotate(self.image, self.angle)  # Rotate the image of the car
@@ -314,7 +315,7 @@ class Car:
             length = self.genetic.length_fast
         return width, length
 
-    def determine_front_of_car(self):
+    def compute_front_of_car(self):
         """
         Compute the coordinates of the front of the car
         Args:
@@ -331,16 +332,17 @@ class Car:
         """
         self.dead = True  # The car is dead
         var.NB_CARS_ALIVE -= 1  # Decrease the number of cars alive
+        self.draw(var.BACKGROUND)  # Draw the car on the background so it stays
         if var.SHOW_EXPLOSIONS:
             var.EXPLOSIONS.add(Explosion(self.pos))  # Add an explosion  # at the position of the car
 
-    def draw(self):
+    def draw(self, surface=var.WINDOW):
         """
         Draw the car
         """
         image_shown = scale_image(self.rotated_image, var.SCALE_RESIZE_X)  # Scale the image of the car
         self.rotated_rect_shown = image_shown.get_rect(center=convert_to_new_window(self.pos))  # Rotate the rectangle of the car
-        var.WINDOW.blit(image_shown, self.rotated_rect_shown)  # We display the car
+        surface.blit(image_shown, self.rotated_rect_shown)  # We display the car
         var.RECTS_BLIT_CAR.append(self.rotated_rect_shown)    # Draw the car and add the rect to the list
 
         if var.DEBUG and not self.dead:
@@ -377,37 +379,36 @@ class Car:
         self.color = color
 
 
-def detect_wall(front_of_car, point):
-    """
-    Detect if there is a wall between the front of the car and the point
+    def detect_wall(self, point):
+        """
+        Detect if there is a wall between the front of the car and the point
 
-    Args:
-        front_of_car (tuple(int, int)): the coordinates of the front of the car
-        point (tuple(int, int)): the coordinates of the point
+        Args:
+            point (tuple(int, int)): the coordinates of the point
 
-    Returns:
-        bool or float : True if there is a wall, False otherwise
-        If it is a float, it is the distance between the front of the car and the wall in this direction
-    """
-    x1, y1 = front_of_car  # Coordinates of the front of the car
-    x2, y2 = point  # Coordinates of the point
+        Returns:
+            bool or float : True if there is a wall, False otherwise
+            If it is a float, it is the distance between the front of the car and the wall in this direction
+        """
+        x1, y1 = self.front_of_car  # Coordinates of the front of the car
+        x2, y2 = point  # Coordinates of the point
 
-    if x1 == x2:  # If the car is parallel to the wall
+        if x1 == x2:  # If the car is parallel to the wall
+            # We check if there is a wall between the front of the car and the point
+            for y in range(int(min(y1, y2)), int(max(y1, y2))):
+                x1 = int(x1)
+                # We check if the pixel is black (wall)
+                if point_out_of_window((x1, y)) or var.BACKGROUND_MASK.get_at((x1, y)):
+                    return True  # There is a wall
+
+        # We determine the equation of the line between the front of the car and the point (y = ax + b)
+        a = (y2 - y1) / (x2 - x1)
+        b = y1 - a * x1
+
         # We check if there is a wall between the front of the car and the point
-        for y in range(int(min(y1, y2)), int(max(y1, y2))):
-            x1 = int(x1)
+        for x in range(int(min(x1, x2)), int(max(x1, x2))):
+            y = int(a * x + b)
             # We check if the pixel is black (wall)
-            if point_out_of_window((x1, y)) or var.BACKGROUND_MASK.get_at((x1, y)):
-                return True  # There is a wall
-
-    # We determine the equation of the line between the front of the car and the point (y = ax + b)
-    a = (y2 - y1) / (x2 - x1)
-    b = y1 - a * x1
-
-    # We check if there is a wall between the front of the car and the point
-    for x in range(int(min(x1, x2)), int(max(x1, x2))):
-        y = int(a * x + b)
-        # We check if the pixel is black (wall)
-        if point_out_of_window((x, y)) or var.BACKGROUND_MASK.get_at((x, y)):
-            return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
-    return False  # There is no wall
+            if point_out_of_window((x, y)) or var.BACKGROUND_MASK.get_at((x, y)):
+                return math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2)  # We return the distance between the front of the car and the wall
+        return False  # There is no wall

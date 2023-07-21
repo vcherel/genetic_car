@@ -96,7 +96,7 @@ DECELERATION = None  # Deceleration of the car for the current map
 
 
 # DEBUG
-SEE_CURSOR = False  # True to see the cursor position and color when clicking
+SHOW_CLICS_INFOS = False  # True to see the cursor position and color when clicking
 DEBUG = False  # True for debug mode, False for normal mode
 
 
@@ -113,7 +113,7 @@ FILE_TEST = None  # File to save the results of the tests
 # CHECKPOINTS
 CHECKPOINTS = None  # List of checkpoints
 RADIUS_CHECKPOINT = None  # Radius of the checkpoints
-SEE_CHECKPOINTS = False  # See the checkpoints
+SHOW_CHECKPOINTS = False  # See the checkpoints
 
 
 # TIME
@@ -259,9 +259,8 @@ def update_visual_variables():
     # This background will be shown but will not be used to detect collisions
     BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
     BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    # Blit the circuit on the background surface
-    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background_{str(NUM_MAP)}.png'),
-                                           convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))
+    blit_circuit() # Blit the circuit on the background surface
+
 
     SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
     SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
@@ -269,6 +268,14 @@ def update_visual_variables():
     edit_background()  # Edit the background
     WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
     pygame.display.flip()  # Update the display
+
+
+def blit_circuit():
+    """
+    Blit the circuit on the background surface
+    """
+    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background_{str(NUM_MAP)}.png'),
+                                           convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))
 
 
 def init_variables(nb_cars, replay=False):

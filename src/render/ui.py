@@ -130,7 +130,7 @@ def handle_clicks(cars):
             SETTINGS.erase()  # Erase the settings
             unpause()  # Unpause the game
 
-    if var.SEE_CURSOR:
+    if var.SHOW_CLICS_INFOS:
         print('Click at position', pygame.mouse.get_pos())  # Print the position of the click
         print('Color of the pixel', var.WINDOW.get_at(pygame.mouse.get_pos()))  # Print the color of the pixel
 
@@ -219,6 +219,7 @@ def display_stop_button():
     if stop_button.just_clicked:
         if var.PLAY:
             var.PLAY = False  # We stop the simulation
+            var.blit_circuit()  # We blit the circuit
         if var.DISPLAY_GARAGE:
             delete_garage()
 

@@ -42,6 +42,9 @@ def apply_genetic(cars):
     else:
         cars = [Car() for _ in range(var.NB_CARS)]  # If there is no car, we add random cars
 
+    for car in cars:
+        print(car)
+
     return cars
 
 

@@ -115,8 +115,7 @@ def change_color_car(image, str_color):
         return image
 
     # Create a new surface with the same dimensions and transparency settings as the original image
-    new_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize())
-    new_image.convert_alpha()
+    new_image = pygame.Surface(image.get_size(), flags=image.get_flags(), depth=image.get_bitsize()).convert_alpha()
 
     # Iterate over each pixel in the original image
     for x in range(image.get_width()):

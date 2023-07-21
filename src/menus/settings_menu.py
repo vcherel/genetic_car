@@ -65,7 +65,7 @@ class Settings:
         # Display section
         self.see_cones_button = Button(x=474, y=455, image_name='checkbox', scale=0.1)
         self.see_explosions_button = Button(x=402, y=530, image_name='checkbox', scale=0.1)
-        self.see_explosions_button.activated = True  # We activate the explosions by default
+        self.see_explosions_button.activated = var.SHOW_EXPLOSIONS  # We activate the explosions by default
         self.see_checkpoints_button = Button(x=412, y=597, image_name='checkbox', scale=0.1)
 
         # Car section
@@ -120,9 +120,9 @@ class Settings:
                 button.text = ''
 
         var.DEBUG = self.see_cones_button.draw()  # Check the state of the button
-        var.SEE_CURSOR = self.see_cursor_button.draw()  # Check the state of the button
-        var.SEE_CHECKPOINTS = self.see_checkpoints_button.draw()  # Check the state of the button
-        if self.see_checkpoints_button.just_clicked and not var.SEE_CHECKPOINTS:
+        var.SHOW_CLICS_INFOS = self.see_cursor_button.draw()  # Check the state of the button
+        var.SHOW_CHECKPOINTS = self.see_checkpoints_button.draw()  # Check the state of the button
+        if self.see_checkpoints_button.just_clicked and not var.SHOW_CHECKPOINTS:
             var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Erase the checkpoints
         var.SHOW_EXPLOSIONS = self.see_explosions_button.draw()  # Check the state of the button
 

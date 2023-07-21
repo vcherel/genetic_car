@@ -35,7 +35,7 @@ def open_window():
         ui.erase()  # Erase the buttons
         ui.display()  # Activate the buttons
 
-        if var.SEE_CHECKPOINTS:
+        if var.SHOW_CHECKPOINTS:
             display.show_checkpoints()   # Display the checkpoints
 
         pygame.display.flip()  # Update the screen
@@ -53,8 +53,8 @@ def play(cars=None):
     Args:
         cars (list): list of cars (if None, it is the first time we play)
     """
-
-    cars = init_play(cars)
+    var.blit_circuit()  # Blit the circuit (to hide the dead cars)
+    cars = init_cars_to_play(cars)  # Initialize the cars and add cars from the garage if needed
 
     while var.PLAY:  # While the game is not stopped
         ui.handle_events(cars)  # Detect events in the ui and do the corresponding action
@@ -89,7 +89,7 @@ def play(cars=None):
     open_window()  # Restart the game
 
 
-def init_play(cars):
+def init_cars_to_play(cars):
     """
     Initialize the game
 
@@ -141,13 +141,13 @@ def play_turn(cars):
     var.WINDOW.blit(var.BACKGROUND, rect_blit_explosion, rect_blit_explosion)  # Erase the explosions
     var.RECTS_BLIT_EXPLOSION = []  # We reset the list of rects to blit
 
-    if var.SEE_CHECKPOINTS:
+    if var.SHOW_CHECKPOINTS:
         display.show_checkpoints()  # Display the checkpoints
 
     for car in cars:  # For each car
         if not car.dead:  # If the car is not dead
             car.move()  # Move the car
-        car.draw()  # Draw the cars
+            car.draw()  # Draw the cars
 
     var.TICKS_REMAINING -= 1  # We decrease the number of iterations remaining
 
