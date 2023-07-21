@@ -149,18 +149,18 @@ def analyze_value_genetic_parameters():
     """
     dict_mean_values = {}  # Dictionary of the mean values for each parameter
 
-    for filename in os.listdir(var.PATH_DATA):
-        f = var.PATH_DATA + filename
-        # checking if it is a file
-        if os.path.isfile(f):
-            list_values = []  # List of the values for the current file
-            with open(f, 'r') as file:
-                for line in file:
-                    list_values.append(int(line.split()[0]))
-            dict_mean_values[filename] = mean(list_values)
+    for filename in os.listdir(var.PATH_DATA + 'tests/'):
+        f = var.PATH_DATA + 'tests/' + filename
+        list_values = []  # List of the values for the current file
+        with open(f, 'r') as file:
+            for line in file:
+                list_values.append(int(line.split()[0]))
+        dict_mean_values[filename] = mean(list_values)
 
-    print(dict_mean_values)
+    # Sort the dictionary by values
+    dict_mean_values = {k: v for k, v in sorted(dict_mean_values.items(), key=lambda item: item[1])}
+    print(dict_mean_values)  # The name of the file is test_MutationRate_CrossoverRate_SelectionRate
 
 
 if __name__ == '__main__':
-    analyze_genetic_algorithm()
+    analyze_value_genetic_parameters()

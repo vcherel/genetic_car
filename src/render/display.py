@@ -107,7 +107,7 @@ def show_car_window(car):
 
     image = scale_image(image, var.SCALE_RESIZE_X)  # Scale the image
     var.WINDOW.blit(image, convert_to_new_window((x, y)))  # Draw the red car
-    draw_detection_cone((x + 52, y - 3), car.genetic.get_list(), factor=3, width_line=5)  # Draw the detection cones
+    draw_detection_cone((x + 52, y - 3), car.genetic.dice_values, factor=3, width_line=5)  # Draw the detection cones
 
     # Draw the dice
     x_distance = 120

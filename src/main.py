@@ -1,7 +1,7 @@
 from src.data.analyze_data import analyze_data_scores, show_positions_crash  # Import the analyze_data function
 from src.data.constants import CHANGE_CHECKPOINTS, PATH_DATA, PATH_IMAGE  # Import the constants
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from src.menus.garage_menu import GARAGE, add_garage_cars  # Import the garage
+from src.menus.garage_menu import add_garage_cars  # Import the garage
 from src.menus.settings_menu import SETTINGS  # Import the settings
 from src.game.genetic import Genetic  # Import the genetic class
 from src.other.utils import union_rect  # Import the utils
@@ -311,9 +311,9 @@ def run_test_value_genetic_parameters():
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 
-    for var.CHANCE_MUTATION in [0.2, 0.5, 0.8]:
-        for var.CHANCE_CROSSOVER in [0.2, 0.5, 0.8]:
-            for var.PROPORTION_CARS_KEPT in [0.2, 0.5, 0.8]:
+    for var.CHANCE_MUTATION in [0.7, 0.9]:
+        for var.CHANCE_CROSSOVER in [0.5]:
+            for var.PROPORTION_CARS_KEPT in [0.2]:
                 var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
                 for var.SEED in range(50):
                     play()
@@ -325,8 +325,9 @@ if __name__ == '__main__':
     Main program
     """
     try:
-        var.load_variables()  # Load the data
+        var.load_parameters()  # Load the data
         var.change_map(first_time=True)  # Change the map to the first one
+        var.load_cars()  # Load the cars (we do it here because we need the map to be loaded so Genetic can be initialized)
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
         display.edit_background()  # Add elements not clickable to the background

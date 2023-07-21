@@ -1,8 +1,9 @@
+from src.data.data_classes import MemoryCar  # Import the car memory
 import itertools  # Used to get all the combinations of cars
 import src.data.variables as var  # Variables of the game
-from src.data.data_classes import MemoryCar  # Import the car memory
 import random  # Used to generate random numbers
 from src.game.car import Car  # Import the car
+
 
 """
 This file contains all the functions used to apply the genetic algorithm to the cars (selection, mutation, crossover)
@@ -28,24 +29,41 @@ def apply_genetic(cars):
         cars_to_keep = find_cars_to_keep(cars)  # We find the cars to keep (the best cars)
         cars = init_cars(cars_to_keep, var.NB_CARS - len(cars_to_keep))  # Select the best cars that we will mutate
 
+
         # We change the genetic algorithm mode if we are in the test mode
         if var.TEST_MUTATION_CROSSOVER:
-            if var.TEST_MODE == 'mutation_only':
-                cars = mutate(cars, cars_to_keep)  # Mutate the cars
-            elif var.TEST_MODE == 'mutation_crossover':
-                cars = mutate(cars, cars_to_keep)  # Mutate the cars
-                crossover(cars)  # Crossover the cars
-            elif var.TEST_MODE == 'crossover_mutation':
-                crossover(cars)
-                cars = mutate(cars, cars_to_keep)  # Mutate the cars
-
+            cars = apply_genetic_test(cars, cars_to_keep)
         else:
             crossover(cars)  # Crossover the cars
             cars = mutate(cars, cars_to_keep)  # Mutate the cars
 
+
         add_cars_to_keep(cars, cars_to_keep)  # We add the best cars to the list
     else:
         cars = [Car() for _ in range(var.NB_CARS)]  # If there is no car, we add random cars
+
+    return cars
+
+
+def apply_genetic_test(cars, cars_to_keep):
+    """
+    Do the correct genetic algorithm based on the test mode
+
+    Args:
+        cars (list): list of cars
+        cars_to_keep (list): list of cars we will not mutate and keep in the next turn
+
+    Returns:
+        list: list of cars with the genetic algorithm applied
+    """
+    if var.TEST_MODE == 'mutation_only':
+        cars = mutate(cars, cars_to_keep)  # Mutate the cars
+    elif var.TEST_MODE == 'mutation_crossover':
+        cars = mutate(cars, cars_to_keep)  # Mutate the cars
+        crossover(cars)  # Crossover the cars
+    elif var.TEST_MODE == 'crossover_mutation':
+        crossover(cars)
+        cars = mutate(cars, cars_to_keep)  # Mutate the cars
 
     return cars
 
@@ -61,15 +79,12 @@ def find_cars_to_keep(cars):
         list: list of cars to keep
     """
     number_to_keep = max(min(int(var.PROPORTION_CARS_KEPT * len(cars)), var.NB_CARS), 1)  # Number of cars to keep
-    cars_to_keep = cars[:number_to_keep]  # Select the best cars
+    cars_to_keep = cars[:number_to_keep]  # We keep the best cars
 
     best_car = cars_to_keep[0]  # We get the best car
     var.MEMORY_CARS.append(MemoryCar(var.ACTUAL_IDS_MEMORY_CARS, f'Génération_{var.NUM_GENERATION}',
                                      'gray', best_car.genetic, best_car.best_scores))  # Add the best car to the memory
     var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the memory cars
-
-    for car in cars_to_keep:
-        car.reset()  # We reset the cars
 
     return cars_to_keep
 
@@ -93,7 +108,7 @@ def init_cars(cars_to_keep, number_cars):
     probabilities = [weight / total_weight for weight in weights]
 
     selected_cars = random.choices(cars_to_keep, probabilities, k=number_cars)  # We choose the cars based on their probabilities
-    cars = [Car(car.genetic) for car in selected_cars]
+    cars = [car.copy() for car in selected_cars]
 
     return cars
 
@@ -114,8 +129,7 @@ def mutate(cars, cars_to_keep):
     for car in cars:
         added = False
         while not added:
-            car = mutate_one_car(car)  # Mutate the car
-
+            mutate_one_car(car)  # Mutate the car
             if car not in new_cars and car not in cars_to_keep:  # If the car is not already in the list or if we have tried too many times
                 added = True
                 new_cars.append(car)  # We add the car to the list
@@ -129,24 +143,15 @@ def mutate_one_car(car):
 
     Args:
         car (Car): the car to mutate
-
-    Returns:
-        Car: the mutated car
     """
     has_muted = False  # True if the car has mutated
     while not has_muted:  # We try mutating the car until it mutates
-        for attribute_name, attribute_value in vars(car.genetic).items():
+        dice_values = car.genetic.dice_values.copy()  # We copy the dice values
+        for index, value in enumerate(car.genetic.dice_values):
             if random.random() < var.CHANCE_MUTATION:
                 has_muted = True
-                # See if it is a width or a length
-                if attribute_name.startswith('width'):
-                    multiplier = var.WIDTH_CONE
-                else:
-                    multiplier = var.LENGTH_CONE
-                actual_value = int(getattr(car.genetic, attribute_name) / multiplier)  # Get the actual value of the attribute
-                setattr(car.genetic, attribute_name, multiplier * random_attribution(actual_value))
-
-    return car
+                dice_values[index] = random_attribution(value)  # We change the value of the dice
+        car.genetic.dice_values = dice_values
 
 
 def crossover(cars):
@@ -167,13 +172,11 @@ def crossover(cars):
                 count += 1
                 number_attributes_exchanged = random.randint(1, 6)  # We choose a random number of attributes to exchange
                 ids_changed_attributes = random.sample(range(0, 6), number_attributes_exchanged)  # We choose the attributes to exchange
-                for k, (attribute_name, attribute_value) in enumerate(vars(car1.genetic).items()):
-                    if k in ids_changed_attributes:
-                        genetic_1, genetic_2 = car1.genetic, car2.genetic
-                        setattr(genetic_1, attribute_name, getattr(genetic_2, attribute_name))
-                        setattr(genetic_2, attribute_name, attribute_value)
-                        new_car_1 = Car(genetic=genetic_1, best_scores=car1.best_scores, color=car1.color)
-                        new_car_2 = Car(genetic=genetic_2, best_scores=car2.best_scores, color=car2.color)
+                for i, value in enumerate(car1.genetic.dice_values):
+                    if i in ids_changed_attributes:
+                        car1.genetic.dice_values[i], car2.genetic.dice_values[i] = car2.genetic.dice_values[i], value
+                        new_car_1 = Car(genetic=car1.genetic, best_scores=car1.best_scores, color=car1.color)
+                        new_car_2 = Car(genetic=car2.genetic, best_scores=car2.best_scores, color=car2.color)
 
                         # We verify that the new cars are not already in the list
                         if new_car_1 not in cars and new_car_2 not in cars:

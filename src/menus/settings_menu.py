@@ -90,6 +90,23 @@ class Settings:
                                 self.proportion_button, self.seed_button, self.width_cone_button, self.length_cone_button,
                                 self.drift_button]
 
+    def update_parameters(self):
+        """
+        Update the texts of the buttons
+        """
+        self.seed_button.update_text(var.SEED)  # Update the text of the seed button
+        self.max_speed_button.update_text(var.MAX_SPEED)  # Update the text of the max speed button
+        self.turn_angle_button.update_text(var.TURN_ANGLE)  # Update the text of the turn angle button
+        self.acceleration_button.update_text(var.ACCELERATION)  # Update the text of the acceleration button
+        self.deceleration_button.update_text(var.DECELERATION)  # Update the text of the deceleration button
+        self.drift_button.update_text(var.DRIFT_FACTOR)  # Update the text of the drift button
+        self.crossover_button.update_text(var.CHANCE_CROSSOVER)  # Update the text of the crossover button
+        self.mutation_button.update_text(var.CHANCE_MUTATION)  # Update the text of the mutation button
+        self.proportion_button.update_text(var.PROPORTION_CARS_KEPT)  # Update the text of the proportion button
+        self.time_generation_button.update_text(var.TIME_GENERATION)  # Update the text of the time per generation button
+        self.width_cone_button.update_text(var.WIDTH_CONE)  # Update the text of the width cone button
+        self.length_cone_button.update_text(var.LENGTH_CONE)  # Update the text of the length cone button
+
     def draw(self):
         """
         Display the settings window

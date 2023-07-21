@@ -1,6 +1,7 @@
 from src.data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA  # Import the constants
 from src.other.utils import scale_image, convert_to_new_window  # Import the utils functions
 from src.render.display import edit_background  # Import the display functions
+from src.menus.settings_menu import SETTINGS  # Import the Settings class
 from src.data.data_classes import MemoryCar  # Import the MemoryCar class
 from src.game.genetic import Genetic  # Import the Genetic class
 import pygame  # To use pygame
@@ -75,6 +76,7 @@ CARS_LAST_RUN = []  # Cars of the last run
 DO_DRIFT = True  # True if we want to see the drift of the cars, False otherwise
 LIST_DRIFT_FACTOR = [2.0] * len(START_POSITIONS)  # Factor of the drift for each map
 DRIFT_FACTOR = None  # Factor of the drift for the current map
+
 
 # CHARACTERISTICS CARS
 LIST_WIDTH_CONE = [16] * len(START_POSITIONS)  # Width multiplier of the cone for each map
@@ -169,12 +171,13 @@ def resize_window(dimensions):
     Args:
         dimensions (tuple): Dimensions of the window
     """
-    global WINDOW, WIDTH_SCREEN, HEIGHT_SCREEN, BACKGROUND
+    global WINDOW, WIDTH_SCREEN, HEIGHT_SCREEN, BACKGROUND, BIG_RED_CAR_IMAGE
 
     WIDTH_SCREEN, HEIGHT_SCREEN = dimensions  # Update the dimensions
     WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Resize the window
     update_visual_variables()  # Update the visual data
     pygame.display.flip()  # Update the display
+    BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
 
 def change_map(first_time=False):
@@ -243,6 +246,9 @@ def change_map(first_time=False):
     CHANCE_MUTATION = LIST_CHANCE_MUTATION[NUM_MAP]  # Chance of mutation for the current map
     PROPORTION_CARS_KEPT = LIST_PROPORTION_CARS_KEPT[NUM_MAP]  # Percentage used to know how many cars we keep for the next generation for the current map
 
+    if SETTINGS.x is not None:  # If the settings window has been initialized
+        SETTINGS.update_parameters()  # Update the settings parameters
+
 
 def update_visual_variables():
     """
@@ -280,13 +286,10 @@ def init_variables(nb_cars, replay=False):
         NUM_GENERATION = 1  # Number of the generation
 
 
-def load_variables():
+def load_parameters():
     """
-    Load the data of the game (number of the map, number of cars, cars, ...)
+    Load the parameters of the different maps stored in the file parameters
     """
-    global ACTUAL_IDS_MEMORY_CARS, BIG_RED_CAR_IMAGE
-
-    # We load the parameters of the game
     with open(PATH_DATA + 'parameters', 'r') as file_parameters_read:
         """
         Format of the file parameters:
@@ -298,6 +301,8 @@ def load_variables():
         param1 = value1
         ...
         """
+        global BIG_RED_CAR_IMAGE
+
         lines = file_parameters_read.readlines()  # We read the file
         actual_map = -1  # Actual map (-1 because we start with the map 0)
         for line in lines:
@@ -334,6 +339,16 @@ def load_variables():
                     elif param == 'proportion_selection':
                         LIST_PROPORTION_CARS_KEPT[actual_map] = float(line.split()[2])
 
+        # We load the image of the car (we do it here because we have to do it during the initialization of the game)
+        BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
+
+
+def load_cars():
+    """
+    Load the cars stored in the file cars
+    """
+    global ACTUAL_IDS_MEMORY_CARS
+
     with open(PATH_DATA + 'cars', 'r') as file_cars_read:
         """
         Format of the file cars:
@@ -353,8 +368,6 @@ def load_variables():
             MEMORY_CARS.append(MemoryCar(id_car, name, color, genetic, scores))  # We create the memory car
             if ACTUAL_IDS_MEMORY_CARS <= id_car:
                 ACTUAL_IDS_MEMORY_CARS = id_car + 1
-
-    BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
 
 def save_cars():

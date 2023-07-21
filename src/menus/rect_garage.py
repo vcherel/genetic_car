@@ -135,7 +135,7 @@ class RectGarage:
         Draw the button to edit a car
         """
         if self.edit_button.draw():  # We check the state of the button
-            DICE_MENU.init(values=self.memory_car.genetic.get_list(), id_memory_car=self.memory_car.id)  # We initialize the dice data
+            DICE_MENU.init(values=self.memory_car.genetic.dice_values, id_memory_car=self.memory_car.id)  # We initialize the dice data
             var.DISPLAY_DICE_MENU = True  # We display the dice menu
 
     def draw_delete_button(self, time_since_last_delete):

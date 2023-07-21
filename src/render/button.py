@@ -131,7 +131,7 @@ class Button:
 
         return self.activated  # Return True if the button is clicked (or activated), False otherwise
 
-    def update(self, event):
+    def update_after_key_press(self, event):
         """
         Update the button
 
@@ -156,7 +156,17 @@ class Button:
 
         return False
 
+    def update_text(self, parameter):
+        """
+        Update the parameter of the button (writing button) after we changed the map
+        """
+        self.variable = parameter
+        self.text = str(parameter)
+
     def deactivate(self):
+        """
+        Deactivate the button (save the text if necessary)
+        """
         self.activated = False
         self.just_clicked = -1
         self.time_clicked = time.time()
@@ -193,8 +203,3 @@ class Button:
                     self.variable = 30
 
             self.text = str(self.variable)  # Reset the text
-
-    def resize(self):
-        """
-
-        """

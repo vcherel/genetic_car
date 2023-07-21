@@ -89,6 +89,15 @@ class Car:
         """
         return self.genetic == other.genetic
 
+    def copy(self):
+        """
+        Copy the car
+
+        Return:
+            Car: copy of the car
+        """
+        return Car(self.genetic.copy(), self.best_scores, self.color, self.id_memory_car)
+
     def move(self):
         """
         Move the car and update its state
@@ -355,7 +364,7 @@ class Car:
             actual_mode = 'medium'
 
         # We draw the detection cone
-        points_detection_cone = draw_detection_cone(self.front_of_car, self.genetic.get_list(), self.angle, actual_mode=actual_mode)
+        points_detection_cone = draw_detection_cone(self.front_of_car, self.genetic.dice_values, self.angle, actual_mode=actual_mode)
         var.RECTS_BLIT_CAR.append(create_rect_from_points(points_detection_cone))  # Add the rect of the cones to the list to blit it
 
     def change_color(self, color):

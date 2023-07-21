@@ -18,22 +18,13 @@ class Genetic:
             list_parameters (list(int)): list of the parameters of the genetic algorithm in this order : (length_slow, length_medium, length_fast, width_slow, width_medium, width_fast)
         """
         if list_parameters is not None:        # If we have the parameters of the genetic algorithm
-            self.length_slow = list_parameters[0] * var.LENGTH_CONE  # Length of the detection cone when the car is going slow
-            self.length_medium = list_parameters[1] * var.LENGTH_CONE  # Length of the detection cone when the car is going at medium speed
-            self.length_fast = list_parameters[2] * var.LENGTH_CONE  # Length of the detection cone when the car is going fast
-
-            self.width_slow = list_parameters[3] * var.WIDTH_CONE  # Width of the detection cone when the car is going slow
-            self.width_medium = list_parameters[4] * var.WIDTH_CONE  # Width of the detection cone when the car is going at medium speed
-            self.width_fast = list_parameters[5] * var.WIDTH_CONE  # Width of the detection cone when the car is going fast
-
+            self.dice_values = list_parameters.copy()  # Dice values corresponding to this genome (we copy the list)
         else:                                  # If we don't have the parameters we randomize them
-            self.length_slow = var.LENGTH_CONE * random.randint(1, 6)  # Length of the detection cone when the car is going slow
-            self.length_medium = var.LENGTH_CONE * random.randint(1, 6)  # Length of the detection cone when the car is going at medium speed
-            self.length_fast = var.LENGTH_CONE * random.randint(1, 6)  # Length of the detection cone when the car is going fast
+            self.dice_values = [random.randint(1, 6) for _ in range(6)]  # Dice values corresponding to this genome
 
-            self.width_slow = var.WIDTH_CONE * random.randint(1, 6)  # Width of the detection cone when the car is going slow
-            self.width_medium = var.WIDTH_CONE * random.randint(1, 6)  # Width of the detection cone when the car is going at medium speed
-            self.width_fast = var.WIDTH_CONE * random.randint(1, 6)  # Width of the detection cone when the car is going fast
+        self.length_slow = self.length_medium = self.length_fast = None  # We initialize the parameters
+        self.width_slow = self.width_medium = self.width_fast = None  # We initialize the parameters
+        self.save_values()  # Update the genetic algorithm (fill the parameters)
 
     def __str__(self):
         """
@@ -42,8 +33,10 @@ class Genetic:
         Returns:
             str: string representation of the genetic algorithm
         """
-        return f'{self.length_slow // var.LENGTH_CONE} {self.length_medium // var.LENGTH_CONE} {self.length_fast // var.LENGTH_CONE} ' \
-               f'{self.width_slow // var.WIDTH_CONE} {self.width_medium // var.WIDTH_CONE} {self.width_fast // var.WIDTH_CONE}'
+        str_to_return = ''
+        for value in self.dice_values:
+            str_to_return += str(value) + ' '
+        return str_to_return[:-1]  # We remove the last space
 
     def __eq__(self, other):
         """
@@ -55,9 +48,7 @@ class Genetic:
         Returns:
             bool: True if the two genetic algorithms are equals, False otherwise
         """
-        return self.width_fast == other.width_fast and self.length_fast == other.length_fast and \
-            self.width_medium == other.width_medium and self.length_medium == other.length_medium and \
-            self.width_slow == other.width_slow and self.length_slow == other.length_slow
+        return self.dice_values == other.dice_values
 
     def copy(self):
         """
@@ -66,14 +57,16 @@ class Genetic:
         Returns:
             Genetic: copy of the genetic algorithm
         """
-        return Genetic(self.get_list())
+        return Genetic(self.dice_values)
 
-    def get_list(self):
+    def save_values(self):
         """
-        Get the list of the genetic parameters
+        Update the genetic algorithm (the dice values have changed, so we update the parameters)
+        """
+        self.length_slow = self.dice_values[0] * var.LENGTH_CONE  # Length of the detection cone when the car is going slow
+        self.length_medium = self.dice_values[1] * var.LENGTH_CONE  # Length of the detection cone when the car is going at medium speed
+        self.length_fast = self.dice_values[2] * var.LENGTH_CONE  # Length of the detection cone when the car is going fast
 
-        Returns:
-            list: list of the genetic parameters
-        """
-        return [self.length_slow // var.LENGTH_CONE, self.length_medium // var.LENGTH_CONE, self.length_fast // var.LENGTH_CONE,
-                self.width_slow // var.WIDTH_CONE, self.width_medium // var.WIDTH_CONE, self.width_fast // var.WIDTH_CONE]
+        self.width_slow = self.dice_values[3] * var.WIDTH_CONE  # Width of the detection cone when the car is going slow
+        self.width_medium = self.dice_values[4] * var.WIDTH_CONE  # Width of the detection cone when the car is going at medium speed
+        self.width_fast = self.dice_values[5] * var.WIDTH_CONE  # Width of the detection cone when the car is going fast

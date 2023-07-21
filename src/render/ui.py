@@ -155,27 +155,27 @@ def handle_key_press(event):
     """
     # We change value of nb cars if necessary
     if nb_cars_button.activated:
-        if nb_cars_button.update(event):  # If the value has been saved
+        if nb_cars_button.update_after_key_press(event):  # If the value has been saved
             var.NB_CARS = nb_cars_button.variable  # We change the value of the variable
 
     # We change value of dice if necessary
     if var.DISPLAY_DICE_MENU:
         for index, value_button in enumerate(DICE_MENU.values_button):
             if value_button.activated:
-                if value_button.update(event):  # If the value has been saved
+                if value_button.update_after_key_press(event):  # If the value has been saved
                     DICE_MENU.save_values(index, value_button)  # Save the values of the dice
 
     # We change value of car name if necessary
     if GARAGE.rectangles:
         for rect_garage in GARAGE.rectangles:
             if rect_garage.name_button.activated:
-                if rect_garage.name_button.update(event):  # If the value has been saved
+                if rect_garage.name_button.update_after_key_press(event):  # If the value has been saved
                     rect_garage.save_new_car_name()  # Save the name of the car
 
     # We change value of settings if necessary
     if var.DISPLAY_SETTINGS:
         for button in SETTINGS.writing_buttons:
-            if button.activated and button.update(event):  # If the value has been saved
+            if button.activated and button.update_after_key_press(event):  # If the value has been saved
                 setattr(var, button.name, button.variable)  # Change the value of the variable
 
 
@@ -321,6 +321,7 @@ def display_map_button(cars):
     if map_button.just_clicked:  # Map button is just clicked
         pygame.display.flip()  # To see the red contour of the button
         var.change_map()  # We change the map
+        update_value_nb_cars_button()  # We update the value of the nb cars button
         if cars:
             for car in cars:
                 car.reset()  # We reset the cars
@@ -460,3 +461,10 @@ def erase():
     rect_blit_ui = union_rect(var.RECTS_BLIT_UI)  # Union of the rects for the blit
     var.WINDOW.blit(var.BACKGROUND, rect_blit_ui, rect_blit_ui)  # Erase the ui
     var.RECTS_BLIT_UI = []  # We reset the list of rects to blit
+
+
+def update_value_nb_cars_button():
+    """
+    Update the value of the nb cars button
+    """
+    nb_cars_button.update_text(var.NB_CARS)
