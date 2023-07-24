@@ -184,24 +184,31 @@ def resize_window(dimensions):
     BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
 
-def change_map(first_time=False):
+def change_map(first_time=False, reverse=False):
     """
     Change the map and all the data associated. It is used at the beginning of the game and when we press the button to change the map
     When it's the first time we keep the actual map but when we press the button we change the map to the next one
 
     Args:
         first_time (bool): True if it's the first time we change the map, False otherwise
+        reverse (bool): True if we want to go to the previous map, False otherwise
     """
     global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, EXPLOSION_IMAGES, \
         MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, NB_CARS, TIME_GENERATION, SEED, MAX_SPEED, TURN_ANGLE, ACCELERATION, \
         DECELERATION, CHANCE_CROSSOVER, CHANCE_MUTATION, PROPORTION_CARS_KEPT, DRIFT_FACTOR, WIDTH_CONE, LENGTH_CONE, START_ANGLE
 
-    # If we change map for the first time, we don't change the map
+    # If we change map for the first time, we don't change the map (it's just to initialize the data)
     if not first_time:
-        if NUM_MAP >= NB_MAPS - 1:
-            NUM_MAP = 0
+        if not reverse:
+            if NUM_MAP >= NB_MAPS - 1:
+                NUM_MAP = 0
+            else:
+                NUM_MAP += 1
         else:
-            NUM_MAP += 1
+            if NUM_MAP == 0:
+                NUM_MAP = NB_MAPS - 1
+            else:
+                NUM_MAP -= 1
 
     START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the cars
     START_ANGLE = START_ANGLES[NUM_MAP]  # Start angle of the cars
@@ -392,3 +399,16 @@ def save_cars():
                 str_to_write += f' {int(score)}'  # We cast to int because it can be a float vor the waiting map
             str_to_write += '\n'
             file_cars_write.write(str_to_write)
+
+
+def add_to_rects_blit_ui(rect, offset=0):
+    """
+    Add a rect to the list of rects used to erase the ui of the screen
+    (we increase the size of the rect, so we don't see the borders left on the screen)
+
+    Args:
+        rect (pygame.Rect): Rect to add
+        offset (int): Offset to add to the rect
+    """
+    rect_to_add = pygame.Rect(rect.x, rect.y, rect.width + offset, rect.height + offset)  # Rect to add
+    RECTS_BLIT_UI.append(rect_to_add)  # We add the rect to the list

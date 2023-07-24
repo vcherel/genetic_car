@@ -27,7 +27,7 @@ class Explosion(pygame.sprite.Sprite):
         self.rect.center = convert_to_new_window(pos)  # Position of the explosion
 
         self.timer = 0  # Counter used to know when to change the image
-        self.delay = 100  # Delay between each image change
+        self.delay = 125  # Delay between each image change
 
     def update(self):
         """

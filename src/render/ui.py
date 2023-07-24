@@ -27,16 +27,17 @@ start_button = Button()  # Button to start the game
 nb_cars_button = Button()  # Button to change the number of cars
 garage_button = Button()  # Button to open the garage
 dice_button = Button()  # Button to see the dice with the camera
-map_button = Button()  # Button to change the map
 restart_button = Button()  # Button to restart the game
 settings_button = Button()  # Button to open the settings
 skip_button = Button()  # Button to go to the next generation
+previous_map_button = Button()  # Button to change the map
+next_map_button = Button()  # Button to change the map
 
-BUTTONS = [stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button]  # List of all the buttons
+BUTTONS = [stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button]  # List of all the buttons
 
 
 def init():
-    global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, map_button, restart_button, settings_button, skip_button
+    global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button
 
     # Buttons
     stop_button = Button(x=1425, y=4, image_name='stop', scale=0.25)
@@ -45,10 +46,12 @@ def init():
     nb_cars_button = Button(x=1095, y=58, image_name='writing', variable=var.NB_CARS, name='nb_cars')
     garage_button = Button(x=350, y=30, image_name='garage', checkbox=True)
     dice_button = Button(x=500, y=30, image_name='dice')
-    map_button = Button(x=780, y=30, image_name='map')
     restart_button = Button(x=1287, y=4, image_name='restart', scale=0.2)
     settings_button = Button(x=285, y=5, image_name='settings', checkbox=True, scale=0.65)
     skip_button = Button(x=1290, y=80, image_name='skip', scale=0.45)
+    previous_map_button = Button(x=820, y=70, image_name='previous_map', scale=0.45)
+    next_map_button = Button(x=920, y=70, image_name='next_map', scale=0.45)
+
 
 
 def handle_events(cars=None):
@@ -215,7 +218,7 @@ def display_stop_button():
     """
     stop_button.draw()  # Draw the stop button
     if stop_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(stop_button.rect)  # We add the rect to the list of rects to blit
+        var.add_to_rects_blit_ui(stop_button.rect)  # We add the rect to the list of rects to blit
     if stop_button.just_clicked:
         if var.PLAY:
             var.PLAY = False  # We stop the simulation
@@ -230,7 +233,7 @@ def display_pause_button():
     """
     var.PAUSE = pause_button.draw()  # Draw the pause button
     if pause_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(pause_button.rect)
+        var.add_to_rects_blit_ui(pause_button.rect, offset=1)
     if pause_button.just_clicked:  # Pause button is just clicked
         if var.PAUSE:
             pause(from_button=True)  # We pause the simulation
@@ -244,7 +247,7 @@ def display_start_button():
     """
     var.START = start_button.draw()  # Draw the start button
     if start_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(start_button.rect)  # To erase the contour of button
+        var.add_to_rects_blit_ui(start_button.rect, offset=3)  # To erase the contour of button
     if start_button.just_clicked and (var.NB_CARS != 0 or var.SELECTED_MEMORY_CARS):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
@@ -270,7 +273,7 @@ def display_garage_button():
     """
     var.DISPLAY_GARAGE = garage_button.draw()  # Draw the garage button
     if garage_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(garage_button.rect)  # We add the rect of the garage button to the list of rects to blit
+        var.add_to_rects_blit_ui(garage_button.rect, offset=3)  # We add the rect of the garage button to the list of rects to blit
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
@@ -287,7 +290,7 @@ def display_dice_button():
     """
     dice_button.draw()  # Draw the dice button
     if dice_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(dice_button.rect)  # We add the rect of the dice button to the list of rects to blit
+        var.add_to_rects_blit_ui(dice_button.rect)  # We add the rect of the dice button to the list of rects to blit
     if dice_button.just_clicked:   # Dice button is just clicked
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage when the dice button is pressed
@@ -316,12 +319,24 @@ def display_map_button(cars):
     """
     Display the map button used to change the map
     """
-    map_button.draw()  # Draw the map button
-    if map_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(map_button.rect)  # We add the rect of the map button to the list of rects to blit
-    if map_button.just_clicked:  # Map button is just clicked
+    previous_map_button.draw()  # Draw the map button
+    if previous_map_button.mouse_over_button:
+        var.add_to_rects_blit_ui(previous_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
+    if previous_map_button.just_clicked:  # Map button is just clicked
         pygame.display.flip()  # To see the red contour of the button
-        var.change_map()  # We change the map
+        var.change_map(reverse=True)  # We change the map to the previous one
+        update_value_nb_cars_button()  # We update the value of the nb cars button
+        if cars:
+            for car in cars:
+                car.reset()  # We reset the cars
+            var.NB_CARS_ALIVE = len(cars)
+
+    next_map_button.draw()  # Draw the map button
+    if next_map_button.mouse_over_button:
+        var.add_to_rects_blit_ui(next_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
+    if next_map_button.just_clicked:  # Map button is just clicked
+        pygame.display.flip()  # To see the red contour of the button
+        var.change_map()  # We change the map to the previous one
         update_value_nb_cars_button()  # We update the value of the nb cars button
         if cars:
             for car in cars:
@@ -336,7 +351,7 @@ def display_restart_button():
     if restart_button.draw() and var.CARS_LAST_RUN:  # Draw the restart button
         var.PLAY_LAST_RUN = True  # We play the last run
     if restart_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(restart_button.rect)
+        var.add_to_rects_blit_ui(restart_button.rect)
 
 
 def display_settings_button():
@@ -353,7 +368,7 @@ def display_settings_button():
     if var.DISPLAY_SETTINGS:  # If the garage is displayed we draw it and do the actions
         SETTINGS.draw()
     if settings_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(settings_button.rect)
+        var.add_to_rects_blit_ui(settings_button.rect)
 
 
 def display_skip_button():
@@ -364,7 +379,7 @@ def display_skip_button():
     if skip_button.just_clicked:  # Next generation button is just clicked
         var.CHANGE_GENERATION = True  # We change the generation
     if skip_button.mouse_over_button:
-        var.RECTS_BLIT_UI.append(skip_button.rect)  # We add the rect of the next generation button to the list of rects to blit
+        var.add_to_rects_blit_ui(skip_button.rect, offset=2)  # We add the rect of the next generation button to the list of rects to blit
 
 
 def display_text():
@@ -415,7 +430,7 @@ def unpause(from_button=False):
     if not from_button:  # If the unpause is not from the pause button we have to uncheck the button
         var.PAUSE = False  # We unpause the simulation
         pause_button.activated = False  # We uncheck the pause button
-        var.RECTS_BLIT_UI.append(pause_button.rect)  # We add the rect of the pause button to the list of rects to blit
+        var.add_to_rects_blit_ui(pause_button.rect)  # We add the rect of the pause button to the list of rects to blit
 
     if var.DISPLAY_CAR_WINDOW:
         erase_car_window()

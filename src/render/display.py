@@ -12,10 +12,11 @@ def edit_background():
     """
     Add elements to the background for the rest of the game
     """
-    font = pygame.font.SysFont('Arial', 20, bold=True)  # Create the font
+    font = pygame.font.SysFont('Arial', int(20 * var.SCALE_RESIZE_X), bold=True)  # Create the font
     var.BACKGROUND.blit(font.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), convert_to_new_window((1060, 25)))  # Add the yes text
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), convert_to_new_window((1280, 120)), convert_to_new_window((1280, 0)), 2)  # Line at the right
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), convert_to_new_window((325, 120)), convert_to_new_window((325, 0)), 2)  # Line at the left
+    var.BACKGROUND.blit(pygame.transform.scale_by(pygame.image.load(var.PATH_IMAGE + 'map.png'), var.SCALE_RESIZE_X), convert_to_new_window((785, 5)))  # Add the map
 
 
 def show_checkpoints():
@@ -35,7 +36,7 @@ def display_text_ui(caption, pos, font, background_color=(128, 128, 128)):
     """
     text = font.render(caption, True, (0, 0, 0), background_color)  # Create the text
     var.WINDOW.blit(text, pos)  # Draw the text
-    var.RECTS_BLIT_UI.append(text_rec(text, pos))  # Add the rectangle of the text to the list of rectangles to blit
+    var.add_to_rects_blit_ui(text_rec(text, pos))  # Add the rectangle of the text to the list of rectangles to blit
 
 
 def draw_detection_cone(pos, dice_values, angle=90, factor=1, width_line=2, actual_mode=None):
