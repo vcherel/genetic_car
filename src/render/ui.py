@@ -247,7 +247,7 @@ def display_start_button():
     """
     var.START = start_button.draw()  # Draw the start button
     if start_button.mouse_over_button:
-        var.add_to_rects_blit_ui(start_button.rect, offset=3)  # To erase the contour of button
+        var.add_to_rects_blit_ui(start_button.rect, offset=5)  # To erase the contour of button
     if start_button.just_clicked and (var.NB_CARS != 0 or var.SELECTED_MEMORY_CARS):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
@@ -323,8 +323,8 @@ def display_map_button(cars):
     if previous_map_button.mouse_over_button:
         var.add_to_rects_blit_ui(previous_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
     if previous_map_button.just_clicked:  # Map button is just clicked
-        pygame.display.flip()  # To see the red contour of the button
         var.change_map(reverse=True)  # We change the map to the previous one
+        pygame.display.flip()  # To see the new map
         update_value_nb_cars_button()  # We update the value of the nb cars button
         if cars:
             for car in cars:
@@ -335,8 +335,8 @@ def display_map_button(cars):
     if next_map_button.mouse_over_button:
         var.add_to_rects_blit_ui(next_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
     if next_map_button.just_clicked:  # Map button is just clicked
-        pygame.display.flip()  # To see the red contour of the button
         var.change_map()  # We change the map to the previous one
+        pygame.display.flip()  # To see the new map
         update_value_nb_cars_button()  # We update the value of the nb cars button
         if cars:
             for car in cars:

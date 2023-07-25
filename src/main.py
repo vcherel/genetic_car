@@ -314,30 +314,29 @@ def run_test_value_genetic_parameters():
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 
-    for var.CHANCE_MUTATION in [0.4]:
-        for var.CHANCE_CROSSOVER in [0.2]:
-            for var.PROPORTION_CARS_KEPT in [0.2]:
-                var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'w')
-                for var.SEED in range(50):
-                    print(var.SEED)
-                    play()
-                    var.NUM_GENERATION = 0
+    for var.CHANCE_MUTATION, var.CHANCE_CROSSOVER, var.PROPORTION_CARS_KEPT in [(0.3, 0.1, 0.2)]:
+        var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
+        for var.SEED in range(50):
+            print(var.SEED)
+            play()
+            var.NUM_GENERATION = 0
 
 
-if __name__ == '__main__':
+def main():
     """
-    Main program
+    Main function
     """
     try:
         var.load_parameters()  # Load the data
+        var.create_background()  # Create the background
         var.change_map(first_time=True)  # Change the map to the first one
         var.load_cars()  # Load the cars (we do it here because we need the map to be loaded so Genetic can be initialized)
+        var.load_explosions()  # Load the explosions
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
-        display.edit_background()  # Add elements not clickable to the background
 
         if var.SHOW_ANALYSIS:
-            scores_cars = analyze_data_scores('test_all_cars_2', 'test_all_cars_2_analysis')
+            scores_cars = analyze_data_scores('test_all_cars', 'test_all_cars_analysis')
             show_positions_crash(scores_cars)
 
         # If we want to run all the cars
@@ -355,3 +354,10 @@ if __name__ == '__main__':
         traceback.print_exc()  # Print the error
         var.exit_game()  # Exit the game
         raise e
+
+
+if __name__ == '__main__':
+    """
+    Main program
+    """
+    main()

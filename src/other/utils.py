@@ -21,7 +21,7 @@ def scale_image(img, factor=None):
     """
     if factor is None:
         x, y = var.SCALE_RESIZE_X, var.SCALE_RESIZE_Y
-    elif isinstance(factor, float):
+    elif isinstance(factor, float) or isinstance(factor, int):
         x, y = factor, factor
     else:
         x, y = factor[0], factor[1]

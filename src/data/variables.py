@@ -175,13 +175,19 @@ def resize_window(dimensions):
     Args:
         dimensions (tuple): Dimensions of the window
     """
-    global WINDOW, WIDTH_SCREEN, HEIGHT_SCREEN, BACKGROUND, BIG_RED_CAR_IMAGE
+    global WINDOW, WIDTH_SCREEN, HEIGHT_SCREEN, BACKGROUND, BIG_RED_CAR_IMAGE, EXPLOSION_IMAGES
 
     WIDTH_SCREEN, HEIGHT_SCREEN = dimensions  # Update the dimensions
     WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Resize the window
     update_visual_variables()  # Update the visual data
     pygame.display.flip()  # Update the display
     BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
+
+    EXPLOSION_IMAGES = []  # List of all the images of the explosion
+    for num in range(1, 10):
+        image = pygame.image.load(f'{PATH_IMAGE}explosion/{num}.png')  # Load the image
+        image = scale_image(image, CAR_SIZES[NUM_MAP] / 25 * SCALE_RESIZE_X)  # Scale the image
+        EXPLOSION_IMAGES.append(image)
 
 
 def change_map(first_time=False, reverse=False):
@@ -197,8 +203,7 @@ def change_map(first_time=False, reverse=False):
         MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, NB_CARS, TIME_GENERATION, SEED, MAX_SPEED, TURN_ANGLE, ACCELERATION, \
         DECELERATION, CHANCE_CROSSOVER, CHANCE_MUTATION, PROPORTION_CARS_KEPT, DRIFT_FACTOR, WIDTH_CONE, LENGTH_CONE, START_ANGLE
 
-    # If we change map for the first time, we don't change the map (it's just to initialize the data)
-    if not first_time:
+    if not first_time:  # We change the number of the map only if it's not the first time
         if not reverse:
             if NUM_MAP >= NB_MAPS - 1:
                 NUM_MAP = 0
@@ -209,6 +214,9 @@ def change_map(first_time=False, reverse=False):
                 NUM_MAP = NB_MAPS - 1
             else:
                 NUM_MAP -= 1
+
+        blit_circuit()  # Blit the circuit on the background surface
+
 
     START_POSITION = START_POSITIONS[NUM_MAP]  # Start position of the cars
     START_ANGLE = START_ANGLES[NUM_MAP]  # Start angle of the cars
@@ -221,13 +229,9 @@ def change_map(first_time=False, reverse=False):
 
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + 'car.png'), CAR_SIZES[NUM_MAP] / 75)  # Image of the car
 
-    EXPLOSION_IMAGES = []  # List of all the images of the explosion
-    for num in range(1, 10):
-        image = pygame.image.load(f'{PATH_IMAGE}explosion/{num}.png')  # Load the image
-        image = scale_image(image, CAR_SIZES[NUM_MAP] / 25)  # Scale the image
-        EXPLOSION_IMAGES.append(image)
+    create_background()  # Create the background
 
-    update_visual_variables()  # Update the data used to display things
+    WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
 
     CHECKPOINTS = []  # List of checkpoints
     with open(PATH_DATA + 'checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:
@@ -262,23 +266,43 @@ def change_map(first_time=False, reverse=False):
         SETTINGS.update_parameters()  # Update the settings parameters
 
 
+def load_explosions():
+    """
+    Load the images of the explosions
+    """
+    global EXPLOSION_IMAGES
+    EXPLOSION_IMAGES = []  # List of all the images of the explosion
+    for num in range(1, 10):
+        image = pygame.image.load(f'{PATH_IMAGE}explosion/{num}.png')  # Load the image
+        image = scale_image(image, CAR_SIZES[NUM_MAP] / 25 * SCALE_RESIZE_X)  # Scale the image
+        EXPLOSION_IMAGES.append(image)
+
+
 def update_visual_variables():
     """
     Update the data used to display things according to the size of the new window
     """
-    global BACKGROUND, SCALE_RESIZE_X, SCALE_RESIZE_Y
+    global SCALE_RESIZE_X, SCALE_RESIZE_Y
 
-    # This background will be shown but will not be used to detect collisions
-    BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
-    BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
-    blit_circuit()  # Blit the circuit on the background surface
 
     SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
     SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
-
-    edit_background()  # Edit the background
+    create_background()  # Create the background
     WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
     pygame.display.flip()  # Update the display
+
+
+def create_background():
+    """
+    Create the background
+    This background will be shown but will not be used to detect collisions
+    """
+    global BACKGROUND
+
+    BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
+    BACKGROUND.fill((128, 128, 128))  # Fill the background with grey
+    edit_background()  # Edit the background
+    blit_circuit()  # Blit the circuit on the background surface
 
 
 def blit_circuit():

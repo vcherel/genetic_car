@@ -1,21 +1,22 @@
 from src.data.constants import PATH_DATA  # Import the path of the data
-from statistics import mean, median, variance  # To use statistics on the data
+import src.data.variables as var  # To use the global variables
 import matplotlib.pyplot as plt  # For plotting the histogram
-import src.data.variables as var  # For the path of the data
+from statistics import mean  # To use statistics on the data
 import os  # To iterate over the files in a folder
 import pylab  # To use the boxplot
 import pygame  # To use pygame
 
 """
 This file contains the functions to analyze the data from the test file (created from the file main.py)
-This data can the score of the cars, to determine where each car died ; or the mean BGR value of values
+This data can be the score of the cars, to determine where each car died ; or the mean BGR value of values
 """
 
 
 def analyze_data_scores(name_file_read, name_file_write):
     """
-    Analyze the data from the test file (created from the file main.py) and write the results in a file
-    The data concerns the score of the cars, to determine where each car died
+    Analyze the data from the test file 'test_all_cars' (created from the file main.py) and write the results in a file
+    named 'test_all_cars_analysis'
+    The data concerns the score of the cars, to determine where each car died on the track and how many cars completed a lap
 
     Args:
         name_file_read (str): Name of the file to read
@@ -36,7 +37,7 @@ def analyze_data_scores(name_file_read, name_file_write):
                 scores.append(score)  # We add the score to the list of the scores
 
                 # Find when the car died
-                if score > 150:
+                if score > len(var.CHECKPOINTS):
                     best_cars.append((int(data[1]), int(data[2]), int(data[3]), int(data[4]), int(data[5]), int(data[6]), score))
 
             # Sort the best cars by score
@@ -59,17 +60,22 @@ def analyze_data_scores(name_file_read, name_file_write):
 
 def show_positions_crash(scores):
     """
-    Show the analysis of the death of cars obtained by the function analyze_data, by drawing circles on the background
+    Show the analysis of the death of cars obtained by the function analyze_data_scores, by drawing circles on the background
+    The more car crashed at a position, the more the circle is red
+
+    Args:
+        scores (list): List of the scores
     """
     scores = [score for score in scores if score < len(var.CHECKPOINTS)]
 
-    turns = [0] * len(var.CHECKPOINTS)
+    score_cars = [0] * len(var.CHECKPOINTS)
     for score in scores:
-        turns[score] += 1
-    max_turns = max(turns)
+        score_cars[score] += 1
+
+    max_turns = max(score_cars)
 
     # Draw the circles
-    for pos, score in zip(var.CHECKPOINTS, turns):
+    for pos, score in zip(var.CHECKPOINTS, score_cars):
 
         # Calculate the red value based on the score
         red_value = int(score / max_turns * 255)  # Adjust the scaling if needed
@@ -110,44 +116,35 @@ def analyze_genetic_algorithm():
     Analyze the data from the genetic algorithm
     """
     mutation_only = []  # The number of generations to complete a lap with only mutation
-    mutation_crossover = []  # The number of generations to complete a lap with mutation and then crossover
     crossover_mutation = []  # The number of generations to complete a lap with crossover and then mutation
-    with open(var.PATH_DATA + 'test_mutation_only_2', 'r') as file:
+    with open(var.PATH_DATA + 'test_mutation_only', 'r') as file:
         for line in file:
             data = line.split()
             mutation_only.append(int(data[0]))
 
-    with open(var.PATH_DATA + 'test_mutation_crossover_2', 'r') as file:
-        for line in file:
-            data = line.split()
-            mutation_crossover.append(int(data[0]))
-
-    with open(var.PATH_DATA + 'test_crossover_mutation_2', 'r') as file:
+    with open(var.PATH_DATA + 'test_crossover_mutation', 'r') as file:
         for line in file:
             data = line.split()
             crossover_mutation.append(int(data[0]))
 
-    data = [mutation_only, mutation_crossover, crossover_mutation]
-    plt.boxplot(data)  # Plot the boxplot
-    plt.title('Nombre de générations pour compléter un tour\n pour les 3 algorithmes génétiques (sur 150 essais)')
+    data = [mutation_only, crossover_mutation]
+    red_square = dict(marker='2', markeredgecolor='red')  # Create a red square for the mean
+    plt.boxplot(data, showmeans=True, meanprops=red_square)  # Plot the boxplot
+    plt.title('Box-plot du nombre de générations nécessaire pour compléter un tour\n avec 2 algorithmes génétiques différents (sur 150 essais)')
     plt.ylim(0, 15)  # Adjust the y-axis as needed
     plt.ylabel('Nombre de générations')
-    pylab.xticks([1, 2, 3], ['Mutation', 'Mutation-crossover', 'Crossover-mutation'])  # Add legend
+    pylab.xticks([1, 2], ['Mutation seulement', 'Crossover puis mutation'])  # Add legend
 
     plt.savefig('algo_gen.png')
     plt.show()
-
-    print(mean(mutation_only), mean(mutation_crossover), mean(crossover_mutation))
-    print(median(mutation_only), median(mutation_crossover), median(crossover_mutation))
-    print(variance(mutation_only), variance(mutation_crossover), variance(crossover_mutation))
 
 
 def analyze_value_genetic_parameters():
     """
     This function analyzes the values that we got from the test of genetic parameters
-    We read all files in the data/test folder, and we look at the mean number of generation needed to complete a lap
+    We read all files in the /data/test folder, and we look at the mean number of generation needed to complete a lap
     """
-    dict_mean_values = {}  # Dictionary of the mean values for each parameter
+    dict_mean_values = {}  # keys : the filenames (test_MutationRate_CrossoverRate_SelectionRate), values : the mean number of generations needed to complete a lap
 
     for filename in os.listdir(var.PATH_DATA + 'tests/'):
         f = var.PATH_DATA + 'tests/' + filename
@@ -155,12 +152,15 @@ def analyze_value_genetic_parameters():
         with open(f, 'r') as file:
             for line in file:
                 list_values.append(int(line.split()[0]))
-        if len(list_values) != 0:
+        if len(list_values) == 50:
             dict_mean_values[filename] = mean(list_values)
+        else:
+            print(f'Le fichier {filename} ne contient pas 50 valeurs')
 
     # Sort the dictionary by values
     dict_mean_values = {k: v for k, v in sorted(dict_mean_values.items(), key=lambda item: item[1])}
-    print(dict_mean_values)  # The name of the file is test_MutationRate_CrossoverRate_SelectionRate
+    for key in dict_mean_values.keys():
+        print(f'{key} : {dict_mean_values[key]}')  #
 
 
 if __name__ == '__main__':

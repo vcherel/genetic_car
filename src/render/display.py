@@ -16,7 +16,7 @@ def edit_background():
     var.BACKGROUND.blit(font.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), convert_to_new_window((1060, 25)))  # Add the yes text
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), convert_to_new_window((1280, 120)), convert_to_new_window((1280, 0)), 2)  # Line at the right
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), convert_to_new_window((325, 120)), convert_to_new_window((325, 0)), 2)  # Line at the left
-    var.BACKGROUND.blit(pygame.transform.scale_by(pygame.image.load(var.PATH_IMAGE + 'map.png'), var.SCALE_RESIZE_X), convert_to_new_window((785, 5)))  # Add the map
+    var.BACKGROUND.blit(scale_image(pygame.image.load(var.PATH_IMAGE + 'map.png'), var.SCALE_RESIZE_X), convert_to_new_window((785, 5)))  # Add the change map button
 
 
 def show_checkpoints():
