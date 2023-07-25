@@ -35,12 +35,12 @@ class RectGarage:
         self.last_time_color_clicked = 0  # Last time the color was clicked
 
         # Buttons
-        self.edit_button = Button(x=self.x + 188, y=self.y + 40, image_name='pen', scale=0.15)  # Button to edit the car
+        self.edit_button = Button(x=self.x + 188, y=self.y + 40, image_name='garage_menu/pen', scale=0.15)  # Button to edit the car
         self.select_button = Button(x=self.x + 188, y=self.y + 8, image_name='checkbox', scale=0.07)  # Button of the writing button
         if self.selected:  # If the car is selected, we activate the button
             self.select_button.activated = True
-        self.delete_button = Button(x=self.x + 153, y=self.y + 5, image_name='trash', scale=0.14)  # Button to delete the car
-        self.name_button = Button(x=self.x + 10, y=self.y + 10, only_one_image=True, image_name='grey', writing_button=True, variable=self.memory_car.name, name='car_name', scale=6)  # Button to edit the name of the car
+        self.delete_button = Button(x=self.x + 153, y=self.y + 5, image_name='garage_menu/trash', scale=0.14)  # Button to delete the car
+        self.name_button = Button(x=self.x + 10, y=self.y + 10, only_one_image=True, image_name='garage_menu/grey', writing_button=True, variable=self.memory_car.name, name='car_name', scale=6)  # Button to edit the name of the car
 
     def __str__(self):
         """
@@ -101,7 +101,7 @@ class RectGarage:
         """
         Draw the button to edit the name of the car
         """
-        self.name_button.draw(True)
+        self.name_button.draw()
         if self.name_button.just_clicked:
             self.name_button.text = ''  # We reset the name at the beginning
 

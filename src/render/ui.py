@@ -40,17 +40,17 @@ def init():
     global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button
 
     # Buttons
-    stop_button = Button(x=1425, y=4, image_name='stop', scale=0.25)
-    pause_button = Button(x=1425, y=56, image_name='pause', checkbox=True, scale=0.25)
-    start_button = Button(x=1330, y=18, image_name='start', scale=0.35)
+    stop_button = Button(x=1425, y=4, image_name='main_menu/stop', scale=0.25)
+    pause_button = Button(x=1425, y=56, image_name='main_menu/pause', checkbox=True, scale=0.25)
+    start_button = Button(x=1330, y=18, image_name='main_menu/start', scale=0.35)
     nb_cars_button = Button(x=1095, y=58, image_name='writing', variable=var.NB_CARS, name='nb_cars')
-    garage_button = Button(x=350, y=30, image_name='garage', checkbox=True)
-    dice_button = Button(x=500, y=30, image_name='dice')
-    restart_button = Button(x=1287, y=4, image_name='restart', scale=0.2)
-    settings_button = Button(x=285, y=5, image_name='settings', checkbox=True, scale=0.65)
-    skip_button = Button(x=1290, y=80, image_name='skip', scale=0.45)
-    previous_map_button = Button(x=820, y=70, image_name='previous_map', scale=0.45)
-    next_map_button = Button(x=920, y=70, image_name='next_map', scale=0.45)
+    garage_button = Button(x=350, y=30, image_name='main_menu/garage', checkbox=True)
+    dice_button = Button(x=500, y=30, image_name='main_menu/dice')
+    restart_button = Button(x=1287, y=4, image_name='main_menu/restart', scale=0.2)
+    settings_button = Button(x=285, y=5, image_name='main_menu/settings', checkbox=True, scale=0.65)
+    skip_button = Button(x=1290, y=80, image_name='main_menu/skip', scale=0.45)
+    previous_map_button = Button(x=820, y=70, image_name='main_menu/previous_map', scale=0.45)
+    next_map_button = Button(x=920, y=70, image_name='main_menu/next_map', scale=0.45)
 
 
 

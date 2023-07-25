@@ -42,16 +42,18 @@ class Button:
 
             self.x, self.y = convert_to_new_window((x, y))  # Position of the button (converted to the new window)
 
+            new_image_name = f'{var.PATH_IMAGE}buttons/{image_name}'  # Add the path of the image folder
+
             # In this case we only have one image for the button
             if only_one_image:
-                image = pygame.image.load(var.PATH_IMAGE + image_name + '.png')  # Image of the button
+                image = pygame.image.load(f'{new_image_name}.png')  # Image of the button
                 self.image_hover = None
                 self.image_clicked = None
             else:  # In this case we have three images for the button
-                image = pygame.image.load(var.PATH_IMAGE + image_name + '_1.png')
-                image_hover = pygame.image.load(var.PATH_IMAGE + image_name + '_2.png')
+                image = pygame.image.load(f'{new_image_name}_1.png')
+                image_hover = pygame.image.load(f'{new_image_name}_2.png')
                 self.image_hover = pygame.transform.scale(image_hover, (int(image_hover.get_width() * scale_x), int(image_hover.get_height() * scale_y)))
-                image_clicked = pygame.image.load(var.PATH_IMAGE + image_name + '_3.png')
+                image_clicked = pygame.image.load(f'{new_image_name}_3.png')
                 self.image_clicked = pygame.transform.scale(image_clicked, (int(image_clicked.get_width() * scale_x), int(image_clicked.get_height() * scale_y)))
 
             self.image = pygame.transform.scale(image, (int(image.get_width() * scale_x), int(image.get_height() * scale_y)))  # Image of the button
@@ -87,7 +89,7 @@ class Button:
                f' ; time_clicked = {self.time_clicked} ; check_box = {self.checkbox} ; writing_button = {self.writing_button}' \
                f' ; text = {self.text} ; variable = {self.variable} ; name = {self.name}'
 
-    def draw(self, debug=False):
+    def draw(self):
         """
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
 
@@ -98,7 +100,7 @@ class Button:
         image = self.image  # Image of the button
         if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
             self.mouse_over_button = True
-            if pygame.mouse.get_pressed()[0] == 1 and time.time() - self.time_clicked > 0.3:    # Mouse clicked for the first time
+            if pygame.mouse.get_pressed()[0] == 1 and time.time() - self.time_clicked > 0.15:    # Mouse clicked for the first time
                 self.time_clicked = time.time()  # Get the time when the button is clicked
                 if self.checkbox or self.writing_button:
                     self.activated = not self.activated  # Change the state of the checkbox
@@ -148,7 +150,7 @@ class Button:
         elif event.key == pygame.K_BACKSPACE:
             self.text = self.text[:-1]  # Remove the last character
 
-        elif self.variable is None and event.unicode == ' ':  # If the variable is a string we don't want space
+        elif event.unicode == ' ':  # If the variable is a string we don't want space
             self.text += '_'
 
         else:

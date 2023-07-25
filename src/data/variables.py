@@ -249,7 +249,7 @@ def change_map(first_time=False, reverse=False):
 
     # We create a background to create the mask of collision, this background has a size of 1500*700
     background = pygame.Surface((1500, 700))  # Image of the background
-    background.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
+    background.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background/background_{str(NUM_MAP)}.png'), (1500, 585)), (0, 115))  # Blit the circuit on the background surface
     BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
 
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + 'car.png'), CAR_SIZES[NUM_MAP] / 75)  # Image of the car
@@ -257,7 +257,7 @@ def change_map(first_time=False, reverse=False):
     WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
 
     CHECKPOINTS = []  # List of checkpoints
-    with open(PATH_DATA + 'checkpoints_' + str(NUM_MAP), 'r') as file_checkpoint_read:
+    with open(f'{PATH_DATA}/checkpoints/{NUM_MAP}', 'r') as file_checkpoint_read:
         """
         Format of the file checkpoints:
         x1 y1
@@ -316,7 +316,7 @@ def blit_circuit():
     """
     Blit the circuit on the background surface
     """
-    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background_{str(NUM_MAP)}.png'),
+    BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background/background_{str(NUM_MAP)}.png'),
                                            convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))
 
 

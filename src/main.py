@@ -1,4 +1,3 @@
-from src.data.analyze_data import analyze_test_all_cars, show_positions_crash  # Import the analyze_data function
 from src.data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.menus.garage_menu import add_garage_cars  # Import the garage
@@ -14,6 +13,7 @@ import random  # To generate random numbers
 import src.render.ui as ui  # Import the ui
 import pygame  # To use pygame
 import time  # To get the time
+
 
 """
 This file contains all the functions used to play the game
@@ -256,11 +256,11 @@ def change_checkpoints():
     Change the checkpoints of the actual map
     """
     # We display the image that explain that we are in the checkpoint mode
-    image_checkpoint = pygame.image.load(PATH_IMAGE + 'checkpoint.png')  # Image of the checkpoint
+    image_checkpoint = pygame.image.load(f'{PATH_IMAGE}checkpoints/checkpoint.png')  # Image of the checkpoint
     var.WINDOW.blit(image_checkpoint, (450, 25))  # We add the image to the screen
     pygame.display.flip()  # Update the screen
     # We open the file to write the checkpoints
-    with open(PATH_DATA + 'checkpoints_' + str(var.NUM_MAP), 'w') as file_checkpoint_write:
+    with open(f'{PATH_DATA}checkpoints/{var.NUM_MAP}', 'w') as file_checkpoint_write:
         while 1:
             # We detect the mouse click to write the coordinates in the file
             for event in pygame.event.get():
@@ -278,7 +278,7 @@ def run_test_all_cars():
     var.FPS = 9999
     var.SHOW_EXPLOSIONS = False
 
-    var.FILE_TEST = open(f'{PATH_DATA}test_all_cars_{var.NUM_MAP}', 'w')  # We open the file to write the results
+    var.FILE_TEST = open(f'{PATH_DATA}test/all_cars/results/{var.NUM_MAP}', 'w')  # We open the file to write the results
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 
@@ -301,7 +301,7 @@ def run_test_mutation_crossover():
     var.PLAY = True
 
     for var.TEST_MODE in ['crossover_mutation']:
-        var.FILE_TEST = open(f'{PATH_DATA}test_{var.TEST_MODE}_{var.NUM_MAP}', 'a')
+        var.FILE_TEST = open(f'{PATH_DATA}tests/genetic_parameters/{var.TEST_MODE}_{var.NUM_MAP}', 'a')
         for var.SEED in range(100, 200):
             play()
             var.NUM_GENERATION = 0
@@ -319,7 +319,7 @@ def run_test_value_genetic_parameters():
     var.PLAY = True
 
     for var.CHANCE_MUTATION, var.CHANCE_CROSSOVER, var.PROPORTION_CARS_KEPT in [(0.3, 0.1, 0.2)]:
-        var.FILE_TEST = open(f'{path_test}test_{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
+        var.FILE_TEST = open(f'{path_test}tests/genetic_parameters/{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
         for var.SEED in range(50):
             print(var.SEED)
             play()

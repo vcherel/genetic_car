@@ -27,8 +27,8 @@ def analyze_test_all_cars(num_map, show_graph=False):
     scores = []  # List of the scores
     best_cars = []  # List of the best cars (cars that completed a lap)
 
-    with open(f'{PATH_DATA}test_all_cars_{num_map}', 'r') as file_read:
-        with open(f'{PATH_DATA}analysis_{num_map}', 'w') as file_write:
+    with open(f'{PATH_DATA}tests/all_cars/results/{num_map}', 'r') as file_read:
+        with open(f'{PATH_DATA}tests/all_cars/analysis/{num_map}', 'w') as file_write:
             for line in file_read:
                 data = line.split(' ')
                 if num_map == 5:
@@ -118,12 +118,12 @@ def analyze_genetic_algorithm():
     """
     mutation_only = []  # The number of generations to complete a lap with only mutation
     crossover_mutation = []  # The number of generations to complete a lap with crossover and then mutation
-    with open(var.PATH_DATA + 'test_mutation_only', 'r') as file:
+    with open(f'{var.PATH_DATA}tests/mutation_only', 'r') as file:
         for line in file:
             data = line.split()
             mutation_only.append(int(data[0]))
 
-    with open(var.PATH_DATA + 'test_crossover_mutation', 'r') as file:
+    with open(f'{var.PATH_DATA}tests/crossover_mutation', 'r') as file:
         for line in file:
             data = line.split()
             crossover_mutation.append(int(data[0]))
@@ -147,8 +147,8 @@ def analyze_value_genetic_parameters():
     """
     dict_mean_values = {}  # keys : the filenames (test_MutationRate_CrossoverRate_SelectionRate), values : the mean number of generations needed to complete a lap
 
-    for filename in os.listdir(var.PATH_DATA + 'tests/'):
-        f = var.PATH_DATA + 'tests/' + filename
+    for filename in os.listdir(var.PATH_DATA + 'tests/genetic_parameters/'):
+        f = f'{var.PATH_DATA}tests/genetic_parameters/' + filename
         list_values = []  # List of the values for the current file
         with open(f, 'r') as file:
             for line in file:
@@ -161,7 +161,7 @@ def analyze_value_genetic_parameters():
     # Sort the dictionary by values
     dict_mean_values = {k: v for k, v in sorted(dict_mean_values.items(), key=lambda item: item[1])}
     for key in dict_mean_values.keys():
-        print(f'{key} : {dict_mean_values[key]}')  #
+        print(f'{key} : {dict_mean_values[key]}')
 
 
 if __name__ == '__main__':
