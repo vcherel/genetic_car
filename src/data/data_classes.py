@@ -29,6 +29,12 @@ class ColorDice:
         else:
             self.bad_colors = bad_colors  # The color that we know is not the color of the dice
 
+    def __str__(self):
+        """
+        Return the string of the dice
+        """
+        return f'ColorDice {self.color} : {self.distances}'
+
 
 class MemoryCar:
     """

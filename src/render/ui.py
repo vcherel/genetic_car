@@ -113,7 +113,7 @@ def handle_clicks(cars):
     if GARAGE.rectangles:
         for rect_garage in GARAGE.rectangles:
             if rect_garage.name_button.activated and not rect_garage.name_button.rect.collidepoint(pygame.mouse.get_pos()):  # If we click outside the writing button, we stop changing the name of the car
-                rect_garage.name_button.activated = False
+                rect_garage.name_button.deactivate()  # Stop changing the name of the car
                 rect_garage.save_new_car_name()  # Save the name of the car
 
     if var.DISPLAY_GARAGE and not GARAGE.rect.collidepoint(pygame.mouse.get_pos()) and not\
@@ -280,7 +280,7 @@ def display_garage_button():
         else:
             unpause()
             GARAGE.erase_garage()
-    if var.DISPLAY_GARAGE:  # If the garage is displayed we draw it and do the actions
+    if var.DISPLAY_GARAGE and not var.DISPLAY_DICE_MENU:  # If the garage is displayed we draw it and do the actions
         GARAGE.draw()
 
 

@@ -11,6 +11,8 @@ import time  # To get the time
 This function contains the Garage class and all the functions related to it. The garage is the place where the cars are stored.
 """
 
+debug = 0
+
 
 class Garage:
     """
@@ -74,6 +76,7 @@ class Garage:
         Draw the rectangles corresponding to cars in the garage
         """
         for rect_garage in self.rectangles:  # For each rectangle in the garage
+
             deleted, selected = rect_garage.draw(self.time_since_last_delete)  # We draw the rectangle
 
             if deleted:  # If the rect has been deleted

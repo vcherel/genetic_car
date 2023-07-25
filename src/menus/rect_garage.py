@@ -49,14 +49,14 @@ class RectGarage:
         Returns:
             str: string of the rectangle
         """
-        return f'RectGarage {self.id_rect} : Checked = {self.select_button.activated}, Name = {self.name_button.name}'
+        return f'RectGarage {self.id_rect} : Checked = {self.select_button.activated}, Name = {self.name_button.variable}'
 
     def draw(self, time_since_last_delete):
         """
         Draw the rectangle in the garage menu
 
         Args:
-            time_since_last_delete (int): time since the last deletion of a car to avoid multiple deletions
+            time_since_last_delete (int): time since the last deletion of a car to avoid multiple deletions in a row
 
         Returns:
             (bool, bool): (True if the car is deleted ; True if the select button has changed of state)
@@ -64,7 +64,7 @@ class RectGarage:
         # We draw the rectangle itself
         pygame.draw.rect(var.WINDOW, (1, 1, 1), (convert_to_new_window((self.x, self.y, 225,  75))), 2)
 
-        state_select_before = self.selected
+        state_select_before = self.selected  # To know if the state of the select button has changed
 
         self.draw_rect_color()  # We draw the rectangle of the color
         self.draw_name_button()  # We draw the name button
@@ -72,6 +72,7 @@ class RectGarage:
         self.draw_select_button()  # We draw the select button
         self.draw_edit_button()  # We draw the edit button
         delete_car = self.draw_delete_button(time_since_last_delete)  # We draw the delete button
+        # delete_car indicates if the car has been deleted or not
 
         if self.selected != state_select_before:
             updated_car_state_select = True
@@ -82,20 +83,20 @@ class RectGarage:
 
     def draw_rect_color(self):
         """
-        Draw the rectangle where we can find the color of the car, depending on the mouse state
+        Draw the rectangle where we can find the color of the car
+        We detect the clics directly in this function
         """
-        # We draw the rects for the color of the car
-        rect_color = pygame.rect.Rect(convert_to_new_window((self.x + 154, self.y + 40, 26, 26)))
+        rect_color = pygame.rect.Rect(convert_to_new_window((self.x + 154, self.y + 40, 26, 26)))  # The rectangle where the color is displayed
         pygame.draw.rect(var.WINDOW, CAR_COLORS[self.memory_car.color], rect_color, 0)  # We fill the rectangle with the color of the car
 
         if rect_color.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
-            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 4)
+            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 4)  # Big borders
             # We change the color of the car if the user clicked on the color
-            if pygame.mouse.get_pressed()[0] and time.time() - self.last_time_color_clicked > 0.3:
+            if pygame.mouse.get_pressed()[0] and time.time() - self.last_time_color_clicked > 0.15:
                 self.last_time_color_clicked = time.time()
                 self.memory_car.color = random.choice(list(CAR_COLORS.keys()))  # We change the color of the car randomly
         else:
-            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 2)
+            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 2)  # Small borders
 
     def draw_name_button(self):
         """
@@ -117,7 +118,7 @@ class RectGarage:
 
     def draw_select_button(self):
         """
-        Draw the button to select a car and change the selected state of the car
+        Draw the button to select the car and change the selected state of the car
         """
         self.select_button.draw()
         if self.select_button.just_clicked:
@@ -134,7 +135,7 @@ class RectGarage:
 
     def draw_edit_button(self):
         """
-        Draw the button to edit a car
+        Draw the button to edit the car
         """
         if self.edit_button.draw():  # We check the state of the button
             DICE_MENU.init(values=self.memory_car.genetic.dice_values, id_memory_car=self.memory_car.id)  # We initialize the dice data
@@ -150,7 +151,7 @@ class RectGarage:
         Returns:
             bool: True if the car is deleted
         """
-        if self.delete_button.draw() and time.time() - time_since_last_delete > 0.2:  # We check the state of the button
+        if self.delete_button.draw() and time.time() - time_since_last_delete > 0.15:  # We check the state of the button
             var.MEMORY_CARS.remove(self.memory_car)  # We remove the car from the memory cars
 
             if self.selected:  # We remove the car from the selected cars if it's selected

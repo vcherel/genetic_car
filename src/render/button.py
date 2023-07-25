@@ -188,6 +188,8 @@ class Button:
 
                 elif self.name == 'car_name':
                     self.variable = self.text
+                    if self.variable == '':
+                        self.variable = '_'
 
                 elif '.' in self.text:
                     self.variable = float(self.text)
