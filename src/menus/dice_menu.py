@@ -22,7 +22,6 @@ camera_frame = None  # Frame of the camera at the last update
 rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 
-
 class DiceMenu:
     """
     This class is used to represent the dice menu that appears when we want to change the value of the parameters of a car
@@ -38,21 +37,6 @@ class DiceMenu:
         self.x = self.y = None  # Coordinates of the dice menu
         self.values_button = None  # List of the rectangles to write the text
         self.check_button = None  # The button to validate the dice
-
-    def dice_button(self, x, y, value):
-        """
-        To create a dice button
-
-        Args:
-            x (int): x coordinate of the button
-            y (int): y coordinate of the button
-            value (int): Value of the dice
-
-        Returns:
-            Button: The dice button
-        """
-
-        return Button(x=self.x + x + 45, y=self.y + y + 140, image_name='writing', variable=value, name='dice', scale_x=0.25)
 
     def init(self, values, id_memory_car=None, by_camera=False):
         """
@@ -82,6 +66,21 @@ class DiceMenu:
 
         self.check_button = Button(x=self.x + 888, y=self.y + 445, image_name='check', scale=0.4)
 
+    def dice_button(self, x, y, value):
+        """
+        To create a dice button
+
+        Args:
+            x (int): x coordinate of the button
+            y (int): y coordinate of the button
+            value (int): Value of the dice
+
+        Returns:
+            Button: The dice button
+        """
+
+        return Button(x=self.x + x + 45, y=self.y + y + 140, image_name='writing', variable=value, name='dice', scale_x=0.25)
+
     def display_dice_menu(self):
         """
         To display the dice menu
@@ -93,12 +92,14 @@ class DiceMenu:
         pygame.draw.rect(var.WINDOW, (128, 128, 128), self.rect, 0)  # Display the background
         pygame.draw.rect(var.WINDOW, (1, 1, 1), self.rect, 2)  # Display the border
 
+        # Display the texts
         var.WINDOW.blit(var.TEXT_SLOW, (convert_to_new_window((self.x + x1 + 30, self.y + 50))))
         var.WINDOW.blit(var.TEXT_MEDIUM, (convert_to_new_window((self.x + x2 + 14, self.y + 50))))
         var.WINDOW.blit(var.TEXT_FAST, (convert_to_new_window((self.x + x3 + 14, self.y + 50))))
         var.WINDOW.blit(var.TEXT_LENGTH, (convert_to_new_window((self.x + 20, self.y + 350))))
         var.WINDOW.blit(var.TEXT_WIDTH, (convert_to_new_window((self.x + 30, self.y + 160))))
 
+        # Display the car
         x, y = self.x + 750, self.y + 275
         var.WINDOW.blit(scale_image(var.BIG_RED_CAR_IMAGE, var.SCALE_RESIZE_X), (convert_to_new_window((x, y))))
         draw_detection_cone((x + 52, y - 3), self.dice_values, factor=3, width_line=5)
@@ -112,7 +113,7 @@ class DiceMenu:
         draw_dice(x=self.x + x3, y=self.y + y2, color=RGB_VALUES_DICE[5], value=self.dice_values[5])
 
         # Display the buttons
-        for index, writing_button in enumerate(self.values_button):
+        for index, writing_button in enumerate(self.values_button):  # Buttons to change the dice values
             writing_button.draw()
             if writing_button.just_clicked:  # We erase the value of the dice if the user has clicked on the button
                 self.values_button[index].text = ''
@@ -136,8 +137,8 @@ class DiceMenu:
 
         if self.by_camera:
             var.WINDOW.blit(var.BACKGROUND, rect_camera_frame, rect_camera_frame)  # We erase the dice menu
-            var.MEMORY_CARS.append(MemoryCar(var.ACTUAL_IDS_MEMORY_CARS, f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
-                                   'gray', Genetic(self.dice_values), [0] * NB_MAPS))
+            var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
+                                   color='gray', genetic=Genetic(self.dice_values), best_scores=[0] * NB_MAPS))
             var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
 
     def save_values(self, index, writing_button):

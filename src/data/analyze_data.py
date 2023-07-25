@@ -11,51 +11,52 @@ This file contains the functions to analyze the data from the test file (created
 This data can be the score of the cars, to determine where each car died ; or the mean BGR value of values
 """
 
+number_checkpoints = [143, 131, 144, 113, 57, 0, 146, 156]
 
-def analyze_data_scores(name_file_read, name_file_write):
+
+def analyze_test_all_cars(num_map, show_graph=False):
     """
-    Analyze the data from the test file 'test_all_cars' (created from the file main.py) and write the results in a file
-    named 'test_all_cars_analysis'
+    Analyze the data from the test file 'test_all_cars_X' created from the file main.py (with X the number of the map) and write the results in a file
+    named 'analysis_X'
     The data concerns the score of the cars, to determine where each car died on the track and how many cars completed a lap
 
     Args:
-        name_file_read (str): Name of the file to read
-        name_file_write (str): Name of the file to write
-
-    Returns:
-        scores (list): List of the scores
+        num_map (int): The number of the map
+        show_graph (bool): If True, show the histogram of the scores
     """
     scores = []  # List of the scores
     best_cars = []  # List of the best cars (cars that completed a lap)
 
-    with open(PATH_DATA + name_file_read, 'r') as file_read:
-        with open(PATH_DATA + name_file_write, 'w') as file_write:
+    with open(f'{PATH_DATA}test_all_cars_{num_map}', 'r') as file_read:
+        with open(f'{PATH_DATA}analysis_{num_map}', 'w') as file_write:
             for line in file_read:
                 data = line.split(' ')
-                score = int(data[7][:-1])  # We remove the \n
+                if num_map == 5:
+                    score = int(float(data[6][:-1]) / 100)  # We remove the \n and transform the score to a smaller value (int)
+                else:
+                    score = int(data[6][:-1])  # We remove the \n
 
                 scores.append(score)  # We add the score to the list of the scores
 
                 # Find when the car died
-                if score > len(var.CHECKPOINTS):
-                    best_cars.append((int(data[1]), int(data[2]), int(data[3]), int(data[4]), int(data[5]), int(data[6]), score))
+                if score > number_checkpoints[num_map]:
+                    best_cars.append((int(data[0]), int(data[1]), int(data[2]), int(data[3]), int(data[4]), int(data[5]), score))
 
             # Sort the best cars by score
             best_cars.sort(key=lambda x: x[6], reverse=True)
-            file_write.write('Cars that completed a lap:\n')
+            file_write.write(f'Cars that completed a lap: ({len(best_cars)})\n')
             for car in best_cars:
                 file_write.write(f'{car[0]}, {car[1]}, {car[2]}, {car[3]}, {car[4]}, {car[5]} ; Score : {car[6]}\n')
 
-    # Plotting the histogram
-    plt.hist(scores, bins=50, range=(0, 100), edgecolor='black')  # Adjust the number of bins as needed
-    plt.xlabel('Score')
-    plt.ylabel('Count')
-    plt.title('Distribution of Scores')
+    if show_graph:
+        # Plotting the histogram
+        plt.hist(scores, bins=50, range=(0, 100), edgecolor='black')  # Adjust the number of bins as needed
+        plt.xlabel('Score')
+        plt.ylabel('Count')
+        plt.title('Distribution of Scores')
 
-    # Display the plot
-    plt.show()
-
-    return scores
+        # Display the plot
+        plt.show()
 
 
 def show_positions_crash(scores):
@@ -164,4 +165,4 @@ def analyze_value_genetic_parameters():
 
 
 if __name__ == '__main__':
-    analyze_value_genetic_parameters()
+    analyze_test_all_cars(7)

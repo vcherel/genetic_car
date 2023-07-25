@@ -26,7 +26,7 @@ class RectGarage:
         Args:
             id_rect (int): id of the rectangle
             memory_car (MemoryCar): memory car of the rectangle
-            selected (bool): True if the car is selected, False otherwise
+            selected (bool): True if the car is selected
         """
         self.id_rect = id_rect  # Id of the rectangle
         self.x, self.y = get_coordinates(self.id_rect)  # Position of the rectangle
@@ -59,7 +59,7 @@ class RectGarage:
             time_since_last_delete (int): time since the last deletion of a car to avoid multiple deletions
 
         Returns:
-            (bool, bool): (True if the car is deleted, False otherwise ; True if the select button has changed of state, False otherwise)
+            (bool, bool): (True if the car is deleted ; True if the select button has changed of state)
         """
         # We draw the rectangle itself
         pygame.draw.rect(var.WINDOW, (1, 1, 1), (convert_to_new_window((self.x, self.y, 225,  75))), 2)
@@ -148,7 +148,7 @@ class RectGarage:
             time_since_last_delete (int): time since the last deletion of a car to avoid multiple deletions
 
         Returns:
-            bool: True if the car is deleted, False otherwise
+            bool: True if the car is deleted
         """
         if self.delete_button.draw() and time.time() - time_since_last_delete > 0.2:  # We check the state of the button
             var.MEMORY_CARS.remove(self.memory_car)  # We remove the car from the memory cars

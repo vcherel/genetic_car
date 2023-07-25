@@ -21,9 +21,9 @@ class Button:
             x (int): x position of the button
             y (int): y position of the button
             image_name (str): name of the image of the button (int the images folder)
-            only_one_image (bool): True if the button has only one image, False otherwise (it means there is three images depending on the state of the button)
-            checkbox (bool): True if the button is a checkbox, False otherwise
-            writing_button (bool): True if the button is a writing button, False otherwise
+            only_one_image (bool): True if the button has only one image (it means there is three images depending on the state of the button)
+            checkbox (bool): True if the button is a checkbox
+            writing_button (bool): True if the button is a writing button
             variable (int or str) : variable associated to the text of the writing button
             name (str): name of the button (used to know if there is special actions to do) or the name of the variable
             associated to the text of the writing button (used for the settings)
@@ -58,16 +58,16 @@ class Button:
             self.rect = self.image.get_rect()  # Rectangle of the button
             self.rect.topleft = (self.x, self.y)  # Position of the button
 
-            self.activated = False    # True if the checkbox is checked, False otherwise
+            self.activated = False    # True if the checkbox is checked
             self.just_clicked = 0   # 0 if nothing happened ; 1 if the button has just been clicked
             self.time_clicked = 0   # Time when the button is clicked
-            self.mouse_over_button = False  # True if the mouse is over the button, False otherwise
+            self.mouse_over_button = False  # True if the mouse is over the button
 
-            self.checkbox = checkbox  # True if the button is a checkbox, False otherwise
+            self.checkbox = checkbox  # True if the button is a checkbox
             if image_name == 'checkbox':
                 self.checkbox = True
 
-            self.writing_button = writing_button  # True if the button is a writing button, False otherwise
+            self.writing_button = writing_button  # True if the button is a writing button
             if image_name == 'writing':
                 self.writing_button = True
 
@@ -92,7 +92,7 @@ class Button:
         Detect if the mouse is over the button and if it is clicked, and draw the button on the screen with the appropriate image
 
         Returns:
-            bool: True if button activated ; False otherwise
+            bool: True if button activated
         """
 
         image = self.image  # Image of the button
@@ -129,7 +129,7 @@ class Button:
         if self.writing_button:
             var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 4))
 
-        return self.activated  # Return True if the button is clicked (or activated), False otherwise
+        return self.activated  # Return True if the button is clicked (or activated)
 
     def update_after_key_press(self, event):
         """
@@ -139,7 +139,7 @@ class Button:
             event (pygame.event.Event): event detected (keyboard)
 
         Returns:
-            bool: True if the button is deactivated ; False otherwise
+            bool: True if the button is deactivated
         """
         if event.key == pygame.K_RETURN:
             self.deactivate()   # Deactivate the writing button (and save the text)

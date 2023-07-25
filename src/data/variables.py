@@ -16,10 +16,11 @@ This file contains all the data of the game used in multiple other files
 # PYGAME
 pygame.init()  # Pygame initialization
 pygame.display.set_caption('Algorithme génétique')  # Window title
-VERY_SMALL_FONT = pygame.font.SysFont('Arial', 10)  # Font of the text
-SMALL_FONT = pygame.font.SysFont('Arial', 17)  # Font of the text
-FONT = pygame.font.SysFont('Arial', 20)  # Font of the text
-LARGE_FONT = pygame.font.SysFont('Arial', 30)  # Font of the text
+# Fonts used in the application
+VERY_SMALL_FONT = pygame.font.SysFont('Arial', 10)
+SMALL_FONT = pygame.font.SysFont('Arial', 17)
+FONT = pygame.font.SysFont('Arial', 20)
+LARGE_FONT = pygame.font.SysFont('Arial', 30)
 
 
 # DISPLAY
@@ -31,21 +32,21 @@ RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the sc
 
 
 # EXPLOSIONS
-SHOW_EXPLOSIONS = True  # True if we want to see the explosions, False otherwise
+SHOW_EXPLOSIONS = True  # True if we want to see the explosions
 EXPLOSIONS = pygame.sprite.Group()  # Group of all the explosions
 EXPLOSION_IMAGES = []  # List of all the images of the explosion
 RECTS_BLIT_EXPLOSION = []  # Coordinates of the rects used to erase the explosions of the screen
 
 
 # RESIZE
-RESIZE = False  # True if we are resizing the window, False otherwise
+RESIZE = False  # True if we are resizing the window
 TIME_RESIZE = 0  # Time when we started to resize the window
 RESIZE_DIMENSIONS = None  # Dimensions of the window after resizing
 SCALE_RESIZE_X = 1  # Scale of the window after resizing on the x-axis
 SCALE_RESIZE_Y = 1  # Scale of the window after resizing on the y-axis
 
 
-# TEXT
+# TEXT (for the dice menu)
 TEXT_SLOW = LARGE_FONT.render('Lent', True, (255, 255, 0), (128, 128, 128))  # Text of the slow button
 TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  # Text of the medium button
 TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
@@ -56,16 +57,16 @@ TEXT_WIDTH = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # 
 # IMAGES
 WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Initialization of the window
 RED_CAR_IMAGE = None  # Image of the original car
-BIG_RED_CAR_IMAGE = None
+BIG_RED_CAR_IMAGE = None  # Image of the car used in the menus
 
 
 # GAME
 LIST_SEED = [0] * NB_MAPS  # Seed of the game for each map
 SEED = None  # Seed of the game for the current map
-START = False  # Start the game (True or False)
-PLAY = False  # Stop the game (True or False)
-CHANGE_GENERATION = False  # True if we want to change the generation, False otherwise
-PLAY_LAST_RUN = False  # True if we want to play the last run again, False otherwise
+START = False  # Start the game
+PLAY = False  # Play the game
+CHANGE_GENERATION = False  # True if we want to change the generation
+PLAY_LAST_RUN = False  # True if we want to play the last run again
 
 
 # CARS
@@ -75,7 +76,6 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 LIST_NB_CARS = [30] * NB_MAPS  # Number of cars for each map
 NB_CARS = None  # Number of cars for the current map
 CARS_LAST_RUN = []  # Cars of the last run
-DO_DRIFT = True  # True if we want to see the drift of the cars, False otherwise
 LIST_DRIFT_FACTOR = [2.0] * NB_MAPS  # Factor of the drift for each map
 DRIFT_FACTOR = None  # Factor of the drift for the current map
 
@@ -87,8 +87,8 @@ LIST_LENGTH_CONE = [11] * NB_MAPS  # Length multiplier of the cone for each map
 LENGTH_CONE = None  # Length multiplier of the cone for the current map
 LIST_MAX_SPEED = [9] * NB_MAPS  # Maximum speed of the car for each map
 MAX_SPEED = None  # Maximum speed of the car for the current map
-MIN_MEDIUM_SPEED = None  # Minimum speed of the car to be considered as medium speed
-MIN_HIGH_SPEED = None  # Minimum speed of the car to be considered as high speed
+MIN_MEDIUM_SPEED = None  # Minimum speed of the car to be considered as medium speed (determined by the maximum speed)
+MIN_HIGH_SPEED = None  # Minimum speed of the car to be considered as high speed  (determined by the maximum speed)
 LIST_TURN_ANGLE = [8] * NB_MAPS  # Angle of rotation of the car for each map
 TURN_ANGLE = None  # Angle of rotation of the car for the current map
 LIST_ACCELERATION = [0.1] * NB_MAPS  # Acceleration of the car for each map
@@ -99,40 +99,39 @@ DECELERATION = None  # Deceleration of the car for the current map
 
 # DEBUG
 SHOW_CLICS_INFO = False  # True to see the cursor position and color when clicking
-SHOW_DETECTION_CONES = False  # True for debug mode, False for normal mode
+SHOW_DETECTION_CONES = False  # True to see the detection cones of the cars
 
 
 # TESTS
-TEST_ALL_CARS = False  # True to test all the cars, False to play the game normally
-SHOW_ANALYSIS = False  # True to see the analysis of the tests, False otherwise
-TEST_MUTATION_CROSSOVER = False  # True to test the mutation and crossover, False to play the game normally
-TEST_VALUE_GENETIC_PARAMETERS = False  # True to test the value of the genetic parameters, False to play the game normally
-TEST_FINISHED = False  # True if a car completed a lap, False otherwise
-TEST_MODE = ''  # Mode of the test ('mutation_only', 'mutation_crossover', crossover_mutation')
-FILE_TEST = None  # File to save the results of the tests
+TEST_ALL_CARS = False  # True to test all the cars
+TEST_MUTATION_CROSSOVER = False  # True to test the mutation and crossover
+TEST_VALUE_GENETIC_PARAMETERS = False  # True to test the value of the genetic parameters
+TEST_FINISHED = False  # True if a car completed a lap
+TEST_MODE = ''  # Mode of the test ('mutation_only' or 'crossover_mutation')
+FILE_TEST = None  # File to save the results of the tests (it's the same object for all the tests)
 
 
 # CHECKPOINTS
 NUM_MAP = 0  # Number of the map
-CHANGE_CHECKPOINTS = False  # Change the checkpoint for the actual map
-CHECKPOINTS = None  # List of checkpoints
+CHANGE_CHECKPOINTS = False  # Change the checkpoint for the actual map (erase the checkpoints !)
+CHECKPOINTS = None  # List of checkpoints for the current map
 RADIUS_CHECKPOINT = None  # Radius of the checkpoints
-SHOW_CHECKPOINTS = False  # See the checkpoints
+SHOW_CHECKPOINTS = False  # Show the checkpoints and the radius of the checkpoints
 
 
 # TIME
 CLOCK = pygame.time.Clock()  # Clock of the game
-PAUSE = False  # Pause the game (True or False)
+PAUSE = False  # True when the game is paused
 TICKS_REMAINING = 0  # Iterations remaining for the genetic algorithm
-TIME_LAST_TURN = 0  # Time of the last turn
-FPS_TOO_HIGH = False  # True if the FPS is too high, False otherwise
-LAST_TIME_REMAINING = []  # List of the remaining time during the last turns
+TIME_LAST_TURN = 0  # Time of the last turn (to compute the FPS or limit it)
+FPS_TOO_HIGH = False  # True if the FPS is too high (when it's the case we don't play and wait for it to become False)
+LAST_TIME_REMAINING = []  # List of the remaining time during the last turns (used to compute the time remaining without changing it too much)
 
 
 # GENETIC
-LIST_TIME_GENERATION = [60] * NB_MAPS  # Time of a generation for each map
-TIME_GENERATION = 0  # Time of a generation for the current map
-NUM_GENERATION = 1  # Number of the generation
+LIST_TIME_GENERATION = [60] * NB_MAPS  # Time for a generation for each map
+TIME_GENERATION = 0  # Time for a generation for the current map
+NUM_GENERATION = 1  # Number of the generation (starts at 1)
 LIST_CHANCE_MUTATION = [0.3] * NB_MAPS  # Chance of mutation for each map
 CHANCE_MUTATION = None  # Chance of mutation for the current map
 LIST_CHANCE_CROSSOVER = [0.3] * NB_MAPS  # Chance of crossover for each map
@@ -142,16 +141,16 @@ PROPORTION_CARS_KEPT = None  # Percentage used to know how many cars we keep for
 
 
 # MENU
-DISPLAY_GARAGE = False  # True to see the garage
+DISPLAY_GARAGE = False  # True if we are displaying the garage menu
 DISPLAY_DICE_MENU = False  # True if we are displaying the dice menu
-DISPLAY_CAR_WINDOW = False  # True if we are displaying the cone of a car
-DISPLAY_SETTINGS = False  # True if we are displaying the settings
+DISPLAY_CAR_WINDOW = False  # True if we are displaying the cone of a car in a window
+DISPLAY_SETTINGS = False  # True if we are displaying the settings menu
 
 
 # MEMORY
-MEMORY_CARS = []  # Memory of the cars, format: [car_memory_1, car_memory_2, ...]
+MEMORY_CARS = []  # Memory of the cars, format: [car_memory_1, car_memory_2, ...] (used to save the cars of the garage)
 SELECTED_MEMORY_CARS = []  # Genetics from the garage that we want to add to the game
-ACTUAL_IDS_MEMORY_CARS = 1  # Biggest id of the memory for the dice cars
+ACTUAL_IDS_MEMORY_CARS = 1  # Biggest id of the memory for the dice cars (to know the id of the next car)
 
 
 # OTHER
@@ -160,22 +159,29 @@ ACTUAL_FPS = 60  # Actual FPS
 BUTTONS = []  # List of the buttons
 
 
-def exit_game():
+def init_variables(nb_cars, replay=False):
     """
-    Exit the game
+    Initialize the data of the game (number of car alive, time remaining, start time, ...)
     """
-    save_cars()  # Save the cars
-    sys.exit()  # Quit pygame
+    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, TICKS_REMAINING
+
+    NB_CARS_ALIVE = nb_cars  # Number of cars alive
+    TICKS_REMAINING = TIME_GENERATION * 60  # Number of iterations remaining for the generation
+    DISPLAY_GARAGE = False  # We don't display the garage
+    if replay:  # If we replay from the last cars
+        NUM_GENERATION += 1
+    else:  # If we start a new run
+        NUM_GENERATION = 1  # Number of the generation
 
 
 def resize_window(dimensions):
     """
-    Resize the window
+    Resize the window (called when the user resizes the window) and change all the data associated
 
     Args:
         dimensions (tuple): Dimensions of the window
     """
-    global WINDOW, WIDTH_SCREEN, HEIGHT_SCREEN, BACKGROUND, BIG_RED_CAR_IMAGE, EXPLOSION_IMAGES
+    global WINDOW, WIDTH_SCREEN, HEIGHT_SCREEN, BIG_RED_CAR_IMAGE, EXPLOSION_IMAGES
 
     WIDTH_SCREEN, HEIGHT_SCREEN = dimensions  # Update the dimensions
     WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Resize the window
@@ -183,6 +189,27 @@ def resize_window(dimensions):
     pygame.display.flip()  # Update the display
     BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
+    load_explosions()  # Load the images of the explosions
+
+
+def update_visual_variables():
+    """
+    Update the data used to display things according to the size of the new window
+    """
+    global SCALE_RESIZE_X, SCALE_RESIZE_Y
+
+    SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
+    SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
+    create_background()  # Create the background
+    WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
+    pygame.display.flip()  # Update the display
+
+
+def load_explosions():
+    """
+    Load the images of the explosions
+    """
+    global EXPLOSION_IMAGES
     EXPLOSION_IMAGES = []  # List of all the images of the explosion
     for num in range(1, 10):
         image = pygame.image.load(f'{PATH_IMAGE}explosion/{num}.png')  # Load the image
@@ -193,15 +220,13 @@ def resize_window(dimensions):
 def change_map(first_time=False, reverse=False):
     """
     Change the map and all the data associated. It is used at the beginning of the game and when we press the button to change the map
-    When it's the first time we keep the actual map but when we press the button we change the map to the next one
+    When it's the first time we keep the actual map but when it's not the case we change the map to the next one
 
     Args:
-        first_time (bool): True if it's the first time we change the map, False otherwise
-        reverse (bool): True if we want to go to the previous map, False otherwise
+        first_time (bool): True if it's the first time we change the map
+        reverse (bool): True if we want to go to the previous map
     """
-    global NUM_MAP, CHECKPOINTS, RADIUS_CHECKPOINT, START_POSITION, BACKGROUND_MASK, RED_CAR_IMAGE, EXPLOSION_IMAGES, \
-        MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, NB_CARS, TIME_GENERATION, SEED, MAX_SPEED, TURN_ANGLE, ACCELERATION, \
-        DECELERATION, CHANCE_CROSSOVER, CHANCE_MUTATION, PROPORTION_CARS_KEPT, DRIFT_FACTOR, WIDTH_CONE, LENGTH_CONE, START_ANGLE
+    global NUM_MAP, START_POSITION, START_ANGLE, RADIUS_CHECKPOINT, BACKGROUND_MASK, RED_CAR_IMAGE, CHECKPOINTS
 
     if not first_time:  # We change the number of the map only if it's not the first time
         if not reverse:
@@ -228,9 +253,7 @@ def change_map(first_time=False, reverse=False):
     BACKGROUND_MASK = pygame.mask.from_threshold(background, (0, 0, 0, 255), threshold=(1, 1, 1, 1))  # Mask of the black pixels of the background (used to detect collisions)
 
     RED_CAR_IMAGE = scale_image(pygame.image.load(PATH_IMAGE + 'car.png'), CAR_SIZES[NUM_MAP] / 75)  # Image of the car
-
     create_background()  # Create the background
-
     WINDOW.blit(BACKGROUND, (0, 0))  # Screen initialization
 
     CHECKPOINTS = []  # List of checkpoints
@@ -245,6 +268,16 @@ def change_map(first_time=False, reverse=False):
         for checkpoint in checkpoints:
             a, b = checkpoint.split(' ')
             CHECKPOINTS.append((int(a), int(b)))
+
+    update_cars_parameters()  # Update all the parameters of the cars
+
+
+def update_cars_parameters():
+    """
+    Update the parameters of the cars according to the map
+    """
+    global NB_CARS, TIME_GENERATION, SEED, MAX_SPEED, MIN_MEDIUM_SPEED, MIN_MEDIUM_SPEED, MIN_HIGH_SPEED, TURN_ANGLE,\
+        ACCELERATION, DECELERATION, DRIFT_FACTOR, WIDTH_CONE, LENGTH_CONE, CHANCE_CROSSOVER, CHANCE_MUTATION, PROPORTION_CARS_KEPT
 
     NB_CARS = LIST_NB_CARS[NUM_MAP]  # Number of cars for the current map
     TIME_GENERATION = LIST_TIME_GENERATION[NUM_MAP]  # Time of a generation for the current map
@@ -264,32 +297,6 @@ def change_map(first_time=False, reverse=False):
 
     if SETTINGS.x is not None:  # If the settings window has been initialized
         SETTINGS.update_parameters()  # Update the settings parameters
-
-
-def load_explosions():
-    """
-    Load the images of the explosions
-    """
-    global EXPLOSION_IMAGES
-    EXPLOSION_IMAGES = []  # List of all the images of the explosion
-    for num in range(1, 10):
-        image = pygame.image.load(f'{PATH_IMAGE}explosion/{num}.png')  # Load the image
-        image = scale_image(image, CAR_SIZES[NUM_MAP] / 25 * SCALE_RESIZE_X)  # Scale the image
-        EXPLOSION_IMAGES.append(image)
-
-
-def update_visual_variables():
-    """
-    Update the data used to display things according to the size of the new window
-    """
-    global SCALE_RESIZE_X, SCALE_RESIZE_Y
-
-
-    SCALE_RESIZE_X = WIDTH_SCREEN / 1500  # Scale used to resize the images
-    SCALE_RESIZE_Y = HEIGHT_SCREEN / 700  # Scale used to resize the images
-    create_background()  # Create the background
-    WINDOW.blit(BACKGROUND, (0, 0))  # Blit the background on the window
-    pygame.display.flip()  # Update the display
 
 
 def create_background():
@@ -313,21 +320,6 @@ def blit_circuit():
                                            convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))
 
 
-def init_variables(nb_cars, replay=False):
-    """
-    Initialize the data of the game (number of car alive, time remaining, start time, ...)
-    """
-    global NB_CARS_ALIVE, DISPLAY_GARAGE, NUM_GENERATION, TICKS_REMAINING
-
-    NB_CARS_ALIVE = nb_cars  # Number of cars alive
-    TICKS_REMAINING = TIME_GENERATION * 60  # Number of iterations remaining for the generation
-    DISPLAY_GARAGE = False  # We don't display the garage
-    if replay:  # If we replay from the last cars
-        NUM_GENERATION += 1
-    else:  # If we start a new run
-        NUM_GENERATION = 1  # Number of the generation
-
-
 def load_parameters():
     """
     Load the parameters of the different maps stored in the file parameters
@@ -343,8 +335,6 @@ def load_parameters():
         param1 = value1
         ...
         """
-        global BIG_RED_CAR_IMAGE
-
         lines = file_parameters_read.readlines()  # We read the file
         actual_map = -1  # Actual map (-1 because we start with the map 0)
         for line in lines:
@@ -381,15 +371,12 @@ def load_parameters():
                     elif param == 'proportion_selection':
                         LIST_PROPORTION_CARS_KEPT[actual_map] = float(line.split()[2])
 
-        # We load the image of the car (we do it here because we have to do it during the initialization of the game)
-        BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
-
 
 def load_cars():
     """
-    Load the cars stored in the file cars
+    Load the cars stored in the file cars (and initialize the big red car image)
     """
-    global ACTUAL_IDS_MEMORY_CARS
+    global ACTUAL_IDS_MEMORY_CARS, BIG_RED_CAR_IMAGE
 
     with open(PATH_DATA + 'cars', 'r') as file_cars_read:
         """
@@ -403,13 +390,16 @@ def load_cars():
 
             id_car = int(line[0])  # Id of the car (unique int)
             name = line[1]  # Name of the car
-            color = line[2]
+            color = line[2]  # Color of the car
             genetic = Genetic([int(line[i]) for i in range(3, 9)])  # Genetic of the car
-            scores = [int(line[i]) for i in range(9, 9 + NB_MAPS)]  # Score of the car
+            scores = [int(line[i]) for i in range(9, 9 + NB_MAPS)]  # Scores of the car for each map
 
             MEMORY_CARS.append(MemoryCar(id_car, name, color, genetic, scores))  # We create the memory car
             if ACTUAL_IDS_MEMORY_CARS <= id_car:
                 ACTUAL_IDS_MEMORY_CARS = id_car + 1
+
+    # We load the image of the car (we do it here because we have to do it during the initialization of the game so why not)
+    BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
 
 
 def save_cars():
@@ -436,3 +426,11 @@ def add_to_rects_blit_ui(rect, offset=0):
     """
     rect_to_add = pygame.Rect(rect.x, rect.y, rect.width + offset, rect.height + offset)  # Rect to add
     RECTS_BLIT_UI.append(rect_to_add)  # We add the rect to the list
+
+
+def exit_game():
+    """
+    Exit the game
+    """
+    save_cars()  # Save the cars
+    sys.exit()  # Quit pygame

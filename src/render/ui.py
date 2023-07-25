@@ -300,8 +300,8 @@ def display_dice_button():
             unpause()
 
         elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.append(MemoryCar(var.ACTUAL_IDS_MEMORY_CARS, f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
-                                             'gray', Genetic(), [0] * NB_MAPS))  # We add the dice to the memory
+            var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
+                                             color='gray', genetic=Genetic(), best_scores=[0] * NB_MAPS))  # We add the dice to the memory
             var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
 
         else:  # If we use the camera we capture the dice

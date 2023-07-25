@@ -58,7 +58,7 @@ def point_out_of_window(point):
         point (tuple(int, int)): the coordinates of the point
 
     Returns:
-        True if the point is out of the window, False otherwise
+        True if the point is out of the window
     """
     return point[0] < 0 or point[0] >= 1500 or point[1] < 0 or point[1] >= 700
 
@@ -238,3 +238,18 @@ def convert_to_new_window(x):
     else:   # If x is a rect
         return int(x[0] * var.WIDTH_SCREEN / 1500), int(x[1] * var.HEIGHT_SCREEN / 700), \
                int(x[2] * var.SCALE_RESIZE_X), int(x[3] * var.SCALE_RESIZE_Y)
+
+
+def checkpoint_reached(pos, checkpoint):
+    """
+    Check if the position is in the radius of a checkpoint
+
+    Args:
+        pos (tuple(int, int)): the position to check
+        checkpoint (tuple(int, int)): the checkpoint to check
+
+    Returns:
+        True if the position is in the radius of the checkpoint
+    """
+    return checkpoint[0] - var.RADIUS_CHECKPOINT < pos[0] < checkpoint[0] + var.RADIUS_CHECKPOINT and \
+        checkpoint[1] - var.RADIUS_CHECKPOINT < pos[1] < checkpoint[1] + var.RADIUS_CHECKPOINT

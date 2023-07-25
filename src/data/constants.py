@@ -4,7 +4,7 @@ import os.path  # To get the path of the file
 This file contains all the constants of the game used in multiple other files
 """
 
-# Debug
+# List of the different color of the dice to draw them in the menu
 RGB_VALUES_DICE = [(220, 220, 0), (250, 120, 0), (204, 0, 0), (240, 170, 25), (0, 175, 0), (0, 0, 0), (255, 255, 255)]
 # The order is: yellow, orange, red, dark_yellow, green, black
 

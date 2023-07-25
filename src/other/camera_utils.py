@@ -19,7 +19,7 @@ def verif_coordinates(circles, rect, coordinates):
         coordinates (list): List of coordinates to check
 
     Returns:
-        (bool): True if the coordinates are the same, False otherwise
+        (bool): True if the coordinates are the same
     """
     x, y = rect[:2]
     for circle in circles:
@@ -108,7 +108,7 @@ def overlapping_rectangles(rect1, rect2, area_threshold):
         area_threshold (float): the minimum overlapping area threshold
 
     Returns:
-        bool: True if the rectangles are overlapping, False otherwise
+        bool: True if the rectangles are overlapping
     """
     x1, y1, w1, h1 = rect1
     x2, y2, w2, h2 = rect2
@@ -141,7 +141,7 @@ def circles_too_close(circle1, circle2, distance_threshold=7):
             distance_threshold (float): the minimum distance between the centers of the circles
 
         Returns:
-            bool: True if the circles are overlapping, False otherwise
+            bool: True if the circles are overlapping
         """
     x1, y1, _ = circle1
     x2, y2, _ = circle2

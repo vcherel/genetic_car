@@ -1,7 +1,7 @@
 from src.other.utils import convert_to_new_window, scale_image  # Utils functions
 from src.menus.rect_garage import RectGarage  # Import the rectangle garage
 from src.render.button import Button  # Import the button
-import src.data.variables as var  # Import the variable
+import src.data.variables as var  # Import the variables
 from src.game.car import Car  # Import the car
 import pygame  # To use pygame
 import time  # To get the time
@@ -23,13 +23,16 @@ class Garage:
         self.x, self.y = convert_to_new_window((500, 125))  # Position of the garage
         self.image = scale_image(pygame.image.load(var.PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
         self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Rect of the garage
+
         self.nb_rectangles = 0  # Number of rectangle in the garage (we use this as a counter to see if we are on the page to draw)
         self.rectangles = []  # List of the rectangles in the garage
         self.selected_rects = [False] * len(var.MEMORY_CARS)  # Selected rectangles
+
         self.actual_page = 0  # Actual page of the garage
         self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning, when we change of page, or after a deletion)
-        self.time_since_last_delete = 0  # Time since the last delete of a car
+
         self.trash_button = Button(x=930, y=135, image_name='trash', scale=0.2)
+        self.time_since_last_delete = 0  # Time since the last delete of a car
         self.next_button = Button(x=940, y=623, image_name='next_page', scale=0.2)
         self.previous_button = Button(x=520, y=623, image_name='previous_page', scale=0.2)
 
@@ -47,22 +50,10 @@ class Garage:
 
     def reset(self):
         """
-        Reset the data
+        Reset the rectangles in the garage
         """
         self.rectangles = []  # We reset the list of the rectangle in the garage
         self.nb_rectangles = 0  # Number of rectangle in the garage
-
-    def resize(self):
-        """
-        Resize the garage
-        """
-        self.x, self.y = convert_to_new_window((500, 125))
-        self.image = scale_image(pygame.image.load(var.PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
-        self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Rect of the garage
-        self.trash_button = Button(x=930, y=135, image_name='trash', scale=0.2)
-        self.next_button = Button(x=940, y=623, image_name='next_page', scale=0.2)
-        self.previous_button = Button(x=520, y=623, image_name='previous_page', scale=0.2)
-        self.reload()  # We reload the page of the garage
 
     def draw(self):
         """
@@ -122,7 +113,7 @@ class Garage:
         """
         Reload the page of the garage
         """
-        # We add False to the selected_rects list if there is more cars in the memory than before
+        # We add one value to the selected_rects list if the number of cars increased
         if len(var.MEMORY_CARS) > len(self.selected_rects):
             for _ in range(len(var.MEMORY_CARS) - len(self.selected_rects)):
                 self.selected_rects.append(False)
@@ -133,7 +124,8 @@ class Garage:
             # If the rectangle is in the good page
             if 10 * self.actual_page <= self.nb_rectangles < 10 * (self.actual_page + 1):
                 # We add the rectangle to the list of the rectangles
-                self.rectangles.append(RectGarage(id_rect=id_rect, memory_car=memory_car, selected=self.selected_rects[self.get_index_rect(id_rect)]))
+                self.rectangles.append(RectGarage(id_rect=id_rect, memory_car=memory_car,
+                                                  selected=self.selected_rects[self.get_index_rect(id_rect)]))
                 id_rect += 1  # We add one to the number to identify the id of the rectangle
             self.nb_rectangles += 1  # We add one to the number of rectangle in the garage
 
@@ -141,7 +133,7 @@ class Garage:
 
     def draw_arrows(self):
         """
-        Check if we have to change the page of the garage (click on the arrows)
+        Check if we have to change the page of the garage (after a click on the arrows)
         """
         if (self.actual_page + 1) * 10 < self.nb_rectangles:  # If we are not at the last page
             self.next_button.draw()  # We draw the next button
@@ -155,19 +147,31 @@ class Garage:
                 self.actual_page -= 1
                 self.reload_page = True  # We have to change the page of the garage
 
-
-    def erase_garage(self):
-        """
-        Erase the garage
-        """
-        var.WINDOW.blit(var.BACKGROUND, self.rect, self.rect)  # We erase the garage
-
     def get_index_rect(self, id_rect):
         """
         Return the index of a rectangle in the self.selected list
         We have to take into account the actual page
         """
         return 10 * self.actual_page + id_rect
+
+    def resize(self):
+        """
+        Resize the garage
+        """
+        self.x, self.y = convert_to_new_window((500, 125))
+        self.image = scale_image(pygame.image.load(var.PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
+        self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Rect of the garage
+        self.trash_button = Button(x=930, y=135, image_name='trash', scale=0.2)
+        self.next_button = Button(x=940, y=623, image_name='next_page', scale=0.2)
+        self.previous_button = Button(x=520, y=623, image_name='previous_page', scale=0.2)
+        self.reload()  # We reload the page of the garage
+
+
+    def erase_garage(self):
+        """
+        Erase the garage
+        """
+        var.WINDOW.blit(var.BACKGROUND, self.rect, self.rect)  # We erase the garage
 
 
 def add_garage_cars(cars):

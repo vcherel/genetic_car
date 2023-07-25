@@ -16,24 +16,23 @@ class ColorDice:
             color (numpy.ndarray): Mean BGR color of the dice
             rect (tuple): Rect of the dice in the image
             distances (dict): Distances between the color of the dice and each color
-            bad_colors (list): The color that we know is not the color of the dice
+            bad_colors (list): The colors that we know is not the color of the dice
         """
-        self.color = color  # Mean BGR color of the dice
-        self.rect = rect  # Rect of the dice in the image
+        self.color, self.rect = color, rect
 
         if distances is None:
-            self.distances = {}
+            self.distances = {}  # Default value
         else:
             self.distances = distances  # Distances between the color of the dice and each color
         if bad_colors is None:
-            self.bad_colors = []
+            self.bad_colors = []  # Default value
         else:
             self.bad_colors = bad_colors  # The color that we know is not the color of the dice
 
 
 class MemoryCar:
     """
-    This class represents a car in the memory
+    This class represents a car in the memory for the garage
     """
     def __init__(self, id_car, name, color, genetic, best_scores):
         """
@@ -46,10 +45,8 @@ class MemoryCar:
             genetic (Genetic): Genetic of the car
             best_scores (list): Scores of the car
         """
-        self.id = id_car
-        self.name = name
-        self.color = color
-        self.genetic = genetic
+        self.id, self.name = id_car, name
+        self.color, self.genetic = color, genetic
         self.best_scores = best_scores
 
     def __str__(self):

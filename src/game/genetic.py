@@ -1,5 +1,6 @@
-import src.data.variables as var  # Import the data
+import src.data.variables as var  # Import the global variables
 import random  # Used to generate random numbers
+
 
 """
 This file contains the Genetic class used to store the genetic parameters of a car
@@ -17,10 +18,10 @@ class Genetic:
         Args:
             list_parameters (list(int)): list of the parameters of the genetic algorithm in this order : (length_slow, length_medium, length_fast, width_slow, width_medium, width_fast)
         """
-        if list_parameters is not None:        # If we have the parameters of the genetic algorithm
-            self.dice_values = list_parameters.copy()  # Dice values corresponding to this genome (we copy the list)
-        else:                                  # If we don't have the parameters we randomize them
+        if list_parameters is None:  # If we don't have the parameters we randomize them
             self.dice_values = [random.randint(1, 6) for _ in range(6)]  # Dice values corresponding to this genome
+        else:
+            self.dice_values = list_parameters.copy()  # Dice values corresponding to this genome (we copy the list)
 
     def __str__(self):
         """
@@ -42,7 +43,7 @@ class Genetic:
             other (Genetic): genetic algorithm to compare with
 
         Returns:
-            bool: True if the two genetic algorithms are equals, False otherwise
+            bool: True if the two genetic algorithms are equals
         """
         return self.dice_values == other.dice_values
 

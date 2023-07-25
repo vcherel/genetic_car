@@ -1,4 +1,4 @@
-from src.data.analyze_data import analyze_data_scores, show_positions_crash  # Import the analyze_data function
+from src.data.analyze_data import analyze_test_all_cars, show_positions_crash  # Import the analyze_data function
 from src.data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
 from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
 from src.menus.garage_menu import add_garage_cars  # Import the garage
@@ -265,7 +265,7 @@ def change_checkpoints():
             # We detect the mouse click to write the coordinates in the file
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    var.exit_game()
+                    var.exit_game()  # Exit the game if we close the window
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
                     file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
@@ -275,18 +275,22 @@ def run_test_all_cars():
     """
     Run all cars and save the results in a file
     """
-    var.FILE_TEST = open(f'{PATH_DATA}test_all_cars_{var.NUM_MAP}', 'a')  # We open the file to write the results
+    var.FPS = 9999
+    var.SHOW_EXPLOSIONS = False
+
+    var.FILE_TEST = open(f'{PATH_DATA}test_all_cars_{var.NUM_MAP}', 'w')  # We open the file to write the results
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
-    tab_cars = []
 
+    tab_cars = []
     genetic_combinations = itertools.product(range(1, 7), repeat=6)
     for combination in genetic_combinations:
-        genetic = Genetic(combination)
+        genetic = Genetic(list(combination))
         tab_cars.append(Car(genetic))
-        if len(tab_cars) == 100:
+        if len(tab_cars) == 10000:
             play(tab_cars)  # We play the game to test the cars
             tab_cars = []
+    play(tab_cars)  # We play the game to test the cars
 
 
 def run_test_mutation_crossover():
@@ -335,10 +339,6 @@ def main():
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
 
-        if var.SHOW_ANALYSIS:
-            scores_cars = analyze_data_scores('test_all_cars', 'test_all_cars_analysis')
-            show_positions_crash(scores_cars)
-
         # If we want to run all the cars
         if var.TEST_ALL_CARS:
             run_test_all_cars()  # Run all cars
@@ -352,7 +352,7 @@ def main():
 
     except Exception as e:
         traceback.print_exc()  # Print the error
-        var.exit_game()  # Exit the game
+        var.exit_game()  # Exit the game if there is an error
         raise e
 
 
