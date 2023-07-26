@@ -1,7 +1,7 @@
-from src.other.utils import scale_image, convert_to_new_window  # To convert the position if we resize the window
-from src.data.constants import PATH_IMAGE  # To get the path of the image
-from src.render.button import Button  # Import the button class
-import src.data.variables as var  # Import the data
+from other.utils import scale_image, convert_to_new_window  # To convert the position if we resize the window
+from data.constants import PATH_IMAGE  # To get the path of the image
+from render.button import Button  # Import the button class
+import data.variables as var  # Import the data
 import pygame  # To use pygame
 
 

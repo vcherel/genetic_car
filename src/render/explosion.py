@@ -1,5 +1,5 @@
-from src.other.utils import convert_to_new_window  # Utils functions
-import src.data.variables as var  # Import the variables
+from other.utils import convert_to_new_window  # Utils functions
+import data.variables as var  # Import the variables
 import pygame  # To use pygame
 
 """

@@ -1,9 +1,9 @@
-from src.other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car, checkpoint_reached  # Utils functions
-from src.render.display import draw_detection_cone  # To draw the detection cone
-from src.data.constants import NB_MAPS  # Number of different tracks
-from src.game.genetic import Genetic  # Genetic algorithm of the car
-from src.render.explosion import Explosion  # To render explosions
-import src.data.variables as var  # Variables of the game
+from other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car, checkpoint_reached  # Utils functions
+from render.display import draw_detection_cone  # To draw the detection cone
+from data.constants import NB_MAPS  # Number of different tracks
+from game.genetic import Genetic  # Genetic algorithm of the car
+from render.explosion import Explosion  # To render explosions
+import data.variables as var  # Variables of the game
 import pygame  # Pygame library
 import math  # Math library
 

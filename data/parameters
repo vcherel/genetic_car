@@ -60,15 +60,15 @@ proportion_selection = 0.2
 
 # Circuit 4
 nombre_voitures = 30
-temps_par_generation = 30
-seed = 0
+temps_par_generation = 20
+seed = 1
 vitesse_max = 8
 angle_rotation = 8
 force_acceleration = 0.1
 force_freinage = 0.7
-coef_derapage = 3
+coef_derapage = 3.5
 largeur_cone = 16
-longueur_cone = 20
+longueur_cone = 15
 chance_croisement = 0.1
 chance_mutation = 0.3
 proportion_selection = 0.2
@@ -89,9 +89,9 @@ chance_mutation = 0.3
 proportion_selection = 0.2
 
 # Circuit 6
-nombre_voitures = 150
+nombre_voitures = 30
 temps_par_generation = 60
-seed = 0
+seed = 2
 vitesse_max = 8
 angle_rotation = 8
 force_acceleration = 0.1
@@ -106,7 +106,7 @@ proportion_selection = 0.2
 # Circuit 7
 nombre_voitures = 30
 temps_par_generation = 60
-seed = 0
+seed = 19
 vitesse_max = 8
 angle_rotation = 8
 force_acceleration = 0.1

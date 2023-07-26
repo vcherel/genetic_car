@@ -1,8 +1,8 @@
-from src.other.utils import convert_to_new_window, scale_image  # Utils functions
-from src.menus.rect_garage import RectGarage  # Import the rectangle garage
-from src.render.button import Button  # Import the button
-import src.data.variables as var  # Import the variables
-from src.game.car import Car  # Import the car
+from other.utils import convert_to_new_window, scale_image  # Utils functions
+from menus.rect_garage import RectGarage  # Import the rectangle garage
+from render.button import Button  # Import the button
+import data.variables as var  # Import the variables
+from game.car import Car  # Import the car
 import pygame  # To use pygame
 import time  # To get the time
 

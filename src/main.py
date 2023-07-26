@@ -1,16 +1,16 @@
-from src.data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
-from src.game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from src.menus.garage_menu import add_garage_cars  # Import the garage
-from src.menus.settings_menu import SETTINGS  # Import the settings
-from src.game.genetic import Genetic  # Import the genetic class
-from src.other.utils import union_rect  # Import the utils
-import src.render.display as display  # Import the display
-import src.data.variables as var  # Import the data
+from data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
+from game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
+from menus.garage_menu import add_garage_cars  # Import the garage
+from menus.settings_menu import SETTINGS  # Import the settings
+from game.genetic import Genetic  # Import the genetic class
+from other.utils import union_rect  # Import the utils
+import render.display as display  # Import the display
+import data.variables as var  # Import the data
 import traceback  # To get the traceback of errors
-from src.game.car import Car  # Import the car
+from game.car import Car  # Import the car
 import itertools  # To iterate over the cars
 import random  # To generate random numbers
-import src.render.ui as ui  # Import the ui
+import render.ui as ui  # Import the ui
 import pygame  # To use pygame
 import time  # To get the time
 
@@ -280,7 +280,7 @@ def run_test_all_cars():
     var.FPS = 9999
     var.SHOW_EXPLOSIONS = False
 
-    var.FILE_TEST = open(f'{PATH_DATA}test/all_cars/results/{var.NUM_MAP}', 'w')  # We open the file to write the results
+    var.FILE_TEST = open(f'{PATH_DATA}tests/all_cars/results/{var.NUM_MAP}', 'w')  # We open the file to write the results
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
     var.PLAY = True
 

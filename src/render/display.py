@@ -1,6 +1,6 @@
-from src.other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, change_color_car  # Import the utils functions
-from src.data.constants import RGB_VALUES_DICE  # Import the constants
-from src.data import variables as var
+from other.utils import text_rec, compute_detection_cone_points, convert_to_new_window, scale_image, scale_positions, change_color_car  # Import the utils functions
+from data.constants import RGB_VALUES_DICE  # Import the constants
+import data.variables as var
 import pygame  # To use pygame
 
 """
@@ -108,7 +108,12 @@ def show_car_window(car):
 
     image = scale_image(image, var.SCALE_RESIZE_X)  # Scale the image
     var.WINDOW.blit(image, convert_to_new_window((x, y)))  # Draw the red car
+
+    # We change the values of width_cone and length_cone to have always the same size of detection cone
+    width, length = var.WIDTH_CONE, var.LENGTH_CONE
+    var.WIDTH_CONE, var.LENGTH_CONE = 16, 11
     draw_detection_cone((x + 52, y - 3), car.genetic.dice_values, factor=3, width_line=5)  # Draw the detection cones
+    var.WIDTH_CONE, var.LENGTH_CONE = width, length
 
     # Draw the dice
     x_distance = 120

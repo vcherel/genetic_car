@@ -1,4 +1,4 @@
-import src.data.variables as var  # Import the global variables
+import data.variables as var  # Import the global variables
 import random  # Used to generate random numbers
 
 

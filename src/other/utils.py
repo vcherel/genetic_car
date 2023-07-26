@@ -1,4 +1,4 @@
-import src.data.variables as var  # To use the data
+import data.variables as var  # To use the data
 import pygame  # To use pygame
 import math  # To use math
 

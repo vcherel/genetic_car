@@ -1,5 +1,5 @@
-from src.other.utils import convert_to_new_window  # To convert the position of the button
-import src.data.variables as var  # Import the data
+from other.utils import convert_to_new_window  # To convert the position of the button
+import data.variables as var  # Import the data
 import pygame  # To use pygame
 import time  # To get the time
 

@@ -1,15 +1,15 @@
-from src.other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
-from src.render.display import show_car_window, erase_car_window  # Import the function to show the car
-from src.other.camera import capture_dice  # Import the function to capture the dice
-from src.render.display import display_text_ui  # Import functions from display
-from src.menus.dice_menu import DICE_MENU  # Import functions from dice menu
-from src.menus.settings_menu import SETTINGS  # Import the settings window
-from src.data.data_classes import MemoryCar  # Import the car memory
-from src.menus.garage_menu import GARAGE  # Import the garage window
-from src.data.constants import NB_MAPS  # Import constants
-from src.game.genetic import Genetic  # Import the genetic class
-from src.render.button import Button  # Import the button
-import src.data.variables as var  # Import the data
+from other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
+from render.display import show_car_window, erase_car_window  # Import the function to show the car
+from other.camera import capture_dice  # Import the function to capture the dice
+from render.display import display_text_ui  # Import functions from display
+from menus.dice_menu import DICE_MENU  # Import functions from dice menu
+from menus.settings_menu import SETTINGS  # Import the settings window
+from data.data_classes import MemoryCar  # Import the car memory
+from menus.garage_menu import GARAGE  # Import the garage window
+from data.constants import NB_MAPS  # Import constants
+from game.genetic import Genetic  # Import the genetic class
+from render.button import Button  # Import the button
+import data.variables as var  # Import the data
 import pygame  # To use pygame
 import time  # To get the time
 

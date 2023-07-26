@@ -1,5 +1,5 @@
-from src.data.constants import PATH_DATA  # Import the path of the data
-import src.data.variables as var  # To use the global variables
+from data.constants import PATH_DATA  # Import the path of the data
+import data.variables as var  # To use the global variables
 import matplotlib.pyplot as plt  # For plotting the histogram
 from statistics import mean  # To use statistics on the data
 import os  # To iterate over the files in a folder

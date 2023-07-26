@@ -1,10 +1,10 @@
-from src.other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
-from src.render.display import draw_detection_cone, draw_dice  # Import the display functions
-from src.data.constants import RGB_VALUES_DICE, NB_MAPS  # Import the constants
-from src.data.data_classes import MemoryCar  # Import the car memory
-from src.game.genetic import Genetic  # Import the genetic class
-from src.render.button import Button  # Import the button class
-import src.data.variables as var  # Import the data
+from other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
+from render.display import draw_detection_cone, draw_dice  # Import the display functions
+from data.constants import RGB_VALUES_DICE, NB_MAPS  # Import the constants
+from data.data_classes import MemoryCar  # Import the car memory
+from game.genetic import Genetic  # Import the genetic class
+from render.button import Button  # Import the button class
+import data.variables as var  # Import the data
 import pygame  # Import pygame module
 
 

@@ -1,9 +1,9 @@
-from src.data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA, START_ANGLES, NB_MAPS  # Import the constants
-from src.other.utils import scale_image, convert_to_new_window  # Import the utils functions
-from src.render.display import edit_background  # Import the display functions
-from src.menus.settings_menu import SETTINGS  # Import the Settings class
-from src.data.data_classes import MemoryCar  # Import the MemoryCar class
-from src.game.genetic import Genetic  # Import the Genetic class
+from data.constants import START_POSITIONS, CAR_SIZES, PATH_IMAGE, PATH_DATA, START_ANGLES, NB_MAPS  # Import the constants
+from other.utils import scale_image, convert_to_new_window  # Import the utils functions
+from render.display import edit_background  # Import the display functions
+from menus.settings_menu import SETTINGS  # Import the Settings class
+from data.data_classes import MemoryCar  # Import the MemoryCar class
+from game.genetic import Genetic  # Import the Genetic class
 import pygame  # To use pygame
 import sys  # To quit the game
 
