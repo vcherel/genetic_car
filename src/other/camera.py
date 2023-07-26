@@ -12,34 +12,32 @@ import cv2  # To use OpenCV
 This file contains the functions used to get the score of the dice from the camera with OpenCV
 """
 
-# The parameters of the threshold to make a black and white image for each color
-param_thresh = {'yellow': 170, 'orange': 90, 'red': 60, 'dark_yellow': 100, 'green': 80, 'black': 20}
-
-# The BGR values of each color (observation)
-bgr_values = {'yellow': (49, 113, 149), 'orange': (44, 66, 169), 'red': (50, 35, 111), 'dark_yellow': (41, 73, 121), 'green': (70, 93, 41), 'black': (44, 38, 39)}
-
-# The BGR values of each color (real)
-real_bgr_values = {'yellow': (0, 255, 255), 'orange': (0, 102, 204), 'red': (0, 0, 204), 'dark_yellow': (0, 152, 152), 'green': (0, 204, 0), 'black': (0, 0, 0)}
-
-# The last scores we stored for each color (used to compare with the new scores to avoid changing the score too often)
-scores_colors = {'yellow': [], 'orange': [], 'red': [], 'dark_yellow': [], 'green': [], 'black': []}
+NUM_CAMERA = 0  # The number of the camera we want to use
 
 # The rects kept in memory (when we detect a rectangle, if it overlaps with a rectangle in memory, we display the rectangle in memory)
 memory_rects = {}  # Format : {rect : lifetime_remaining} ; lifetime_remaining : the number of frames the rectangle will be displayed unless it is detected again
 
+# We take in memory for each color the bgr color and the rectangle to prevent 2 colors from being the same
+colors = {}  # List of the colors of the dice (key: name_color, value: ColorDice)
+
 # The circles kept in memory (when we detect a circle, if it overlaps with a circle in memory, we display the circle in memory)
 memory_circles = {'yellow': {}, 'orange': {}, 'red': {}, 'dark_yellow': {}, 'green': {}, 'black': {}}  # Format : {color : {circle : lifetime_remaining}}
 
+# The last scores we stored for each color (used to compare with the new scores to avoid changing the score too often)
+scores_colors = {'yellow': [], 'orange': [], 'red': [], 'dark_yellow': [], 'green': [], 'black': []}
+
 frame_view = np.empty([2, 2])  # The frame of the camera (viewed by the user)
+frame = np.empty([2, 2])  # The frame of the camera (used by the program)
+
 count_iterations = 0  # The number of iterations of the program
 
 # The parameters of the HoughCircles function
-list_p1 = [150]
-list_p2 = [16]
-list_dp = [5]
+param_1, param_2, param_dp = 150, 16, 5
 max_radius_circle = 7  # The maximum radius of the circles we want to detect
 
+
 # Optimization and debug parameters
+
 show_clicks = False  # To show the coordinates and color of the position where the user clicked
 
 # To find what is the color of each dice
@@ -62,12 +60,13 @@ dict_p1_opti, dict_p2_opti, dict_dp_opti = {}, {}, {}  # Format : {value : count
 
 def capture_dice():
     """
-    Main program
+    Main program, find the values of the different dice from the camera and return them when the user clicks on the window
+    The dice are identified by their color
 
     Returns:
-        (dict) : The scores of the dice
+        (list) : The scores of the dice
     """
-    global frame_view, count_iterations
+    global frame_view, frame
 
     final_score = {'yellow': random.randint(1, 6), 'orange': random.randint(1, 6), 'red': random.randint(1, 6),
                    'dark_yellow': random.randint(1, 6), 'green': random.randint(1, 6), 'black': random.randint(1, 6)}
@@ -75,62 +74,16 @@ def capture_dice():
     rect_window = pygame.rect.Rect(convert_to_new_window((425, 175, 640, 480)))
 
     # Create a VideoCapture object
-    cap = cv2.VideoCapture(0)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
+    cap = cv2.VideoCapture(NUM_CAMERA)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
     while True:
-        count_iterations += 1  # We increment the number of iterations
-
-        _, frame = cap.read()  # Read a frame from the camera
-
-        if frame is None:  # We don't have a camera connected
-            print('Aucune caméra détectée')
-            return end_capture_dice(cap, final_score)
-
-        frame_view = frame.copy()  # We make a copy of the frame to display it on the window (with rectangles, texts, ...)
-
-        rectangles = find_rectangles(frame)  # Find the rectangles on the image
-
-        # Draw the rectangles on the image
-        # draw_rectangle(rectangles, thickness=1)
-
-        # We take in memory for each color the bgr color and the rectangle to prevent 2 colors from being the same
-        colors = {}  # List of the colors of the dice (key: name_color, value: ColorDice)
-
-        for rect in rectangles:
-            x, y, w, h = rect  # We get the coordinates of the rectangle
-            image = frame[y:y+h, x:x+w]  # We get the image of the rectangle
-
-            mean_bgr = compute_mean_bgr(image)  # We compute the mean BGR values of the rectangle
-
-            # Write the mean BGR values in a file
-            if write_mean_bgr:
-                write_mean_bgr_value(rect, mean_bgr)
-
-            colors = determine_color(ColorDice(mean_bgr, rect), colors)  # We determine the color of the rectangle
-
-        for color in colors:
-            rect = x, y, w, h = colors[color].rect  # We get the coordinates of the rectangle
-            image = frame[y:y+h, x:x+w]  # We get the image of the rectangle
-
-            if np.size(image) == 0:  # If the image is empty, we don't do anything
-                break
-
-            # We draw the rectangle on the image
-            draw_rectangle((x, y, w, h), real_bgr_values[color])
-
-            score = determine_score(image, rect, color, scores_colors[color])  # We determine the score of the dice
-
-            if color in final_score:
-                final_score[color] = score  # We add the score to the final score
-
-            # We write the value of the dice on the image
-            cv2.putText(frame_view, f'Score: {score}', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 50, 50), 2)
+        find_dice_values(cap, final_score)  # Find the values of the dice from the camera
 
         # We display the frame on the window
         display_frame(rect_window)
 
         if count_iterations == wait_optimize and optimize_hough_circle:
-            display_dictionaries_optimization()  # Sort the dictionaries
+            display_dictionaries_optimization()  # Sort the dictionaries and print them
 
         # Detect a click on the window to stop the program
         for event in pygame.event.get():
@@ -142,23 +95,55 @@ def capture_dice():
                 frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
                 update_pygame_camera_frame(frame_view)  # Update the frame of the camera shown in pygame
 
-                return end_capture_dice(cap, final_score)  # End the capture of the dice
+                return end_capture_dice(cap, final_score)  # End the capture of the dice, and return the scores in a list
 
 
-def find_rectangles(frame):
+def find_dice_values(cap, final_score):
     """
-    Find the rectangles on the frame of the camera
+    Find the values of the dice from the camera (one frame)
 
     Args:
-        frame (numpy.ndarray): Frame of the camera
+        cap (cv2.VideoCapture): VideoCapture object
+        final_score (dict): The scores of the dice
+    """
+    global count_iterations, frame_view, frame, colors
+
+    count_iterations += 1  # We increment the number of iterations
+
+    _, frame = cap.read()  # Read a frame from the camera
+
+    if frame is None:  # We don't have a camera connected
+        print('Aucune caméra détectée')
+        return end_capture_dice(cap, final_score)
+
+    frame_view = frame.copy()  # We make a copy of the frame to display it on the window (with rectangles, texts, ...)
+
+    rectangles = find_rectangles()  # Find the rectangles on the image
+
+    # Draw all the rectangles found on the image
+    # draw_rectangle(rectangles, thickness=1)
+
+    # Initialize the colors memory
+    colors = {}  # List of the colors of the dice (key: name_color, value: ColorDice)
+
+    for rect in rectangles:
+        find_colors(rect)  # Modify the colors dictionary inplace
+
+    for color in colors:
+        draw_score(color, final_score)
+
+
+def find_rectangles():
+    """
+    Find the rectangles on the frame of the camera
 
     Returns:
         list: The list of rectangles found
     """
     contours = find_contours(frame)  # We find the contours
     rectangles = get_rectangles_from_contours(contours)  # We check the validity of the contours
-    rectangles = add_offset(rectangles, offset=7)  # We add an offset to the rectangles
-    rectangles = add_rect_from_memory(rectangles)  # We add the rectangles from the memory
+    rectangles = add_offset(rectangles, offset=7)  # We add an offset to each rectangle in case the rectangle has cut the dice
+    rectangles = add_rect_from_memory(rectangles)  # We add the rectangles from the memory to the list of rectangles
 
     update_memory(memory_rects)  # We update the memory of the rectangles (we decrease the lifetime of the rectangles)
 
@@ -175,9 +160,12 @@ def find_contours(image):
     Returns:
         list: The list of contours found
     """
-    contours = []  # The list of contours found
-    for (str_color, value) in param_thresh.items():  # For each color we have a threshold_color
+    # The parameters of the threshold to make a black and white image for each color
+    param_thresh = {'yellow': 170, 'orange': 90, 'red': 60, 'dark_yellow': 100, 'green': 80, 'black': 20}
 
+    contours = []  # The list of contours found
+
+    for (str_color, value) in param_thresh.items():  # For each color we have a threshold_color
         gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)  # We convert the image from BGR to gray
         gray_img = cv2.medianBlur(gray_img, 3)  # We apply a median blur to the image to erase useless details
 
@@ -218,7 +206,7 @@ def get_rectangles_from_contours(contours):
             for rectangle in rectangles:
                 if overlapping_rectangles((x, y, w, h), rectangle, area_threshold=0.6):
                     rectangle_already_in_list = True
-                    if w * h > rectangle[2] * rectangle[3]:
+                    if w * h > rectangle[2] * rectangle[3]:   # We keep the biggest rectangle
                         rectangles.remove(rectangle)
                         rectangles.append((x, y, w, h))
                     break
@@ -248,7 +236,6 @@ def add_rect_from_memory(rectangles, lifetime=25, area_threshold=0.9):
     Returns:
         list: List of rectangles found
     """
-
     new_rectangles = list(memory_rects.keys())  # List of rectangles to add to the list of rectangles
 
     # We look at each rectangle
@@ -304,7 +291,23 @@ def update_memory(memory):
         del memory[key]
 
 
-def determine_color(color_dice, dict_color_dice):
+def find_colors(rect):
+    """
+    Find the colors of the dice
+    """
+    x, y, w, h = rect  # We get the coordinates of the rectangle
+    image = frame[y:y + h, x:x + w]  # We get the image of the rectangle
+
+    mean_bgr = compute_mean_bgr(image)  # We compute the mean BGR values of the rectangle
+
+    # Write the mean BGR values in a file
+    if write_mean_bgr:
+        write_mean_bgr_value(rect, mean_bgr)
+
+    determine_color(ColorDice(mean_bgr, rect))  # We determine the color of the rectangle (it modifies the colors dictionary)
+
+
+def determine_color(color_dice):
     """
     Determine the colors of the dice on the image. We try to find the color with the minimum distance between the mean
     BGR values and the BGR values of each color. There may be conflicts between the colors, and in this case, we
@@ -312,11 +315,14 @@ def determine_color(color_dice, dict_color_dice):
 
     Args:
         color_dice (ColorDice): ColorDice object representing the dice
-        dict_color_dice (dict): Dictionary of the ColorDice objects, with the name of the color as key
 
     Returns:
         (dict) : Dictionary of the ColorDice objects
     """
+    # The BGR values of each color (observation)
+    bgr_values = {'yellow': (49, 113, 149), 'orange': (44, 66, 169), 'red': (50, 35, 111),
+                  'dark_yellow': (41, 73, 121), 'green': (70, 93, 41), 'black': (44, 38, 39)}
+
     # Calculate the distance between the mean BGR values and the BGR values of each color if necessary
     if not color_dice.distances:
         color_dice.distances = {}  # Format: {name_color: distance}
@@ -336,27 +342,25 @@ def determine_color(color_dice, dict_color_dice):
                 min_distance = distance
                 name_color = name
         if min_distance is None:  # If we didn't find any color, we reject this color and exit the function
-            return dict_color_dice
+            return
 
     # We check if the color is already in the list
-    if name_color not in dict_color_dice:
-        dict_color_dice[name_color] = color_dice  # We add the color to the list if it is not in it
+    if name_color not in colors:
+        colors[name_color] = color_dice  # We add the color to the list if it is not in it
     else:
         # We check what dice has the closest mean_bgr to the BGR value we want
-        if np.linalg.norm(dict_color_dice[name_color].color - bgr_values[name_color]) > np.linalg.norm(color_dice.color - bgr_values[name_color]):
+        if np.linalg.norm(colors[name_color].color - bgr_values[name_color]) > np.linalg.norm(color_dice.color - bgr_values[name_color]):
             # If the new dice is closer to the color we want, we replace the old dice by the new one
-            old_dice = dict_color_dice[name_color]
-            dict_color_dice[name_color] = color_dice
+            old_dice = colors[name_color]
+            colors[name_color] = color_dice
 
             # We restart the function with the old dice
             old_dice.bad_colors.append(name_color)
-            dict_color_dice = determine_color(old_dice, dict_color_dice)
+            determine_color(old_dice)
         else:
             # If the old dice is closer to the color we want, we restart the function with the new dice
             color_dice.bad_colors.append(name_color)
-            dict_color_dice = determine_color(color_dice, dict_color_dice)
-
-    return dict_color_dice
+            determine_color(color_dice)
 
 
 def write_mean_bgr_value(rect, mean_bgr):
@@ -377,6 +381,32 @@ def write_mean_bgr_value(rect, mean_bgr):
     if overlapping_rectangles(rect, rect_detection, area_threshold=0.1):
         draw_rectangle(rect, color=(255, 0, 0), thickness=20)
         file_write_mean_bgr.write(f'{mean_bgr[0]} {mean_bgr[1]} {mean_bgr[2]}\n')
+
+
+def draw_score(color, final_score):
+    """
+    Find the score of the dice
+    """
+    # The BGR values of each color (real)
+    real_bgr_values = {'yellow': (0, 255, 255), 'orange': (0, 102, 204), 'red': (0, 0, 204),
+                       'dark_yellow': (0, 152, 152), 'green': (0, 204, 0), 'black': (0, 0, 0)}
+
+    rect = x, y, w, h = colors[color].rect  # We get the coordinates of the rectangle
+    image = frame[y:y + h, x:x + w]  # We get the image of the rectangle
+
+    if np.size(image) == 0:  # If the image is empty, we don't do anything
+        return None
+
+    # We draw the rectangle on the image
+    draw_rectangle((x, y, w, h), real_bgr_values[color])
+
+    score = determine_score(image, rect, color, scores_colors[color])  # We determine the score of the dice
+
+    if color in final_score:
+        final_score[color] = score  # We add the score to the final score
+
+    # We write the value of the dice on the image
+    cv2.putText(frame_view, f'Score: {score}', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 50, 50), 2)
 
 
 def determine_score(image, rect, color, scores, len_memory=40):
@@ -467,25 +497,24 @@ def add_circles(actual_circles, image):
     Returns:
         (list): List of circles with the new circles
     """
-    for index in range(len(list_p1)):  # We try to find circles with different parameters for the current color
-        new_circles = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=list_dp[index] / 10, minDist=3,
-                                       param1=list_p1[index], param2=list_p2[index], minRadius=0, maxRadius=max_radius_circle)
+    new_circles = cv2.HoughCircles(image=image, method=cv2.HOUGH_GRADIENT, dp=param_dp / 10, minDist=3,
+                                   param1=param_1, param2=param_2, minRadius=0, maxRadius=max_radius_circle)
 
-        if new_circles is not None:
-            # Transform the circles to a list of tuple instead of numpy.ndarray of numpy.ndarray (to be able to add them to a dictionary like a key)
-            new_circles = [tuple(new_circle.tolist()) for new_circle in new_circles[0, :]]
+    if new_circles is not None:
+        # Transform the circles to a list of tuple instead of numpy.ndarray of numpy.ndarray (to be able to add them to a dictionary like a key)
+        new_circles = [tuple(new_circle.tolist()) for new_circle in new_circles[0, :]]
 
-            # We add the new circles to the list of circles
-            for circle_to_add in new_circles:
-                circle_already_in_list = False  # Boolean to know if the circle is already in the list
+        # We add the new circles to the list of circles
+        for circle_to_add in new_circles:
+            circle_already_in_list = False  # Boolean to know if the circle is already in the list
 
-                for circle in actual_circles:  # We look if the circle is already in the list
-                    if circles_too_close(circle, circle_to_add):
-                        circle_already_in_list = True
-                        break
+            for circle in actual_circles:  # We look if the circle is already in the list
+                if circles_too_close(circle, circle_to_add):
+                    circle_already_in_list = True
+                    break
 
-                if not circle_already_in_list:
-                    actual_circles.append(circle_to_add)
+            if not circle_already_in_list:
+                actual_circles.append(circle_to_add)
 
     return actual_circles
 
@@ -584,7 +613,7 @@ def display_dictionaries_optimization():
 
 def draw_rectangle(rectangle, color=(0, 0, 0), thickness=3):
     """
-    Draw the rectangles on the frame
+    Draw the rectangles on the frame used to view things
 
     Args:
         rectangle (tuple or list of tuple): The rectangle or the rectangles
@@ -600,7 +629,7 @@ def draw_rectangle(rectangle, color=(0, 0, 0), thickness=3):
 
 def draw_circle(circles):
     """
-    Draw the circles on the frame
+    Draw the circles on the frame used to view things
 
     Args:
         circles (list): The circles to draw

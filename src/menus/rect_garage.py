@@ -149,7 +149,7 @@ class RectGarage:
             time_since_last_delete (int): time since the last deletion of a car to avoid multiple deletions
 
         Returns:
-            bool: True if the car is deleted
+            bool: True if the car is deleted (to indicate that we need to reload the page)
         """
         if self.delete_button.draw() and time.time() - time_since_last_delete > 0.15:  # We check the state of the button
             var.MEMORY_CARS.remove(self.memory_car)  # We remove the car from the memory cars
@@ -175,7 +175,7 @@ class RectGarage:
 
 def get_coordinates(id_rect):
     """
-    Get the coordinates of the rectangle in the garage menu
+    Get the coordinates of the rectangle in the garage menu based on its id
 
     Args:
         id_rect (int): id of the rectangle

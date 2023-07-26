@@ -290,7 +290,7 @@ def display_dice_button():
     """
     dice_button.draw()  # Draw the dice button
     if dice_button.mouse_over_button:
-        var.add_to_rects_blit_ui(dice_button.rect)  # We add the rect of the dice button to the list of rects to blit
+        var.add_to_rects_blit_ui(dice_button.rect, offset=1)  # We add the rect of the dice button to the list of rects to blit
     if dice_button.just_clicked:   # Dice button is just clicked
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage when the dice button is pressed
@@ -350,6 +350,10 @@ def display_restart_button():
     """
     if restart_button.draw() and var.CARS_LAST_RUN:  # Draw the restart button
         var.PLAY_LAST_RUN = True  # We play the last run
+        var.blit_circuit()  # We blit the circuit to hide the dead cars
+        if not var.LAST_RUN_PLAYING:
+            var.NUM_GENERATION -= 1  # We decrement the number of generation
+        var.LAST_RUN_PLAYING = True  # We indicate that we are playing the last run
     if restart_button.mouse_over_button:
         var.add_to_rects_blit_ui(restart_button.rect)
 

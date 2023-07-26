@@ -1,7 +1,7 @@
 # Circuit 0
-nombre_voitures = 30
+nombre_voitures = 40
 temps_par_generation = 60
-seed = 0
+seed = 3
 vitesse_max = 9
 angle_rotation = 8
 force_acceleration = 0.1

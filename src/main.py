@@ -212,6 +212,8 @@ def stop_play(cars):
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Reset the screen
 
     var.CARS_LAST_RUN = cars  # Save the last run
+    if var.LAST_RUN_PLAYING:
+        var.PLAY_LAST_RUN = False  # We are no longer replaying something
 
     if var.TEST_ALL_CARS:  # If we want to test all cars
         for car in cars:
@@ -335,7 +337,6 @@ def main():
         var.create_background()  # Create the background
         var.change_map(first_time=True)  # Change the map to the first one
         var.load_cars()  # Load the cars (we do it here because we need the map to be loaded so Genetic can be initialized)
-        var.load_explosions()  # Load the explosions
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
 

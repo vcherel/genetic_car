@@ -164,9 +164,9 @@ class Garage:
         self.x, self.y = convert_to_new_window((500, 125))
         self.image = scale_image(pygame.image.load(var.PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
         self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Rect of the garage
-        self.trash_button = Button(x=930, y=135, image_name='trash', scale=0.2)
-        self.next_button = Button(x=940, y=623, image_name='next_page', scale=0.2)
-        self.previous_button = Button(x=520, y=623, image_name='previous_page', scale=0.2)
+        self.trash_button = Button(x=930, y=135, image_name='garage_menu/trash', scale=0.2)
+        self.next_button = Button(x=940, y=623, image_name='garage_menu/next_page', scale=0.2)
+        self.previous_button = Button(x=520, y=623, image_name='garage_menu/previous_page', scale=0.2)
         self.reload()  # We reload the page of the garage
 
 

@@ -5,6 +5,12 @@ import src.data.variables as var  # Import the data
 import pygame  # To use pygame
 
 
+"""
+This file contains the Settings class and all the functions related to it. The settings window is used to change many
+different settings of the simulation.
+"""
+
+
 class Settings:
     """
     This class is used to create the settings window, used to change the settings of the simulation
@@ -17,16 +23,16 @@ class Settings:
         self.rect = None  # Rect of the window
         self.x = self.y = None  # Position of the window
 
-        self.see_cursor_button = None  # The button to see the clics
+        self.show_clics_button = None  # The button to see the clics
 
         # General section
         self.fps_button = None  # The button to change the FPS
         self.seed_button = None  # The button to change the seed
 
         # Display section
-        self.see_cones_button = None  # The button to activate the debug mode
-        self.see_explosions_button = None  # The button to see the explosions
-        self.see_checkpoints_button = None  # The button to see the checkpoints
+        self.show_cones_button = None  # The button to activate the debug mode
+        self.show_explosions_button = None  # The button to see the explosions
+        self.show_checkpoints_button = None  # The button to see the checkpoints
 
         # Car section
         self.max_speed_button = None  # The button to change the max speed of the car
@@ -56,17 +62,17 @@ class Settings:
         self.image = scale_image(pygame.image.load(PATH_IMAGE + '/settings_menu.png'))  # Load the image of the window
         self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Create the rect of the window
 
-        self.see_cursor_button = Button(x=1340, y=650, image_name='checkbox', scale=0.02)  # Hidden button to see the cursor
+        self.show_clics_button = Button(x=1340, y=650, image_name='checkbox', scale=0.02)  # Hidden button to see the cursor
 
         # General section
         self.fps_button = Button(x=292, y=221, image_name='writing', variable=var.FPS, name='FPS', scale_x=0.5)
         self.seed_button = Button(x=290, y=288, image_name='writing', variable=var.SEED, name='SEED', scale_x=0.5)
 
         # Display section
-        self.see_cones_button = Button(x=474, y=455, image_name='checkbox', scale=0.1)
-        self.see_explosions_button = Button(x=402, y=530, image_name='checkbox', scale=0.1)
-        self.see_explosions_button.activated = var.SHOW_EXPLOSIONS  # We activate the explosions by default
-        self.see_checkpoints_button = Button(x=412, y=597, image_name='checkbox', scale=0.1)
+        self.show_cones_button = Button(x=474, y=455, image_name='checkbox', scale=0.1)
+        self.show_explosions_button = Button(x=402, y=530, image_name='checkbox', scale=0.1)
+        self.show_explosions_button.activated = var.SHOW_EXPLOSIONS  # We activate the explosions by default
+        self.show_checkpoints_button = Button(x=412, y=597, image_name='checkbox', scale=0.1)
 
         # Car section
         self.max_speed_button = Button(x=847, y=223, image_name='writing', variable=var.MAX_SPEED, name='MAX_SPEED', scale_x=0.5)
@@ -92,7 +98,7 @@ class Settings:
 
     def update_parameters(self):
         """
-        Update the texts of the buttons
+        Update the texts of the buttons, used when we change map, because the parameters are different for each map
         """
         self.seed_button.update_text(var.SEED)  # Update the text of the seed button
         self.max_speed_button.update_text(var.MAX_SPEED)  # Update the text of the max speed button
@@ -119,12 +125,12 @@ class Settings:
             if button.just_clicked:
                 button.text = ''
 
-        var.SHOW_DETECTION_CONES = self.see_cones_button.draw()  # Check the state of the button
-        var.SHOW_CLICS_INFO = self.see_cursor_button.draw()  # Check the state of the button
-        var.SHOW_CHECKPOINTS = self.see_checkpoints_button.draw()  # Check the state of the button
-        if self.see_checkpoints_button.just_clicked and not var.SHOW_CHECKPOINTS:
-            var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Erase the checkpoints
-        var.SHOW_EXPLOSIONS = self.see_explosions_button.draw()  # Check the state of the button
+        var.SHOW_DETECTION_CONES = self.show_cones_button.draw()  # Check the state of the button
+        var.SHOW_CLICS_INFO = self.show_clics_button.draw()  # Check the state of the button
+        var.SHOW_EXPLOSIONS = self.show_explosions_button.draw()  # Check the state of the button
+        var.SHOW_CHECKPOINTS = self.show_checkpoints_button.draw()  # Check the state of the button
+        if self.show_checkpoints_button.just_clicked and not var.SHOW_CHECKPOINTS:
+            var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Erase the checkpoints when we don't show them anymore
 
     def erase(self):
         """

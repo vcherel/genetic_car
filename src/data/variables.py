@@ -67,6 +67,7 @@ START = False  # Start the game
 PLAY = False  # Play the game
 CHANGE_GENERATION = False  # True if we want to change the generation
 PLAY_LAST_RUN = False  # True if we want to play the last run again
+LAST_RUN_PLAYING = False  # True if we are playing the last run
 
 
 # CARS
@@ -210,6 +211,7 @@ def load_explosions():
     Load the images of the explosions
     """
     global EXPLOSION_IMAGES
+
     EXPLOSION_IMAGES = []  # List of all the images of the explosion
     for num in range(1, 10):
         image = pygame.image.load(f'{PATH_IMAGE}explosion/{num}.png')  # Load the image
@@ -270,6 +272,9 @@ def change_map(first_time=False, reverse=False):
             CHECKPOINTS.append((int(a), int(b)))
 
     update_cars_parameters()  # Update all the parameters of the cars
+    if SETTINGS.x is not None:  # If the settings window has been initialized
+        SETTINGS.update_parameters()  # Update the settings parameters
+    load_explosions()  # The explosions are loaded here because they depend on the size of the car
 
 
 def update_cars_parameters():
@@ -294,9 +299,6 @@ def update_cars_parameters():
     CHANCE_CROSSOVER = LIST_CHANCE_CROSSOVER[NUM_MAP]  # Chance of crossover for the current map
     CHANCE_MUTATION = LIST_CHANCE_MUTATION[NUM_MAP]  # Chance of mutation for the current map
     PROPORTION_CARS_KEPT = LIST_PROPORTION_CARS_KEPT[NUM_MAP]  # Percentage used to know how many cars we keep for the next generation for the current map
-
-    if SETTINGS.x is not None:  # If the settings window has been initialized
-        SETTINGS.update_parameters()  # Update the settings parameters
 
 
 def create_background():
