@@ -85,7 +85,7 @@ class Settings:
         self.proportion_button = Button(x=1280, y=222, image_name='writing', variable=var.PROPORTION_CARS_KEPT, name='PROPORTION_CARS_KEPT', scale_x=0.5)
         self.crossover_button = Button(x=1240, y=295, image_name='writing', variable=var.CHANCE_CROSSOVER, name='CHANCE_CROSSOVER', scale_x=0.5)
         self.mutation_button = Button(x=1222, y=369, image_name='writing', variable=var.CHANCE_MUTATION, name='CHANCE_MUTATION', scale_x=0.5)
-        self.time_generation_button = Button(x=1260, y=446, image_name='writing', variable=var.TIME_GENERATION, name='TIME_GENERATION', scale_x=0.5)
+        self.time_generation_button = Button(x=1280, y=446, image_name='writing', variable=var.TIME_GENERATION, name='TIME_GENERATION', scale_x=0.5)
 
         # Cone section
         self.width_cone_button = Button(x=718, y=610, image_name='writing', variable=var.WIDTH_CONE, name='SEED', scale_x=0.5)

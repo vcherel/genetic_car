@@ -303,6 +303,7 @@ def display_dice_button():
             var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
                                              color='gray', genetic=Genetic(), best_scores=[0] * NB_MAPS))  # We add the dice to the memory
             var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
+            GARAGE.reload_page = True
 
         else:  # If we use the camera we capture the dice
             pause()

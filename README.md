@@ -5,26 +5,28 @@ Il a pour but de réaliser une application pouvant être utilisée pour explique
 génétique à un public allant des enfants aux adultes.
 
 Dans l’application, on peut simuler des voitures qui tentent d’aller le plus loin possible sur un circuit en un temps 
-donné. Au fil des générations, les voitures vont de plus en plus loin et de plus en plus vite. La simulation est complètement déterministe.
+donné. Au fil des générations, les voitures vont de plus en plus loin et de plus en plus vite. La simulation est 
+complètement déterministe.
 
-Il y a aussi la possibilité d’utiliser une caméra afin de capturer les valeurs de plusieurs dés colorés, qui permettent
-alors de générer une voiture avec des propriétés aléatoires. On peut alors comparer les performances d’une voiture 
-choisie au hasard (ou non si on veut tricher) avec les performances de voitures obtenues grâce à 
-l’algorithme génétique.
+Les voitures possèdent des paramètres pouvant être réprésentés à l'aide de 6 dés. Il est possible d’utiliser une caméra 
+afin de capturer les valeurs de plusieurs dés colorés, qui permettent alors de générer une voiture avec des propriétés
+aléatoires. On peut alors comparer les performances d’une voiture choisie au hasard (ou non si on veut tricher) avec les
+performances de voitures obtenues grâce à l’algorithme génétique.
 
 
 
 ## Guide d’utilisation
 
-Pour utiliser l’application, il est nécessaire d’installer plusieurs librairies. Vous pouvez les installer directement à l’aide de ces commandes :
+Pour utiliser l’application, il est nécessaire d’installer plusieurs librairies. Vous pouvez les installer directement
+à l’aide de ces commandes :
 ```bash
 pip install pygame
 pip install opencv-python
 pip install matplotlib
 ```
 Assurez-vous d’avoir Python 3.8 installé sur votre machine. 
-Si ce n’est pas le cas, vous pouvez l’installer ic : “https://www.python.org/downloads/release/python-380/”.
-Vous pouvez ensuite lancer le programme dans le dossier src avec la commande :
+Si ce n’est pas le cas, vous pouvez l’installer ici : “https://www.python.org/downloads/release/python-380/”.
+Vous pouvez ensuite démarrer l'application avec la commande :
 
 ```bash
 python3.8 src/main.py
@@ -33,24 +35,26 @@ python3.8 src/main.py
 ## Fonctionnalités
 
 <p align="center">
-  <img src="/images/menu.png" alt="Capture d'écran de l'application">
+  <img src="/images/menu.png">
+  <em>Capture d'écran de l'application</em>
 </p>
 
 Après avoir lancé le programme, vous arrivez directement dans l'application. Le bouton tout en haut à gauche permet
-d'ouvrir un menu permettant de modifier les paramètres de la simulation. Ces paramètres sont expliquées plus bas dans 
+d'ouvrir un menu permettant de modifier les paramètres de la simulation. Ces paramètres sont explicitées plus bas dans 
 ce document.
 
 Le bouton 'Garage' permet de voir toutes les voitures des générations précédentes, ainsi que les voitures capturées 
-avec les dés. Ces voitures se sauvegardent lorsque l'on ferme l'application. (⚠️ Pour que cela fonctionne, il faut 
-fermer la simulation avec la croix en haut à droite et non en forçant la fermeture du programme) Dans ce menu, vous 
+avec les dés. Ces voitures se sauvegardent lorsqu'on ferme l'application (⚠️ Pour que cela fonctionne, il faut 
+fermer la simulation avec la croix en haut à droite et non en forçant la fermeture du programme). Dans ce menu, vous 
 pouvez sélectionner les voitures pour les faire rouler, ou bien les modifier (modification du nom,
-de la couleur, des paramètres ou suppression de la voiture)
+de la couleur, des paramètres ou suppression de la voiture).
 
-Le bouton 'Capter les dés' permet d'utiliser la caméra pour reconnaître le score des différents dés. Une fenêtre 
-s'affiche  et on peut y voir les dés ainsi que les scores de chaque dé.
+Le bouton 'Capter les dés' permet d'utiliser la caméra pour reconnaître la valeur des différents dés. Une fenêtre 
+s'affiche  et on peut y voir les dés ainsi que les scores de chaque dé en temps réel.
 
 <p align="center">
-  <img src="/images/dice.png" alt="Capture d'écran de la reconnaissance des dés">
+  <img src="/images/dice.png" alt>
+  <em>Capture d'écran de la reconnaissance des dés</em>
 </p>
 
 Il faut attendre un peu que le score se stabilise, et lorsque c'est bon, on peut cliquer n'importe où pour quitter
@@ -66,11 +70,10 @@ avoir des points blancs. Ces dés sont les suivants:
 ⚠️ Il est possible que la caméra ne soit pas reconnu. Dans ce cas, il faut modifier la valeur de la variable 
 'NUM_CAMERA' dans le fichier 'src/other/camera.py', en mettant 1 ou 2 par exemple.
 
-Ensuite, d'autres boutons sont présent en haut à droite de l'écran. Ils servent à changer le circuit, changer le nombre
+D'autres boutons sont présent en haut à droite de l'écran. Ils servent à changer le circuit, changer le nombre
 de voitures, lancer la simulation, arrêter la simulation, mettre en pause, recommencer la dernière génération, ou 
-passer à la génération suivante.
-
-On peut aussi cliquer directement sur les voitures pour afficher leurs paramètres ainsi que leur champ de vision.
+passer à la génération suivante. On peut aussi cliquer directement sur les voitures pour afficher leurs paramètres 
+ainsi que leurs champs de vision.
 
 ### Paramètres de la simulation
 
@@ -83,7 +86,7 @@ Les paramètres pouvant être modifiés sont les suivants :
 - **Paramètres d'affichage :**
   - **Champs de vision** : pour afficher les cônes de détections utilisés par les voitures
   - **Explosions** : pour afficher des explosions lorsqu'une voiture touche un mur
-  - **Checkpoints** : pour afficher les checkpoints
+  - **Checkpoints** : pour afficher les checkpoints du circuit actuel
 - **Paramètres des voitures :**
   - **Vitesse maximale** : pour modifier la vitesse maximale des voitures
   - **Angle de rotation** : pour modifier l'angle de rotation des voitures
@@ -98,7 +101,7 @@ Les paramètres pouvant être modifiés sont les suivants :
   ont de chance d'échanger leurs caractéristiques)
   - **Chance mutation** : pour modifier la chance de mutation des voitures (plus la valeur est élevée, plus les voitures
   ont de chance de muter)
-  - **Temps / Génération** : pour modifier le temps de la simulation pour une génération (en secondes)
+  - **Temps par génération** : pour modifier le temps de la simulation par génération (en secondes)
 - **Paramètres des cônes de vision :**
   - **Largeur** : pour modifier la largeur du champ de vision des voitures
   - **Longueur** : pour modifier la longueur du champ de vision des voitures
@@ -112,7 +115,8 @@ champ de vision du pilote, représenté par un cône. Un cône peut être repré
 du cône, et un dé pour la longueur du cône. Les valeurs des dés indiquent la taille du cône.
 
 <p align="center">
-  <img src="/images/cones.png" alt="Exemple de cônes de détection">
+  <img src="/images/cones.png" alt>
+  <em>Exemple de cônes de détection</em>
 </p>
 
 Selon la vitesse à laquelle roule la voiture, le pilote n’a pas forcément le même champ de vision. C’est par 
@@ -149,8 +153,9 @@ faire le tour de chaque circuit se trouvent dans le dossier 'data/tests/all_cars
 
 
 - **src** : contient le code source de l'application
-    - **data**: contient les classes permettant de gérer les données
-    - **game**: contient les classes permettant de gérer la simulation
-    - **menus**: contient les classes permettant de gérer les menus
-    - **render**: contient les classes permettant de gérer l'affichage
-    - **other**: contient les classes permettant de gérer les autres fonctionnalités
+    - **data**: contient les fichiers permettant de gérer les données
+    - **game**: contient les fichiers permettant de gérer la simulation
+    - **menus**: contient les fichiers permettant de gérer les menus
+    - **render**: contient les fichiers permettant de gérer l'affichage
+    - **other**: contient des fonctions diverses ainsi que les fichiers permettant de gérer la reconnaissance des dés
+    - **main.py**: fichier principal de l'application

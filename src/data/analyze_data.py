@@ -69,17 +69,17 @@ def show_positions_crash(scores):
     """
     scores = [score for score in scores if score < len(var.CHECKPOINTS)]
 
-    score_cars = [0] * len(var.CHECKPOINTS)
+    deaths_by_checkpoints = [0] * len(var.CHECKPOINTS)
     for score in scores:
-        score_cars[score] += 1
+        deaths_by_checkpoints[score] += 1
 
-    max_turns = max(score_cars)
+    deaths_worst_checkpoint = max(deaths_by_checkpoints)  # Best score
 
     # Draw the circles
-    for pos, score in zip(var.CHECKPOINTS, score_cars):
+    for pos, score in zip(var.CHECKPOINTS, deaths_by_checkpoints):  # Iterate over the checkpoints
 
         # Calculate the red value based on the score
-        red_value = int(score / max_turns * 255)  # Adjust the scaling if needed
+        red_value = int(score / deaths_worst_checkpoint * 255)  # Adjust the scaling if needed
 
         # If it is not white
         if red_value != 0:
@@ -165,4 +165,4 @@ def analyze_value_genetic_parameters():
 
 
 if __name__ == '__main__':
-    analyze_test_all_cars(7)
+    pass
