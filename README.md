@@ -71,28 +71,33 @@ On peut aussi cliquer directement sur les voitures pour afficher leurs paramètr
 ### Paramètres de la simulation
 
 Les paramètres pouvant être modifiés sont les suivants :
-- **FPS** : le nombre d'images par seconde, cela permet d'accélerer ou de ralentir la simulation (sans impact sur le
-résultat final)
-- **Seed** : la graine utilisée pour générer les voitures (si on utilise la même seed sur le même circuit, on obtiendra
-toujours le même résultat)
-- **Champs de vision** : pour afficher les cônes de détections utilisés par les voitures
-- **Explosions** : pour afficher des explosions lorsqu'une voiture touche un mur
-- **Checkpoints** : pour afficher les checkpoints
-- **Vitesse maximale** : pour modifier la vitesse maximale des voitures
-- **Angle de rotation** : pour modifier l'angle de rotation des voitures
-- **Accélération** : pour modifier la puissance de l'accélération des voitures
-- **Freinage** : pour modifier la puissance de freinage des voitures
-- **Coef drift** : pour modifier le coefficient de drift des voitures (un coeficient plus élevé fait glisser les
-voitures)
-- **Chance crossover** : pour modifier la chance de crossover des voitures (plus la valeur est élevée, plus les voitures
-ont de chance de se croiser)
-- **Chance mutation** : pour modifier la chance de mutation des voitures (plus la valeur est élevée, plus les voitures
-ont de chance de muter)
-- **Proportion conservée** : pour modifier la proportion de voitures conservées à l'identique lors de la sélection
-naturelle
-- **Temps / Génération** : pour modifier le temps de la simulation pour une génération (en secondes)
-- **Largeur** : pour modifier la largeur du champ de vision des voitures
-- **Longueur** : pour modifier la longueur du champ de vision des voitures
+- **Paramètres généraux** :
+  - **FPS** : le nombre d'images par seconde, cela permet d'accélerer ou de ralentir la simulation (sans impact sur le
+  résultat final)
+  - **Seed** : la graine utilisée pour générer les voitures (si on utilise la même seed sur le même circuit, on obtiendra
+  toujours le même résultat)
+- **Paramètres d'affichage :**
+  - **Champs de vision** : pour afficher les cônes de détections utilisés par les voitures
+  - **Explosions** : pour afficher des explosions lorsqu'une voiture touche un mur
+  - **Checkpoints** : pour afficher les checkpoints
+- **Paramètres des voitures :**
+  - **Vitesse maximale** : pour modifier la vitesse maximale des voitures
+  - **Angle de rotation** : pour modifier l'angle de rotation des voitures
+  - **Accélération** : pour modifier la puissance de l'accélération des voitures
+  - **Freinage** : pour modifier la puissance de freinage des voitures
+  - **Coef drift** : pour modifier le coefficient de drift des voitures (un coeficient plus élevé fait glisser les
+  voitures)
+- **Paramètres de l'algorithme génétique :**
+  - **Proportion conservée** : pour modifier la proportion de voitures conservées à l'identique lors de la sélection
+  naturelle
+  - **Chance croisement** : pour modifier la chance de croiser des voitures (plus la valeur est élevée, plus les voitures
+  ont de chance d'échanger leurs caractéristiques)
+  - **Chance mutation** : pour modifier la chance de mutation des voitures (plus la valeur est élevée, plus les voitures
+  ont de chance de muter)
+  - **Temps / Génération** : pour modifier le temps de la simulation pour une génération (en secondes)
+- **Paramètres des cônes de vision :**
+  - **Largeur** : pour modifier la largeur du champ de vision des voitures
+  - **Longueur** : pour modifier la longueur du champ de vision des voitures
 
 
 ## Explications des paramètres des voitures :

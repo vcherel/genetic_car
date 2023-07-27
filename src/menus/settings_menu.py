@@ -70,21 +70,21 @@ class Settings:
 
         # Display section
         self.show_cones_button = Button(x=474, y=455, image_name='checkbox', scale=0.1)
-        self.show_explosions_button = Button(x=402, y=530, image_name='checkbox', scale=0.1)
+        self.show_explosions_button = Button(x=401, y=524, image_name='checkbox', scale=0.1)
         self.show_explosions_button.activated = var.SHOW_EXPLOSIONS  # We activate the explosions by default
         self.show_checkpoints_button = Button(x=412, y=597, image_name='checkbox', scale=0.1)
 
         # Car section
-        self.max_speed_button = Button(x=847, y=223, image_name='writing', variable=var.MAX_SPEED, name='MAX_SPEED', scale_x=0.5)
-        self.turn_angle_button = Button(x=864, y=278, image_name='writing', variable=var.TURN_ANGLE, name='TURN_ANGLE', scale_x=0.5)
-        self.acceleration_button = Button(x=791, y=343, image_name='writing', name='ACCELERATION', variable=var.ACCELERATION, scale_x=0.5)
+        self.max_speed_button = Button(x=847, y=222, image_name='writing', variable=var.MAX_SPEED, name='MAX_SPEED', scale_x=0.5)
+        self.turn_angle_button = Button(x=864, y=279, image_name='writing', variable=var.TURN_ANGLE, name='TURN_ANGLE', scale_x=0.5)
+        self.acceleration_button = Button(x=791, y=342, image_name='writing', name='ACCELERATION', variable=var.ACCELERATION, scale_x=0.5)
         self.deceleration_button = Button(x=742, y=402, image_name='writing', name='DECELERATION', variable=var.DECELERATION, scale_x=0.5)
-        self.drift_button = Button(x=777, y=461, image_name='writing', name='DRIFT_FACTOR', variable=var.DRIFT_FACTOR, scale_x=0.5)
+        self.drift_button = Button(x=777, y=460, image_name='writing', name='DRIFT_FACTOR', variable=var.DRIFT_FACTOR, scale_x=0.5)
 
         # Genetic section
-        self.crossover_button = Button(x=1229, y=221, image_name='writing', variable=var.CHANCE_CROSSOVER, name='CHANCE_CROSSOVER', scale_x=0.5)
-        self.mutation_button = Button(x=1222, y=298, image_name='writing', variable=var.CHANCE_MUTATION, name='CHANCE_MUTATION', scale_x=0.5)
-        self.proportion_button = Button(x=1280, y=370, image_name='writing', variable=var.PROPORTION_CARS_KEPT, name='PROPORTION_CARS_KEPT', scale_x=0.5)
+        self.proportion_button = Button(x=1280, y=222, image_name='writing', variable=var.PROPORTION_CARS_KEPT, name='PROPORTION_CARS_KEPT', scale_x=0.5)
+        self.crossover_button = Button(x=1240, y=295, image_name='writing', variable=var.CHANCE_CROSSOVER, name='CHANCE_CROSSOVER', scale_x=0.5)
+        self.mutation_button = Button(x=1222, y=369, image_name='writing', variable=var.CHANCE_MUTATION, name='CHANCE_MUTATION', scale_x=0.5)
         self.time_generation_button = Button(x=1260, y=446, image_name='writing', variable=var.TIME_GENERATION, name='TIME_GENERATION', scale_x=0.5)
 
         # Cone section
