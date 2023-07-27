@@ -32,7 +32,9 @@ python3.8 src/main.py
 
 ## Fonctionnalités
 
-![menu](/images/menu.png)
+<p align="center">
+  <img src="/images/menu.png" alt="Capture d'écran de l'application">
+</p>
 
 Après avoir lancé le programme, vous arrivez directement dans l'application. Le bouton tout en haut à gauche permet
 d'ouvrir un menu permettant de modifier les paramètres de la simulation. Ces paramètres sont expliquées plus bas dans 
@@ -47,7 +49,9 @@ de la couleur, des paramètres ou suppression de la voiture)
 Le bouton 'Capter les dés' permet d'utiliser la caméra pour reconnaître le score des différents dés. Une fenêtre 
 s'affiche  et on peut y voir les dés ainsi que les scores de chaque dé.
 
-![dice](/images/dice.png)
+<p align="center">
+  <img src="/images/dice.png" alt="Capture d'écran de la reconnaissance des dés">
+</p>
 
 Il faut attendre un peu que le score se stabilise, et lorsque c'est bon, on peut cliquer n'importe où pour quitter
 cette fenêtre. Il y a alors la possibilité de modifier la valeur des dés en cas d'erreurs. Les dés à utiliser doivent
@@ -101,12 +105,15 @@ Les paramètres pouvant être modifiés sont les suivants :
 
 
 ## Explications des paramètres des voitures :
+
 Le système de contrôle se base sur le champ de vision des voitures. Les différents véhicules ont tous les mêmes 
 caractéristiques de base : taille, accélération, vitesse maximale, force du freinage… La seule différence est le 
 champ de vision du pilote, représenté par un cône. Un cône peut être représenté avec deux dés : un dé pour la largeur
 du cône, et un dé pour la longueur du cône. Les valeurs des dés indiquent la taille du cône.
 
-![cones](/images/cones.png)
+<p align="center">
+  <img src="/images/cones.png" alt="Exemple de cônes de détection">
+</p>
 
 Selon la vitesse à laquelle roule la voiture, le pilote n’a pas forcément le même champ de vision. C’est par 
 exemple le cas dans la réalité, avec un champ de vision qui a tendance à se rétrécir au fur et à mesure que la 

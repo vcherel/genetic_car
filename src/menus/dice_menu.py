@@ -96,8 +96,8 @@ class DiceMenu:
         var.WINDOW.blit(var.TEXT_SLOW, (convert_to_new_window((self.x + x1 + 30, self.y + 50))))
         var.WINDOW.blit(var.TEXT_MEDIUM, (convert_to_new_window((self.x + x2 + 14, self.y + 50))))
         var.WINDOW.blit(var.TEXT_FAST, (convert_to_new_window((self.x + x3 + 14, self.y + 50))))
-        var.WINDOW.blit(var.TEXT_LENGTH, (convert_to_new_window((self.x + 20, self.y + 350))))
-        var.WINDOW.blit(var.TEXT_WIDTH, (convert_to_new_window((self.x + 30, self.y + 160))))
+        var.WINDOW.blit(var.TEXT_LENGTH, (convert_to_new_window((self.x + 22, self.y + 160))))
+        var.WINDOW.blit(var.TEXT_WIDTH, (convert_to_new_window((self.x + 35, self.y + 350))))
 
         # Display the car
         x, y = self.x + 750, self.y + 275

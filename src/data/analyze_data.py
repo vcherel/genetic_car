@@ -134,7 +134,7 @@ def analyze_genetic_algorithm():
     plt.title('Box-plot du nombre de générations nécessaire pour compléter un tour\n avec 2 algorithmes génétiques différents (sur 150 essais)')
     plt.ylim(0, 15)  # Adjust the y-axis as needed
     plt.ylabel('Nombre de générations')
-    pylab.xticks([1, 2], ['Mutation seulement', 'Crossover puis mutation'])  # Add legend
+    pylab.xticks([1, 2], ['Mutation seulement', 'Croisements puis mutation'])  # Add legend
 
     plt.savefig('algo_gen.png')
     plt.show()

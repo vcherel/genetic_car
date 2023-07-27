@@ -132,8 +132,8 @@ def show_car_window(car):
     var.WINDOW.blit(var.TEXT_SLOW, convert_to_new_window((rect_x + 175, rect_y + 150)))  # Draw the slow text
     var.WINDOW.blit(var.TEXT_MEDIUM, convert_to_new_window((rect_x + 277, rect_y + 150)))  # Draw the medium text
     var.WINDOW.blit(var.TEXT_FAST, convert_to_new_window((rect_x + 400, rect_y + 150)))  # Draw the fast text
-    var.WINDOW.blit(var.TEXT_LENGTH, convert_to_new_window((rect_x + 25, rect_y + 250)))  # Draw the length text
-    var.WINDOW.blit(var.TEXT_WIDTH, convert_to_new_window((rect_x + 15, rect_y + 375)))  # Draw the width text
+    var.WINDOW.blit(var.TEXT_LENGTH, convert_to_new_window((rect_x + 15, rect_y + 250)))  # Draw the length text
+    var.WINDOW.blit(var.TEXT_WIDTH, convert_to_new_window((rect_x + 25, rect_y + 375)))  # Draw the width text
 
 
 def erase_car_window():
