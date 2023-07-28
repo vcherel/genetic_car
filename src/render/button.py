@@ -1,8 +1,9 @@
-from other.utils import convert_to_new_window  # To convert the position of the button
 import data.variables as var  # Import the data
 import pygame  # To use pygame
 import time  # To get the time
 
+from data.constants import PATH_IMAGE
+from render.resizing import convert_to_new_window
 
 """
 This file contains the Button class and all the functions related to it
@@ -42,7 +43,7 @@ class Button:
 
             self.x, self.y = convert_to_new_window((x, y))  # Position of the button (converted to the new window)
 
-            new_image_name = f'{var.PATH_IMAGE}buttons/{image_name}'  # Add the path of the image folder
+            new_image_name = f'{PATH_IMAGE}buttons/{image_name}'  # Add the path of the image folder
 
             # In this case we only have one image for the button
             if only_one_image:

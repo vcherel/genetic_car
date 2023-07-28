@@ -1,11 +1,11 @@
-from other.utils import convert_to_new_window, scale_image  # Utils functions
+from data.constants import PATH_IMAGE
 from menus.rect_garage import RectGarage  # Import the rectangle garage
 from render.button import Button  # Import the button
 import data.variables as var  # Import the variables
-from game.car import Car  # Import the car
 import pygame  # To use pygame
 import time  # To get the time
 
+from render.resizing import convert_to_new_window, scale_image
 
 """
 This function contains the Garage class and all the functions related to it. The garage is the place where the cars are stored.
@@ -23,7 +23,7 @@ class Garage:
         Initialize the garage
         """
         self.x, self.y = convert_to_new_window((500, 125))  # Position of the garage
-        self.image = scale_image(pygame.image.load(var.PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
+        self.image = scale_image(pygame.image.load(PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
         self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Rect of the garage
 
         self.nb_rectangles = 0  # Number of rectangle in the garage (we use this as a counter to see if we are on the page to draw)
@@ -162,7 +162,7 @@ class Garage:
         Resize the garage
         """
         self.x, self.y = convert_to_new_window((500, 125))
-        self.image = scale_image(pygame.image.load(var.PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
+        self.image = scale_image(pygame.image.load(PATH_IMAGE + '/garage_menu.png'))  # Image of the garage
         self.rect = pygame.rect.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())  # Rect of the garage
         self.trash_button = Button(x=930, y=135, image_name='garage_menu/trash', scale=0.2)
         self.next_button = Button(x=940, y=623, image_name='garage_menu/next_page', scale=0.2)
@@ -177,13 +177,4 @@ class Garage:
         var.WINDOW.blit(var.BACKGROUND, self.rect, self.rect)  # We erase the garage
 
 
-def add_garage_cars(cars):
-    """
-    Add the cars from the garage to the list of cars
-    """
-    for memory_car in var.SELECTED_MEMORY_CARS:
-        cars.append(Car(genetic=memory_car.genetic, best_scores=memory_car.best_scores, color=memory_car.color, id_memory_car=memory_car.id))  # Add cars from the garage to the list
-    return cars
-
-
-GARAGE = Garage()  # We create the garage
+GARAGE = Garage()  # Garage of the game

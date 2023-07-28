@@ -3,7 +3,7 @@ import itertools  # Used to get all the combinations of cars
 import data.variables as var  # Variables of the game
 import random  # Used to generate random numbers
 from game.car import Car  # Import the car
-
+from menus.garage_menu import GARAGE
 
 """
 This file contains all the functions used to apply the genetic algorithm to the cars (selection, mutation, crossover)
@@ -59,6 +59,7 @@ def find_cars_to_keep(cars):
     var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Génération_{var.NUM_GENERATION}',
                                      color='gray', genetic=best_car.genetic, best_scores=best_car.best_scores))  # Add the best car to the memory
     var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the memory cars
+    GARAGE.reload_page = True  # We reload the garage page
 
     return cars_to_keep
 

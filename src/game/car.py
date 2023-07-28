@@ -1,4 +1,5 @@
-from other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, scale_image, convert_to_new_window, change_color_car, checkpoint_reached  # Utils functions
+from data.variables_functions import checkpoint_reached
+from other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, change_color_car  # Utils functions
 from render.display import draw_detection_cone  # To draw the detection cone
 from data.constants import NB_MAPS  # Number of different tracks
 from game.genetic import Genetic  # Genetic algorithm of the car
@@ -6,6 +7,8 @@ from render.explosion import Explosion  # To render explosions
 import data.variables as var  # Variables of the game
 import pygame  # Pygame library
 import math  # Math library
+
+from render.resizing import convert_to_new_window, scale_image
 
 """
 This file contains the class Car used to represent a car in the game. The car is controlled by genetic parameters of the detection cone.
@@ -416,3 +419,13 @@ class Car:
         self.draw(var.BACKGROUND)  # Draw the car on the background so it stays
         if var.SHOW_EXPLOSIONS:
             var.EXPLOSIONS.add(Explosion(self.pos))  # Add an explosion at the position of the car
+
+
+
+def add_garage_cars(cars):
+    """
+    Add the cars from the garage to the list of cars
+    """
+    for memory_car in var.SELECTED_MEMORY_CARS:
+        cars.append(Car(genetic=memory_car.genetic, best_scores=memory_car.best_scores, color=memory_car.color, id_memory_car=memory_car.id))  # Add cars from the garage to the list
+    return cars

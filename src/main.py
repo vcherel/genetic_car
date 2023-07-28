@@ -1,13 +1,14 @@
 from data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
+from data.variables_functions import load_cars, create_background, load_parameters, change_map, exit_game, \
+    init_variables, blit_circuit
 from game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
-from menus.garage_menu import add_garage_cars  # Import the garage
-from menus.settings_menu import SETTINGS  # Import the settings
 from game.genetic import Genetic  # Import the genetic class
+from game.car import Car, add_garage_cars  # Import the car
+from menus.settings_menu import SETTINGS
 from other.utils import union_rect  # Import the utils
 import render.display as display  # Import the display
 import data.variables as var  # Import the data
 import traceback  # To get the traceback of errors
-from game.car import Car  # Import the car
 import itertools  # To iterate over the cars
 import random  # To generate random numbers
 import render.ui as ui  # Import the ui
@@ -53,7 +54,7 @@ def play(cars=None):
     Args:
         cars (list): list of cars (if None, it is the first time we play)
     """
-    var.blit_circuit()  # Blit the circuit (to hide the dead cars)
+    blit_circuit()  # Blit the circuit (to hide the dead cars)
     cars = init_cars_to_play(cars)  # Initialize the cars and add cars from the garage if needed
 
     while var.PLAY:  # While the game is not stopped
@@ -113,11 +114,11 @@ def init_cars_to_play(cars):
                     cars.append(car)
 
         cars = add_garage_cars(cars)  # We add the car from the garage to the list of cars
-        var.init_variables(len(cars))  # Initialize the data
+        init_variables(len(cars))  # Initialize the data
 
     else:           # If we already played
         cars = add_garage_cars(cars)  # We add the car from the garage to the list of cars
-        var.init_variables(len(cars), replay=True)  # Initialize the data
+        init_variables(len(cars), replay=True)  # Initialize the data
 
     return cars
 
@@ -267,7 +268,7 @@ def change_checkpoints():
             # We detect the mouse click to write the coordinates in the file
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    var.exit_game()  # Exit the game if we close the window
+                    exit_game()  # Exit the game if we close the window
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = event.pos
                     file_checkpoint_write.write(str(x) + ' ' + str(y) + '\n')
@@ -333,10 +334,10 @@ def main():
     Main function
     """
     try:
-        var.load_parameters()  # Load the data
-        var.create_background()  # Create the background
-        var.change_map(first_time=True)  # Change the map to the first one
-        var.load_cars()  # Load the cars (we do it here because we need the map to be loaded so Genetic can be initialized)
+        load_parameters()  # Load the data
+        create_background()  # Create the background
+        change_map(first_time=True)  # Change the map to the first one
+        load_cars()  # Load the cars (we do it here because we need the map to be loaded so Genetic can be initialized)
         ui.init()  # Initialize the ui
         SETTINGS.init()  # Initialize the settings
 
@@ -353,7 +354,7 @@ def main():
 
     except Exception as e:
         traceback.print_exc()  # Print the error
-        var.exit_game()  # Exit the game if there is an error
+        exit_game()  # Exit the game if there is an error
         raise e
 
 

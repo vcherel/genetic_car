@@ -1,6 +1,7 @@
-from other.utils import convert_to_new_window  # Utils functions
 import data.variables as var  # Import the variables
 import pygame  # To use pygame
+
+from render.resizing import convert_to_new_window
 
 """
 This file contains the Explosion class, used to render explosions.

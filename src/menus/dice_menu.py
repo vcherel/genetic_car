@@ -1,4 +1,3 @@
-from other.utils import convert_to_new_window, scale_image  # Import the convert_to_new_window function
 from render.display import draw_detection_cone, draw_dice  # Import the display functions
 from data.constants import RGB_VALUES_DICE, NB_MAPS  # Import the constants
 from data.data_classes import MemoryCar  # Import the car memory
@@ -7,6 +6,7 @@ from render.button import Button  # Import the button class
 import data.variables as var  # Import the data
 import pygame  # Import pygame module
 
+from render.resizing import convert_to_new_window, scale_image
 
 """
 This file contains the DiceMenu class used to display the dice menu and change the value of dice
@@ -180,4 +180,4 @@ def update_pygame_camera_frame(frame):
     camera_frame = pygame.transform.scale(camera_frame, (rect_camera_frame.width, rect_camera_frame.height))  # Resize the camera frame
 
 
-DICE_MENU = DiceMenu()   # We create the dice menu
+DICE_MENU = DiceMenu()  # Dice menu of the game

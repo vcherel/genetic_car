@@ -1,18 +1,21 @@
-from other.utils import convert_to_new_window, union_rect  # Import the function to convert the coordinates
+from data.variables_functions import resize_window, blit_circuit, change_map, exit_game
+from data.variables_utils import add_to_rects_blit_ui
+from menus.dice_menu import DICE_MENU
+from menus.garage_menu import GARAGE
+from menus.settings_menu import SETTINGS
+from other.utils import union_rect  # Import the function to convert the coordinates
 from render.display import show_car_window, erase_car_window  # Import the function to show the car
 from other.camera import capture_dice  # Import the function to capture the dice
 from render.display import display_text_ui  # Import functions from display
-from menus.dice_menu import DICE_MENU  # Import functions from dice menu
-from menus.settings_menu import SETTINGS  # Import the settings window
 from data.data_classes import MemoryCar  # Import the car memory
-from menus.garage_menu import GARAGE  # Import the garage window
-from data.constants import NB_MAPS  # Import constants
 from game.genetic import Genetic  # Import the genetic class
+from data.constants import NB_MAPS  # Import constants
 from render.button import Button  # Import the button
 import data.variables as var  # Import the data
 import pygame  # To use pygame
 import time  # To get the time
 
+from render.resizing import convert_to_new_window
 
 """
 This file contains all the functions to display the UI and check the events
@@ -65,7 +68,7 @@ def handle_events(cars=None):
     if var.RESIZE and not pygame.mouse.get_pressed()[0] and time.time() - var.TIME_RESIZE > 0.05:
         delete_all_windows()  # Delete all the windows
         var.RESIZE = False  # We indicate that we are not resizing the window anymore
-        var.resize_window(var.RESIZE_DIMENSIONS)  # Resize the window
+        resize_window(var.RESIZE_DIMENSIONS)  # Resize the window
         init()   # Reinitialize the buttons
         SETTINGS.init()  # Reinitialize the settings window
         GARAGE.resize()  # Reinitialize the garage window
@@ -73,7 +76,7 @@ def handle_events(cars=None):
     # Pygame events
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            var.exit_game()  # Exit the game if the user click on the cross or press escape
+            exit_game()  # Exit the game if the user click on the cross or press escape
 
         # If we resize the window
         elif event.type == pygame.VIDEORESIZE:
@@ -218,11 +221,11 @@ def display_stop_button():
     """
     stop_button.draw()  # Draw the stop button
     if stop_button.mouse_over_button:
-        var.add_to_rects_blit_ui(stop_button.rect)  # We add the rect to the list of rects to blit
+        add_to_rects_blit_ui(stop_button.rect)  # We add the rect to the list of rects to blit
     if stop_button.just_clicked:
         if var.PLAY:
             var.PLAY = False  # We stop the simulation
-            var.blit_circuit()  # We blit the circuit
+            blit_circuit()  # We blit the circuit
         if var.DISPLAY_GARAGE:
             delete_garage()
 
@@ -233,7 +236,7 @@ def display_pause_button():
     """
     var.PAUSE = pause_button.draw()  # Draw the pause button
     if pause_button.mouse_over_button:
-        var.add_to_rects_blit_ui(pause_button.rect, offset=1)
+        add_to_rects_blit_ui(pause_button.rect, offset=1)
     if pause_button.just_clicked:  # Pause button is just clicked
         if var.PAUSE:
             pause(from_button=True)  # We pause the simulation
@@ -247,7 +250,7 @@ def display_start_button():
     """
     var.START = start_button.draw()  # Draw the start button
     if start_button.mouse_over_button:
-        var.add_to_rects_blit_ui(start_button.rect, offset=5)  # To erase the contour of button
+        add_to_rects_blit_ui(start_button.rect, offset=5)  # To erase the contour of button
     if start_button.just_clicked and (var.NB_CARS != 0 or var.SELECTED_MEMORY_CARS):
         var.PLAY = True  # We start the simulation
         if var.DISPLAY_GARAGE:
@@ -273,7 +276,7 @@ def display_garage_button():
     """
     var.DISPLAY_GARAGE = garage_button.draw()  # Draw the garage button
     if garage_button.mouse_over_button:
-        var.add_to_rects_blit_ui(garage_button.rect, offset=3)  # We add the rect of the garage button to the list of rects to blit
+        add_to_rects_blit_ui(garage_button.rect, offset=3)  # We add the rect of the garage button to the list of rects to blit
     if garage_button.just_clicked:  # Garage button is just clicked
         if var.DISPLAY_GARAGE:
             pause()
@@ -290,7 +293,7 @@ def display_dice_button():
     """
     dice_button.draw()  # Draw the dice button
     if dice_button.mouse_over_button:
-        var.add_to_rects_blit_ui(dice_button.rect, offset=1)  # We add the rect of the dice button to the list of rects to blit
+        add_to_rects_blit_ui(dice_button.rect, offset=1)  # We add the rect of the dice button to the list of rects to blit
     if dice_button.just_clicked:   # Dice button is just clicked
         if var.DISPLAY_GARAGE:
             delete_garage()  # We erase the garage when the dice button is pressed
@@ -322,9 +325,9 @@ def display_map_button(cars):
     """
     previous_map_button.draw()  # Draw the map button
     if previous_map_button.mouse_over_button:
-        var.add_to_rects_blit_ui(previous_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
+        add_to_rects_blit_ui(previous_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
     if previous_map_button.just_clicked:  # Map button is just clicked
-        var.change_map(reverse=True)  # We change the map to the previous one
+        change_map(reverse=True)  # We change the map to the previous one
         pygame.display.flip()  # To see the new map
         update_value_nb_cars_button()  # We update the value of the nb cars button
         if cars:
@@ -334,9 +337,9 @@ def display_map_button(cars):
 
     next_map_button.draw()  # Draw the map button
     if next_map_button.mouse_over_button:
-        var.add_to_rects_blit_ui(next_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
+        add_to_rects_blit_ui(next_map_button.rect, offset=6)  # We add the rect of the map button to the list of rects to blit
     if next_map_button.just_clicked:  # Map button is just clicked
-        var.change_map()  # We change the map to the previous one
+        change_map()  # We change the map to the previous one
         pygame.display.flip()  # To see the new map
         update_value_nb_cars_button()  # We update the value of the nb cars button
         if cars:
@@ -351,12 +354,12 @@ def display_restart_button():
     """
     if restart_button.draw() and var.CARS_LAST_RUN:  # Draw the restart button
         var.PLAY_LAST_RUN = True  # We play the last run
-        var.blit_circuit()  # We blit the circuit to hide the dead cars
+        blit_circuit()  # We blit the circuit to hide the dead cars
         if not var.LAST_RUN_PLAYING:
             var.NUM_GENERATION -= 1  # We decrement the number of generation
         var.LAST_RUN_PLAYING = True  # We indicate that we are playing the last run
     if restart_button.mouse_over_button:
-        var.add_to_rects_blit_ui(restart_button.rect)
+        add_to_rects_blit_ui(restart_button.rect)
 
 
 def display_settings_button():
@@ -373,7 +376,7 @@ def display_settings_button():
     if var.DISPLAY_SETTINGS:  # If the garage is displayed we draw it and do the actions
         SETTINGS.draw()
     if settings_button.mouse_over_button:
-        var.add_to_rects_blit_ui(settings_button.rect)
+        add_to_rects_blit_ui(settings_button.rect)
 
 
 def display_skip_button():
@@ -384,7 +387,7 @@ def display_skip_button():
     if skip_button.just_clicked:  # Next generation button is just clicked
         var.CHANGE_GENERATION = True  # We change the generation
     if skip_button.mouse_over_button:
-        var.add_to_rects_blit_ui(skip_button.rect, offset=2)  # We add the rect of the next generation button to the list of rects to blit
+        add_to_rects_blit_ui(skip_button.rect, offset=2)  # We add the rect of the next generation button to the list of rects to blit
 
 
 def display_text():
@@ -435,7 +438,7 @@ def unpause(from_button=False):
     if not from_button:  # If the unpause is not from the pause button we have to uncheck the button
         var.PAUSE = False  # We unpause the simulation
         pause_button.activated = False  # We uncheck the pause button
-        var.add_to_rects_blit_ui(pause_button.rect)  # We add the rect of the pause button to the list of rects to blit
+        add_to_rects_blit_ui(pause_button.rect)  # We add the rect of the pause button to the list of rects to blit
 
     if var.DISPLAY_CAR_WINDOW:
         erase_car_window()

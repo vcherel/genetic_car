@@ -1,6 +1,5 @@
-import data.variables as var  # Import the global variables
 import random  # Used to generate random numbers
-
+import data.variables as var  # Import the variables
 
 """
 This file contains the Genetic class used to store the genetic parameters of a car

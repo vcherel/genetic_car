@@ -102,7 +102,7 @@ def compute_mean_bgr():
         mean_r (float): Mean R value
     """
     b, g, r = [], [], []
-    with open(var.PATH_DATA + 'mean_bgr', 'r') as file:
+    with open(PATH_DATA + 'mean_bgr', 'r') as file:
         for line in file:
             bgr = line.split()
             b.append(float(bgr[0]))
@@ -118,12 +118,12 @@ def analyze_genetic_algorithm():
     """
     mutation_only = []  # The number of generations to complete a lap with only mutation
     crossover_mutation = []  # The number of generations to complete a lap with crossover and then mutation
-    with open(f'{var.PATH_DATA}tests/mutation_only', 'r') as file:
+    with open(f'{PATH_DATA}tests/mutation_only', 'r') as file:
         for line in file:
             data = line.split()
             mutation_only.append(int(data[0]))
 
-    with open(f'{var.PATH_DATA}tests/crossover_mutation', 'r') as file:
+    with open(f'{PATH_DATA}tests/crossover_mutation', 'r') as file:
         for line in file:
             data = line.split()
             crossover_mutation.append(int(data[0]))
@@ -147,8 +147,8 @@ def analyze_value_genetic_parameters():
     """
     dict_mean_values = {}  # keys : the filenames (test_MutationRate_CrossoverRate_SelectionRate), values : the mean number of generations needed to complete a lap
 
-    for filename in os.listdir(var.PATH_DATA + 'tests/genetic_parameters/'):
-        f = f'{var.PATH_DATA}tests/genetic_parameters/' + filename
+    for filename in os.listdir(PATH_DATA + 'tests/genetic_parameters/'):
+        f = f'{PATH_DATA}tests/genetic_parameters/' + filename
         list_values = []  # List of the values for the current file
         with open(f, 'r') as file:
             for line in file:

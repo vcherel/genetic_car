@@ -1,12 +1,14 @@
+from data.constants import PATH_DATA
 from other.camera_utils import *  # Utils functions for the camera
 from data.data_classes import ColorDice  # To find the color of each dice
 from menus.dice_menu import update_pygame_camera_frame  # To save the camera frame
-from other.utils import convert_to_new_window  # Utils functions
 import data.variables as var  # Variables
 import random  # To generate random numbers
 import numpy as np  # To use numpy
 import pygame  # To use Pygame
 import cv2  # To use OpenCV
+
+from render.resizing import convert_to_new_window
 
 """
 This file contains the functions used to get the score of the dice from the camera with OpenCV
@@ -374,7 +376,7 @@ def write_mean_bgr_value(rect, mean_bgr):
     global file_write_mean_bgr
 
     if file_write_mean_bgr is None:
-        file_write_mean_bgr = open(var.PATH_DATA + 'mean_bgr', 'a')  # The file in which we will write the parameters
+        file_write_mean_bgr = open(PATH_DATA + 'mean_bgr', 'a')  # The file in which we will write the parameters
 
     rect_detection = (250, 150, 150, 150)
     draw_rectangle(rect_detection, color=(0, 255, 0), thickness=1)
@@ -606,7 +608,7 @@ def display_dictionaries_optimization():
     dict_dp_opti = {k: v for k, v in sorted(dict_dp_opti.items(), key=lambda item: item[1], reverse=True)}
 
     # We create the file
-    with open(var.PATH_DATA + 'optimization', 'w') as file_write:
+    with open(PATH_DATA + 'optimization', 'w') as file_write:
         # We print the dictionaries
         file_write.write(f'p1 : {dict_p1_opti}\np2 : {dict_p2_opti}\ndp : {dict_dp_opti}')
 
