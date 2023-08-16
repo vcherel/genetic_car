@@ -2,6 +2,12 @@ import pygame
 import data.variables as var  # Import the variables
 
 
+"""
+This file contains all the functions related to the global variables of the game that can't be in the variables_functions.py file
+because of circular imports
+"""
+
+
 def add_to_rects_blit_ui(rect, offset=0):
     """
     Add a rect to the list of rects used to erase the ui of the screen

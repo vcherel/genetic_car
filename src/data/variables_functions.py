@@ -1,12 +1,12 @@
-import sys
 from data.constants import PATH_IMAGE, CAR_SIZES, START_POSITIONS, START_ANGLES, PATH_DATA  # Import the constants
-import data.variables as var  # Import the variables
-from data.data_classes import MemoryCar
-from game.genetic import Genetic
-from menus.settings_menu import SETTINGS
+from render.resizing import scale_image, convert_to_new_window  # To resize the images
+from data.data_classes import MemoryCar  # Import the class MemoryCar
 from render.display import edit_background  # Display functions
+from menus.settings_menu import SETTINGS  # Import the settings
+from game.genetic import Genetic  # Import the class Genetic
+import data.variables as var  # Import the variables
 import pygame  # To use pygame
-from render.resizing import scale_image, convert_to_new_window
+import sys  # To use sys.exit
 
 
 """
@@ -234,8 +234,8 @@ def load_cars():
             scores = [int(line[i]) for i in range(9, 9 + var.NB_MAPS)]  # Scores of the car for each map
 
             var.MEMORY_CARS.append(MemoryCar(id_car, name, color, genetic, scores))  # We create the memory car
-            if ACTUAL_IDS_MEMORY_CARS <= id_car:
-                ACTUAL_IDS_MEMORY_CARS = id_car + 1
+            if var.ACTUAL_IDS_MEMORY_CARS <= id_car:
+                var.ACTUAL_IDS_MEMORY_CARS = id_car + 1
 
     # We load the image of the car (we do it here because we have to do it during the initialization of the game so why not)
     var.BIG_RED_CAR_IMAGE = pygame.transform.rotate(scale_image(pygame.image.load(PATH_IMAGE + '/car.png'), 1.5), 90)
