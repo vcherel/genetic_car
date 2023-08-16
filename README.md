@@ -54,8 +54,11 @@ s'affiche  et on peut y voir les dés ainsi que les scores de chaque dé en temp
 
 <p align="center">
   <img src="/images/dice.png" alt>
+</p>
+<p align="center">
   <em>Capture d'écran de la reconnaissance des dés</em>
 </p>
+  
 
 Il faut attendre un peu que le score se stabilise, et lorsque c'est bon, on peut cliquer n'importe où pour quitter
 cette fenêtre. Il y a alors la possibilité de modifier la valeur des dés en cas d'erreurs. Les dés à utiliser doivent
@@ -116,8 +119,11 @@ du cône, et un dé pour la longueur du cône. Les valeurs des dés indiquent la
 
 <p align="center">
   <img src="/images/cones.png" alt>
+</p>
+<p align="center">
   <em>Exemple de cônes de détection</em>
 </p>
+
 
 Selon la vitesse à laquelle roule la voiture, le pilote n’a pas forcément le même champ de vision. C’est par 
 exemple le cas dans la réalité, avec un champ de vision qui a tendance à se rétrécir au fur et à mesure que la 
