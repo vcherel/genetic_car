@@ -79,7 +79,11 @@ def capture_dice():
     cap = cv2.VideoCapture(NUM_CAMERA)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
 
     while True:
-        find_dice_values(cap, final_score)  # Find the values of the dice from the camera
+        res = find_dice_values(cap, final_score)  # Find the values of the dice from the camera
+        if res is not None:
+            # If we are here it means there is no camera connected
+            return res  # We quit the dice capture
+
 
         # We display the frame on the window
         display_frame(rect_window)
