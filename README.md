@@ -15,21 +15,60 @@ performances de voitures obtenues grâce à l’algorithme génétique.
 
 
 
-## Guide d’utilisation
+## Guide d’installation
 
-Pour utiliser l’application, il est nécessaire d’installer plusieurs librairies. Vous pouvez les installer directement
-à l’aide de ces commandes :
+Deux méthodes peuvent être utilisées pour installer l’application. Conda facilite l’utilisation de 
+plusieurs environnements différents sur votre machine, tandis que pip est beaucoup plus rapide
+
+### 1) Méthode d'installation utilisant Conda
+
+Installez Miniconda si ce n’est pas déjà installé sur votre machine. Pour ce faire, allez sur le lien
+"https://docs.conda.io/en/latest/miniconda.html". Sur Linux, après avoir téléchargé le fichier, ouvrez un
+terminal dans le dossier où se trouve le fichier et rentrez la commande :
 ```bash
-pip install pygame
-pip install opencv-python
-pip install matplotlib
+bash Miniconda3-latest-Linux-x86_64.sh
 ```
-Assurez-vous d’avoir Python 3.8 installé sur votre machine. 
-Si ce n’est pas le cas, vous pouvez l’installer ici : “https://www.python.org/downloads/release/python-380/”.
-Vous pouvez ensuite démarrer l'application avec la commande :
 
+Créez un nouvel environnement avec la bonne version de Python :
 ```bash
-python3.8 src/main.py
+conda create --name sim_gen python=3.8.10
+```
+
+Activez cet environnement :
+```bash
+conda activate sim_gen
+```
+
+Installez toutes les librairies nécessaires avec ces commandes (cette partie peut prendre du temps) :
+```bash
+conda install -c conda-forge pygame=2.4.0
+conda install -c conda-forge numpy=1.24.3
+conda install -c fastai opencv-python-headless=4.7.0
+conda install -c conda-forge matplotlib-base=3.7.1
+```
+Pour démarrer l’application, ouvrez un terminal dans le dossier du projet et lancez les commandes :
+```bash
+conda activate sim_gen
+python src/main.py
+```
+
+### 2) Méthode d'installation utilisant pip
+
+
+Installez Python 3.8 si ce n’est pas déjà installé sur votre machine. Pour ce faire, allez sur le lien
+ “https://www.python.org/downloads/release/python-381". 
+
+Installez toutes les librairies nécessaires avec ces commandes :
+```bash
+pip install pygame==2.4.0
+pip install numpy==1.24.3
+pip install opencv-python==4.7.0.72
+pip install matplotlib==3.7.1
+```
+
+Pour démarrer l’application, ouvrez un terminal dans le dossier du projet et lancez cette commande :
+```bash
+python src/main.py
 ```
 
 ## Fonctionnalités
@@ -49,8 +88,17 @@ fermer la simulation avec la croix en haut à droite et non en forçant la ferme
 pouvez sélectionner les voitures pour les faire rouler, ou bien les modifier (modification du nom,
 de la couleur, des paramètres ou suppression de la voiture).
 
-Le bouton 'Capter les dés' permet d'utiliser la caméra pour reconnaître la valeur des différents dés. Une fenêtre 
-s'affiche  et on peut y voir les dés ainsi que les scores de chaque dé en temps réel.
+Le bouton 'Capter les dés' permet d'utiliser la caméra pour reconnaître la valeur des différents dés. Les dés à utiliser doivent
+avoir des points blancs. Ces dés sont les suivants:
+- un dé **rouge**
+- un dé **noir**
+- un dé **vert**
+- un dé **orange**
+- un dé **jaune**
+- un dé **jaune foncé** (avec des points noirs)
+
+Après un clic sur le bouton 'Capter les dés", Une fenêtre s'affiche et on peut y voir les dés ainsi que 
+leurs scores en temps réel.
 
 <p align="center">
   <img src="/images/dice.png" alt>
@@ -61,17 +109,10 @@ s'affiche  et on peut y voir les dés ainsi que les scores de chaque dé en temp
   
 
 Il faut attendre un peu que le score se stabilise, et lorsque c'est bon, on peut cliquer n'importe où pour quitter
-cette fenêtre. Il y a alors la possibilité de modifier la valeur des dés en cas d'erreurs. Les dés à utiliser doivent
-avoir des points blancs. Ces dés sont les suivants:
-- un dé **rouge**
-- un dé **noir**
-- un dé **vert**
-- un dé **orange**
-- un dé **jaune**
-- un dé **jaune foncé** (avec des points noirs)
+cette fenêtre. Il y a alors la possibilité de modifier la valeur des dés en cas d'erreurs. 
 
 ⚠️ Il est possible que la caméra ne soit pas reconnu. Dans ce cas, il faut modifier la valeur de la variable 
-'NUM_CAMERA' dans le fichier 'src/other/camera.py', en mettant 1 ou 2 par exemple.
+'NUM_CAMERA' tout en haut du fichier 'src/other/camera.py', en mettant 1 ou 2 par exemple.
 
 D'autres boutons sont présent en haut à droite de l'écran. Ils servent à changer le circuit, changer le nombre
 de voitures, lancer la simulation, arrêter la simulation, mettre en pause, recommencer la dernière génération, ou 
@@ -84,38 +125,38 @@ Les paramètres pouvant être modifiés sont les suivants :
 - **Paramètres généraux** :
   - **FPS** : le nombre d'images par seconde, cela permet d'accélerer ou de ralentir la simulation (sans impact sur le
   résultat final)
-  - **Seed** : la graine utilisée pour générer les voitures (si on utilise la même seed sur le même circuit, on obtiendra
+  - **Seed** : la graine utilisée pour générer les voitures (si on utilise la même seed sur le même circuit avec les mêmes paramètres, on obtiendra
   toujours le même résultat)
 - **Paramètres d'affichage :**
-  - **Champs de vision** : pour afficher les cônes de détections utilisés par les voitures
-  - **Explosions** : pour afficher des explosions lorsqu'une voiture touche un mur
-  - **Checkpoints** : pour afficher les checkpoints du circuit actuel
+  - **Champs de vision** : afficher les cônes de détections utilisés par les voitures
+  - **Explosions** : afficher des explosions lorsqu'une voiture touche un mur
+  - **Checkpoints** : afficher les checkpoints du circuit actuel
 - **Paramètres des voitures :**
-  - **Vitesse maximale** : pour modifier la vitesse maximale des voitures
-  - **Angle de rotation** : pour modifier l'angle de rotation des voitures
-  - **Accélération** : pour modifier la puissance de l'accélération des voitures
-  - **Freinage** : pour modifier la puissance de freinage des voitures
-  - **Coef drift** : pour modifier le coefficient de drift des voitures (un coeficient plus élevé fait glisser les
+  - **Vitesse maximale** : modifier la vitesse maximale des voitures
+  - **Angle de rotation** : modifier l'angle de rotation des voitures
+  - **Accélération** : modifier la puissance de l'accélération des voitures
+  - **Freinage** : modifier la puissance de freinage des voitures
+  - **Coef drift** : modifier le coefficient de drift des voitures (un coeficient élevé fait glisser les
   voitures)
 - **Paramètres de l'algorithme génétique :**
-  - **Proportion conservée** : pour modifier la proportion de voitures conservées à l'identique lors de la sélection
+  - **Proportion conservée** : modifier la proportion de voitures conservées à l'identique lors de la sélection
   naturelle
-  - **Chance croisement** : pour modifier la chance de croiser des voitures (plus la valeur est élevée, plus les voitures
+  - **Chance croisement** : modifier la chance de croisement des voitures (plus la valeur est élevée, plus les voitures
   ont de chance d'échanger leurs caractéristiques)
-  - **Chance mutation** : pour modifier la chance de mutation des voitures (plus la valeur est élevée, plus les voitures
+  - **Chance mutation** : modifier la chance de mutation des voitures (plus la valeur est élevée, plus les voitures
   ont de chance de muter)
-  - **Temps par génération** : pour modifier le temps de la simulation par génération (en secondes)
+  - **Temps par génération** : modifier le temps de la simulation par génération (en secondes)
 - **Paramètres des cônes de vision :**
-  - **Largeur** : pour modifier la largeur du champ de vision des voitures
-  - **Longueur** : pour modifier la longueur du champ de vision des voitures
+  - **Largeur** : modifier la largeur du champ de vision des voitures
+  - **Longueur** : modifier la longueur du champ de vision des voitures
 
 
-## Explications des paramètres des voitures :
+## Explication du système de contrôle des voitures
 
 Le système de contrôle se base sur le champ de vision des voitures. Les différents véhicules ont tous les mêmes 
-caractéristiques de base : taille, accélération, vitesse maximale, force du freinage… La seule différence est le 
-champ de vision du pilote, représenté par un cône. Un cône peut être représenté avec deux dés : un dé pour la largeur
-du cône, et un dé pour la longueur du cône. Les valeurs des dés indiquent la taille du cône.
+caractéristiques de base : taille, accélération, vitesse maximale, force de freinage… La seule différence est le 
+champ de vision, représenté par un cône. Un cône peut être représenté avec deux dés : un dé qui détermine la largeur
+du cône, et un dé qui détermine la longueur du cône. Les valeurs des dés indiquent la taille du cône.
 
 <p align="center">
   <img src="/images/cones.png" alt>
@@ -125,7 +166,7 @@ du cône, et un dé pour la longueur du cône. Les valeurs des dés indiquent la
 </p>
 
 
-Selon la vitesse à laquelle roule la voiture, le pilote n’a pas forcément le même champ de vision. C’est par 
+Leur champ de vision évolue en fonction de leur vitesse. C’est par 
 exemple le cas dans la réalité, avec un champ de vision qui a tendance à se rétrécir au fur et à mesure que la 
 vitesse augmente. Nous retrouvons cela avec les voitures de la simulation, qui possèdent 3 champs de vision différents 
 en fonction de leur vitesse actuelle. Selon la vitesse, il faut donc utiliser le bon cône de vision. Nous pouvons 
@@ -134,13 +175,13 @@ par exemple imaginer 3 champs de visions différents pour 3 zones de vitesses di
 - Vitesse moyenne : Entre 50 et 100 km/h
 - Vitesse rapide : Plus de 100 km/h
 
-C’est le même principe pour les voitures de la simulation, avec bien sûr des unités de vitesse différentes. Chaque 
+C’est le même principe pour les voitures de la simulation, avec des unités de vitesse différentes. Chaque 
 cône de vision étant représenté par deux dés, il faut 6 dés au total pour représenter nos voitures. Cela fait 
-donc 46 656 possibilités de voitures différentes.
+ainsi 46 656 possibilités de voitures différentes.
 
 La voiture utilise ensuite son cône pour se déplacer. À chaque pas de simulation, la voiture détecte les murs et 
 agit en conséquence. Tout d’abord, elle regarde si elle détecte un mur en face d’elle dans le cône de vision. Si
-c’est le cas, elle freine, sinon, elle accélère. Elle regarde ensuite s’il y a un mur qui coupe le champ de vision. 
+c’est le cas, elle freine, sinon, elle accélère. Elle regarde ensuite s’il y a un mur qui coupe le champ de vision sur les côtés. 
 S’il y a un mur à gauche, elle tourne à droite et inversement. S’il y a un mur de chaque côté, la voiture regarde 
 quel mur est le plus proche et tourne de telle sorte à s’en éloigner.
 
@@ -152,7 +193,7 @@ quel mur est le plus proche et tourne de telle sorte à s’en éloigner.
     - **tests** : contient les résultats des différents tests (des résultats concernant le nombre de voitures pouvant 
 faire le tour de chaque circuit se trouvent dans le dossier 'data/tests/all_cars/analysis')
     - **cars** : contient les voitures sauvegardées
-    - **parameters** : contient les paramètres de la simulation pour chaque circuit, modifiables facilement
+    - **parameters** : contient les paramètres de la simulation pour chaque circuit
   
 
 - **images** : contient les images utilisées dans l'application
