@@ -1,10 +1,20 @@
 from data.constants import PATH_DATA  # Import the path of the data
-import data.variables as var  # To use the global variables
-import matplotlib.pyplot as plt  # For plotting the histogram
 from statistics import mean  # To use statistics on the data
+import data.variables as var  # To use the global variables
+import matplotlib.pyplot as plt  # To plot the boxplot
 import os  # To iterate over the files in a folder
+import matplotlib  # To export the boxplot to pgf
 import pylab  # To use the boxplot
 import pygame  # To use pygame
+
+matplotlib.use("pgf")
+matplotlib.rcParams.update({
+    "pgf.texsystem": "pdflatex",
+    'font.family': 'serif',
+    'font.size': 11,
+    'text.usetex': True,
+    'pgf.rcfonts': False,
+})
 
 """
 This file contains the functions to analyze the data from the test file (created from the file main.py)
@@ -134,10 +144,11 @@ def analyze_genetic_algorithm():
     plt.title('Box-plot du nombre de générations nécessaire pour compléter un tour\n avec 2 algorithmes génétiques différents (sur 150 essais)')
     plt.ylim(0, 15)  # Adjust the y-axis as needed
     plt.ylabel('Nombre de générations')
-    pylab.xticks([1, 2], ['Mutation seulement', 'Croisements puis mutation'])  # Add legend
+    pylab.xticks([1, 2], ['Mutations seulement', 'Croisements puis mutations'])  # Add legend
 
-    plt.savefig('algo_gen.png')
-    plt.show()
+    fig = matplotlib.pyplot.gcf()  # Get the current figure
+    fig.set_size_inches(5, 3)  # Adjust the size of the boxplot
+    plt.savefig('algo.pgf')  # Save the boxplot to a pgf file (for LaTeX)
 
 
 def analyze_value_genetic_parameters():
@@ -165,4 +176,4 @@ def analyze_value_genetic_parameters():
 
 
 if __name__ == '__main__':
-    pass
+    analyze_genetic_algorithm()
