@@ -59,6 +59,9 @@ theorical_coordinates = {}  # Format : {color : [(x1, y1), (x2, y2)]}
 wait_optimize = 100  # The number of iterations we wait before starting to optimize
 dict_p1_opti, dict_p2_opti, dict_dp_opti = {}, {}, {}  # Format : {value : count}
 
+# Create a VideoCapture object
+cap = cv2.VideoCapture(NUM_CAMERA)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
+
 
 def capture_dice():
     """
@@ -75,11 +78,8 @@ def capture_dice():
 
     rect_window = pygame.rect.Rect(convert_to_new_window((425, 175, 640, 480)))
 
-    # Create a VideoCapture object
-    cap = cv2.VideoCapture(NUM_CAMERA)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
-
     while True:
-        res = find_dice_values(cap, final_score)  # Find the values of the dice from the camera
+        res = find_dice_values(final_score)  # Find the values of the dice from the camera
         if res is not None:
             # If we are here it means there is no camera connected
             return res  # We quit the dice capture
@@ -101,15 +101,14 @@ def capture_dice():
                 frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
                 update_pygame_camera_frame(frame_view)  # Update the frame of the camera shown in pygame
 
-                return end_capture_dice(cap, final_score)  # End the capture of the dice, and return the scores in a list
+                return end_capture_dice(final_score)  # End the capture of the dice, and return the scores in a list
 
 
-def find_dice_values(cap, final_score):
+def find_dice_values(final_score):
     """
     Find the values of the dice from the camera (one frame)
 
     Args:
-        cap (cv2.VideoCapture): VideoCapture object
         final_score (dict): The scores of the dice
     """
     global count_iterations, frame_view, frame, colors
@@ -120,7 +119,7 @@ def find_dice_values(cap, final_score):
 
     if frame is None:  # We don't have a camera connected
         print('Aucune caméra détectée')
-        return end_capture_dice(cap, final_score)
+        return end_capture_dice(final_score)
 
     frame_view = frame.copy()  # We make a copy of the frame to display it on the window (with rectangles, texts, ...)
 
@@ -666,18 +665,16 @@ def display_frame(rect_window):
     pygame.display.flip()  # We update the window
 
 
-def end_capture_dice(cap, final_score):
+def end_capture_dice(final_score):
     """
     End the capture of the dice
 
     Args:
-        cap (cv2.VideoCapture): VideoCapture object
         final_score (dict): Final score of the dice
 
     Returns:
         (list) : The scores of the dice
     """
-    cap.release()  # Release the VideoCapture object
     cv2.destroyAllWindows()  # Close all windows
 
     return list(final_score.values())
