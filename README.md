@@ -13,18 +13,25 @@ afin de capturer les valeurs de plusieurs dés colorés, qui permettent alors de
 aléatoires. On peut alors comparer les performances d’une voiture choisie au hasard (ou non si on veut tricher) avec les
 performances de voitures obtenues grâce à l’algorithme génétique.
 
+Un fichier de support à la démonstration est disponible au format PDF (Supports.pdf). Cela peut servir à rajouter de 
+l'interaction et mieux expliquer les mouvements des voitures ainsi que l'algorithme génétique en lui même.
+
 
 
 ## Guide d’installation
 
 Deux méthodes peuvent être utilisées pour installer l’application. Conda facilite l’utilisation de 
-plusieurs environnements différents sur votre machine, tandis que pip est beaucoup plus rapide
+plusieurs environnements différents sur votre machine, tandis que pip est beaucoup plus rapide.
 
 ### 1) Méthode d'installation utilisant Conda
 
-Installez Miniconda si ce n’est pas déjà installé sur votre machine.
+Pour l'installation avec Conda, vous pouvez exécutez le script shell 'install.sh'. Pour lancer l'application, vous pouvez
+exécuter le fichier 'start.sh'.
+Si vous ne souhaitez pas utiliser ces scripts, vous pouvez suivre les étapes ci-dessous.
 
 #### 1.1) Installation de Miniconda
+
+Installez Miniconda si ce n’est pas déjà installé sur votre machine.
 
 ##### Windows
 Allez sur le lien "https://docs.conda.io/en/latest/miniconda-other-installer-links.html" et télécharger l'exécutable pour
@@ -65,7 +72,6 @@ python src/main.py
 ```
 
 ### 2) Méthode d'installation utilisant pip
-
 
 Installez Python 3.8 si ce n’est pas déjà installé sur votre machine. Pour ce faire, allez sur le lien
  “https://www.python.org/downloads/release/python-381". 
