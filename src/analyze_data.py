@@ -147,7 +147,7 @@ def analyze_genetic_algorithm():
     pylab.xticks([1, 2], ['Mutations seulement', 'Croisements puis mutations'])  # Add legend
 
     fig = matplotlib.pyplot.gcf()  # Get the current figure
-    fig.set_size_inches(5, 3)  # Adjust the size of the boxplot
+    fig.set_size_inches(5.2, 3.2)  # Adjust the size of the boxplot
     plt.savefig('algo.pgf')  # Save the boxplot to a pgf file (for LaTeX)
 
 

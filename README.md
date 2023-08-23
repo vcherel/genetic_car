@@ -22,12 +22,24 @@ plusieurs environnements différents sur votre machine, tandis que pip est beauc
 
 ### 1) Méthode d'installation utilisant Conda
 
-Installez Miniconda si ce n’est pas déjà installé sur votre machine. Pour ce faire, allez sur le lien
-"https://docs.conda.io/en/latest/miniconda.html". Sur Linux, après avoir téléchargé le fichier, ouvrez un
-terminal dans le dossier où se trouve le fichier et rentrez la commande :
+Installez Miniconda si ce n’est pas déjà installé sur votre machine.
+
+#### 1.1) Installation de Miniconda
+
+##### Windows
+Allez sur le lien "https://docs.conda.io/en/latest/miniconda-other-installer-links.html" et télécharger l'exécutable pour
+Python 3.8. Après avoir téléchargé le fichier, installez-le en suivant les instructions. Les prochaines commandes seront
+à rentrer dans l'invite de commande Anaconda Prompt.
+
+##### Linux
+Allez sur le lien "https://docs.conda.io/en/latest/miniconda-other-installer-links.html" et télécharger le fichier 
+correspondant à Python 3.8. Après avoir téléchargé le fichier, ouvrez un terminal dans le dossier où se trouve le fichier 
+et rentrez la commande :
 ```bash
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
+
+#### 1.2) Préparation de l'environnement Conda
 
 Créez un nouvel environnement avec la bonne version de Python :
 ```bash

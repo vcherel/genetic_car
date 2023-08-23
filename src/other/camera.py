@@ -101,7 +101,7 @@ def capture_dice():
                 frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB
                 update_pygame_camera_frame(frame_view)  # Update the frame of the camera shown in pygame
 
-                return end_capture_dice(final_score)  # End the capture of the dice, and return the scores in a list
+                return list(final_score.values())  # End the capture of the dice by returning the scores in a list
 
 
 def find_dice_values(final_score):
@@ -119,7 +119,7 @@ def find_dice_values(final_score):
 
     if frame is None:  # We don't have a camera connected
         print('Aucune caméra détectée')
-        return end_capture_dice(final_score)
+        return list(final_score.values())  # End the capture of the dice by returning the scores in a list
 
     frame_view = frame.copy()  # We make a copy of the frame to display it on the window (with rectangles, texts, ...)
 
