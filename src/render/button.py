@@ -1,9 +1,9 @@
+from render.resizing import convert_to_new_window  # To convert the coordinates to the new window
+from data.constants import PATH_IMAGE  # To get the path of the image
+from other.camera import change_camera  # To change the camera
 import data.variables as var  # Import the data
 import pygame  # To use pygame
 import time  # To get the time
-
-from data.constants import PATH_IMAGE
-from render.resizing import convert_to_new_window
 
 """
 This file contains the Button class and all the functions related to it
@@ -208,3 +208,7 @@ class Button:
                     self.variable = 30
 
             self.text = str(self.variable)  # Reset the text
+
+            if self.name == 'CAMERA':  # It means we changed the camera
+                var.NUM_CAMERA = self.variable
+                change_camera()

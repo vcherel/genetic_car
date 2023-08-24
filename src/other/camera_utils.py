@@ -1,8 +1,10 @@
-import matplotlib.pyplot as plt  # To show images
+from render.resizing import convert_to_new_window  # To convert the coordinates to the new window
+import data.variables as var  # To use the variables
 import warnings  # To ignore warnings
 import math  # To use math functions
 import numpy as np  # To use numpy
 import pygame  # To use pygame
+
 
 """
 This file contains all the utils functions related to the detection of the dice
@@ -69,35 +71,6 @@ def add_offset(rectangles, offset):
     return new_rectangles
 
 
-def check_overlapping_rectangles(rectangles):
-    """
-    Check if the rectangles are overlapping or not
-
-    Args:
-        rectangles (list): List of rectangles found
-
-    Returns:
-        list: List of rectangles found
-    """
-    new_rectangles = []
-    # We check if the rectangles are overlapping or not
-    for rect in rectangles:
-        overlapping = False
-        for new_rect in new_rectangles:
-            if overlapping_rectangles(rect, new_rect, area_threshold=0.4):
-                # If the rectangles are overlapping, we take the biggest one
-                overlapping = True
-                if rect[2] * rect[3] > new_rect[2] * new_rect[3]:
-                    new_rectangles.remove(new_rect)
-                    new_rectangles.append(rect)
-                break
-
-        if not overlapping:
-            new_rectangles.append(rect)
-
-    return new_rectangles
-
-
 def overlapping_rectangles(rect1, rect2, area_threshold):
     """
     Check if two rectangles are overlapping for more than the area threshold
@@ -156,32 +129,6 @@ def circles_too_close(circle1, circle2, distance_threshold=7):
     return False
 
 
-def calculate_intersection_area(circle1, circle2, distance):
-    """
-    Calculate the area of intersection between two circles
-
-    Args:
-        circle1 (tuple(int, int, int)): the first circle (x, y, r)
-        circle2 (tuple(int, int, int)): the second circle (x, y, r)
-        distance (float): the distance between the centers of the circles
-    """
-    x1, y1, r1 = circle1
-    x2, y2, r2 = circle2
-
-    # Calculate the area of intersection using the formula for two overlapping circles
-    if distance >= abs(r1 - r2):
-        if distance <= r1 + r2:
-            a = (r1**2 - r2**2 + distance**2) / (2 * distance)
-            h = math.sqrt(r1**2 - a**2)
-            intersection_area = r1**2 * math.acos(a / r1) - a * h
-        else:
-            intersection_area = min(math.pi * r1**2, math.pi * r2**2)
-    else:
-        intersection_area = 0
-
-    return intersection_area
-
-
 def compute_mean_bgr(image):
     """
     Compute the mean BGR values of the image without the white or black dots
@@ -195,18 +142,6 @@ def compute_mean_bgr(image):
     threshold_distance = 150  # The threshold distance to consider a pixel as a white or black dot
     white = np.array([200, 200, 200])  # Assuming white color value
     array = np.array(image)  # Convert the image to a numpy array
-
-    # To see what the threshold distance should be
-    """
-    count = 0
-    count_white = 0
-    for i in range(len(array)):
-        for j in range(len(array[i])):
-            count += 1
-            if np.linalg.norm(array[i][j] - white) < 150:
-                count_white += 1
-    print(count_white * 100 / count)
-    """
 
     # Create a boolean mask to filter out pixels based on the condition
     mask = (np.linalg.norm(array - white, axis=2) > threshold_distance)
@@ -222,26 +157,22 @@ def compute_mean_bgr(image):
     return mean_bgr
 
 
-def biggest_rect(rect1, rect2):
+def update_pygame_camera_frame(frame):
     """
-    Return the biggest rectangle (in terms of area)
-    """
-    if rect1[2] * rect1[3] > rect2[2] * rect2[3]:
-        return rect1
-    else:
-        return rect2
-
-
-def show_image(image, gray=True):
-    """
-    Show an image in a window
+    Transform the openCV frame to a pygame frame and update the variables of the camera frame in the dice menu
 
     Args:
-        image (numpy.ndarray): The image
-        gray (bool): If the image is in gray scale
+        frame (numpy.ndarray): Frame of the camera
     """
-    if gray:
-        plt.imshow(image, cmap='gray')  # Image with the edges
-    else:
-        plt.imshow(image)
-    plt.show()
+    frame = pygame.surfarray.make_surface(frame)  # Convert the camera frame to a surface
+
+    # Resize, rotate and flip the camera frame
+    var.CAMERA_FRAME = pygame.transform.flip(pygame.transform.rotate(pygame.transform.scale(frame, (int(frame.get_width() * 0.75), int(frame.get_height() * 0.75))), -90), True, False)
+
+    # Get the rectangle of the camera frame
+    var.RECT_CAMERA_FRAME = var.CAMERA_FRAME.get_rect()
+    var.RECT_CAMERA_FRAME.x, var.RECT_CAMERA_FRAME.y = 0, 200  # We place the camera frame in the window at the right place
+
+    # Resize the camera frame to fit the window
+    var.RECT_CAMERA_FRAME = pygame.rect.Rect(convert_to_new_window(var.RECT_CAMERA_FRAME))  # Convert the rectangle to the new window
+    var.CAMERA_FRAME = pygame.transform.scale(var.CAMERA_FRAME, (var.RECT_CAMERA_FRAME.width, var.RECT_CAMERA_FRAME.height))  # Resize the camera frame

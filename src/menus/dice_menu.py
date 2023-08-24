@@ -1,3 +1,4 @@
+from render.resizing import convert_to_new_window, scale_image  # Import the resizing functions
 from render.display import draw_detection_cone, draw_dice  # Import the display functions
 from data.constants import RGB_VALUES_DICE, NB_MAPS  # Import the constants
 from data.data_classes import MemoryCar  # Import the car memory
@@ -6,7 +7,6 @@ from render.button import Button  # Import the button class
 import data.variables as var  # Import the data
 import pygame  # Import pygame module
 
-from render.resizing import convert_to_new_window, scale_image
 
 """
 This file contains the DiceMenu class used to display the dice menu and change the value of dice
@@ -16,10 +16,6 @@ This file contains the DiceMenu class used to display the dice menu and change t
 # Positions of the dice
 x1, x2, x3 = 175, 355, 535  # x coordinates of the dice
 y1, y2 = 120, 315           # y coordinates of the dice
-
-# Camera
-camera_frame = None  # Frame of the camera at the last update
-rect_camera_frame = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame
 
 
 class DiceMenu:
@@ -33,6 +29,7 @@ class DiceMenu:
         self.dice_values = None  # Values of the dice
         self.id_memory_car = None  # Id of the dice
         self.by_camera = None  # True if the dice menu is called by the camera, False if we are modifying the dice
+        self.camera_activated = None  # True if the camera is activated (sometimes we take from camera but without the camera)
         self.rect = None  # Rectangle of the dice menu
         self.x = self.y = None  # Coordinates of the dice menu
         self.values_button = None  # List of the rectangles to write the text
@@ -50,8 +47,12 @@ class DiceMenu:
         self.dice_values = values
         self.id_memory_car = id_memory_car
         self.by_camera = by_camera
+        if self.by_camera:
+            self.camera_activated = True if var.CAMERA_FRAME else False  # We check if the camera was activated
+        else:
+            self.camera_activated = False  # Cannot be true if we are not modifying the dice from the camera
 
-        if self.by_camera:  # By camera
+        if self.camera_activated:  # By camera
             self.rect = pygame.rect.Rect(convert_to_new_window((480, 125, 1000, 550)))  # From camera
             self.x = 480  # The x coordinate of the rectangle before the conversion
             self.y = 125  # The y coordinate of the rectangle before the conversion
@@ -119,9 +120,9 @@ class DiceMenu:
                 self.values_button[index].text = ''
 
         # Display the image of the last frame of the camera
-        if self.by_camera and camera_frame is not None:  # If we are modifying dice from the camera
-            var.WINDOW.blit(camera_frame, (rect_camera_frame.x, rect_camera_frame.y))
-            pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_camera_frame, 2)
+        if self.camera_activated:  # If we are modifying dice from the camera and the camera was activated
+            var.WINDOW.blit(var.CAMERA_FRAME, (var.RECT_CAMERA_FRAME.x, var.RECT_CAMERA_FRAME.y))
+            pygame.draw.rect(var.WINDOW, (1, 1, 1), var.RECT_CAMERA_FRAME, 2)
 
         # Display the button to validate the value of the dice
         self.check_button.draw()
@@ -135,11 +136,14 @@ class DiceMenu:
         var.DISPLAY_DICE_MENU = False  # We don't display the dice menu anymore
         var.WINDOW.blit(var.BACKGROUND, self.rect, self.rect)  # We erase the dice menu
 
-        if self.by_camera:
-            var.WINDOW.blit(var.BACKGROUND, rect_camera_frame, rect_camera_frame)  # We erase the dice menu
+        if self.camera_activated:  # If the camera is activated
+            var.WINDOW.blit(var.BACKGROUND, var.RECT_CAMERA_FRAME, var.RECT_CAMERA_FRAME)  # We erase the dice menu
             var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
                                    color='gray', genetic=Genetic(self.dice_values), best_scores=[0] * NB_MAPS))
             var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
+
+            var.CAMERA_FRAME = None  # We reset the camera frame
+
 
     def save_values(self, index, writing_button):
         """
@@ -155,29 +159,6 @@ class DiceMenu:
             for memory_car in var.MEMORY_CARS:
                 if memory_car.id == self.id_memory_car:
                     memory_car.genetic = Genetic(self.dice_values)
-
-
-def update_pygame_camera_frame(frame):
-    """
-    Transform the openCV frame to a pygame frame and update the variables of the camera frame in the dice menu
-
-    Args:
-        frame (numpy.ndarray): Frame of the camera
-    """
-    global camera_frame, rect_camera_frame
-
-    frame = pygame.surfarray.make_surface(frame)  # Convert the camera frame to a surface
-
-    # Resize, rotate and flip the camera frame
-    camera_frame = pygame.transform.flip(pygame.transform.rotate(pygame.transform.scale(frame, (int(frame.get_width() * 0.75), int(frame.get_height() * 0.75))), -90), True, False)
-
-    # Get the rectangle of the camera frame
-    rect_camera_frame = camera_frame.get_rect()
-    rect_camera_frame.x, rect_camera_frame.y = 0, 200  # We place the camera frame in the window at the right place
-
-    # Resize the camera frame to fit the window
-    rect_camera_frame = pygame.rect.Rect(convert_to_new_window(rect_camera_frame))  # Convert the rectangle to the new window
-    camera_frame = pygame.transform.scale(camera_frame, (rect_camera_frame.width, rect_camera_frame.height))  # Resize the camera frame
 
 
 DICE_MENU = DiceMenu()  # Dice menu of the game

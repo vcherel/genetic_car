@@ -1,20 +1,17 @@
-from data.constants import PATH_DATA
-from other.camera_utils import *  # Utils functions for the camera
+from data.constants import PATH_DATA  # To get the path of the data folder
+from typing import Optional  # To use Optional to avoid NoneType warnings
 from data.data_classes import ColorDice  # To find the color of each dice
-from menus.dice_menu import update_pygame_camera_frame  # To save the camera frame
-import data.variables as var  # Variables
+from other.camera_utils import *  # Utils functions for the camera
 import random  # To generate random numbers
+import data.variables as var  # Variables
 import numpy as np  # To use numpy
 import pygame  # To use Pygame
 import cv2  # To use OpenCV
 
-from render.resizing import convert_to_new_window
 
 """
 This file contains the functions used to get the score of the dice from the camera with OpenCV
 """
-
-NUM_CAMERA = 0  # The number of the camera we want to use
 
 # The rects kept in memory (when we detect a rectangle, if it overlaps with a rectangle in memory, we display the rectangle in memory)
 memory_rects = {}  # Format : {rect : lifetime_remaining} ; lifetime_remaining : the number of frames the rectangle will be displayed unless it is detected again
@@ -60,7 +57,24 @@ wait_optimize = 100  # The number of iterations we wait before starting to optim
 dict_p1_opti, dict_p2_opti, dict_dp_opti = {}, {}, {}  # Format : {value : count}
 
 # Create a VideoCapture object
-cap = cv2.VideoCapture(NUM_CAMERA)  # 0 corresponds to the default camera, you can change it if you have multiple cameras
+cap: Optional[cv2.VideoCapture] = None  # The VideoCapture object
+
+
+def change_camera(first_time=False):
+    """
+    Change the camera used by the program
+
+    Args:
+        first_time (bool): True if it's the first time we change the camera
+    """
+    global cap
+
+    cap = cv2.VideoCapture(var.NUM_CAMERA)  # Create a new VideoCapture object
+
+    if not first_time:
+        # We write the new camera number in the file if we changed it
+        with open(PATH_DATA + 'num_camera', 'w') as file_write:
+            file_write.write(str(var.NUM_CAMERA))
 
 
 def capture_dice():
@@ -562,7 +576,6 @@ def optimize_parameters(image, color, rect):
         rect (tuple): Coordinates of the rectangle
     """
     for p1 in range(p1_min, p1_max + 1):
-        print(p1)
         for p2 in range(p2_min, p2_max + 1):
             for dp in range(dp_min, dp_max + 1):
                 if p1 > p2:

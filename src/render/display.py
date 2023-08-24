@@ -1,4 +1,4 @@
-from data.variables_utils import add_to_rects_blit_ui
+from data.variables_functions_ui import add_to_rects_blit_ui
 from other.utils import text_rec, compute_detection_cone_points, change_color_car  # Import the utils functions
 from data.constants import RGB_VALUES_DICE, PATH_IMAGE  # Import the constants
 import data.variables as var

@@ -147,6 +147,11 @@ MEMORY_CARS = []  # Memory of the cars, format: [car_memory_1, car_memory_2, ...
 SELECTED_MEMORY_CARS = []  # Genetics from the garage that we want to add to the game
 ACTUAL_IDS_MEMORY_CARS = 1  # Biggest id of the memory for the dice cars (to know the id of the next car)
 
+# CAMERA
+CAMERA_FRAME = None  # Frame of the camera at the last update (displayed in the dice menu)
+RECT_CAMERA_FRAME = pygame.rect.Rect(0, 0, 0, 0)  # Rect of the camera frame (displayed in the dice menu)
+NUM_CAMERA = 0  # Number of the camera
+
 
 # OTHER
 FPS = 60  # FPS of the game

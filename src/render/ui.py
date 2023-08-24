@@ -1,28 +1,22 @@
-from data.variables_functions import resize_window, blit_circuit, change_map, exit_game
-from data.variables_utils import add_to_rects_blit_ui
-from menus.dice_menu import DICE_MENU
-from menus.garage_menu import GARAGE
-from menus.settings_menu import SETTINGS
+from data.variables_functions import resize_window, blit_circuit, change_map, exit_game  # Import functions from variables
+from data.variables_functions_ui import add_to_rects_blit_ui  # Import the function to add a rect to the list of rects to blit
+from render.display import show_car_window, erase_car_window, display_text_ui  # Import the function to show the car
+from render.resizing import convert_to_new_window  # To convert the coordinates to the new window
 from other.utils import union_rect  # Import the function to convert the coordinates
-from render.display import show_car_window, erase_car_window  # Import the function to show the car
 from other.camera import capture_dice  # Import the function to capture the dice
-from render.display import display_text_ui  # Import functions from display
-from data.data_classes import MemoryCar  # Import the car memory
-from game.genetic import Genetic  # Import the genetic class
-from data.constants import NB_MAPS  # Import constants
+from menus.settings_menu import SETTINGS  # Import the settings menu
+from menus.garage_menu import GARAGE  # Import the garage menu
+from menus.dice_menu import DICE_MENU  # Import the dice menu
 from render.button import Button  # Import the button
 import data.variables as var  # Import the data
 import pygame  # To use pygame
 import time  # To get the time
 
-from render.resizing import convert_to_new_window
 
 """
 This file contains all the functions to display the UI and check the events
 """
 
-
-use_camera = True  # If we don't use the camera
 
 stop_button = Button()  # Button to stop the game
 pause_button = Button()  # Button to pause the game
@@ -54,7 +48,6 @@ def init():
     skip_button = Button(x=1290, y=80, image_name='main_menu/skip', scale=0.45)
     previous_map_button = Button(x=820, y=70, image_name='main_menu/previous_map', scale=0.45)
     next_map_button = Button(x=920, y=70, image_name='main_menu/next_map', scale=0.45)
-
 
 
 def handle_events(cars=None):
@@ -301,12 +294,6 @@ def display_dice_button():
         if var.DISPLAY_DICE_MENU:  # If the dice menu is displayed we erase it
             DICE_MENU.erase_dice_menu()
             unpause()
-
-        elif not use_camera:  # If we don't use the camera we create a random dice
-            var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
-                                             color='gray', genetic=Genetic(), best_scores=[0] * NB_MAPS))  # We add the dice to the memory
-            var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
-            GARAGE.reload_page = True
 
         else:  # If we use the camera we capture the dice
             pause()

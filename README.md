@@ -13,7 +13,7 @@ afin de capturer les valeurs de plusieurs dés colorés, qui permettent alors de
 aléatoires. On peut alors comparer les performances d’une voiture choisie au hasard (ou non si on veut tricher) avec les
 performances de voitures obtenues grâce à l’algorithme génétique.
 
-Un fichier de support à la démonstration est disponible au format PDF (Supports.pdf). Cela peut servir à rajouter de 
+Un fichier de support à la démonstration est disponible au format PDF (Supports.pdf) et au format svg (Supports.svg). Cela peut servir à rajouter de 
 l'interaction et mieux expliquer les mouvements des voitures ainsi que l'algorithme génétique en lui même.
 
 
@@ -129,8 +129,8 @@ leurs scores en temps réel.
 Il faut attendre un peu que le score se stabilise, et lorsque c'est bon, on peut cliquer n'importe où pour quitter
 cette fenêtre. Il y a alors la possibilité de modifier la valeur des dés en cas d'erreurs. 
 
-⚠️ Il est possible que la caméra ne soit pas reconnu. Dans ce cas, il faut modifier la valeur de la variable 
-'NUM_CAMERA' tout en haut du fichier 'src/other/camera.py', en mettant 1 ou 2 par exemple.
+⚠️ Il est possible que la caméra ne soit pas reconnu. Dans ce cas, il faut modifier le numéro de la caméra dans le menu
+paramètres.
 
 D'autres boutons sont présent en haut à droite de l'écran. Ils servent à changer le circuit, changer le nombre
 de voitures, lancer la simulation, arrêter la simulation, mettre en pause, recommencer la dernière génération, ou 
@@ -145,6 +145,7 @@ Les paramètres pouvant être modifiés sont les suivants :
   résultat final)
   - **Seed** : la graine utilisée pour générer les voitures (si on utilise la même seed sur le même circuit avec les mêmes paramètres, on obtiendra
   toujours le même résultat)
+  - **Caméra** : le numéro de la caméra à utiliser pour la reconnaissance des dés
 - **Paramètres d'affichage :**
   - **Champs de vision** : afficher les cônes de détections utilisés par les voitures
   - **Explosions** : afficher des explosions lorsqu'une voiture touche un mur
@@ -224,3 +225,8 @@ faire le tour de chaque circuit se trouvent dans le dossier 'data/tests/all_cars
     - **render**: contient les fichiers permettant de gérer l'affichage
     - **other**: contient des fonctions diverses ainsi que les fichiers permettant de gérer la reconnaissance des dés
     - **main.py**: fichier principal de l'application
+    - **analyze_data.py**: fichier permettant d'analyser les données de la simulation
+    - **install_env.sh**: script shell permettant d'installer l'environnement Conda
+    - **start.sh**: script shell permettant de lancer l'application
+    - **Supports.pdf**: fichier de support à la démonstration
+    - **Supports.svg**: fichier de support à la démonstration (format SVG)

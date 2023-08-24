@@ -28,6 +28,7 @@ class Settings:
         # General section
         self.fps_button = None  # The button to change the FPS
         self.seed_button = None  # The button to change the seed
+        self.camera_button = None  # The button to change the camera
 
         # Display section
         self.show_cones_button = None  # The button to activate the debug mode
@@ -66,7 +67,8 @@ class Settings:
 
         # General section
         self.fps_button = Button(x=292, y=221, image_name='writing', variable=var.FPS, name='FPS', scale_x=0.5)
-        self.seed_button = Button(x=290, y=288, image_name='writing', variable=var.SEED, name='SEED', scale_x=0.5)
+        self.seed_button = Button(x=300, y=267, image_name='writing', variable=var.SEED, name='SEED', scale_x=0.5)
+        self.camera_button = Button(x=330, y=311, image_name='writing', variable=var.NUM_CAMERA, name='CAMERA', scale_x=0.5)
 
         # Display section
         self.show_cones_button = Button(x=474, y=455, image_name='checkbox', scale=0.1)
@@ -91,10 +93,9 @@ class Settings:
         self.width_cone_button = Button(x=718, y=610, image_name='writing', variable=var.WIDTH_CONE, name='SEED', scale_x=0.5)
         self.length_cone_button = Button(x=1110, y=610, image_name='writing', variable=var.LENGTH_CONE, name='LENGTH_CONE', scale_x=0.5)
 
-        self.writing_buttons = [self.fps_button, self.time_generation_button, self.max_speed_button, self.turn_angle_button,
-                                self.acceleration_button, self.deceleration_button, self.mutation_button, self.crossover_button,
-                                self.proportion_button, self.seed_button, self.width_cone_button, self.length_cone_button,
-                                self.drift_button]
+        self.writing_buttons = [self.fps_button, self.seed_button, self.camera_button, self.max_speed_button, self.turn_angle_button,
+                                self.acceleration_button, self.deceleration_button, self.drift_button, self.proportion_button,
+                                self.mutation_button, self.crossover_button, self.time_generation_button,  self.width_cone_button, self.length_cone_button]
 
     def update_parameters(self):
         """

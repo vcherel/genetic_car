@@ -163,11 +163,15 @@ def blit_circuit():
 
 def load_parameters():
     """
-    Load the parameters of the different maps stored in the file parameters
+    Load the parameters of the different maps stored in the file parameters, and the number of the camera
     """
-    with open(PATH_DATA + 'parameters', 'r') as file_parameters_read:
+    # The number of the camera is stored in a file
+    with open(PATH_DATA + 'num_camera', 'r') as file_num_camera_read:
+        var.NUM_CAMERA = int(file_num_camera_read.readline())  # Number of the camera
+
+    with open(PATH_DATA + 'parameters_map', 'r') as file_parameters_read:
         """
-        Format of the file parameters:
+        Format of the file parameters_map:
         # Circuit x
         param1 = value1
         param2 = value2
@@ -178,7 +182,7 @@ def load_parameters():
         """
         lines = file_parameters_read.readlines()  # We read the file
         actual_map = -1  # Actual map (-1 because we start with the map 0)
-        for line in lines:
+        for line in lines[1:]:
             if line[0] == '#':
                 actual_map += 1  # We change the map
             else:

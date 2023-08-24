@@ -1,10 +1,11 @@
-from data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
 from data.variables_functions import load_cars, create_background, load_parameters, change_map, exit_game, \
     init_variables, blit_circuit
+from data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
 from game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
+from menus.settings_menu import SETTINGS  # Import the settings menu
+from other.camera import change_camera  # To change the camera
 from game.genetic import Genetic  # Import the genetic class
 from game.car import Car, add_garage_cars  # Import the car
-from menus.settings_menu import SETTINGS
 from other.utils import union_rect  # Import the utils
 import render.display as display  # Import the display
 import data.variables as var  # Import the data
@@ -324,7 +325,6 @@ def run_test_value_genetic_parameters():
     for var.CHANCE_MUTATION, var.CHANCE_CROSSOVER, var.PROPORTION_CARS_KEPT in [(0.3, 0.1, 0.2)]:
         var.FILE_TEST = open(f'{path_test}tests/genetic_parameters/{var.CHANCE_MUTATION}_{var.CHANCE_CROSSOVER}_{var.PROPORTION_CARS_KEPT}', 'a')
         for var.SEED in range(50):
-            print(var.SEED)
             play()
             var.NUM_GENERATION = 0
 
@@ -335,6 +335,7 @@ def main():
     """
     try:
         load_parameters()  # Load the data
+        change_camera(first_time=True)  # Change the camera
         create_background()  # Create the background
         change_map(first_time=True)  # Change the map to the first one
         load_cars()  # Load the cars (we do it here because we need the map to be loaded so Genetic can be initialized)
