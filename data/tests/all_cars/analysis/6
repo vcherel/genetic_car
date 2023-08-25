@@ -1,15 +1,30 @@
-Cars that completed a lap: (14)
-4, 6, 6, 6, 4, 4 ; Score : 254
-4, 6, 6, 5, 3, 3 ; Score : 236
-3, 5, 6, 4, 4, 4 ; Score : 178
-4, 6, 6, 5, 4, 4 ; Score : 173
-5, 5, 6, 3, 5, 3 ; Score : 173
-5, 5, 6, 5, 5, 4 ; Score : 173
-3, 5, 6, 6, 6, 3 ; Score : 172
-4, 5, 6, 6, 2, 3 ; Score : 172
-4, 6, 6, 6, 4, 6 ; Score : 172
-5, 5, 6, 3, 5, 4 ; Score : 172
-4, 5, 6, 5, 3, 1 ; Score : 170
-4, 6, 6, 5, 3, 1 ; Score : 170
-4, 5, 6, 6, 6, 4 ; Score : 164
-5, 6, 6, 4, 4, 4 ; Score : 164
+Cars that completed at least one lap : 14
+
+Mean score : 21.512538580246915
+Max score : 254
+Min score : 6
+Median score : 18
+
+Correlation between the parameters and the score:
+Length slow : -0.5800849252160797
+Length medium : -0.2827513211778019
+Length fast : -0.08078900507528321
+Width slow : -0.020006866447441582
+Width medium : -0.003996478928357221
+Width fast : -0.0009573137307611768
+
+Parameters of the cars that completed at least one lap:
+(4, 6, 6, 6, 4, 4) ; Score : 254
+(4, 6, 6, 5, 3, 3) ; Score : 236
+(3, 5, 6, 4, 4, 4) ; Score : 178
+(4, 6, 6, 5, 4, 4) ; Score : 173
+(5, 5, 6, 3, 5, 3) ; Score : 173
+(5, 5, 6, 5, 5, 4) ; Score : 173
+(3, 5, 6, 6, 6, 3) ; Score : 172
+(4, 5, 6, 6, 2, 3) ; Score : 172
+(4, 6, 6, 6, 4, 6) ; Score : 172
+(5, 5, 6, 3, 5, 4) ; Score : 172
+(4, 5, 6, 5, 3, 1) ; Score : 170
+(4, 6, 6, 5, 3, 1) ; Score : 170
+(4, 5, 6, 6, 6, 4) ; Score : 164
+(5, 6, 6, 4, 4, 4) ; Score : 164

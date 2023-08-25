@@ -1,28 +1,44 @@
-Cars that completed a lap: (27)
-2, 6, 6, 5, 6, 3 ; Score : 287
-2, 6, 6, 2, 1, 3 ; Score : 240
-3, 6, 6, 5, 4, 3 ; Score : 240
-1, 6, 6, 3, 6, 3 ; Score : 218
-2, 6, 6, 2, 3, 3 ; Score : 218
-2, 6, 6, 6, 3, 3 ; Score : 218
-6, 6, 6, 4, 6, 3 ; Score : 218
-1, 6, 6, 2, 6, 3 ; Score : 174
-3, 6, 6, 1, 5, 3 ; Score : 174
-3, 6, 6, 6, 3, 3 ; Score : 174
-1, 6, 6, 4, 5, 3 ; Score : 149
-1, 6, 6, 5, 6, 3 ; Score : 149
-2, 6, 6, 3, 5, 3 ; Score : 149
-3, 6, 6, 2, 3, 3 ; Score : 149
-3, 6, 6, 5, 3, 3 ; Score : 149
-2, 6, 6, 3, 6, 3 ; Score : 127
-2, 6, 6, 4, 2, 3 ; Score : 127
-2, 6, 6, 4, 6, 3 ; Score : 127
-2, 6, 6, 5, 5, 3 ; Score : 127
-3, 6, 6, 2, 1, 3 ; Score : 127
-3, 6, 6, 3, 3, 3 ; Score : 127
-3, 6, 6, 5, 5, 3 ; Score : 127
-6, 5, 6, 5, 4, 3 ; Score : 127
-2, 6, 6, 2, 2, 3 ; Score : 126
-2, 6, 6, 3, 3, 3 ; Score : 126
-2, 6, 6, 4, 4, 3 ; Score : 126
-2, 6, 6, 4, 5, 3 ; Score : 125
+Cars that completed at least one lap : 27
+Cars that completed at least 2 lap : 3
+
+Mean score : 18.497835219478738
+Max score : 287
+Min score : 6
+Median score : 11
+
+Correlation between the parameters and the score:
+Length slow : -0.7534606644573305
+Length medium : -0.19503693131439573
+Length fast : -0.04415693041809005
+Width slow : -0.010708122974461066
+Width medium : -0.00403514330093004
+Width fast : -0.0007883036874422801
+
+Parameters of the cars that completed at least one lap:
+(2, 6, 6, 5, 6, 3) ; Score : 287
+(2, 6, 6, 2, 1, 3) ; Score : 240
+(3, 6, 6, 5, 4, 3) ; Score : 240
+(1, 6, 6, 3, 6, 3) ; Score : 218
+(2, 6, 6, 2, 3, 3) ; Score : 218
+(2, 6, 6, 6, 3, 3) ; Score : 218
+(6, 6, 6, 4, 6, 3) ; Score : 218
+(1, 6, 6, 2, 6, 3) ; Score : 174
+(3, 6, 6, 1, 5, 3) ; Score : 174
+(3, 6, 6, 6, 3, 3) ; Score : 174
+(1, 6, 6, 4, 5, 3) ; Score : 149
+(1, 6, 6, 5, 6, 3) ; Score : 149
+(2, 6, 6, 3, 5, 3) ; Score : 149
+(3, 6, 6, 2, 3, 3) ; Score : 149
+(3, 6, 6, 5, 3, 3) ; Score : 149
+(2, 6, 6, 3, 6, 3) ; Score : 127
+(2, 6, 6, 4, 2, 3) ; Score : 127
+(2, 6, 6, 4, 6, 3) ; Score : 127
+(2, 6, 6, 5, 5, 3) ; Score : 127
+(3, 6, 6, 2, 1, 3) ; Score : 127
+(3, 6, 6, 3, 3, 3) ; Score : 127
+(3, 6, 6, 5, 5, 3) ; Score : 127
+(6, 5, 6, 5, 4, 3) ; Score : 127
+(2, 6, 6, 2, 2, 3) ; Score : 126
+(2, 6, 6, 3, 3, 3) ; Score : 126
+(2, 6, 6, 4, 4, 3) ; Score : 126
+(2, 6, 6, 4, 5, 3) ; Score : 125

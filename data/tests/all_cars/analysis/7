@@ -1,7 +1,22 @@
-Cars that completed a lap: (6)
-4, 6, 5, 6, 6, 1 ; Score : 244
-4, 6, 6, 6, 5, 1 ; Score : 232
-3, 5, 6, 6, 2, 6 ; Score : 187
-3, 5, 6, 5, 2, 1 ; Score : 168
-3, 6, 6, 6, 6, 1 ; Score : 168
-4, 4, 5, 6, 6, 1 ; Score : 168
+Cars that completed at least one lap : 6
+
+Mean score : 24.74502743484225
+Max score : 244
+Min score : 6
+Median score : 12
+
+Correlation between the parameters and the score:
+Length slow : -0.7780153587230483
+Length medium : -0.1779282912495209
+Length fast : -0.05265133538125458
+Width slow : -0.010150669086370957
+Width medium : -0.0018342626973772693
+Width fast : -0.00040941753422285126
+
+Parameters of the cars that completed at least one lap:
+(4, 6, 5, 6, 6, 1) ; Score : 244
+(4, 6, 6, 6, 5, 1) ; Score : 232
+(3, 5, 6, 6, 2, 6) ; Score : 187
+(3, 5, 6, 5, 2, 1) ; Score : 168
+(3, 6, 6, 6, 6, 1) ; Score : 168
+(4, 4, 5, 6, 6, 1) ; Score : 168

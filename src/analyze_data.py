@@ -1,12 +1,14 @@
 from data.constants import PATH_DATA  # Import the path of the data
 from statistics import mean  # To use statistics on the data
-import data.variables as var  # To use the global variables
 import matplotlib.pyplot as plt  # To plot the boxplot
 import os  # To iterate over the files in a folder
+import numpy as np  # To use the boxplot
 import matplotlib  # To export the boxplot to pgf
 import pylab  # To use the boxplot
-import pygame  # To use pygame
 
+
+# To export the boxplot to pgf (for LaTeX)
+"""
 matplotlib.use("pgf")
 matplotlib.rcParams.update({
     "pgf.texsystem": "pdflatex",
@@ -15,6 +17,8 @@ matplotlib.rcParams.update({
     'text.usetex': True,
     'pgf.rcfonts': False,
 })
+"""
+
 
 """
 This file contains the functions to analyze the data from the test file (created from the file main.py)
@@ -24,7 +28,39 @@ This data can be the score of the cars, to determine where each car died ; or th
 number_checkpoints = [143, 131, 144, 113, 57, 0, 146, 156]
 
 
-def analyze_test_all_cars(num_map, show_graph=False):
+class BestCar:
+    def __init__(self, data):
+        """
+        Initialize the BestCar object
+
+        Args:
+            data (list): The data of the car (x1, y1, x2, y2, x3, y3, score)
+        """
+        data = [int(data) for data in data]
+        self.x1, self.y1, self.x2, self.y2, self.x3, self.y3, self.score = data
+        self.tab = [self.x1, self.y1, self.x2, self.y2, self.x3, self.y3]
+
+    def __str__(self):
+        """
+        Return the string representation of the BestCar object to write it in a file
+        Returns:
+            str: The string representation of the BestCar object
+        """
+        return f'({self.x1}, {self.y1}, {self.x2}, {self.y2}, {self.x3}, {self.y3}) ; Score : {self.score}'
+
+    def __getitem__(self, item):
+        """
+        Return the item of the BestCar object corresponding to the index
+        Args:
+            item (int): The index of the item to return
+
+        Returns:
+            int: The parameter of the BestCar object corresponding to the index
+        """
+        return self.tab[item]
+
+
+def analyze_test_all_cars(num_map):
     """
     Analyze the data from the test file 'test_all_cars_X' created from the file main.py (with X the number of the map) and write the results in a file
     named 'analysis_X'
@@ -32,99 +68,135 @@ def analyze_test_all_cars(num_map, show_graph=False):
 
     Args:
         num_map (int): The number of the map
-        show_graph (bool): If True, show the histogram of the scores
     """
-    scores = []  # List of the scores
-    best_cars = []  # List of the best cars (cars that completed a lap)
+    scores = []  # List of the scores [score1, score2, ...]
+    cars = []  # List of all the cars [(x1, y1, x2, y2, x3, y3, score1), (x1, y1, x2, y2, x3, y3, score2), ...]
+    best_cars = []  # List of the cars that completed a lap [(x1, y1, x2, y2, x3, y3, score1), (x1, y1, x2, y2, x3, y3, score2), ...]
 
     with open(f'{PATH_DATA}tests/all_cars/results/{num_map}', 'r') as file_read:
-        with open(f'{PATH_DATA}tests/all_cars/analysis/{num_map}', 'w') as file_write:
-            for line in file_read:
-                data = line.split(' ')
-                if num_map == 5:
-                    score = int(float(data[6][:-1]) / 100)  # We remove the \n and transform the score to a smaller value (int)
-                else:
-                    score = int(data[6][:-1])  # We remove the \n
+        for line in file_read:
+            data = line.split(' ')
 
-                scores.append(score)  # We add the score to the list of the scores
+            # We get the score of the cars
+            if num_map == 5:
+                score = int(float(data[6][:-1]) / 100)  # We remove the \n and transform the score to a smaller value (int)
+                data[6] = str(score)  # We replace the score in the data
+            else:
+                score = int(data[6][:-1])  # We remove
+            scores.append(score)  # We add the score to the list of the
+            cars.append(BestCar(data))
 
-                # Find when the car died
-                if score > number_checkpoints[num_map]:
-                    best_cars.append((int(data[0]), int(data[1]), int(data[2]), int(data[3]), int(data[4]), int(data[5]), score))
+            if score > number_checkpoints[num_map]:
+                best_cars.append(BestCar(data))
 
-            # Sort the best cars by score
-            best_cars.sort(key=lambda x: x[6], reverse=True)
-            file_write.write(f'Cars that completed a lap: ({len(best_cars)})\n')
+        # Sort the scores
+        scores.sort(reverse=True)  # We sort the scores in descending order
+
+        # Sort the best cars by score
+        best_cars.sort(key=lambda x: x.score, reverse=True)
+
+    with open(f'{PATH_DATA}tests/all_cars/analysis/{num_map}', 'w') as file_write:
+
+        # We count how many cars completed at least 1 lap, 2 laps, 3 laps, ...
+        multiplier = 1  # The number of laps
+        end_loop = False  # If True, we stop the loop
+        nb_cars = 0  # The number of cars that completed at least multiplier laps
+        while not end_loop:
             for car in best_cars:
-                file_write.write(f'{car[0]}, {car[1]}, {car[2]}, {car[3]}, {car[4]}, {car[5]} ; Score : {car[6]}\n')
+                if car.score >= multiplier * number_checkpoints[num_map]:
+                    nb_cars += 1
+            if nb_cars > 0:
+                if multiplier == 1:
+                    file_write.write(f'Cars that completed at least one lap : {nb_cars}\n')
+                else:
+                    file_write.write(f'Cars that completed at least {multiplier} lap : {nb_cars}\n')
+                multiplier += 1
+                nb_cars = 0
+            else:
+                end_loop = True
 
-    if show_graph:
-        # Plotting the histogram
-        plt.hist(scores, bins=50, range=(0, 100), edgecolor='black')  # Adjust the number of bins as needed
-        plt.xlabel('Score')
-        plt.ylabel('Count')
-        plt.title('Distribution of Scores')
+        # Statistics on the scores
+        file_write.write(f'\nMean score : {mean(scores)}\n')
+        file_write.write(f'Max score : {max(scores)}\n')
+        file_write.write(f'Min score : {min(scores)}\n')
+        file_write.write(f'Median score : {scores[len(scores) // 2]}\n')
 
-        # Display the plot
-        plt.show()
+        # Correlation between the parameters and the score
+        name_parameters = ['Length slow', 'Length medium', 'Length fast', 'Width slow', 'Width medium', 'Width fast']
+        file_write.write('\nCorrelation between the parameters and the score:\n')
+        for j in range(0, 6):
+            file_write.write(f'{name_parameters[j]} : {np.corrcoef([car[j] for car in cars], scores)[0][1]}\n')
+
+        # We write the scores of the cars that completed at least 1 lap
+        file_write.write('\nParameters of the cars that completed at least one lap:\n')
+        for car in best_cars:
+            file_write.write(f'{car}\n')
 
 
-def show_positions_crash(scores):
+def show_graph(num_map):
     """
-    Show the analysis of the death of cars obtained by the function analyze_data_scores, by drawing circles on the background
-    The more car crashed at a position, the more the circle is red
+    Show the graph of the scores
 
     Args:
-        scores (list): List of the scores
+        num_map (int): The number of the map
     """
-    scores = [score for score in scores if score < len(var.CHECKPOINTS)]
+    scores = []  # List of the scores [score1, score2, ...]
 
-    deaths_by_checkpoints = [0] * len(var.CHECKPOINTS)
-    for score in scores:
-        deaths_by_checkpoints[score] += 1
+    with open(f'{PATH_DATA}tests/all_cars/results/{num_map}', 'r') as file_read:
+        for line in file_read:
+            data = line.split(' ')
 
-    deaths_worst_checkpoint = max(deaths_by_checkpoints)  # Best score
+            # We get the score of the cars
+            if num_map == 5:
+                score = int(
+                    float(data[6][:-1]) / 100)  # We remove the \n and transform the score to a smaller value (int)
+                data[6] = str(score)  # We replace the score in the data
+            else:
+                score = int(data[6][:-1])  # We remove
+            scores.append(score)  # We add the score to the list of the
 
-    # Draw the circles
-    for pos, score in zip(var.CHECKPOINTS, deaths_by_checkpoints):  # Iterate over the checkpoints
+    # Sort the scores
+    scores.sort(reverse=True)  # We sort the scores in descending order
 
-        # Calculate the red value based on the score
-        red_value = int(score / deaths_worst_checkpoint * 255)  # Adjust the scaling if needed
-
-        # If it is not white
-        if red_value != 0:
-            # Create the color tuple with the adjusted red value
-            circle_color = (255, 255 - red_value, 255 - red_value)
-
-            # Draw the circle with the calculated color
-            pygame.draw.circle(var.BACKGROUND, circle_color, pos, 25)
-
-    pygame.display.flip()
+    plt.plot(scores, range(1, len(scores) + 1))
+    plt.xlabel('Score')
+    plt.ylabel('Number of cars')
+    plt.title('Cars remaining on the track /number of checkpoints passed')
+    fig = pylab.gcf()
+    fig.canvas.manager.set_window_title(f'Map {num_map}')
+    plt.show()
 
 
-def compute_mean_bgr():
+def show_heatmap(num_map):
     """
-    Compute the mean BGR value using the data in the mean_bgr file
-
-    Returns:
-        mean_b (float): Mean B value
-        mean_g (float): Mean G value
-        mean_r (float): Mean R value
+    Show the heatmap of death directly on the map
+    Args:
+        num_map: the number of the map
     """
-    b, g, r = [], [], []
-    with open(PATH_DATA + 'mean_bgr', 'r') as file:
-        for line in file:
-            bgr = line.split()
-            b.append(float(bgr[0]))
-            g.append(float(bgr[1]))
-            r.append(float(bgr[2]))
+    scores = []  # List of the scores [score1, score2, ...]
 
-    return mean(b), mean(g), mean(r)
+    with open(f'{PATH_DATA}tests/all_cars/results/{num_map}', 'r') as file_read:
+        for line in file_read:
+            data = line.split(' ')
+
+            # We get the score of the cars
+            if num_map == 5:
+                score = int(
+                    float(data[6][:-1]) / 100)  # We remove the \n and transform the score to a smaller value (int)
+                data[6] = str(score)  # We replace the score in the data
+            else:
+                score = int(data[6][:-1])  # We remove
+            scores.append(score)  # We add the score to the list of the
+
+        # Sort the scores
+        scores.sort(reverse=True)  # We sort the scores in descending order
+
+    # TODO : faire la heatmap
 
 
 def analyze_genetic_algorithm():
     """
-    Analyze the data from the genetic algorithm
+    Analyze the data from the two different genetic algorithms (mutation only and crossover then mutation) and plot the boxplot
     """
     mutation_only = []  # The number of generations to complete a lap with only mutation
     crossover_mutation = []  # The number of generations to complete a lap with crossover and then mutation
@@ -176,4 +248,4 @@ def analyze_value_genetic_parameters():
 
 
 if __name__ == '__main__':
-    analyze_genetic_algorithm()
+    show_graph(4)
