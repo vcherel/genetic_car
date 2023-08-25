@@ -1,10 +1,10 @@
-from data.variables_functions_ui import add_to_rects_blit_ui
+from data.variables_functions_ui import add_to_rects_blit_ui  # To add a rectangle to the list of rectangles to blit
+from render.resizing import convert_to_new_window, scale_image, scale_positions  # Import the resizing functions
 from other.utils import text_rec, compute_detection_cone_points, change_color_car  # Import the utils functions
 from data.constants import RGB_VALUES_DICE, PATH_IMAGE  # Import the constants
-import data.variables as var
+import data.variables as var  # Import the data
 import pygame  # To use pygame
 
-from render.resizing import convert_to_new_window, scale_image, scale_positions
 
 """
 This file contains all the functions to display elements on the screen
@@ -19,7 +19,7 @@ def edit_background():
     var.BACKGROUND.blit(font.render('Nombre de voitures', True, (0, 0, 0), (128, 128, 128)), convert_to_new_window((1060, 25)))  # Add the yes text
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), convert_to_new_window((1280, 120)), convert_to_new_window((1280, 0)), 2)  # Line at the right
     pygame.draw.line(var.BACKGROUND, (0, 0, 0), convert_to_new_window((325, 120)), convert_to_new_window((325, 0)), 2)  # Line at the left
-    var.BACKGROUND.blit(scale_image(pygame.image.load(PATH_IMAGE + 'map.png'), var.SCALE_RESIZE_X), convert_to_new_window((785, 5)))  # Add the change map button
+    var.BACKGROUND.blit(scale_image(pygame.image.load(PATH_IMAGE + 'map.png')), convert_to_new_window((785, 5)))  # Add the change map button
 
 
 def show_checkpoints():

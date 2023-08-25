@@ -182,7 +182,7 @@ def load_parameters():
         """
         lines = file_parameters_read.readlines()  # We read the file
         actual_map = -1  # Actual map (-1 because we start with the map 0)
-        for line in lines[1:]:
+        for line in lines:
             if line[0] == '#':
                 actual_map += 1  # We change the map
             else:

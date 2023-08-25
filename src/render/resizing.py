@@ -1,6 +1,5 @@
-import pygame
-
 import data.variables as var  # Import the data
+import pygame  # To use pygame
 
 """
 This file contains all the functions related to the resizing of the application window

@@ -70,7 +70,6 @@ class Car:
         self.dead = False  # True if the car is dead
         self.reverse = False  # True if the car is going in the wrong way (the direction of the car will no longer change)
 
-
     def __str__(self):
         """
         Return the string representation of the car
@@ -105,21 +104,29 @@ class Car:
         """
         Move the car and update its state depending on its genetic and environment
         """
-        self.update_score()  # Update the score of the car
+        if self.reverse:  # If the car is going in the wrong way, we crash it
+            self.update_acceleration(wall_top=False)  # We accelerate the car to make it crash
+            self.update_speed()  # Update the speed of the car
+            self.update_drift_angle(turn_angle=0)  # We don't turn the car, but we update its drift angle to do a natural movement
+            self.update_pos()  # Update the position and orientation of the car
+            self.detect_collision()  # Detect if the car is dead
 
-        wall_left, wall_top, wall_right = self.detect_walls()  # Detect if there is wall in the detection cone of the car
+        else:
+            self.update_score()  # Update the score of the car
 
-        self.update_acceleration(wall_top)  # Change the acceleration of the car depending on the detected walls
-        self.update_speed()  # Update the speed of the car depending on the acceleration of the car
+            wall_left, wall_top, wall_right = self.detect_walls()  # Detect if there is wall in the detection cone of the car
 
-        turn_angle = self.update_angle(wall_left, wall_right)  # Change the speed and the angle of the car depending on the detected walls
-        self.update_drift_angle(turn_angle)  # Update the drift angle of the car
+            self.update_acceleration(wall_top)  # Change the acceleration of the car depending on the detected walls
+            self.update_speed()  # Update the speed of the car depending on the acceleration of the car
 
-        self.update_pos()  # Update the position and orientation of the car
-        self.detect_collision()  # Detect if the car is dead
+            turn_angle = self.update_angle(wall_left, wall_right)  # Change the speed and the angle of the car depending on the detected walls
+            self.update_drift_angle(turn_angle)  # Update the drift angle of the car
 
-        self.detect_reverse()  # Detect if the car is going in the wrong way
-        self.update_best_scores()  # Update the best scores of the car
+            self.update_pos()  # Update the position and orientation of the car
+            self.detect_collision()  # Detect if the car is dead
+
+            self.detect_reverse()  # Detect if the car is going in the wrong way
+            self.update_best_scores()  # Update the best scores of the car
 
     def update_score(self):
         """
@@ -235,16 +242,15 @@ class Car:
         """
         Change the acceleration of the car (depending on the genetic cone)
         If there is a wall in front of the car, we decelerate it
-        Furthermore, if the car is going in the wrong way, we accelerate it
 
         Args:
             wall_top (bool or float) : True if there is a wall
             If it is a float, it is the distance between the front of the car and the wall in this direction
         """
-        if not wall_top or self.reverse:  # We don't brake if the car is going backwards
-            self.acceleration = var.ACCELERATION
-        else:
+        if wall_top:
             self.acceleration -= var.DECELERATION
+        else:
+            self.acceleration = var.ACCELERATION
 
     def update_speed(self):
         """
@@ -261,7 +267,6 @@ class Car:
         Change the angle of the car depending on the genetic cone
         If the closest wall is on the left of the car, we turn it to the right, and vice versa
         The angle of turn is different depending on the speed of the car (the faster the car goes, the less it turns)
-        We don't turn the car if it is going backward
 
         Args:
             wall_left (bool or float): True if there is a wall at the left
@@ -287,8 +292,7 @@ class Car:
                 turn_angle = -turn_angle  # We modify the angle of the turn of the car to turn it to the right
         # elif wall_right: we don't need to do anything because the car is already turning to the left
 
-        if not self.reverse:  # We don't turn the car if it is going backward
-            self.angle += turn_angle
+        self.angle += turn_angle
 
         return turn_angle
 
@@ -334,26 +338,6 @@ class Car:
             self.kill()  # Collision with the wall of the window
 
         if var.BACKGROUND_MASK.overlap(pygame.mask.from_surface(self.rotated_image), self.rotated_rect.topleft) is not None:
-            # This part was used to avoid determinism problems, it seems to work now, but we never know
-            """
-            # We move the car backward because we don't want the car to bo on top of the wall
-            speed = 1  # Speed of the car
-            radians = math.radians(-self.speed_angle)  # Convert the angle to radians
-            dx = math.cos(radians) * speed  # The movement of the car on the x-axis
-            dy = math.sin(radians) * speed  # The movement of the car on the y-axis
-            # While it touches the wall
-            count = 0
-            while var.BACKGROUND_MASK.overlap(car_mask, self.rotated_rect.topleft) is not None:
-                count += 1
-                if count == 20:  # To avoid a car teleporting we try to move in the other direction (to avoid the case when the back of the car is in the wall)
-                    dx = -dx
-                    dy = -dy
-
-                self.pos = self.pos[0] - dx, self.pos[1] - dy  # Update the position of the car
-                self.rotated_image = pygame.transform.rotate(self.image, self.angle)  # Rotate the image of the car
-                self.rotated_rect = self.rotated_image.get_rect(center=self.image.get_rect(center=self.pos).center)  # Rotate the rectangle of the car
-                car_mask = pygame.mask.from_surface(self.rotated_image)
-            """
             self.kill()  # Collision with a wall
 
     def detect_reverse(self):
@@ -361,7 +345,7 @@ class Car:
         Detect if the car is going in the wrong way in order to make it stop driving
         """
         # If we are in a circuit and the car is going backwards, we change its color and reverse variable
-        if var.NUM_MAP != 5 and self.turn_without_checkpoint > 150 and not self.reverse:
+        if var.NUM_MAP != 5 and self.turn_without_checkpoint > 150:
             if self.id_memory_car is None and not self.color == 'yellow':
                 # We convert the image of the car to light grayscale if it's not the best car (to show that it's going in the wrong way)
                 self.image = change_color_car(self.image, 'light_gray')
