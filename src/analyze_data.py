@@ -1,13 +1,11 @@
-from data.constants import PATH_DATA  # Import the path of the data
-from render.resizing import scale_image  # To scale the image
+from data.constants import PATH_DATA, PATH_IMAGE, CAR_SIZES  # Import the constants
 from statistics import mean  # To use statistics on the data
+import data.variables as var  # Import the variables
 import matplotlib.pyplot as plt  # To plot the boxplot
-import data.variables as var  # To get the window size
 import os  # To iterate over the files in a folder
 import numpy as np  # To use numpy arrays
 import pylab  # To use the boxplot
 import pygame  # To use pygame
-
 
 # Used to save image for LaTeX
 """
@@ -20,7 +18,6 @@ matplotlib.rcParams.update({
     'pgf.rcfonts': False,
 })
 """
-
 
 """
 This file contains the functions to analyze the data from the test file (created from the file main.py)
@@ -151,7 +148,8 @@ def show_graph(num_map):
 
             # We get the score of the cars
             if num_map == 5:
-                score = int(float(data[6][:-1]) / 100)  # We remove the \n and transform the score to a smaller value (int)
+                score = int(
+                    float(data[6][:-1]) / 100)  # We remove the \n and transform the score to a smaller value (int)
                 data[6] = str(score)  # We replace the score in the data
             else:
                 score = int(data[6][:-1])  # We remove
@@ -188,7 +186,8 @@ def analyze_genetic_algorithm():
     data = [mutation_only, crossover_mutation]
     red_square = dict(marker='2', markeredgecolor='red')  # Create a red square for the mean
     plt.boxplot(data, showmeans=True, meanprops=red_square)  # Plot the boxplot
-    plt.title('Box-plot du nombre de générations nécessaire pour compléter un tour\n avec 2 algorithmes génétiques différents (sur 150 essais)')
+    plt.title(
+        'Box-plot du nombre de générations nécessaire pour compléter un tour\n avec 2 algorithmes génétiques différents (sur 150 essais)')
     plt.ylim(0, 15)  # Adjust the y-axis as needed
     plt.ylabel('Nombre de générations')
     pylab.xticks([1, 2], ['Mutations seulement', 'Croisements puis mutations'])  # Add legend
@@ -256,24 +255,43 @@ def show_heat_map(num_map):
             data = line.split(' ')
             checkpoints.append((int(data[0]), int(data[1])))
 
-    coordinate_list = [checkpoints[scores[i] - 1] for i in range(len(scores))]
+    coordinate_list = [(checkpoints[scores[i] - 1][0], checkpoints[scores[i] - 1][1] - 115) for i in range(len(scores))]
 
     # Create a numpy array to store the heatmap intensity
-    heat_map = np.zeros((1500, 700))
+    heat_map = np.zeros((1500, 585))
 
     # Calculate intensity at each coordinate and update the heatmap
     for coord in coordinate_list:
-        x, y = coord
-        heat_map[x, y] += 1  # Increase intensity at this coordinate
+        heat_map[coord] += 1
+    max_value = np.amax(heat_map)
 
-    heat_map_surface = pygame.Surface((1500, 700), pygame.SRCALPHA)
+    heat_map_surface = pygame.image.load(f'{PATH_IMAGE}background/background_{str(num_map)}.png')
+    result_surface = pygame.image.load(f'{PATH_IMAGE}background/background_{str(num_map)}.png')
 
-    for x in heat_map:
-        for y in x:
-            pygame.draw.circle(heat_map_surface, (255, 0, 0, y * 10), (x, y), 1)
+    circles_to_draw = []  # List of the circles to draw (format : ((x, y), alpha))
+    for i, x in enumerate(heat_map):
+        for j, y in enumerate(x):
+            if y != 0:
+                alpha = min(y / max_value * 255 * 1.5, 255)
+                circles_to_draw.append(((i, j), alpha))
 
-    var.WINDOW.blit(scale_image(heat_map_surface), (0, 0))
+
+    circles_to_draw.sort(key=lambda item: item[1])
+    for circle in circles_to_draw:
+        pygame.draw.circle(heat_map_surface, (255, 255 - circle[1], 255 - circle[1]), circle[0], CAR_SIZES[var.NUM_MAP] * 6)
+
+    for x in range(result_surface.get_width()):
+        for y in range(result_surface.get_height()):
+            pixel_color = result_surface.get_at((x, y))
+            if pixel_color == (255, 255, 255, 255):  # White pixel
+                result_surface.set_at((x, y), heat_map_surface.get_at((x, y)))
+            else:
+                result_surface.set_at((x, y), pixel_color)
+
+    pygame.image.save(result_surface, f"images/background/heatmap_{num_map}.png")
 
 
 if __name__ == '__main__':
-    pass
+    for number_map in range(8):
+        print(number_map)
+        show_heat_map(number_map)

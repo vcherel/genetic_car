@@ -1,12 +1,12 @@
+from render.resizing import convert_to_new_window  # Import the resizing functions
 from data.constants import CAR_COLORS  # Import the constants
-from menus.dice_menu import DICE_MENU
+from menus.dice_menu import DICE_MENU  # Import the dice menu
 from render.button import Button  # Import the button class
 import data.variables as var  # Import the data
 import random  # To get random numbers
 import pygame  # To play the game
 import time  # To get the time
 
-from render.resizing import convert_to_new_window
 
 """
 This file contains the RectGarage class and all the functions related to it. A rectangle garage is a rectangle that contains the cars saved in the garage menu.

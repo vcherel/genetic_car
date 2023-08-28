@@ -1,11 +1,12 @@
-from data.constants import PATH_IMAGE
+from render.resizing import convert_to_new_window, scale_image  # Import the resizing functions
 from menus.rect_garage import RectGarage  # Import the rectangle garage
+from data.constants import PATH_IMAGE  # Import the constants
 from render.button import Button  # Import the button
 import data.variables as var  # Import the variables
 import pygame  # To use pygame
 import time  # To get the time
 
-from render.resizing import convert_to_new_window, scale_image
+
 
 """
 This function contains the Garage class and all the functions related to it. The garage is the place where the cars are stored.

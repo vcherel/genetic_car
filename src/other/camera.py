@@ -34,11 +34,6 @@ count_iterations = 0  # The number of iterations of the program
 param_1, param_2, param_dp = 150, 16, 5
 max_radius_circle = 7  # The maximum radius of the circles we want to detect
 
-
-# Optimization and debug parameters
-
-show_clicks = False  # To show the coordinates and color of the position where the user clicked
-
 # To find what is the color of each dice
 write_mean_bgr = False
 file_write_mean_bgr = None  # The file in which we will write the parameters
@@ -108,8 +103,6 @@ def capture_dice():
         # Detect a click on the window to stop the program
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:  # We stop the program after a click
-                if show_clicks:
-                    show_click(rect_window, frame)  # We display the click
                 var.WINDOW.blit(var.BACKGROUND, rect_window, rect_window)  # We erase the window
 
                 frame_view = cv2.cvtColor(frame_view, cv2.COLOR_BGR2RGB)  # Convert the image to RGB

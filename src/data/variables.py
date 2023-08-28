@@ -19,10 +19,14 @@ LARGE_FONT = pygame.font.SysFont('Arial', 30)
 
 # DISPLAY
 WIDTH_SCREEN, HEIGHT_SCREEN = 1500, 700  # Screen size
+WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Initialization of the window
 BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
+SHOW_HEATMAP = False  # True if we want to see the heatmap
 BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to detect collisions)
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
+RED_CAR_IMAGE = None  # Image of the original car
+BIG_RED_CAR_IMAGE = None  # Image of the car used in the menus
 
 
 # EXPLOSIONS
@@ -46,12 +50,6 @@ TEXT_MEDIUM = LARGE_FONT.render('Moyen', True, (255, 128, 0), (128, 128, 128))  
 TEXT_FAST = LARGE_FONT.render('Rapide', True, (255, 0, 0), (128, 128, 128))  # Text of the fast button
 TEXT_LENGTH = LARGE_FONT.render('Longueur', True, (0, 0, 0), (128, 128, 128))  # Text of the length button
 TEXT_WIDTH = LARGE_FONT.render('Largeur', True, (0, 0, 0), (128, 128, 128))  # Text of the width button
-
-
-# IMAGES
-WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE)  # Initialization of the window
-RED_CAR_IMAGE = None  # Image of the original car
-BIG_RED_CAR_IMAGE = None  # Image of the car used in the menus
 
 
 # GAME
@@ -146,6 +144,7 @@ DISPLAY_SETTINGS = False  # True if we are displaying the settings menu
 MEMORY_CARS = []  # Memory of the cars, format: [car_memory_1, car_memory_2, ...] (used to save the cars of the garage)
 SELECTED_MEMORY_CARS = []  # Genetics from the garage that we want to add to the game
 ACTUAL_IDS_MEMORY_CARS = 1  # Biggest id of the memory for the dice cars (to know the id of the next car)
+
 
 # CAMERA
 CAMERA_FRAME = None  # Frame of the camera at the last update (displayed in the dice menu)

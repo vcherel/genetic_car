@@ -1,9 +1,8 @@
 from data.variables_functions import load_cars, load_parameters, change_map, exit_game, init_variables, blit_circuit
-from data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
 from game.genetic_algorithm import apply_genetic  # Import the genetic algorithm
+from data.constants import PATH_DATA, PATH_IMAGE  # Import the constants
 from menus.settings_menu import SETTINGS  # Import the settings menu
 from other.camera import change_camera  # To change the camera
-from analyze_data import show_heat_map  # Import the heat map
 from game.genetic import Genetic  # Import the genetic class
 from game.car import Car, add_garage_cars  # Import the car
 from other.utils import union_rect  # Import the utils
@@ -27,7 +26,6 @@ def open_window():
     Open the window of the game and manage the events until the game is started or closed
     """
     var.WINDOW.blit(var.BACKGROUND, (0, 0))  # Screen initialization
-    # show_heat_map(0)  # Display the heat map of the deaths of the cars
 
     while 1:
         # If we want to change the checkpoints

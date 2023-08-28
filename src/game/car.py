@@ -1,5 +1,6 @@
-from data.variables_functions import checkpoint_reached
-from other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, change_color_car  # Utils functions
+from other.utils import compute_detection_cone_points, point_out_of_window, create_rect_from_points, change_color_car
+from render.resizing import convert_to_new_window, scale_image  # To convert the coordinates of the car and scale the image
+from data.variables_functions import checkpoint_reached  # To detect if the car has reached a checkpoint
 from render.display import draw_detection_cone  # To draw the detection cone
 from data.constants import NB_MAPS  # Number of different tracks
 from game.genetic import Genetic  # Genetic algorithm of the car
@@ -8,7 +9,6 @@ import data.variables as var  # Variables of the game
 import pygame  # Pygame library
 import math  # Math library
 
-from render.resizing import convert_to_new_window, scale_image
 
 """
 This file contains the class Car used to represent a car in the game. The car is controlled by genetic parameters of the detection cone.

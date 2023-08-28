@@ -36,22 +36,6 @@ def verif_coordinates(circles, rect, coordinates):
     return True
 
 
-def show_click(rect_window, frame):
-    """
-    Display the click in the terminal
-
-    Args:
-        rect_window (pygame.rect.Rect): Rectangle of the window
-        frame (numpy.ndarray): Image of the camera
-    """
-    pos = pygame.mouse.get_pos()
-    pos = (pos[0] - rect_window.x, pos[1] - rect_window.y)
-    # Print the position of the click
-    print(pos)
-    # Print the color of the pixel
-    print(frame[pos[1], pos[0]])
-
-
 def add_offset(rectangles, offset):
     """
     Add an offset to the rectangles

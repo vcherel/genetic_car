@@ -1,9 +1,9 @@
+from render.resizing import convert_to_new_window, scale_image  # Import the functions to resize the window
 from data.constants import PATH_IMAGE  # To get the path of the image
 from render.button import Button  # Import the button class
 import data.variables as var  # Import the data
 import pygame  # To use pygame
 
-from render.resizing import convert_to_new_window, scale_image
 
 """
 This file contains the Settings class and all the functions related to it. The settings window is used to change many

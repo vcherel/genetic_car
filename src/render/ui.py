@@ -29,12 +29,11 @@ settings_button = Button()  # Button to open the settings
 skip_button = Button()  # Button to go to the next generation
 previous_map_button = Button()  # Button to change the map
 next_map_button = Button()  # Button to change the map
-
-BUTTONS = [stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button]  # List of all the buttons
+heatmap_button = Button()  # Button to display the heatmap
 
 
 def init():
-    global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button
+    global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button, heatmap_button
 
     # Buttons
     stop_button = Button(x=1425, y=4, image_name='main_menu/stop', scale=0.25)
@@ -48,6 +47,7 @@ def init():
     skip_button = Button(x=1290, y=80, image_name='main_menu/skip', scale=0.45)
     previous_map_button = Button(x=820, y=70, image_name='main_menu/previous_map', scale=0.45)
     next_map_button = Button(x=920, y=70, image_name='main_menu/next_map', scale=0.45)
+    heatmap_button = Button(x=285, y=77, image_name='main_menu/heatmap', scale=0.25)
 
 
 def handle_events(cars=None):
@@ -206,6 +206,7 @@ def display_buttons(cars):
     display_settings_button()  # Display the settings button
     display_skip_button()  # Display the next generation button
     display_dice_button()  # Display the dice button
+    display_heatmap_button()  # Display the heatmap button
 
 
 def display_stop_button():
@@ -375,6 +376,19 @@ def display_skip_button():
         var.CHANGE_GENERATION = True  # We change the generation
     if skip_button.mouse_over_button:
         add_to_rects_blit_ui(skip_button.rect, offset=2)  # We add the rect of the next generation button to the list of rects to blit
+
+
+def display_heatmap_button():
+    """
+    Display the heatmap button used to display the heatmap
+    """
+    heatmap_button.draw()  # Draw the heatmap button
+    if heatmap_button.just_clicked:  # Heatmap button is just clicked
+        var.SHOW_HEATMAP = not var.SHOW_HEATMAP  # We change the value of the variable
+        blit_circuit()
+        var.WINDOW.blit(var.BACKGROUND, (0, 0))  # We display the new background
+    if heatmap_button.mouse_over_button:
+        add_to_rects_blit_ui(heatmap_button.rect)
 
 
 def display_text():

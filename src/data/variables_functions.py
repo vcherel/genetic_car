@@ -86,9 +86,6 @@ def change_map(first_time=False, reverse=False):
             else:
                 var.NUM_MAP -= 1
 
-        blit_circuit()  # Blit the circuit on the background surface
-
-
     var.START_POSITION = START_POSITIONS[var.NUM_MAP]  # Start position of the cars
     var.START_ANGLE = START_ANGLES[var.NUM_MAP]  # Start angle of the cars
     var.RADIUS_CHECKPOINT = 7.5 * CAR_SIZES[var.NUM_MAP]  # Radius of the checkpoints
@@ -155,10 +152,12 @@ def create_background():
 
 def blit_circuit():
     """
-    Blit the circuit on the background surface
+    Blit the circuit on the background surface. The size of the circuit is 1500*585
     """
-    var.BACKGROUND.blit(pygame.transform.scale(pygame.image.load(f'{PATH_IMAGE}background/background_{str(var.NUM_MAP)}.png'),
-                                               convert_to_new_window((1500, 585))), convert_to_new_window((0, 115)))
+    if not var.SHOW_HEATMAP or var.NUM_MAP == 5:
+        var.BACKGROUND.blit(scale_image(pygame.image.load(f'{PATH_IMAGE}background/background_{str(var.NUM_MAP)}.png')), convert_to_new_window((0, 115)))
+    else:
+        var.BACKGROUND.blit(scale_image(pygame.image.load(f'{PATH_IMAGE}background/heatmap_{str(var.NUM_MAP)}.png')), convert_to_new_window((0, 115)))
 
 
 def load_parameters():
