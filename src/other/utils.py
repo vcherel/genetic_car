@@ -174,3 +174,17 @@ def create_rect_from_points(points):
     rect_height = max_y - min_y
 
     return pygame.Rect(min_x, min_y, rect_width, rect_height)
+
+
+def add_offset_to_rect(rect, offset):
+    """
+    Add an offset to a rect
+
+    Args:
+        rect: the rect
+        offset: the offset to add
+
+    Returns:
+        the rect with the offset added
+    """
+    return pygame.Rect(rect.x - offset, rect.y - offset, rect.width + 2 * offset, rect.height + 2 * offset)

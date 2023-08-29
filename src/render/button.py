@@ -1,4 +1,5 @@
 from render.resizing import convert_to_new_window  # To convert the coordinates to the new window
+from other.utils import add_offset_to_rect  # To add an offset to a rect
 from data.constants import PATH_IMAGE  # To get the path of the image
 from other.camera import change_camera  # To change the camera
 import data.variables as var  # Import the data
@@ -14,7 +15,8 @@ class Button:
     """
     This class is used to represent a button used in the ui
     """
-    def __init__(self, x=None, y=None, image_name=None, only_one_image=False, checkbox=False, writing_button=False, variable=None, name=None, scale=1, scale_x=None, scale_y=None):
+    def __init__(self, x=None, y=None, image_name=None, only_one_image=False, checkbox=False, writing_button=False,
+                 variable=None, name=None, text_displayed=None, scale=1, scale_x=None, scale_y=None):
         """
         Initialization of a button
 
@@ -27,6 +29,7 @@ class Button:
             writing_button (bool): True if the button is a writing button
             variable (int or str) : variable associated to the text of the writing button
             name (str): name of the button (used to know if there is special actions to do) or the name of the variable
+            text_displayed (str): the text that will be displayed on the button when the mouse is over it
             associated to the text of the writing button (used for the settings)
             scale (float): scale of the button
             scale_x (float): scale of the button on the x-axis
@@ -78,6 +81,11 @@ class Button:
             self.variable = variable  # Variable of the button
 
             self.name = name    # Name of the button
+            self.time_mouse_over_button = None  # Number of ticks the mouse is over the button
+            if text_displayed is None:
+                self.text_displayed = None
+            else:
+                self.text_displayed = var.FONT.render(text_displayed, False, (0, 0, 0), (255, 255, 255))  # Text displayed on the button when the mouse is over it
 
     def __str__(self):
         """
@@ -99,8 +107,14 @@ class Button:
         """
 
         image = self.image  # Image of the button
-        if self.rect.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
+        mouse_pos = pygame.mouse.get_pos()  # Position of the mouse
+        if self.rect.collidepoint(mouse_pos):  # Mouse over the button
             self.mouse_over_button = True
+
+            # We start the timer if it's the first time the mouse is over the button
+            if self.time_mouse_over_button is None:
+                self.time_mouse_over_button = time.time()
+
             if pygame.mouse.get_pressed()[0] == 1 and time.time() - self.time_clicked > 0.15:    # Mouse clicked for the first time
                 self.time_clicked = time.time()  # Get the time when the button is clicked
                 if self.checkbox or self.writing_button:
@@ -117,6 +131,8 @@ class Button:
             if self.image_hover:
                 image = self.image_hover   # Change the image if it's possible
         else:
+            if self.time_mouse_over_button is not None:
+                self.time_mouse_over_button = None
             self.mouse_over_button = False
             self.just_clicked = 0   # The button has not just been clicked
             if not self.checkbox and not self.writing_button:
@@ -131,6 +147,10 @@ class Button:
         # Draw text on button if it's a writing button
         if self.writing_button:
             var.WINDOW.blit(var.FONT.render(self.text, True, (0, 0, 0)), (self.rect.x + 10, self.rect.y + 4))
+
+        # Display the text that indicates what the button does if the mouse is over the button for more than 0.5 seconds
+        if self.mouse_over_button and self.text_displayed is not None and time.time() - self.time_mouse_over_button > 0.5:
+            var.TEXT_BUTTON = self.text_displayed
 
         return self.activated  # Return True if the button is clicked (or activated)
 

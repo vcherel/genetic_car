@@ -23,6 +23,7 @@ WINDOW = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN), pygame.RESIZABLE
 BACKGROUND = pygame.Surface((WIDTH_SCREEN, HEIGHT_SCREEN))  # Image of the background
 SHOW_HEATMAP = False  # True if we want to see the heatmap
 BACKGROUND_MASK = None  # Mask of the black pixels of the background (used to detect collisions)
+TEXT_BUTTON = None  # Text that appears when the mouse is over a button
 RECTS_BLIT_UI = []  # Coordinates of the rects used to erase the ui of the screen
 RECTS_BLIT_CAR = []  # Coordinates of the rects used to erase the cars of the screen
 RED_CAR_IMAGE = None  # Image of the original car

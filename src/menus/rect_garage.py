@@ -34,12 +34,15 @@ class RectGarage:
         self.last_time_color_clicked = 0  # Last time the color was clicked
 
         # Buttons
-        self.edit_button = Button(x=self.x + 188, y=self.y + 40, image_name='garage_menu/pen', scale=0.15)  # Button to edit the car
-        self.select_button = Button(x=self.x + 188, y=self.y + 8, image_name='checkbox', scale=0.07)  # Button of the writing button
+        self.edit_button = Button(x=self.x + 188, y=self.y + 40, image_name='garage_menu/pen', scale=0.15, text_displayed="Modifier les paramètres")  # Button to edit the car
+        self.select_button = Button(x=self.x + 188, y=self.y + 8, image_name='checkbox', scale=0.07, text_displayed="Sélectionner")  # Button of the writing button
         if self.selected:  # If the car is selected, we activate the button
             self.select_button.activated = True
-        self.delete_button = Button(x=self.x + 153, y=self.y + 5, image_name='garage_menu/trash', scale=0.14)  # Button to delete the car
-        self.name_button = Button(x=self.x + 10, y=self.y + 10, only_one_image=True, image_name='garage_menu/grey', writing_button=True, variable=self.memory_car.name, name='car_name', scale=6)  # Button to edit the name of the car
+        self.delete_button = Button(x=self.x + 153, y=self.y + 5, image_name='garage_menu/trash', scale=0.14, text_displayed="Supprimer")  # Button to delete the car
+        self.name_button = Button(x=self.x + 10, y=self.y + 10, only_one_image=True, image_name='garage_menu/grey', writing_button=True, variable=self.memory_car.name, name='car_name', scale=6, text_displayed="Changer le nom")  # Button to edit the name of the car
+
+        self.text_displayed_rect_color = var.FONT.render("Modifier la couleur", False, (0, 0, 0), (255, 255, 255))
+        self.time_mouse_over_rect_color = None  # Number of ticks the mouse is over the color rectangle
 
     def __str__(self):
         """
@@ -89,12 +92,24 @@ class RectGarage:
         pygame.draw.rect(var.WINDOW, CAR_COLORS[self.memory_car.color], rect_color, 0)  # We fill the rectangle with the color of the car
 
         if rect_color.collidepoint(pygame.mouse.get_pos()):  # Mouse over the button
+            # We start the timer if it's the first time the mouse is over the button
+            if self.time_mouse_over_rect_color is None:
+                self.time_mouse_over_rect_color = time.time()
+
             pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 4)  # Big borders
+
             # We change the color of the car if the user clicked on the color
             if pygame.mouse.get_pressed()[0] and time.time() - self.last_time_color_clicked > 0.15:
                 self.last_time_color_clicked = time.time()
                 self.memory_car.color = random.choice(list(CAR_COLORS.keys()))  # We change the color of the car randomly
+
+            # We display the text if the mouse is over the button for more than 0.5 second
+            if time.time() - self.time_mouse_over_rect_color > 0.5:
+                var.TEXT_BUTTON = self.text_displayed_rect_color  # We display the text
+
         else:
+            if self.time_mouse_over_rect_color is not None:
+                self.time_mouse_over_rect_color = None
             pygame.draw.rect(var.WINDOW, (1, 1, 1), rect_color, 2)  # Small borders
 
     def draw_name_button(self):

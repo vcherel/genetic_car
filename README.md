@@ -137,6 +137,9 @@ de voitures, lancer la simulation, arrêter la simulation, mettre en pause, reco
 passer à la génération suivante. On peut aussi cliquer directement sur les voitures pour afficher leurs paramètres 
 ainsi que leurs champs de vision.
 
+Enfin, le bouton coloré à gauche permet de visualiser les emplacements où il y a le plus de crash de voitures. (Plus les cercles
+sont rouges foncés, plus il y a de crashs à cet endroit).
+
 ### Paramètres de la simulation
 
 Les paramètres pouvant être modifiés sont les suivants :

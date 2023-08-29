@@ -65,7 +65,7 @@ class DiceMenu:
                               self.dice_button(x3, y1, self.dice_values[2]), self.dice_button(x1, y2, self.dice_values[3]),
                               self.dice_button(x2, y2, self.dice_values[4]), self.dice_button(x3, y2, self.dice_values[5])]
 
-        self.check_button = Button(x=self.x + 888, y=self.y + 445, image_name='check', scale=0.4)
+        self.check_button = Button(x=self.x + 888, y=self.y + 445, image_name='check', scale=0.4, text_displayed="Valider les dés")
 
     def dice_button(self, x, y, value):
         """
@@ -80,7 +80,7 @@ class DiceMenu:
             Button: The dice button
         """
 
-        return Button(x=self.x + x + 45, y=self.y + y + 140, image_name='writing', variable=value, name='dice', scale_x=0.25)
+        return Button(x=self.x + x + 45, y=self.y + y + 140, image_name='writing', variable=value, name='dice', scale_x=0.25, text_displayed="Modifier la valeur du dé")
 
     def display_dice_menu(self):
         """
@@ -136,14 +136,13 @@ class DiceMenu:
         var.DISPLAY_DICE_MENU = False  # We don't display the dice menu anymore
         var.WINDOW.blit(var.BACKGROUND, self.rect, self.rect)  # We erase the dice menu
 
-        if self.camera_activated:  # If the camera is activated
+        if self.camera_activated:  # If the camera is activated we have to erase the camera frame at the left of the dice menu
             var.WINDOW.blit(var.BACKGROUND, var.RECT_CAMERA_FRAME, var.RECT_CAMERA_FRAME)  # We erase the dice menu
-            var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
-                                   color='gray', genetic=Genetic(self.dice_values), best_scores=[0] * NB_MAPS))
-            var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
-
             var.CAMERA_FRAME = None  # We reset the camera frame
 
+        var.MEMORY_CARS.append(MemoryCar(id_car=var.ACTUAL_IDS_MEMORY_CARS, name=f'Dé_{var.ACTUAL_IDS_MEMORY_CARS}',
+                                         color='gray', genetic=Genetic(self.dice_values), best_scores=[0] * NB_MAPS))
+        var.ACTUAL_IDS_MEMORY_CARS += 1  # We increment the id of the dice
 
     def save_values(self, index, writing_button):
         """

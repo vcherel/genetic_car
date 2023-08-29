@@ -34,10 +34,10 @@ class Garage:
         self.actual_page = 0  # Actual page of the garage
         self.reload_page = True  # True if we have to change the page of the garage (for example at the beginning, when we change of page, or after a deletion)
 
-        self.trash_button = Button(x=930, y=135, image_name='garage_menu/trash', scale=0.2)
+        self.trash_button = Button(x=930, y=135, image_name='garage_menu/trash', scale=0.2, text_displayed="Supprimer toutes les voitures")
         self.time_since_last_delete = 0  # Time since the last delete of a car
-        self.next_button = Button(x=940, y=623, image_name='garage_menu/next_page', scale=0.2)
-        self.previous_button = Button(x=520, y=623, image_name='garage_menu/previous_page', scale=0.2)
+        self.next_button = Button(x=940, y=623, image_name='garage_menu/next_page', scale=0.2, text_displayed="Page suivante")
+        self.previous_button = Button(x=520, y=623, image_name='garage_menu/previous_page', scale=0.2, text_displayed="Page précédente")
 
     def __str__(self):
         """

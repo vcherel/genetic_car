@@ -1,8 +1,8 @@
-from data.variables_functions import resize_window, blit_circuit, change_map, exit_game  # Import functions from variables
 from data.variables_functions_ui import add_to_rects_blit_ui  # Import the function to add a rect to the list of rects to blit
+from data.variables_functions import resize_window, blit_circuit, change_map, exit_game  # Import functions from variables
 from render.display import show_car_window, erase_car_window, display_text_ui  # Import the function to show the car
 from render.resizing import convert_to_new_window  # To convert the coordinates to the new window
-from other.utils import union_rect  # Import the function to convert the coordinates
+from other.utils import union_rect, add_offset_to_rect  # Import the utils functions
 from other.camera import capture_dice  # Import the function to capture the dice
 from menus.settings_menu import SETTINGS  # Import the settings menu
 from menus.garage_menu import GARAGE  # Import the garage menu
@@ -36,18 +36,18 @@ def init():
     global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button, heatmap_button
 
     # Buttons
-    stop_button = Button(x=1425, y=4, image_name='main_menu/stop', scale=0.25)
-    pause_button = Button(x=1425, y=56, image_name='main_menu/pause', checkbox=True, scale=0.25)
-    start_button = Button(x=1330, y=18, image_name='main_menu/start', scale=0.35)
-    nb_cars_button = Button(x=1095, y=58, image_name='writing', variable=var.NB_CARS, name='nb_cars')
-    garage_button = Button(x=350, y=30, image_name='main_menu/garage', checkbox=True)
-    dice_button = Button(x=500, y=30, image_name='main_menu/dice')
-    restart_button = Button(x=1287, y=4, image_name='main_menu/restart', scale=0.2)
-    settings_button = Button(x=285, y=5, image_name='main_menu/settings', checkbox=True, scale=0.65)
-    skip_button = Button(x=1290, y=80, image_name='main_menu/skip', scale=0.45)
-    previous_map_button = Button(x=820, y=70, image_name='main_menu/previous_map', scale=0.45)
-    next_map_button = Button(x=920, y=70, image_name='main_menu/next_map', scale=0.45)
-    heatmap_button = Button(x=285, y=77, image_name='main_menu/heatmap', scale=0.25)
+    stop_button = Button(x=1425, y=4, image_name='main_menu/stop', scale=0.25, text_displayed="Arrêter")
+    pause_button = Button(x=1425, y=56, image_name='main_menu/pause', checkbox=True, scale=0.25, text_displayed="Pause")
+    start_button = Button(x=1330, y=18, image_name='main_menu/start', scale=0.35, text_displayed="Démarrer")
+    nb_cars_button = Button(x=1095, y=58, image_name='writing', variable=var.NB_CARS, name='nb_cars', text_displayed="Changer nombre de voitures")
+    garage_button = Button(x=350, y=30, image_name='main_menu/garage', checkbox=True, text_displayed="Ouvrir le garage")
+    dice_button = Button(x=500, y=30, image_name='main_menu/dice', text_displayed="Allumer la caméra")
+    restart_button = Button(x=1287, y=4, image_name='main_menu/restart', scale=0.2, text_displayed="Rejouer dernière run")
+    settings_button = Button(x=285, y=5, image_name='main_menu/settings', checkbox=True, scale=0.65, text_displayed="Paramètres")
+    skip_button = Button(x=1290, y=80, image_name='main_menu/skip', scale=0.45, text_displayed="Passer la génération")
+    previous_map_button = Button(x=820, y=70, image_name='main_menu/previous_map', scale=0.45, text_displayed="Circuit précédent")
+    next_map_button = Button(x=920, y=70, image_name='main_menu/next_map', scale=0.45, text_displayed="Circuit suivant")
+    heatmap_button = Button(x=285, y=77, image_name='main_menu/heatmap', scale=0.25, text_displayed="Afficher emplacements des crashs")
 
 
 def handle_events(cars=None):
@@ -187,6 +187,7 @@ def display(cars=None):
     """
     display_text()  # Display the different texts
     display_buttons(cars)  # Display the buttons
+    display_text_mouse()  # Display the text of the button if the mouse is over it for a long time
 
 
 def display_buttons(cars):
@@ -415,6 +416,19 @@ def display_text():
     else:
         fps = str(int(var.CLOCK.get_fps()))
     display_text_ui('FPS : ' + fps, convert_to_new_window((1, 1)), var.VERY_SMALL_FONT)
+
+
+def display_text_mouse():
+    """
+    Display the text that explain what does the button if the mouse is over it for a long time
+    """
+    mouse_pos = pygame.mouse.get_pos()  # Position of the mouse
+    if var.TEXT_BUTTON is not None:
+        var.WINDOW.blit(var.TEXT_BUTTON, (mouse_pos[0], mouse_pos[1] + 20))
+        rect = var.TEXT_BUTTON.get_rect(topleft=(mouse_pos[0], mouse_pos[1] + 20))
+        pygame.draw.rect(var.WINDOW, (0, 0, 0), add_offset_to_rect(rect, 2), 1)
+        var.RECTS_BLIT_UI.append(rect)
+    var.TEXT_BUTTON = None
 
 
 def pause(from_button=False):
