@@ -16,9 +16,9 @@ This file contains the class Car used to represent a car in the game. The car is
 
 
 # Constants for the car
-min_speed = 1  # Minimum speed of the car
-add_to_speed_angle = 2  # Value added to the speed angle each turn to make it equals to the real angle
-turn_decrease_factor = 1  # Factor of the decrease of the turn angle (when at high speed, the car turns 'turn_decrease_factor' times slower)
+MIN_SPEED = 1  # Minimum speed of the car
+ADD_TO_SPEED_ANGLE = 2  # Value added to the speed angle each turn to make it equals to the real angle
+TURN_DECREASE_FACTOR = 1  # Factor of the decrease of the turn angle (when at high speed, the car turns 'turn_decrease_factor' times slower)
 
 
 class Car:
@@ -104,6 +104,11 @@ class Car:
         """
         Move the car and update its state depending on its genetic and environment
         """
+        # This part is not very clean because I did it the last day...
+        memory_drift_factor = var.DRIFT_FACTOR
+        if var.RAIN_MODE:  # If we are in the rain mode, we increase the drift factor
+            var.DRIFT_FACTOR *= 1.5
+
         if self.reverse:  # If the car is going in the wrong way, we crash it
             self.update_acceleration(wall_top=False)  # We accelerate the car to make it crash
             self.update_speed()  # Update the speed of the car
@@ -127,6 +132,8 @@ class Car:
 
             self.detect_reverse()  # Detect if the car is going in the wrong way
             self.update_best_scores()  # Update the best scores of the car
+
+        var.DRIFT_FACTOR = memory_drift_factor  # We reset the drift factor
 
     def update_score(self):
         """
@@ -260,7 +267,7 @@ class Car:
         self.speed += self.acceleration  # Update the speed of the car
 
         # Limit the speed of the car (between MIN_SPEED and MAX_SPEED)
-        self.speed = max(min(self.speed, var.MAX_SPEED), min_speed)
+        self.speed = max(min(self.speed, var.MAX_SPEED), MIN_SPEED)
 
     def update_angle(self, wall_left, wall_right):
         """
@@ -280,7 +287,7 @@ class Car:
             turn_angle = var.TURN_ANGLE
         else:
             # When at high speed, the car turns 'turn_decrease_factor' times slower
-            turn_angle = min(var.TURN_ANGLE, var.TURN_ANGLE * var.MAX_SPEED / (turn_decrease_factor * self.speed))  # Angle of the turn of the car
+            turn_angle = min(var.TURN_ANGLE, var.TURN_ANGLE * var.MAX_SPEED / (TURN_DECREASE_FACTOR * self.speed))  # Angle of the turn of the car
 
         if not wall_left and not wall_right:
             turn_angle = 0  # We don't turn the car if there is no wall
@@ -307,13 +314,13 @@ class Car:
         # If the drift angle is different from the angle of the car, we change it to be closer to the angle of the car
         if not math.isclose(self.drift_angle, self.angle):  # It's float values, so it's better not to use the == operator
             # If it can be done in one turn, we make the drift angle equals to the angle of the car
-            if self.angle - add_to_speed_angle < self.drift_angle < self.angle + add_to_speed_angle:
+            if self.angle - ADD_TO_SPEED_ANGLE < self.drift_angle < self.angle + ADD_TO_SPEED_ANGLE:
                 self.drift_angle = self.angle
             # If it can't be done in one turn, we approach the good value
             elif self.drift_angle > self.angle:
-                self.drift_angle -= add_to_speed_angle
+                self.drift_angle -= ADD_TO_SPEED_ANGLE
             else:
-                self.drift_angle += add_to_speed_angle
+                self.drift_angle += ADD_TO_SPEED_ANGLE
 
         self.drift_angle += turn_angle / var.DRIFT_FACTOR
 

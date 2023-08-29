@@ -1,9 +1,10 @@
 from data.variables_functions_ui import add_to_rects_blit_ui  # Import the function to add a rect to the list of rects to blit
 from data.variables_functions import resize_window, blit_circuit, change_map, exit_game  # Import functions from variables
 from render.display import show_car_window, erase_car_window, display_text_ui  # Import the function to show the car
-from render.resizing import convert_to_new_window  # To convert the coordinates to the new window
+from render.resizing import convert_to_new_window, scale_image  # To convert the coordinates to the new window
 from other.utils import union_rect, add_offset_to_rect  # Import the utils functions
 from other.camera import capture_dice  # Import the function to capture the dice
+from data.constants import PATH_IMAGE  # Import the path of the images
 from menus.settings_menu import SETTINGS  # Import the settings menu
 from menus.garage_menu import GARAGE  # Import the garage menu
 from menus.dice_menu import DICE_MENU  # Import the dice menu
@@ -30,10 +31,14 @@ skip_button = Button()  # Button to go to the next generation
 previous_map_button = Button()  # Button to change the map
 next_map_button = Button()  # Button to change the map
 heatmap_button = Button()  # Button to display the heatmap
+rain_button = Button()  # Button to activate the rain
+
+image_rain = pygame.image.load(PATH_IMAGE + '/rain_activated.png')  # Image of the rain text
+rect_rain = image_rain.get_rect(topleft=(convert_to_new_window((335, 92))))  # Rect of the rain text
 
 
 def init():
-    global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button, heatmap_button
+    global stop_button, pause_button, start_button, nb_cars_button, garage_button, dice_button, restart_button, settings_button, skip_button, previous_map_button, next_map_button, heatmap_button, rain_button
 
     # Buttons
     stop_button = Button(x=1425, y=4, image_name='main_menu/stop', scale=0.25, text_displayed="Arrêter")
@@ -47,7 +52,8 @@ def init():
     skip_button = Button(x=1290, y=80, image_name='main_menu/skip', scale=0.45, text_displayed="Passer la génération")
     previous_map_button = Button(x=820, y=70, image_name='main_menu/previous_map', scale=0.45, text_displayed="Circuit précédent")
     next_map_button = Button(x=920, y=70, image_name='main_menu/next_map', scale=0.45, text_displayed="Circuit suivant")
-    heatmap_button = Button(x=285, y=77, image_name='main_menu/heatmap', scale=0.25, text_displayed="Afficher emplacements des crashs")
+    heatmap_button = Button(x=240, y=77, image_name='main_menu/heatmap', scale=0.25, text_displayed="Afficher emplacements des crashs")
+    rain_button = Button(x=285, y=75, image_name='main_menu/rain', checkbox=True, scale=0.22, text_displayed="Activer la pluie (fais déraper les voitures)")
 
 
 def handle_events(cars=None):
@@ -208,6 +214,7 @@ def display_buttons(cars):
     display_skip_button()  # Display the next generation button
     display_dice_button()  # Display the dice button
     display_heatmap_button()  # Display the heatmap button
+    display_rain_button()  # Display the rain button
 
 
 def display_stop_button():
@@ -390,6 +397,17 @@ def display_heatmap_button():
         var.WINDOW.blit(var.BACKGROUND, (0, 0))  # We display the new background
     if heatmap_button.mouse_over_button:
         add_to_rects_blit_ui(heatmap_button.rect)
+
+
+def display_rain_button():
+    """
+    Display the rain button used to activate the rain
+    """
+    var.RAIN_MODE = rain_button.draw()  # Draw the rain button
+    if var.RAIN_MODE:
+        var.WINDOW.blit(scale_image(image_rain), (convert_to_new_window((335, 92))))  # We display the rain image
+        var.RECTS_BLIT_UI.append(rect_rain)
+
 
 
 def display_text():

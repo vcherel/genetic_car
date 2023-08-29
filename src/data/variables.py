@@ -61,6 +61,7 @@ PLAY = False  # Play the game
 CHANGE_GENERATION = False  # True if we want to change the generation
 PLAY_LAST_RUN = False  # True if we want to play the last run again
 LAST_RUN_PLAYING = False  # True if we are playing the last run
+RAIN_MODE = False  # True if we are in the rain mode (the car are drifting)
 
 
 # CARS
@@ -70,8 +71,6 @@ NB_CARS_ALIVE = 0  # Number of cars alive
 LIST_NB_CARS = [30] * NB_MAPS  # Number of cars for each map
 NB_CARS = None  # Number of cars for the current map
 CARS_LAST_RUN = []  # Cars of the last run
-LIST_DRIFT_FACTOR = [2.0] * NB_MAPS  # Factor of the drift for each map
-DRIFT_FACTOR = None  # Factor of the drift for the current map
 
 
 # CHARACTERISTICS CARS
@@ -89,6 +88,8 @@ LIST_ACCELERATION = [0.1] * NB_MAPS  # Acceleration of the car for each map
 ACCELERATION = None  # Acceleration of the car for the current map
 LIST_DECELERATION = [0.7] * NB_MAPS  # Deceleration of the car for each map
 DECELERATION = None  # Deceleration of the car for the current map
+LIST_DRIFT_FACTOR = [2.0] * NB_MAPS  # Factor of the drift for each map
+DRIFT_FACTOR = None  # Factor of the drift for the current map
 
 
 # DEBUG
