@@ -1,91 +1,32 @@
 # Démonstrateur d'algorithme génétique
 
-Ce projet a été réalisé dans le cadre d’un stage au sein du laboratoire IETR à l’INSA de Rennes, dans l’équipe Vaader.
-Il a pour but de réaliser une application pouvant être utilisée pour expliquer le fonctionnement d’un algorithme 
-génétique à un public allant des enfants aux adultes.
+Ce projet a été réalisé lors d’un stage au laboratoire **IETR** de l’**INSA Rennes**, au sein de l’équipe [Vaader](https://www.ietr.fr/equipe-vaader-video-analysis-and-architecture-design-embedded-resources).
 
-Dans l’application, on peut simuler des voitures qui tentent d’aller le plus loin possible sur un circuit en un temps 
-donné. Au fil des générations, les voitures vont de plus en plus loin et de plus en plus vite. La simulation est 
-complètement déterministe.
+Il consiste en une application interactive destinée à **illustrer le fonctionnement d’un algorithme génétique** auprès d’un public large, des enfants aux adultes.
 
-Les voitures possèdent des paramètres pouvant être réprésentés à l'aide de 6 dés. Il est possible d’utiliser une caméra 
-afin de capturer les valeurs de plusieurs dés colorés, qui permettent alors de générer une voiture avec des propriétés
-aléatoires. On peut alors comparer les performances d’une voiture choisie au hasard (ou non si on veut tricher) avec les
-performances de voitures obtenues grâce à l’algorithme génétique.
+L’application simule des **voitures** cherchant à parcourir le plus de distance possible sur un circuit. Au fil des générations, leur performance s’améliore grâce à l’algorithme génétique.
 
-Un fichier de support à la démonstration est disponible au format PDF (Supports.pdf) et au format svg (Supports.svg). Cela peut servir à rajouter de 
-l'interaction et mieux expliquer les mouvements des voitures ainsi que l'algorithme génétique en lui même.
+Les **paramètres des voitures** peuvent aussi être définis à partir de **dés colorés détectés par caméra**, permettant de générer aléatoirement de nouveaux individus à comparer avec ceux de la simulation.
 
-
+Un **support visuel** (Supports.pdf / Supports.svg) accompagne la démonstration pour aider à expliquer les mouvements et les principes de l’algorithme.
 
 ## Guide d’installation
 
-Deux méthodes peuvent être utilisées pour installer l’application. Conda facilite l’utilisation de 
-plusieurs environnements différents sur votre machine, tandis que pip est beaucoup plus rapide.
+Deux méthodes sont possibles : via Conda (recommandé) ou via pip.
 
-### 1) Méthode d'installation utilisant Conda
+### 1) Installation avec Conda
 
-Pour l'installation avec Conda, vous pouvez exécutez le script shell 'install.sh'. Pour lancer l'application, vous pouvez
-exécuter le fichier 'start.sh'.
-Si vous ne souhaitez pas utiliser ces scripts, vous pouvez suivre les étapes ci-dessous.
-
-#### 1.1) Installation de Miniconda
-
-Installez Miniconda si ce n’est pas déjà installé sur votre machine.
-
-##### Windows
-Allez sur le lien "https://docs.conda.io/en/latest/miniconda-other-installer-links.html" et télécharger l'exécutable pour
-Python 3.8. Après avoir téléchargé le fichier, installez-le en suivant les instructions. Les prochaines commandes seront
-à rentrer dans l'invite de commande Anaconda Prompt.
-
-##### Linux
-Allez sur le lien "https://docs.conda.io/en/latest/miniconda-other-installer-links.html" et télécharger le fichier 
-correspondant à Python 3.8. Après avoir téléchargé le fichier, ouvrez un terminal dans le dossier où se trouve le fichier 
-et rentrez la commande :
+Exécutez simplement les scripts fournis :
 ```bash
-bash Miniconda3-latest-Linux-x86_64.sh
+bash install_env.sh   # Installe l’environnement et les dépendances
+bash start.sh         # Lance l’application
 ```
 
-#### 1.2) Préparation de l'environnement Conda
+### 2) Installation avec pip
 
-Créez un nouvel environnement avec la bonne version de Python :
+Si vous préférez utiliser pip :
 ```bash
-conda create --name sim_gen python=3.8.10
-```
-
-Activez cet environnement :
-```bash
-conda activate sim_gen
-```
-
-Installez toutes les librairies nécessaires avec ces commandes (cette partie peut prendre du temps) :
-```bash
-conda install -c conda-forge pygame=2.4.0
-conda install -c conda-forge numpy=1.24.3
-conda install -c fastai opencv-python-headless=4.7.0
-conda install -c conda-forge matplotlib-base=3.7.1
-```
-Pour démarrer l’application, ouvrez un terminal dans le dossier du projet et lancez les commandes :
-```bash
-conda activate sim_gen
-python src/main.py
-```
-
-### 2) Méthode d'installation utilisant pip
-
-Installez Python 3.8 si ce n’est pas déjà installé sur votre machine. Pour ce faire, allez sur le lien
- “https://www.python.org/downloads/release/python-381". 
-
-Installez toutes les librairies nécessaires avec ces commandes :
-```bash
-pip install pygame==2.4.0
-pip install numpy==1.24.3
-pip install opencv-python==4.7.0.72
-pip install matplotlib==3.7.1
-```
-
-Pour démarrer l’application, ouvrez un terminal dans le dossier du projet et lancez cette commande :
-```bash
+pip install pygame==2.4.0 numpy==1.24.3 opencv-python==4.7.0.72 matplotlib==3.7.1
 python src/main.py
 ```
 
@@ -233,3 +174,8 @@ faire le tour de chaque circuit se trouvent dans le dossier 'data/tests/all_cars
     - **start.sh**: script shell permettant de lancer l'application
     - **Supports.pdf**: fichier de support à la démonstration
     - **Supports.svg**: fichier de support à la démonstration (format SVG)
+
+
+## Crédits
+
+Démonstrateur Python réalisé par Valentin Cherel sous la supervision de Karol Desnos et Hugo Miomandre, à partir d'une implémentation en C par Enzo Leveque, Loïs Rincé et Tanguy Raufflet, sous la supervision de Karol Desnos.
