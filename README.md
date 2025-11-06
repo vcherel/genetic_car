@@ -24,10 +24,12 @@ bash start.sh         # Lance l’application
 
 ### 2) Installation avec pip
 
-Si vous préférez utiliser pip :
+Si vous préférez utiliser pip, assurez vous d'avoir Python 3.8.
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 pip install pygame==2.4.0 numpy==1.24.3 opencv-python==4.7.0.72 matplotlib==3.7.1
-python src/main.py
+python3 src/main.py
 ```
 
 ## Fonctionnalités
